@@ -5,20 +5,23 @@ using UnityEngine.InputSystem;
 
 public class PlayerCamera : MonoBehaviour
 {
+    //Real-Time Adjustable Variables
     public float xSens;
     public float ySens;
 
+    //Component References
     public Transform orientation;
-
-    [SerializeField] private float yRot;
-    [SerializeField] private float xRot;
-
     public PlayerControlls controls;
-    public GameObject MainCamera;
+    public Transform cameraPosition;
+    public Camera myCamera;
+
+    private float yRot;
+    private float xRot;
+
 
     private InputAction look;
-    [SerializeField] private float lookX;
-    [SerializeField] private float lookY;
+    private float lookX;
+    private float lookY;
 
 
     private void Awake()
@@ -44,23 +47,32 @@ public class PlayerCamera : MonoBehaviour
         look.Disable();
     }
 
+
     private void Update()
     {
-        Vector2 lookInput = look.ReadValue<Vector2>();
-        
-
-        lookX = lookInput.x * (xSens / 5);
-        lookY = lookInput.y * (ySens / 5) * -1;
+        //Looks with the mouse
         MouseLooking(lookX, lookY);
+
+        //Update the Camera's position to the desired location set by this script
+        Transform camTransform = myCamera.GetComponent<Transform>();  //CACHE
+        camTransform.position = cameraPosition.position;
+        camTransform.rotation = cameraPosition.rotation;
     }
 
+    //
     void MouseLooking(float x, float y)
     {
-        yRot += y;
-        xRot += x;
+        //Stores the look input from the Input System
+        Vector2 lookInput = look.ReadValue<Vector2>();
 
+        //Cache's the X and Y positions from the Input System
+        xRot += lookInput.x * (xSens / 5);
+        yRot += lookInput.y * (ySens / 5) * -1;
+
+        //Restricts the looking of UP and DOWN
         yRot = Mathf.Clamp(yRot, -90f, 90f);
 
+        //Sets the rotation to the player inputted rotations
         transform.rotation = Quaternion.Euler(0, xRot, 0);
         orientation.rotation = Quaternion.Euler(yRot, xRot, 0);
     }

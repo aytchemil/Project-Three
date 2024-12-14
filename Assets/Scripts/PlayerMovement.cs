@@ -6,23 +6,34 @@ using UnityEngine.InputSystem;
 public class PlayerMovement : MonoBehaviour
 {
 
-    //Variables
-    public float speedMoving;
+    //Adjustable Variables
+    public float moveSpeed;
+    public float groundLinearDampeningDrag;
+    public float height;
+    public LayerMask whatIsGroundMask;
 
-    public PlayerControlls controls;
-    
-    //References
+    //Flags
+    [SerializeField] private bool isGrounded;
+
+    //Adjustable Component Refernces
     public Rigidbody rb;
     [SerializeField] private Transform lookPivot;
 
-    //Input Action References
+    //Cached Component Refernces
+    Transform orientation;
+    PlayerInputActions controls;
+
+    //Input Actions
     private InputAction move;
 
+ 
 
     private void Awake()
     {
-        controls = new PlayerControlls();
+        //Cache
+        controls = new PlayerInputActions();
         move = controls.Player.Move;
+        orientation = transform;
     }
 
     #region enable/disable movement
@@ -45,36 +56,53 @@ public class PlayerMovement : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        //Stops the player from tipping over
+        rb.freezeRotation = true;
     }
 
 
 
     private void FixedUpdate()
     {
-        Vector3 forward = lookPivot.forward; 
-        forward.y = 0f;
-        forward.Normalize();
-
-        Vector3 right = lookPivot.right;
-        right.y = 0f;
-        right.Normalize();
-
-        Vector2 inputDirection = move.ReadValue<Vector2>();
-        Vector3 moveDirection = new Vector3(inputDirection.x, 0, inputDirection.y).normalized;
-
-
-
-        rb.linearVelocity = moveDirection * speedMoving + new Vector3(0, rb.linearVelocity.y, 0);
+        MovePlayer();
+        GroundedCheck();
+        SpeedCap();
     }
 
 
-
-    //Custom Functions
-
-    private void CachePivotDirections()
+    //Moves the Player Forward
+    void MovePlayer()
     {
-        
+        //Stores input values from the InputSystem Controls
+        Vector2 moveInput = move.ReadValue<Vector2>();
+        //Results in Move Input: (0.0, 0.0)
+        //                       (1.0, 0.0)
+        //                       (0.0, 1.1)
+        //                       (1.1, 1.1)
+
+        //Stores the move direction of the player, which is always set to where the orientaion's forward and right is 
+        Vector3 moveDirection = orientation.forward * moveInput.y + orientation.right * moveInput.x;
+
+        //Adds a pushing force to the RigidBody based on movement speed
+        rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
     }
+
+    //Checks if the player is grounded to apply linear damping on the rigid body
+    void GroundedCheck()
+    {
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, height * 0.5f + 0.2f, whatIsGroundMask);
+        if (isGrounded)
+            rb.linearDamping = groundLinearDampeningDrag;
+        else
+            rb.linearDamping = 0;
+    }
+
+    //Caps the max linear velocity of the player
+    void SpeedCap()
+    {
+        rb.maxLinearVelocity = moveSpeed;
+    }
+
+
 
 }

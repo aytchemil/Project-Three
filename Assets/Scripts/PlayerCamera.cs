@@ -9,11 +9,13 @@ public class PlayerCamera : MonoBehaviour
     public float xSens;
     public float ySens;
 
-    //Component References
+    //Adjustable Component References
     public Transform orientation;
-    public PlayerControlls controls;
     public Transform cameraPosition;
     public Camera myCamera;
+
+    //Cached Component References
+    PlayerInputActions controls;
 
     private float yRot;
     private float xRot;
@@ -26,7 +28,8 @@ public class PlayerCamera : MonoBehaviour
 
     private void Awake()
     {
-        controls = new PlayerControlls();
+        //Cache controls
+        controls = new PlayerInputActions();
     }
 
     private void Start()

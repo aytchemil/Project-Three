@@ -61,7 +61,7 @@ public class PlayerMovement : MonoBehaviour
     public float height;
     public float weightMultiplier;
     public LayerMask whatIsGroundMask;
-    public float airMultiplier;
+    public float airAccelerationMultiplier;
     public float maxSlopeAngle;
 
     [Header("Flags")]
@@ -75,7 +75,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform lookPivot;
 
     //Private Variables
-    float moveSpeed;
+    [SerializeField] float moveSpeed;
 
     //Cached Component Refernces
     Transform orientation;
@@ -138,10 +138,9 @@ public class PlayerMovement : MonoBehaviour
 
     private void FixedUpdate()
     {
-        MovePlayer();
         GroundedCheck();
         OnSlope();
-        SpeedHandler();
+        MovePlayer();
 
     }
 
@@ -156,15 +155,20 @@ public class PlayerMovement : MonoBehaviour
         //                       (0.0, 1.1)
         //                       (1.1, 1.1)
 
+        if (moveInput.x <= 0 && moveInput.y <= 0) return;
+
         //Stores the move direction of the player, which is always set to where the orientaion's forward and right is 
         Vector3 moveDirection = orientation.forward * moveInput.y + orientation.right * moveInput.x;
 
         //Adds a pushing force to the RigidBody based on movement speed
-        if(isGrounded)
+        if (isGrounded)
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
         else
-            rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
+            rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airAccelerationMultiplier, ForceMode.Force);
+
+        SpeedHandler();
     }
+
 
     //Checks if the player is grounded to apply linear damping on the rigid body
     void GroundedCheck()
@@ -175,15 +179,29 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             Debug.Log("Not Grounded");
-            rb.linearDamping = 5;
-            rb.AddForce(Vector3.up.normalized * weightMultiplier, ForceMode.Acceleration);
+            rb.linearDamping = 0;
+            rb.AddForce(Vector3.down.normalized * weightMultiplier, ForceMode.Acceleration);
         }
     }
 
     //Caps the max linear velocity of the player
     void SpeedHandler()
     {
-        rb.maxLinearVelocity = moveSpeed;
+
+        //Limit X and Z velocity's but not Y (Because falling)
+        if (rb.linearVelocity.x > moveSpeed || rb.linearVelocity.x < -moveSpeed)
+        {
+            float velx = Mathf.Clamp(rb.linearVelocity.x, -moveSpeed, moveSpeed);
+            rb.linearVelocity = new Vector3(velx, rb.linearVelocity.y, rb.linearVelocity.z);
+        }
+        if (rb.linearVelocity.z > moveSpeed || rb.linearVelocity.z < -moveSpeed)
+        {
+            float velz = Mathf.Clamp(rb.linearVelocity.z, -moveSpeed, moveSpeed);
+            rb.linearVelocity = new Vector3(rb.linearVelocity.x, rb.linearVelocity.y, velz);
+        }
+
+
+
         moveSpeed = playerStates.UpdateSpeed(state);
     }
 

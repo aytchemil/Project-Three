@@ -59,12 +59,16 @@ public class PlayerMovement : MonoBehaviour
 
     public float groundLinearDampeningDrag;
     public float height;
+    public float weightMultiplier;
     public LayerMask whatIsGroundMask;
+    public float airMultiplier;
+    public float maxSlopeAngle;
 
     [Header("Flags")]
     //Flags
     [SerializeField] private bool isGrounded;
     [SerializeField] private bool inCombat;
+    [SerializeField] private bool onSlope;
 
     [Header("Adjustable Component Refernces")]
     //Adjustable Component Refernces
@@ -136,6 +140,7 @@ public class PlayerMovement : MonoBehaviour
     {
         MovePlayer();
         GroundedCheck();
+        OnSlope();
         SpeedHandler();
 
     }
@@ -155,7 +160,10 @@ public class PlayerMovement : MonoBehaviour
         Vector3 moveDirection = orientation.forward * moveInput.y + orientation.right * moveInput.x;
 
         //Adds a pushing force to the RigidBody based on movement speed
-        rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+        if(isGrounded)
+            rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+        else
+            rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airMultiplier, ForceMode.Force);
     }
 
     //Checks if the player is grounded to apply linear damping on the rigid body
@@ -165,7 +173,11 @@ public class PlayerMovement : MonoBehaviour
         if (isGrounded)
             rb.linearDamping = groundLinearDampeningDrag;
         else
-            rb.linearDamping = 0;
+        {
+            Debug.Log("Not Grounded");
+            rb.linearDamping = 5;
+            rb.AddForce(Vector3.up.normalized * weightMultiplier, ForceMode.Acceleration);
+        }
     }
 
     //Caps the max linear velocity of the player
@@ -175,20 +187,26 @@ public class PlayerMovement : MonoBehaviour
         moveSpeed = playerStates.UpdateSpeed(state);
     }
 
+    void OnSlope()
+    {
+        RaycastHit slopeHit;
+        if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, height * 0.5f + 0.4f))
+        {
+            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            onSlope = (angle < maxSlopeAngle && angle != 0);
+        }
+    }
+
+    #region Button Presses
     void OnSprintPressed() 
     {
         if(isGrounded && state != PlayerStates.CurrentState.combat) 
             state = PlayerStates.CurrentState.sprinting;
-
-        Debug.Log("Sprint Pressed");
     }
     void OnSprintReleased()
     { 
         if (state != PlayerStates.CurrentState.combat) 
             state = PlayerStates.CurrentState.notSprinting;
-
-        Debug.Log("Sprint Released");
-
     }
     void OnCombatToggle() 
     {
@@ -202,12 +220,8 @@ public class PlayerMovement : MonoBehaviour
             state = PlayerStates.CurrentState.combat;
             inCombat = true;
         }
-
-
-
-        Debug.Log("Combat Pressed");
     }
-
+    #endregion
 
 
 }

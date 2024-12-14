@@ -743,16 +743,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   playerStates:
-    walkSpeed: 0
-    sprintSpeed: 0
-    combatSpeed: 0
+    walkSpeed: 18
+    sprintSpeed: 27
+    combatSpeed: 10
   state: 0
   groundLinearDampeningDrag: 7
   height: 14
   whatIsGroundMask:
     serializedVersion: 2
     m_Bits: 128
-  isGrounded: 1
+  isGrounded: 0
+  inCombat: 0
   lookPivot: {fileID: 220207747}
 --- !u!54 &1368657296
 Rigidbody:

@@ -3,61 +3,131 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[System.Serializable]
+public struct PlayerStates
+{
+    public enum CurrentState
+    {
+        notSprinting = 0,
+        sprinting = 1,
+        combat = 2,
+    }
+
+    [Space]
+    public float walkSpeed;
+    public float sprintSpeed;
+    public float combatSpeed;
+
+    //Constructor
+    public PlayerStates(float walkSpeed, float sprintSpeed, float combatSpeed)
+    {
+        this.walkSpeed = walkSpeed;
+        this.sprintSpeed = sprintSpeed;
+        this.combatSpeed = combatSpeed;
+    }
+
+    public float UpdateSpeed(CurrentState state)
+    {
+        float playerSpeed = walkSpeed;
+
+        switch (state)
+        {
+            case CurrentState.notSprinting:
+                playerSpeed = walkSpeed;
+                break;
+            case CurrentState.sprinting:
+                playerSpeed = sprintSpeed;
+                break;
+            case CurrentState.combat:
+                playerSpeed = combatSpeed;
+                break;
+        }
+
+
+        return playerSpeed;
+    }
+}
+
 public class PlayerMovement : MonoBehaviour
 {
 
+    [Header("Adjustable Variables")]
     //Adjustable Variables
-    public float moveSpeed;
+    public PlayerStates playerStates;
+    public PlayerStates.CurrentState state;
+    [Space]
+
     public float groundLinearDampeningDrag;
     public float height;
     public LayerMask whatIsGroundMask;
 
+    [Header("Flags")]
     //Flags
     [SerializeField] private bool isGrounded;
+    [SerializeField] private bool inCombat;
 
+    [Header("Adjustable Component Refernces")]
     //Adjustable Component Refernces
-    public Rigidbody rb;
     [SerializeField] private Transform lookPivot;
+
+    //Private Variables
+    float moveSpeed;
 
     //Cached Component Refernces
     Transform orientation;
     PlayerInputActions controls;
+    Rigidbody rb;
 
     //Input Actions
     private InputAction move;
+    private InputAction sprint;
+    private InputAction combat;
 
  
 
     private void Awake()
     {
         //Cache
+        rb = GetComponent<Rigidbody>();
         controls = new PlayerInputActions();
-        move = controls.Player.Move;
         orientation = transform;
+
+        //Input Cache
+        move = controls.Player.Move;
+        sprint = controls.Player.Sprint;
+        combat = controls.Player.Combat;
+
+        //InputAction Callbacks
+        sprint.started += ctx => OnSprintPressed();
+        sprint.canceled += ctx => OnSprintReleased();
+        combat.started += ctx => OnCombatToggle();
+
     }
 
     #region enable/disable movement
 
     private void OnEnable()
     {
-        move = controls.Player.Move;
         move.Enable();
-        Debug.Log("Moving Enabled");
+        sprint.Enable();
+        combat.Enable();
     }
 
     private void OnDisable()
     {
         move.Disable();
-        Debug.Log("Moving Disabled");
-
+        sprint.Disable();
+        combat.Disable();
     }
     #endregion 
+
 
     // Start is called before the first frame update
     void Start()
     {
         //Stops the player from tipping over
         rb.freezeRotation = true;
+        state = PlayerStates.CurrentState.notSprinting;
     }
 
 
@@ -66,7 +136,8 @@ public class PlayerMovement : MonoBehaviour
     {
         MovePlayer();
         GroundedCheck();
-        SpeedCap();
+        SpeedHandler();
+
     }
 
 
@@ -98,9 +169,43 @@ public class PlayerMovement : MonoBehaviour
     }
 
     //Caps the max linear velocity of the player
-    void SpeedCap()
+    void SpeedHandler()
     {
         rb.maxLinearVelocity = moveSpeed;
+        moveSpeed = playerStates.UpdateSpeed(state);
+    }
+
+    void OnSprintPressed() 
+    {
+        if(isGrounded && state != PlayerStates.CurrentState.combat) 
+            state = PlayerStates.CurrentState.sprinting;
+
+        Debug.Log("Sprint Pressed");
+    }
+    void OnSprintReleased()
+    { 
+        if (state != PlayerStates.CurrentState.combat) 
+            state = PlayerStates.CurrentState.notSprinting;
+
+        Debug.Log("Sprint Released");
+
+    }
+    void OnCombatToggle() 
+    {
+        if (inCombat)
+        {
+            inCombat = false;
+            state = PlayerStates.CurrentState.notSprinting;
+        }
+        else
+        {
+            state = PlayerStates.CurrentState.combat;
+            inCombat = true;
+        }
+
+
+
+        Debug.Log("Combat Pressed");
     }
 
 

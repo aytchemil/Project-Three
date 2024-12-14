@@ -76,6 +76,7 @@ public class PlayerMovement : MonoBehaviour
 
     //Private Variables
     [SerializeField] float moveSpeed;
+    [SerializeField] RaycastHit slopeHit;
 
     //Cached Component Refernces
     Transform orientation;
@@ -155,18 +156,26 @@ public class PlayerMovement : MonoBehaviour
         //                       (0.0, 1.1)
         //                       (1.1, 1.1)
 
-        if (moveInput.x <= 0 && moveInput.y <= 0) return;
+        if (moveInput.x == 0 && moveInput.y == 0) return;
 
         //Stores the move direction of the player, which is always set to where the orientaion's forward and right is 
         Vector3 moveDirection = orientation.forward * moveInput.y + orientation.right * moveInput.x;
 
         //Adds a pushing force to the RigidBody based on movement speed
         if (isGrounded)
-            rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+        {
+            if (!onSlope)
+                rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+            else
+                rb.AddForce(GetSlopeMoveDirection(moveDirection) * moveSpeed * 10f, ForceMode.Force);
+
+        }
         else
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airAccelerationMultiplier, ForceMode.Force);
 
         SpeedHandler();
+
+        Debug.Log(rb.linearVelocity);
     }
 
 
@@ -178,7 +187,6 @@ public class PlayerMovement : MonoBehaviour
             rb.linearDamping = groundLinearDampeningDrag;
         else
         {
-            Debug.Log("Not Grounded");
             rb.linearDamping = 0;
             rb.AddForce(Vector3.down.normalized * weightMultiplier, ForceMode.Acceleration);
         }
@@ -210,9 +218,15 @@ public class PlayerMovement : MonoBehaviour
         RaycastHit slopeHit;
         if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, height * 0.5f + 0.4f))
         {
+            this.slopeHit = slopeHit;
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
             onSlope = (angle < maxSlopeAngle && angle != 0);
         }
+    }
+    
+    Vector3 GetSlopeMoveDirection(Vector3 moveDirection)
+    {
+        return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
     }
 
     #region Button Presses

@@ -1232,6 +1232,7 @@ MonoBehaviour:
     sprintSpeed: 30
     combatSpeed: 15
     dashSpeed: 66
+    dashTime: 0.11
   state: 0
   groundLinearDampeningDrag: 7
   height: 21

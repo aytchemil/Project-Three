@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -15,7 +16,7 @@ public class PlayerCombatEntity : CombatEntity
         controls = gameObject.GetComponent<ControllsHandler>();
 
         //Input Action Callback Additions
-        controls.lockOn.started += ctx => AttemptLock();
+        controls.lockOn.performed += ctx => AttemptLock();
     }
 
     protected override void Respawn()
@@ -26,38 +27,28 @@ public class PlayerCombatEntity : CombatEntity
     protected override void Lock()
     {
         base.Lock();
-
-        //if (isLockedOntoBySomething)
-        //{
-        //    isLockedOntoBySomething = false;
-        //    //state = PlayerStates.CurrentState.notSprinting;
-        //}
-        //else
-        //{
-        //    //state = PlayerStates.CurrentState.combat;
-        //    isLockedOntoBySomething = true;
-        //}
-
+        EnterCombat();
+       // Debug.Log("Player Locking on");
+       
     }
 
-
-    void AttemptLock()
+    protected override void DeLock()
     {
-        if (isLockedOntoSomething) return;
-
-        Debug.Log("Attempting a lock");
-
-        if (combatEntityInLockedZone)
-        {
-            Debug.Log("Found something to lock onto");
-            Debug.Log("Locking On");
-
-            Lock();
-
-        }
-
-
+        base.DeLock();
+        ExitCombat();
+       // Debug.Log("Player Unlocking");
     }
+
+    void EnterCombat()
+    {
+        controls.EnterCombat?.Invoke();
+    }
+
+    private void ExitCombat()
+    {
+        controls.ExitCombat?.Invoke();
+    }
+
 
 
 

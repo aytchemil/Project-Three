@@ -1,9 +1,14 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class ControllsHandler : MonoBehaviour
 {
     public PlayerInputActions controls;
+
+    //Action Delegates
+    public Action EnterCombat;
+    public Action ExitCombat;
 
     //Input Actions
     public InputAction look;
@@ -13,7 +18,7 @@ public class ControllsHandler : MonoBehaviour
 
 
     //Flags
-    public bool inCombat;
+    public bool lockedOn;
 
     private void Awake()
     {

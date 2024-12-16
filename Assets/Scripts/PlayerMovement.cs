@@ -11,19 +11,22 @@ public struct PlayerStates
         notSprinting = 0,
         sprinting = 1,
         combat = 2,
+        dashing = 3,
     }
 
     [Space]
     public float walkSpeed;
     public float sprintSpeed;
     public float combatSpeed;
+    public float dashSpeed;
 
     //Constructor
-    public PlayerStates(float walkSpeed, float sprintSpeed, float combatSpeed)
+    public PlayerStates(float walkSpeed, float sprintSpeed, float combatSpeed, float dashSpeed)
     {
         this.walkSpeed = walkSpeed;
         this.sprintSpeed = sprintSpeed;
         this.combatSpeed = combatSpeed;
+        this.dashSpeed = dashSpeed;
     }
 
     public float UpdateSpeed(CurrentState state)
@@ -40,6 +43,9 @@ public struct PlayerStates
                 break;
             case CurrentState.combat:
                 playerSpeed = combatSpeed;
+                break;
+            case CurrentState.dashing:
+                playerSpeed = dashSpeed;
                 break;
         }
 
@@ -64,6 +70,8 @@ public class PlayerMovement : MonoBehaviour
     public LayerMask whatIsGroundMask;
     public float airAccelerationMultiplier;
     public float maxSlopeAngle;
+    [Space]
+    public float dashSpeedMultiplier;
 
     [Header("Flags")]
     //Flags
@@ -104,6 +112,7 @@ public class PlayerMovement : MonoBehaviour
         //InputAction Callback Additions
         controls.sprint.started += ctx => OnSprintPressed();
         controls.sprint.canceled += ctx => OnSprintReleased();
+        controls.dash.performed += ctx => DashDirection();
 
         //Action Callback additions
         controls.EnterCombat += EnterCombat;
@@ -123,14 +132,17 @@ public class PlayerMovement : MonoBehaviour
     {
         //Stores input values from the InputSystem Controls
         Vector2 moveInput = controls.move.ReadValue<Vector2>();
-        //Results in Move Input: (0.0, 0.0)
-        //                       (1.0, 0.0)
-        //                       (0.0, 1.1)
-        //                       (1.1, 1.1)
+        //Debug.Log(moveInput);
+        //Results in Move Input: (0.0  ,   0.0)
+        //                       (+-1.0,   0.0)
+        //                       (0.0  , +-1.0)
+        //                       (+-1.0, +-1.0)
 
         if (moveInput.x == 0 && moveInput.y == 0) return;
 
         //Stores the move direction of the player, which is always set to where the orientaion's forward and right is 
+        //the player facing forward * the move input of y (which is either neg or pos)
+        //the combined vector of all of those
         Vector3 moveDirection = orientation.forward * moveInput.y + orientation.right * moveInput.x;
 
         //Adds a pushing force to the RigidBody based on movement speed
@@ -155,12 +167,16 @@ public class PlayerMovement : MonoBehaviour
     void GroundedCheck()
     {
         isGrounded = Physics.Raycast(transform.position, Vector3.down, height * 0.5f, whatIsGroundMask);
-        if (isGrounded)
+        if (isGrounded && state != PlayerStates.CurrentState.dashing)
             rb.linearDamping = groundLinearDampeningDrag;
-        else
+        else if(state != PlayerStates.CurrentState.dashing)
         {
             rb.linearDamping = 0;
             rb.AddForce(Vector3.down.normalized * weightMultiplier, ForceMode.Acceleration);
+        }
+        else
+        {
+            rb.linearDamping = 0;
         }
     }
 
@@ -188,29 +204,29 @@ public class PlayerMovement : MonoBehaviour
     void OnSlope()
     {
         RaycastHit slopeHit;
-        if(Physics.Raycast(transform.position, Vector3.down, out slopeHit, height * 0.5f + 0.4f))
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, height * 0.5f + 0.4f))
         {
             this.slopeHit = slopeHit;
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
             onSlope = (angle < maxSlopeAngle && angle != 0);
         }
     }
-    
+
     Vector3 GetSlopeMoveDirection(Vector3 moveDirection)
     {
         return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
     }
 
     #region Button Presses
-    void OnSprintPressed() 
+    void OnSprintPressed()
     {
         //Debug.Log("sprint pressed");
-        if(isGrounded && state != PlayerStates.CurrentState.combat) 
+        if (isGrounded && state != PlayerStates.CurrentState.combat)
             state = PlayerStates.CurrentState.sprinting;
     }
     void OnSprintReleased()
-    { 
-        if (state != PlayerStates.CurrentState.combat) 
+    {
+        if (state != PlayerStates.CurrentState.combat)
             state = PlayerStates.CurrentState.notSprinting;
     }
     #endregion
@@ -226,4 +242,60 @@ public class PlayerMovement : MonoBehaviour
         //Debug.Log("Player movement exiting combat");
         state = PlayerStates.CurrentState.notSprinting;
     }
+
+    void DashDirection()
+    {
+        Debug.Log("Attempted a dash");
+        if (state != PlayerStates.CurrentState.combat) return;
+        Debug.Log("Dashing");
+
+        Vector2 moveInput = controls.move.ReadValue<Vector2>();
+        //Results in Move Input: (0.0  ,   0.0)
+        //                       (+-1.0,   0.0)
+        //                       (0.0  , +-1.0)
+        //                       (+-1.0, +-1.0)
+        
+        if(moveInput.x < 0) //left
+        {
+            Dash(true);
+        }
+        if(moveInput.x > 0) //Right
+        {
+            Dash(false);
+        }
+    }
+
+    void Dash(bool left)
+    {
+        Debug.Log("Attempting Dashing : true for left, false for right " + left);
+        //The vector which is left of the orientation
+        Vector3 moveDirection = new Vector3();
+        if (left)
+            moveDirection = -orientation.right;
+        else
+            moveDirection = orientation.right;
+
+        if (isGrounded)
+        {
+            if (!onSlope)
+            {
+                Debug.Log("Dashing Left");
+                rb.AddForce(moveDirection.normalized * dashSpeedMultiplier, ForceMode.VelocityChange);
+
+            }
+            else
+                rb.AddForce(GetSlopeMoveDirection(moveDirection) * dashSpeedMultiplier, ForceMode.VelocityChange);
+
+            state = PlayerStates.CurrentState.dashing;
+        }
+
+        Invoke("StopDash", 0.1f);
+    }
+
+    void StopDash()
+    {
+   
+        state = PlayerStates.CurrentState.combat;
+    }
+
 }

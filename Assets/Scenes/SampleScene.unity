@@ -1160,11 +1160,11 @@ GameObject:
   m_Component:
   - component: {fileID: 1368657293}
   - component: {fileID: 1368657296}
+  - component: {fileID: 1368657299}
   - component: {fileID: 1368657294}
   - component: {fileID: 1368657298}
   - component: {fileID: 1368657295}
   - component: {fileID: 1368657297}
-  - component: {fileID: 1368657299}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -1211,6 +1211,10 @@ MonoBehaviour:
   savedTransformY: 0
   savedOrientationX: 0
   savedTargetLocation: {x: 0, y: 0, z: 0}
+  yRot: 0
+  xRot: 0
+  currentXY: {x: 0, y: 0}
+  newXY: {x: 0, y: 0}
 --- !u!114 &1368657295
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1227,6 +1231,7 @@ MonoBehaviour:
     walkSpeed: 20
     sprintSpeed: 30
     combatSpeed: 15
+    dashSpeed: 66
   state: 0
   groundLinearDampeningDrag: 7
   height: 21
@@ -1236,6 +1241,7 @@ MonoBehaviour:
     m_Bits: 128
   airAccelerationMultiplier: 0.2
   maxSlopeAngle: 40
+  dashSpeedMultiplier: 60
   isGrounded: 0
   onSlope: 0
   lookPivot: {fileID: 220207747}
@@ -1280,9 +1286,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lockedTarget: {fileID: 0}
-  combatEntityMask:
-    serializedVersion: 2
-    m_Bits: 0
   combatEntityInLockedZone: 0
   colliderDetecterAsset: {fileID: 3243137597141389865, guid: 11e14ea0d576d4e40950e72b2e820ced, type: 3}
   isLockedBy: 0
@@ -1331,6 +1334,15 @@ MonoBehaviour:
     m_Type: 0
     m_ExpectedControlType: 
     m_Id: 1f833eea-3446-4579-a76d-80ea310bf9cf
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  dash:
+    m_Name: 
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 915235a9-0dcd-4aa1-973a-f23cce7b9339
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings: []
@@ -2462,9 +2474,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lockedTarget: {fileID: 0}
-  combatEntityMask:
-    serializedVersion: 2
-    m_Bits: 0
   combatEntityInLockedZone: 0
   colliderDetecterAsset: {fileID: 3243137597141389865, guid: 11e14ea0d576d4e40950e72b2e820ced, type: 3}
   isLockedBy: 0

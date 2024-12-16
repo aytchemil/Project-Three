@@ -15,6 +15,7 @@ public class ControllsHandler : MonoBehaviour
     public InputAction move;
     public InputAction sprint;
     public InputAction lockOn;
+    public InputAction dash;
 
     private void Awake()
     {
@@ -25,6 +26,7 @@ public class ControllsHandler : MonoBehaviour
         move = controls.Player.Move;
         sprint = controls.Player.Sprint;
         lockOn = controls.Player.LockOn;
+        dash = controls.Player.Dash;
 
 
         lockOn.performed += ctx => TestLockOn();
@@ -39,6 +41,7 @@ public class ControllsHandler : MonoBehaviour
         move.Enable();
         sprint.Enable();
         lockOn.Enable();
+        dash.Enable();
     }
 
     private void OnDisable()
@@ -47,6 +50,7 @@ public class ControllsHandler : MonoBehaviour
         move.Disable();
         sprint.Disable();
         lockOn.Disable();
+        dash.Disable();
     }
     #endregion 
 

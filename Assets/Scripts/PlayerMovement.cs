@@ -142,7 +142,6 @@ public class PlayerMovement : MonoBehaviour
         GroundedCheck();
         OnSlope();
         MovePlayer();
-
     }
 
 
@@ -175,7 +174,7 @@ public class PlayerMovement : MonoBehaviour
 
         SpeedHandler();
 
-        Debug.Log(rb.linearVelocity);
+        //Debug.Log(rb.linearVelocity);
     }
 
 

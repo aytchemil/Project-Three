@@ -29,13 +29,12 @@ public class PlayerCamera : MonoBehaviour
     //Flags
     bool inCombat = false;
 
-
     public float yRot;
     public float xRot;
 
     public Vector2 currentXY;
     public Vector2 newXY;
-    public Vector2 newRotXY;
+
 
     private void Awake()
     {
@@ -65,7 +64,6 @@ public class PlayerCamera : MonoBehaviour
 
             //Looks with the mouse
             MouseLooking(controls.look.ReadValue<Vector2>());
-
             GetCurrentXY();
 
             if (xRot > 180f) xRot -= 360f;
@@ -77,7 +75,7 @@ public class PlayerCamera : MonoBehaviour
         {
             if (target != null)
             {
-                Debug.Log("Locked onto target by cam");
+                //Debug.Log("Locked onto target by cam");
                 CameraLookAtLockTarget(target.transform.position);
                 TransformLookAtTarget(target.transform.position);
                 UpdateNewXY();
@@ -90,16 +88,12 @@ public class PlayerCamera : MonoBehaviour
         UpdateCamPosition();
     }
 
-    //
     void MouseLooking(Vector2 lookInput)
     {
         //Debug.Log("Mouse Looking");
-        //Stores the look input from the Input System
 
         //Cache's the X and Y positions from the Input System
         Vector2 xyRot = CalculateXYRot(lookInput);
-
-       // Debug.Log("X : " + xRot + " Y: " + yRot);
 
         //Sets the rotation to the player inputted rotations
         transform.rotation = Quaternion.Euler(0, xyRot.x, 0);
@@ -118,25 +112,6 @@ public class PlayerCamera : MonoBehaviour
         return new Vector2(xRot, yRot);
     }
 
-
-    Vector2 MakeRaw(float transformEulerX, float camOrientationEulerY)
-    {
-        // Retrieve the local rotation angles
-        float xRot = transformEulerX;
-        float yRot = camOrientationEulerY;
-
-        // Handle Unity's 360-degree wraparound for angles
-        if (yRot > 180f) yRot -= 360f;
-
-        // Undo clamping for yRot
-        yRot = Mathf.Clamp(yRot, -90f, 90f);
-
-        // Reverse the input transformation
-        float rawX = xRot / (xSens / 5);
-        float rawY = -yRot / (ySens / 5);
-
-        return new Vector2(rawX, rawY);
-    }
 
     void CameraLookAtLockTarget(Vector3 target)
     {
@@ -164,15 +139,14 @@ public class PlayerCamera : MonoBehaviour
     {
         inCombat = true;
         this.target = target;
-
     }
 
     void ExitCombat(CombatEntity target)
     {
-        Debug.Log("Exiting Combat");
+        //Debug.Log("Exiting Combat");
 
         UpdateNewXY();
-        ApplyNewViewPosition();
+        ApplyNewXYPosition();
 
         inCombat = false;
         this.target = null;
@@ -192,12 +166,12 @@ public class PlayerCamera : MonoBehaviour
         return new Vector2(currentXY.x, currentXY.y);
     }
 
-    void ApplyNewViewPosition()
+    void ApplyNewXYPosition()
     {
         xRot = newXY.y;
         yRot = newXY.x;
 
-        Debug.Log("NEW X : " + xRot + " NEW Y: " + yRot);
+        //Debug.Log("NEW X : " + xRot + " NEW Y: " + yRot);
     }
 
     void UpdateNewXY()

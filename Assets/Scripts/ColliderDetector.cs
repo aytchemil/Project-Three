@@ -27,5 +27,7 @@ public class ColliderDetector : MonoBehaviour
         myCombatEntity.lockedTarget = null;
         if (myCombatEntity.isLockedOnto)
             myCombatEntity.DeLock();
+
+        transform.localEulerAngles = Vector3.zero;
     }
 }

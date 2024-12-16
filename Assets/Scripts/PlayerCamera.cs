@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(Camera), typeof(ControllsHandler))]
 public class PlayerCamera : MonoBehaviour
 {
     //Real-Time Adjustable Variables
@@ -15,39 +16,23 @@ public class PlayerCamera : MonoBehaviour
     public Camera myCamera;
 
     //Cached Component References
-    PlayerInputActions controls;
+    ControllsHandler controls;
 
     private float yRot;
     private float xRot;
 
-
-    private InputAction look;
     private float lookX;
     private float lookY;
 
-
     private void Awake()
     {
-        //Cache controls
-        controls = new PlayerInputActions();
+        controls = GetComponent<ControllsHandler>();
     }
 
     private void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-
-    }
-
-    private void OnEnable()
-    {
-        look = controls.Player.Look;
-        look.Enable();
-    }
-
-    private void OnDisable()
-    {
-        look.Disable();
     }
 
 
@@ -66,7 +51,7 @@ public class PlayerCamera : MonoBehaviour
     void MouseLooking(float x, float y)
     {
         //Stores the look input from the Input System
-        Vector2 lookInput = look.ReadValue<Vector2>();
+        Vector2 lookInput = controls.look.ReadValue<Vector2>();
 
         //Cache's the X and Y positions from the Input System
         xRot += lookInput.x * (xSens / 5);

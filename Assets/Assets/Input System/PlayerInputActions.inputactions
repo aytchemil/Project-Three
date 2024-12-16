@@ -87,7 +87,7 @@
                     "initialStateCheck": true
                 },
                 {
-                    "name": "Combat",
+                    "name": "LockOn",
                     "type": "Button",
                     "id": "eb682654-12b1-46e0-81e9-6288f1d65340",
                     "expectedControlType": "",
@@ -500,7 +500,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": ";Keyboard&Mouse",
-                    "action": "Combat",
+                    "action": "LockOn",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

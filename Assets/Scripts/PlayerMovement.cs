@@ -1,8 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.InputSystem;
-
+ 
 [System.Serializable]
 public struct PlayerStates
 {
@@ -48,6 +47,7 @@ public struct PlayerStates
     }
 }
 
+[RequireComponent(typeof(ControllsHandler))]
 public class PlayerMovement : MonoBehaviour
 {
 
@@ -67,7 +67,6 @@ public class PlayerMovement : MonoBehaviour
     [Header("Flags")]
     //Flags
     [SerializeField] private bool isGrounded;
-    [SerializeField] private bool inCombat;
     [SerializeField] private bool onSlope;
 
     [Header("Adjustable Component Refernces")]
@@ -80,51 +79,18 @@ public class PlayerMovement : MonoBehaviour
 
     //Cached Component Refernces
     Transform orientation;
-    PlayerInputActions controls;
     Rigidbody rb;
+    ControllsHandler controls;
 
-    //Input Actions
-    private InputAction move;
-    private InputAction sprint;
-    private InputAction combat;
-
- 
 
     private void Awake()
     {
         //Cache
+        controls = gameObject.GetComponent<ControllsHandler>();
         rb = GetComponent<Rigidbody>();
-        controls = new PlayerInputActions();
         orientation = transform;
 
-        //Input Cache
-        move = controls.Player.Move;
-        sprint = controls.Player.Sprint;
-        combat = controls.Player.Combat;
-
-        //InputAction Callbacks
-        sprint.started += ctx => OnSprintPressed();
-        sprint.canceled += ctx => OnSprintReleased();
-        combat.started += ctx => OnCombatToggle();
-
     }
-
-    #region enable/disable movement
-
-    private void OnEnable()
-    {
-        move.Enable();
-        sprint.Enable();
-        combat.Enable();
-    }
-
-    private void OnDisable()
-    {
-        move.Disable();
-        sprint.Disable();
-        combat.Disable();
-    }
-    #endregion 
 
 
     // Start is called before the first frame update
@@ -133,6 +99,10 @@ public class PlayerMovement : MonoBehaviour
         //Stops the player from tipping over
         rb.freezeRotation = true;
         state = PlayerStates.CurrentState.notSprinting;
+
+        //InputAction Callback Additions
+        controls.sprint.started += ctx => OnSprintPressed();
+        controls.sprint.canceled += ctx => OnSprintReleased();
     }
 
 
@@ -149,7 +119,7 @@ public class PlayerMovement : MonoBehaviour
     void MovePlayer()
     {
         //Stores input values from the InputSystem Controls
-        Vector2 moveInput = move.ReadValue<Vector2>();
+        Vector2 moveInput = controls.move.ReadValue<Vector2>();
         //Results in Move Input: (0.0, 0.0)
         //                       (1.0, 0.0)
         //                       (0.0, 1.1)
@@ -231,6 +201,7 @@ public class PlayerMovement : MonoBehaviour
     #region Button Presses
     void OnSprintPressed() 
     {
+        //Debug.Log("sprint pressed");
         if(isGrounded && state != PlayerStates.CurrentState.combat) 
             state = PlayerStates.CurrentState.sprinting;
     }
@@ -238,19 +209,6 @@ public class PlayerMovement : MonoBehaviour
     { 
         if (state != PlayerStates.CurrentState.combat) 
             state = PlayerStates.CurrentState.notSprinting;
-    }
-    void OnCombatToggle() 
-    {
-        if (inCombat)
-        {
-            inCombat = false;
-            state = PlayerStates.CurrentState.notSprinting;
-        }
-        else
-        {
-            state = PlayerStates.CurrentState.combat;
-            inCombat = true;
-        }
     }
     #endregion
 

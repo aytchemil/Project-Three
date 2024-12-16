@@ -42,7 +42,7 @@ public class PlayerCombatEntity : CombatEntity
 
     public override void DeLock()
     {
-        Debug.Log("PlayerCombatEntity: Delocking");
+        //Debug.Log("PlayerCombatEntity: Delocking");
 
         base.DeLock();
         ExitCombat();
@@ -58,7 +58,7 @@ public class PlayerCombatEntity : CombatEntity
 
     private void ExitCombat()
     {
-        Debug.Log("PlayerCombatEntity: Exiting Combat");
+        //Debug.Log("PlayerCombatEntity: Exiting Combat");
         
         controls.ExitCombat?.Invoke(lockedTarget);
     }

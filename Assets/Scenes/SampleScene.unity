@@ -239,7 +239,7 @@ GameObject:
   - component: {fileID: 90886098}
   - component: {fileID: 90886097}
   - component: {fileID: 90886096}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -348,7 +348,7 @@ GameObject:
   - component: {fileID: 220207747}
   - component: {fileID: 220207746}
   - component: {fileID: 220207745}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Camera
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -438,7 +438,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 249840860}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -639,7 +639,7 @@ GameObject:
   - component: {fileID: 624167672}
   - component: {fileID: 624167671}
   - component: {fileID: 624167670}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -904,7 +904,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 756156138}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1045,7 +1045,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1038770986}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: CameraPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1186,6 +1186,7 @@ GameObject:
   - component: {fileID: 1368657293}
   - component: {fileID: 1368657296}
   - component: {fileID: 1368657294}
+  - component: {fileID: 1368657298}
   - component: {fileID: 1368657295}
   - component: {fileID: 1368657297}
   m_Layer: 8
@@ -1255,7 +1256,6 @@ MonoBehaviour:
   airAccelerationMultiplier: 0.2
   maxSlopeAngle: 40
   isGrounded: 0
-  inCombat: 0
   onSlope: 0
   lookPivot: {fileID: 220207747}
   moveSpeed: 18
@@ -1298,17 +1298,63 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07520422694b44f4b881d14486a2efc7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 0
-  maxHealth: 0
   lockedTarget: {fileID: 0}
   combatEntityMask:
     serializedVersion: 2
     m_Bits: 0
   combatEntityInLockedZone: 0
   colliderDetecterAsset: {fileID: 3243137597141389865, guid: 11e14ea0d576d4e40950e72b2e820ced, type: 3}
-  isAlive: 0
-  isLockedOntoBySomething: 0
-  isLockedOntoSomething: 0
+  isLockedBy: 0
+  isLockedOnto: 0
+--- !u!114 &1368657298
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1368657291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ece7caa883bce2242a96582bc276a39b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  look:
+    m_Name: Look
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: a311e857-5f53-4065-a4df-80cc3af96442
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  move:
+    m_Name: Move
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 65c48267-dffc-4505-86b5-67e70d3f8f34
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  sprint:
+    m_Name: Sprint
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 5066be3a-0aac-48d8-baa9-cba1fb346139
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  lockOn:
+    m_Name: Lock On
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 1f833eea-3446-4579-a76d-80ea310bf9cf
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  lockedOn: 0
 --- !u!1 &1379316844
 GameObject:
   m_ObjectHideFlags: 0
@@ -1429,7 +1475,7 @@ GameObject:
   - component: {fileID: 1390581721}
   - component: {fileID: 1390581720}
   - component: {fileID: 1390581719}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1866,7 +1912,7 @@ GameObject:
   - component: {fileID: 1705163780}
   - component: {fileID: 1705163779}
   - component: {fileID: 1705163778}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1974,7 +2020,7 @@ GameObject:
   - component: {fileID: 1744651876}
   - component: {fileID: 1744651875}
   - component: {fileID: 1744651874}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2079,7 +2125,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1777942784}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: CameraPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2348,17 +2394,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26456e46abb983647bf61c4d6d0dfd6c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 0
-  maxHealth: 0
   lockedTarget: {fileID: 0}
   combatEntityMask:
     serializedVersion: 2
     m_Bits: 0
   combatEntityInLockedZone: 0
   colliderDetecterAsset: {fileID: 3243137597141389865, guid: 11e14ea0d576d4e40950e72b2e820ced, type: 3}
-  isAlive: 0
-  isLockedOntoBySomething: 0
-  isLockedOntoSomething: 0
+  isLockedBy: 0
+  isLockedOnto: 0
 --- !u!54 &1996351894
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2651,7 +2694,7 @@ GameObject:
   - component: {fileID: 2127934022}
   - component: {fileID: 2127934021}
   - component: {fileID: 2127934020}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: Head
   m_TagString: Untagged
   m_Icon: {fileID: 0}

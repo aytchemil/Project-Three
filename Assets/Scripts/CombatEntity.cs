@@ -37,22 +37,14 @@ public class CombatEntity : MonoBehaviour
         myColliderDetector.myCombatEntity = this;
     }
 
-    protected virtual void DeLock()
+    public virtual void DeLock()
     {
         isLockedOnto = false;
     }
 
     protected virtual void Lock()
     {
-
-        if (isLockedOnto)
-        {
-            isLockedOnto = false;
-        }
-        else
-        {
-            isLockedOnto = true;
-        }
+        isLockedOnto = true;
     }
 
 

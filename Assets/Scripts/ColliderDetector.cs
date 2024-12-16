@@ -7,15 +7,14 @@ public class ColliderDetector : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         myCombatEntity.combatEntityInLockedZone = true;
+        myCombatEntity.lockedTarget = other.GetComponent<CombatEntity>();
     }
 
-    private void OnTriggerStay(Collider other)
-    {
-        myCombatEntity.combatEntityInLockedZone = true;
-    }
 
     private void OnTriggerExit(Collider other)
     {
         myCombatEntity.combatEntityInLockedZone = false;
+        myCombatEntity.lockedTarget = null;
+        myCombatEntity.DeLock();
     }
 }

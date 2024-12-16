@@ -32,7 +32,7 @@ public class PlayerCombatEntity : CombatEntity
        
     }
 
-    protected override void DeLock()
+    public override void DeLock()
     {
         base.DeLock();
         ExitCombat();

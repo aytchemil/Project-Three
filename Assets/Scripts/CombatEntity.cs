@@ -43,6 +43,25 @@ public class CombatEntity : MonoBehaviour
         myColliderDetector.myCombatEntity = this;
     }
 
+    protected virtual void DeLock()
+    {
+        isLockedOntoBySomething = false;
+    }
+
+    protected virtual void Lock()
+    {
+
+        if (isLockedOntoBySomething)
+        {
+            isLockedOntoBySomething = false;
+            //state = PlayerStates.CurrentState.notSprinting;
+        }
+        else
+        {
+            //state = PlayerStates.CurrentState.combat;
+            isLockedOntoBySomething = true;
+        }
+    }
 
 
 

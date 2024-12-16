@@ -19,14 +19,16 @@ public struct PlayerStates
     public float sprintSpeed;
     public float combatSpeed;
     public float dashSpeed;
+    public float dashTime;
 
     //Constructor
-    public PlayerStates(float walkSpeed, float sprintSpeed, float combatSpeed, float dashSpeed)
+    public PlayerStates(float walkSpeed, float sprintSpeed, float combatSpeed, float dashSpeed, float dashTime)
     {
         this.walkSpeed = walkSpeed;
         this.sprintSpeed = sprintSpeed;
         this.combatSpeed = combatSpeed;
         this.dashSpeed = dashSpeed;
+        this.dashTime = dashTime;
     }
 
     public float UpdateSpeed(CurrentState state)
@@ -289,7 +291,7 @@ public class PlayerMovement : MonoBehaviour
             state = PlayerStates.CurrentState.dashing;
         }
 
-        Invoke("StopDash", 0.1f);
+        Invoke("StopDash", playerStates.dashTime);
     }
 
     void StopDash()

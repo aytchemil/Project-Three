@@ -154,7 +154,7 @@ public class PlayerMovement : MonoBehaviour
     //Checks if the player is grounded to apply linear damping on the rigid body
     void GroundedCheck()
     {
-        isGrounded = Physics.Raycast(transform.position, Vector3.down, height * 0.5f + 0.2f, whatIsGroundMask);
+        isGrounded = Physics.Raycast(transform.position, Vector3.down, height * 0.5f, whatIsGroundMask);
         if (isGrounded)
             rb.linearDamping = groundLinearDampeningDrag;
         else
@@ -216,12 +216,12 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
 
-    void EnterCombat()
+    void EnterCombat(CombatEntity target)
     {
         //Debug.Log("Player movement entering combat");
         state = PlayerStates.CurrentState.combat;
     }
-    private void ExitCombat()
+    private void ExitCombat(CombatEntity target)
     {
         //Debug.Log("Player movement exiting combat");
         state = PlayerStates.CurrentState.notSprinting;

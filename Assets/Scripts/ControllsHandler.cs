@@ -7,18 +7,14 @@ public class ControllsHandler : MonoBehaviour
     public PlayerInputActions controls;
 
     //Action Delegates
-    public Action EnterCombat;
-    public Action ExitCombat;
+    public Action<CombatEntity> EnterCombat;
+    public Action<CombatEntity> ExitCombat;
 
     //Input Actions
     public InputAction look;
     public InputAction move;
     public InputAction sprint;
     public InputAction lockOn;
-
-
-    //Flags
-    public bool lockedOn;
 
     private void Awake()
     {
@@ -50,4 +46,7 @@ public class ControllsHandler : MonoBehaviour
         lockOn.Disable();
     }
     #endregion 
+
+
+
 }

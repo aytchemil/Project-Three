@@ -30,11 +30,12 @@ public class PlayerCamera : MonoBehaviour
     bool inCombat = false;
 
 
-    private float yRot;
-    private float xRot;
+    public float yRot;
+    public float xRot;
 
-    private float savedLookInputX;
-    private float savedLookInputY;
+    public Vector2 currentXY;
+    public Vector2 newXY;
+    public Vector2 newRotXY;
 
     private void Awake()
     {
@@ -63,8 +64,14 @@ public class PlayerCamera : MonoBehaviour
         {
 
             //Looks with the mouse
-            MouseLooking();
+            MouseLooking(controls.look.ReadValue<Vector2>());
 
+            GetCurrentXY();
+
+            if (xRot > 180f) xRot -= 360f;
+            if (yRot > 180f) yRot -= 360f;
+            if (xRot < -180f) xRot += 360f;
+            if (yRot < -180f) yRot += 360f;
         }
         else
         {
@@ -73,7 +80,7 @@ public class PlayerCamera : MonoBehaviour
                 Debug.Log("Locked onto target by cam");
                 CameraLookAtLockTarget(target.transform.position);
                 TransformLookAtTarget(target.transform.position);
-
+                UpdateNewXY();
             }
             else
                 Debug.LogError("Player Camera: In combat with enemy that doesnt exist");
@@ -84,22 +91,51 @@ public class PlayerCamera : MonoBehaviour
     }
 
     //
-    void MouseLooking()
+    void MouseLooking(Vector2 lookInput)
     {
-        Debug.Log("Mouse Looking");
+        //Debug.Log("Mouse Looking");
         //Stores the look input from the Input System
-        Vector2 lookInput = controls.look.ReadValue<Vector2>();
 
         //Cache's the X and Y positions from the Input System
-        xRot += lookInput.x * (xSens / 5);
-        yRot += lookInput.y * (ySens / 5) * -1;
+        Vector2 xyRot = CalculateXYRot(lookInput);
+
+       // Debug.Log("X : " + xRot + " Y: " + yRot);
+
+        //Sets the rotation to the player inputted rotations
+        transform.rotation = Quaternion.Euler(0, xyRot.x, 0);
+        camOrientation.rotation = Quaternion.Euler(xyRot.y, xyRot.x, 0);
+    }
+
+    Vector2 CalculateXYRot(Vector2 rawXY)
+    {
+        //Cache's the X and Y positions from the Input System
+        xRot += rawXY.x * (xSens / 5);
+        yRot += rawXY.y * (ySens / 5) * -1;
 
         //Restricts the looking of UP and DOWN
         yRot = Mathf.Clamp(yRot, -90f, 90f);
 
-        //Sets the rotation to the player inputted rotations
-        transform.rotation = Quaternion.Euler(0, xRot, 0);
-        camOrientation.rotation = Quaternion.Euler(yRot, xRot, 0);
+        return new Vector2(xRot, yRot);
+    }
+
+
+    Vector2 MakeRaw(float transformEulerX, float camOrientationEulerY)
+    {
+        // Retrieve the local rotation angles
+        float xRot = transformEulerX;
+        float yRot = camOrientationEulerY;
+
+        // Handle Unity's 360-degree wraparound for angles
+        if (yRot > 180f) yRot -= 360f;
+
+        // Undo clamping for yRot
+        yRot = Mathf.Clamp(yRot, -90f, 90f);
+
+        // Reverse the input transformation
+        float rawX = xRot / (xSens / 5);
+        float rawY = -yRot / (ySens / 5);
+
+        return new Vector2(rawX, rawY);
     }
 
     void CameraLookAtLockTarget(Vector3 target)
@@ -128,15 +164,46 @@ public class PlayerCamera : MonoBehaviour
     {
         inCombat = true;
         this.target = target;
+
     }
 
     void ExitCombat(CombatEntity target)
     {
         Debug.Log("Exiting Combat");
+
+        UpdateNewXY();
+        ApplyNewViewPosition();
+
         inCombat = false;
         this.target = null;
     }
-    
+
+
+    Vector2 GetCurrentXY()
+    {
+        currentXY.y = transform.localEulerAngles.y;
+        currentXY.x = camTransform.localEulerAngles.x;
+
+        if (currentXY.y > 180f) currentXY.y -= 360f;
+        if (currentXY.x > 180f) currentXY.x -= 360f;
+        if (currentXY.y < -180f) currentXY.y += 360f;
+        if (currentXY.x < -180f) currentXY.x += 360f;
+
+        return new Vector2(currentXY.x, currentXY.y);
+    }
+
+    void ApplyNewViewPosition()
+    {
+        xRot = newXY.y;
+        yRot = newXY.x;
+
+        Debug.Log("NEW X : " + xRot + " NEW Y: " + yRot);
+    }
+
+    void UpdateNewXY()
+    {
+        newXY = GetCurrentXY();
+    }
 
 
 }

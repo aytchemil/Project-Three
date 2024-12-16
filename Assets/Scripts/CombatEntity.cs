@@ -66,8 +66,11 @@ public class CombatEntity : MonoBehaviour
         {
             DeLock();
         }
+    }
 
-
+    public virtual void ColliderLockOntoTarget()
+    {
+        myColliderDetector.gameObject.transform.LookAt(lockedTarget.transform.position);
     }
 
 

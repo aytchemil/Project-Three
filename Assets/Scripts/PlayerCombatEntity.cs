@@ -19,6 +19,7 @@ public class PlayerCombatEntity : CombatEntity
         controls.lockOn.performed += ctx => AttemptLock();
     }
 
+
     protected override void Respawn()
     {
         base.Respawn();
@@ -26,6 +27,7 @@ public class PlayerCombatEntity : CombatEntity
 
     protected override void Lock()
     {
+        Debug.Log("PlayerCombatEntity: Locking on");
         base.Lock();
         EnterCombat();
        // Debug.Log("Player Locking on");
@@ -34,21 +36,26 @@ public class PlayerCombatEntity : CombatEntity
 
     public override void DeLock()
     {
+        Debug.Log("PlayerCombatEntity: Delocking");
+
         base.DeLock();
         ExitCombat();
-       // Debug.Log("Player Unlocking");
+        // Debug.Log("Player Unlocking");
     }
 
     void EnterCombat()
     {
-        controls.EnterCombat?.Invoke();
+        Debug.Log("PlayerCombatEntity: Entering Combat");
+
+        controls.EnterCombat?.Invoke(lockedTarget);
     }
 
     private void ExitCombat()
     {
-        controls.ExitCombat?.Invoke();
+        Debug.Log("PlayerCombatEntity: Exiting Combat");
+        
+        controls.ExitCombat?.Invoke(lockedTarget);
     }
-
 
 
 

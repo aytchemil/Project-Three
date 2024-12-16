@@ -256,26 +256,24 @@ public class PlayerMovement : MonoBehaviour
         //                       (+-1.0,   0.0)
         //                       (0.0  , +-1.0)
         //                       (+-1.0, +-1.0)
-        
-        if(moveInput.x < 0) //left
-        {
-            Dash(true);
-        }
-        if(moveInput.x > 0) //Right
-        {
-            Dash(false);
-        }
+
+        Dash(moveInput);
     }
 
-    void Dash(bool left)
+    void Dash(Vector2 dir)
     {
-        Debug.Log("Attempting Dashing : true for left, false for right " + left);
+        Debug.Log("Attempting Dashing In Direction:  " + dir);
         //The vector which is left of the orientation
         Vector3 moveDirection = new Vector3();
-        if (left)
+        if (dir.x < 0)
             moveDirection = -orientation.right;
-        else
+        else if(dir.x > 1)
             moveDirection = orientation.right;
+
+        if (dir.y < 0)
+            moveDirection = -orientation.forward;
+        else if (dir.y > 1)
+            moveDirection = orientation.forward;
 
         if (isGrounded)
         {

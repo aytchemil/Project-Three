@@ -13,8 +13,11 @@ public class ColliderDetector : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
-        if(myCombatEntity.isLockedOnto)
+        if (myCombatEntity.isLockedOnto)
+        {
             myCombatEntity.ColliderLockOntoTarget();
+
+        }
     }
 
 

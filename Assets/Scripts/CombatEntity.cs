@@ -6,7 +6,6 @@ public class CombatEntity : MonoBehaviour
 
     //Component References
     public CombatEntity lockedTarget;
-    public LayerMask combatEntityMask;
     public bool combatEntityInLockedZone;
 
     //Cache
@@ -50,20 +49,22 @@ public class CombatEntity : MonoBehaviour
 
     protected virtual void AttemptLock()
     {
+        //Debug.Log("Attempting a lock");
         if (!isLockedOnto)
         {
-           // Debug.Log("Attempting a lock");
+           //Debug.Log("Is not locked onto something already");
 
             if (combatEntityInLockedZone)
             {
-              //  Debug.Log("Found something to lock onto");
-              //  Debug.Log("Locking On");
+                //Debug.Log("Found something to lock onto");
+               // Debug.Log("Locking On");
 
                 Lock();
             }
         }
         else
         {
+           // Debug.Log("Is already locked onto, will delock");
             DeLock();
         }
     }

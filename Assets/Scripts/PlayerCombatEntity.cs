@@ -15,9 +15,15 @@ public class PlayerCombatEntity : CombatEntity
         base.Awake();
         controls = gameObject.GetComponent<ControllsHandler>();
 
+    }
+
+
+    private void Start()
+    {
         //Input Action Callback Additions
         controls.lockOn.performed += ctx => AttemptLock();
     }
+
 
 
     protected override void Respawn()
@@ -27,7 +33,7 @@ public class PlayerCombatEntity : CombatEntity
 
     protected override void Lock()
     {
-        Debug.Log("PlayerCombatEntity: Locking on");
+       // Debug.Log("PlayerCombatEntity: Locking on");
         base.Lock();
         EnterCombat();
        // Debug.Log("Player Locking on");
@@ -45,7 +51,7 @@ public class PlayerCombatEntity : CombatEntity
 
     void EnterCombat()
     {
-        Debug.Log("PlayerCombatEntity: Entering Combat");
+       // Debug.Log("PlayerCombatEntity: Entering Combat");
 
         controls.EnterCombat?.Invoke(lockedTarget);
     }

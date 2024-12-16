@@ -25,6 +25,9 @@ public class ControllsHandler : MonoBehaviour
         move = controls.Player.Move;
         sprint = controls.Player.Sprint;
         lockOn = controls.Player.LockOn;
+
+
+        lockOn.performed += ctx => TestLockOn();
     }
 
 
@@ -46,6 +49,11 @@ public class ControllsHandler : MonoBehaviour
         lockOn.Disable();
     }
     #endregion 
+
+    void TestLockOn()
+    {
+        //Debug.Log("Lock on Pressed");
+    }
 
 
 

@@ -3,9 +3,6 @@ using UnityEngine;
 
 public class CombatEntity : MonoBehaviour
 {
-    //Adjustable Variables
-    public float health;
-    public float maxHealth;
 
     //Component References
     public CombatEntity lockedTarget;
@@ -20,9 +17,8 @@ public class CombatEntity : MonoBehaviour
 
 
     //Flags
-    public bool isAlive;
-    public bool isLockedOntoBySomething; //Later make this a list so multiple things can lock onto a Combat Entity
-    public bool isLockedOntoSomething;
+    public bool isLockedBy; //Later make this a list so multiple things can lock onto a Combat Entity
+    public bool isLockedOnto;
 
 
     protected virtual void Awake()
@@ -32,8 +28,6 @@ public class CombatEntity : MonoBehaviour
 
     protected virtual void Respawn()
     {
-        isAlive = true;
-        health = maxHealth;
         InstantiateColliderDetector();
     }
 
@@ -45,26 +39,44 @@ public class CombatEntity : MonoBehaviour
 
     protected virtual void DeLock()
     {
-        isLockedOntoBySomething = false;
+        isLockedOnto = false;
     }
 
     protected virtual void Lock()
     {
 
-        if (isLockedOntoBySomething)
+        if (isLockedOnto)
         {
-            isLockedOntoBySomething = false;
-            //state = PlayerStates.CurrentState.notSprinting;
+            isLockedOnto = false;
         }
         else
         {
-            //state = PlayerStates.CurrentState.combat;
-            isLockedOntoBySomething = true;
+            isLockedOnto = true;
         }
     }
 
 
+    protected virtual void AttemptLock()
+    {
+        if (!isLockedOnto)
+        {
+           // Debug.Log("Attempting a lock");
 
+            if (combatEntityInLockedZone)
+            {
+              //  Debug.Log("Found something to lock onto");
+              //  Debug.Log("Locking On");
+
+                Lock();
+            }
+        }
+        else
+        {
+            DeLock();
+        }
+
+
+    }
 
 
 

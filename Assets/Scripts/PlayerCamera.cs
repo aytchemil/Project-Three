@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-[RequireComponent(typeof(Camera), typeof(ControllsHandler))]
+[RequireComponent(typeof(ControllsHandler))]
 public class PlayerCamera : MonoBehaviour
 {
     //Real-Time Adjustable Variables

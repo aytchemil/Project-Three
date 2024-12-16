@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -103,9 +104,11 @@ public class PlayerMovement : MonoBehaviour
         //InputAction Callback Additions
         controls.sprint.started += ctx => OnSprintPressed();
         controls.sprint.canceled += ctx => OnSprintReleased();
+
+        //Action Callback additions
+        controls.EnterCombat += EnterCombat;
+        controls.ExitCombat += ExitCombat;
     }
-
-
 
     private void FixedUpdate()
     {
@@ -213,4 +216,14 @@ public class PlayerMovement : MonoBehaviour
     #endregion
 
 
+    void EnterCombat()
+    {
+        //Debug.Log("Player movement entering combat");
+        state = PlayerStates.CurrentState.combat;
+    }
+    private void ExitCombat()
+    {
+        //Debug.Log("Player movement exiting combat");
+        state = PlayerStates.CurrentState.notSprinting;
+    }
 }

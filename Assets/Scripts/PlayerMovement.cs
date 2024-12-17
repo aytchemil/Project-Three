@@ -74,6 +74,8 @@ public class PlayerMovement : MonoBehaviour
     public float maxSlopeAngle;
     [Space]
     public float dashSpeedMultiplier;
+    public float dashCooldown;
+    public bool dashOnCooldown;
 
     [Header("Flags")]
     //Flags
@@ -249,6 +251,10 @@ public class PlayerMovement : MonoBehaviour
     {
         Debug.Log("Attempted a dash");
         if (state != PlayerStates.CurrentState.combat) return;
+        if (dashOnCooldown)
+            return;
+        else
+            dashOnCooldown = true;
         Debug.Log("Dashing");
 
         Vector2 moveInput = controls.move.ReadValue<Vector2>();
@@ -290,12 +296,17 @@ public class PlayerMovement : MonoBehaviour
         }
 
         Invoke("StopDash", playerStates.dashTime);
+        Invoke("DashCooldown", dashCooldown);
     }
 
     void StopDash()
     {
-   
         state = PlayerStates.CurrentState.combat;
+    }
+
+    void DashCooldown()
+    {
+        dashOnCooldown = false;
     }
 
 }

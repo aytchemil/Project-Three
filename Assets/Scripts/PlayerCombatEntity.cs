@@ -9,6 +9,9 @@ public class PlayerCombatEntity : CombatEntity
     //Cache
     ControllsHandler controls;
 
+    public GameObject AttkTriggerCollider;
+    public float damage;
+
 
     protected override void Awake()
     {
@@ -62,6 +65,26 @@ public class PlayerCombatEntity : CombatEntity
         
         controls.ExitCombat?.Invoke(lockedTarget);
     }
+    public override void InstantiateColliderDetector()
+    {
+        base.InstantiateColliderDetector();
+
+        GameObject attkTrigger = InstantiateAttkCollider();
+
+    }
+
+    GameObject InstantiateAttkCollider()
+    {
+        return Instantiate(AttkTriggerCollider, GetComponentInChildren<ColliderDetector>().transform, false);
+    }
+
+    public override void ColliderLockOntoTarget()
+    {
+        base.ColliderLockOntoTarget();
+
+
+    }
+
 
 
 

@@ -1,8 +1,17 @@
 using UnityEngine;
 
+[RequireComponent(typeof(Collider))]
 public class ColliderDetector : MonoBehaviour
 {
     public CombatEntity myCombatEntity;
+    public LayerMask collideWith;
+
+    private void Awake()
+    {
+        Collider col = GetComponent<Collider>();
+        col.includeLayers = collideWith;
+        col.excludeLayers = ~collideWith;
+    }
 
 
     private void OnTriggerEnter(Collider other)

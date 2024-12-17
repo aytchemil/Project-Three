@@ -30,7 +30,7 @@ public class CombatEntity : MonoBehaviour
         InstantiateColliderDetector();
     }
 
-    void InstantiateColliderDetector()
+    public virtual void InstantiateColliderDetector()
     {
         myColliderDetector = Instantiate(colliderDetecterAsset, transform, false).GetComponent<ColliderDetector>();
         myColliderDetector.myCombatEntity = this;

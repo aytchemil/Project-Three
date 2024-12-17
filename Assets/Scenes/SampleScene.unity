@@ -426,7 +426,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.54834855, z: 0.2174637}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1106105012}
   m_Father: {fileID: 1368657293}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!43 &549539679
@@ -624,7 +625,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0.12100004, z: 0}
   m_LocalScale: {x: 0.6050729, y: 0.29476583, z: 0.6050729}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1845791984}
   m_Father: {fileID: 1368657293}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &624167671
@@ -1042,6 +1044,37 @@ Transform:
   m_Children: []
   m_Father: {fileID: 2127934019}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1106105011
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1106105012}
+  m_Layer: 8
+  m_Name: WeaponCollisionParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1106105012
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1106105011}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: -0.54834855, z: -0.2174637}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 220207747}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1167625986
 GameObject:
   m_ObjectHideFlags: 0
@@ -1185,10 +1218,9 @@ Transform:
   m_LocalScale: {x: 6.072082, y: 6.072082, z: 6.072082}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 635491444}
   - {fileID: 220207747}
   - {fileID: 624167669}
-  - {fileID: 635491444}
-  - {fileID: 1845791984}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1368657294
@@ -1231,7 +1263,7 @@ MonoBehaviour:
     walkSpeed: 20
     sprintSpeed: 30
     combatSpeed: 15
-    dashSpeed: 66
+    dashSpeed: 80
     dashTime: 0.11
   state: 0
   groundLinearDampeningDrag: 7
@@ -1243,8 +1275,10 @@ MonoBehaviour:
   airAccelerationMultiplier: 0.2
   maxSlopeAngle: 40
   dashSpeedMultiplier: 60
+  dashCooldown: 1
   isGrounded: 0
   onSlope: 0
+  dashOnCooldown: 0
   lookPivot: {fileID: 220207747}
   moveSpeed: 18
 --- !u!54 &1368657296
@@ -1291,6 +1325,8 @@ MonoBehaviour:
   colliderDetecterAsset: {fileID: 3243137597141389865, guid: 11e14ea0d576d4e40950e72b2e820ced, type: 3}
   isLockedBy: 0
   isLockedOnto: 0
+  AttkTriggerCollider: {fileID: 8475917669229452261, guid: 54eaad126c9bcaa498c827fb9317d41d, type: 3}
+  damage: 0
 --- !u!114 &1368657298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1340,7 +1376,7 @@ MonoBehaviour:
     m_SingletonActionBindings: []
     m_Flags: 0
   dash:
-    m_Name: 
+    m_Name: Dash
     m_Type: 0
     m_ExpectedControlType: 
     m_Id: 915235a9-0dcd-4aa1-973a-f23cce7b9339
@@ -1922,8 +1958,8 @@ Transform:
   m_GameObject: {fileID: 1705163776}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.000000033584, y: 0.133, z: 0.619}
-  m_LocalScale: {x: 0.08889733, y: 0.05782995, z: 1}
+  m_LocalPosition: {x: -0.000000033584, y: 0.133, z: 0.464}
+  m_LocalScale: {x: 0.2244213, y: 0.05782995, z: 0.6261}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1390581718}
@@ -2276,11 +2312,11 @@ Transform:
   m_GameObject: {fileID: 1845791983}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.703, z: 0}
-  m_LocalScale: {x: 0.7947369, y: 0.7789845, z: 0.7947369}
+  m_LocalPosition: {x: 0, y: -2.7954395, z: 0}
+  m_LocalScale: {x: 1.3134565, y: 2.6427233, z: 1.3134565}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 1368657293}
+  m_Father: {fileID: 624167669}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1845791986
 MeshRenderer:
@@ -2455,6 +2491,7 @@ GameObject:
   - component: {fileID: 1996351894}
   - component: {fileID: 1996351896}
   - component: {fileID: 1996351893}
+  - component: {fileID: 1996351897}
   m_Layer: 8
   m_Name: Dummy
   m_TagString: Untagged
@@ -2543,6 +2580,18 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1.9149048, z: 1}
   m_Center: {x: 0, y: -0.12563822, z: 0}
+--- !u!114 &1996351897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1996351892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5b5324de348bf3045ba50a1fe1418c48, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2012587787
 GameObject:
   m_ObjectHideFlags: 0

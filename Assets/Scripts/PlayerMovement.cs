@@ -75,12 +75,12 @@ public class PlayerMovement : MonoBehaviour
     [Space]
     public float dashSpeedMultiplier;
     public float dashCooldown;
-    public bool dashOnCooldown;
 
     [Header("Flags")]
     //Flags
     [SerializeField] private bool isGrounded;
     [SerializeField] private bool onSlope;
+    public bool dashOnCooldown;
 
     [Header("Adjustable Component Refernces")]
     //Adjustable Component Refernces

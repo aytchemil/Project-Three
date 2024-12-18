@@ -22,18 +22,15 @@ public class PlayerCamera : MonoBehaviour
     CombatEntity target;
 
     //Privates
-    public float savedTransformY;
-    public float savedOrientationX;
     public Vector3 savedTargetLocation;
+    Vector2 currentXY;
+    Vector2 finalUnlockedXYPos;
 
     //Flags
     bool inCombat = false;
 
     public float yRot;
     public float xRot;
-
-    public Vector2 currentXY;
-    public Vector2 newXY;
 
 
     private void Awake()
@@ -168,15 +165,15 @@ public class PlayerCamera : MonoBehaviour
 
     void ApplyNewXYPosition()
     {
-        xRot = newXY.y;
-        yRot = newXY.x;
+        xRot = finalUnlockedXYPos.y;
+        yRot = finalUnlockedXYPos.x;
 
         //Debug.Log("NEW X : " + xRot + " NEW Y: " + yRot);
     }
 
     void UpdateNewXY()
     {
-        newXY = GetCurrentXY();
+        finalUnlockedXYPos = GetCurrentXY();
     }
 
 

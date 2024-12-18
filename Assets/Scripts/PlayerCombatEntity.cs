@@ -9,7 +9,7 @@ public class PlayerCombatEntity : CombatEntity
     //Cache
     ControllsHandler controls;
 
-    public GameObject AttkTriggerCollider;
+    public GameObject AttkTriggerColliderPrefab;
     public float damage;
 
 
@@ -65,17 +65,24 @@ public class PlayerCombatEntity : CombatEntity
         
         controls.ExitCombat?.Invoke(lockedTarget);
     }
-    public override void InstantiateColliderDetector()
+    public override ColliderDetector InstantiateColliderDetector()
     {
-        base.InstantiateColliderDetector();
+        ColliderDetector colliderDetector = base.InstantiateColliderDetector();
 
         GameObject attkTrigger = InstantiateAttkCollider();
+        attkTrigger.GetComponent<AttackTriggerCollider>().myCombatEntity = this;
+
+
+        colliderDetector.Init();
+        
+
+        return colliderDetector;
 
     }
 
     GameObject InstantiateAttkCollider()
     {
-        return Instantiate(AttkTriggerCollider, GetComponentInChildren<ColliderDetector>().transform, false);
+        return Instantiate(AttkTriggerColliderPrefab, GetComponentInChildren<ColliderDetector>().transform, false);
     }
 
     public override void ColliderLockOntoTarget()

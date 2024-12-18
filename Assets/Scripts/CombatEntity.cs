@@ -18,6 +18,7 @@ public class CombatEntity : MonoBehaviour
     //Flags
     public bool isLockedBy; //Later make this a list so multiple things can lock onto a Combat Entity
     public bool isLockedOnto;
+    public bool inRange;
 
 
     protected virtual void Awake()
@@ -30,20 +31,25 @@ public class CombatEntity : MonoBehaviour
         InstantiateColliderDetector();
     }
 
-    public virtual void InstantiateColliderDetector()
+    public virtual ColliderDetector InstantiateColliderDetector()
     {
         myColliderDetector = Instantiate(colliderDetecterAsset, transform, false).GetComponent<ColliderDetector>();
         myColliderDetector.myCombatEntity = this;
+
+        return myColliderDetector;
     }
 
     public virtual void DeLock()
     {
         isLockedOnto = false;
+        myColliderDetector.DisableAttackTriggers();
     }
 
     protected virtual void Lock()
     {
         isLockedOnto = true;
+        myColliderDetector.EnableAttackTriggers();
+
     }
 
 

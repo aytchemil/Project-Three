@@ -3,6 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class AttackTriggerCollider : MonoBehaviour
 {
+    public CombatEntity myCombatEntity;
     public LayerMask collideWith;
     private void Awake()
     {
@@ -14,7 +15,14 @@ public class AttackTriggerCollider : MonoBehaviour
     //Scritpable Object Current Attk
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("In Range");
+        myCombatEntity.inRange = true;
+    }
 
+    private void OnTriggerExit(Collider other)
+    {
+        Debug.Log("OutOfRange Range");
+        myCombatEntity.inRange = false;
     }
 
 }

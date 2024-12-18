@@ -12,6 +12,8 @@ public class PlayerCombatEntity : CombatEntity
     public GameObject AttkTriggerColliderPrefab;
     public float damage;
 
+    public Ability[] abilities;
+
 
     protected override void Awake()
     {

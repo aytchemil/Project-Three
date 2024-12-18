@@ -234,8 +234,6 @@ public class PlayerMovement : MonoBehaviour
             state = PlayerStates.CurrentState.notSprinting;
     }
     #endregion
-
-
     void EnterCombat(CombatEntity target)
     {
         //Debug.Log("Player movement entering combat");

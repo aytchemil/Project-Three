@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 8094267911779122675}
   - component: {fileID: 377499401562837398}
   - component: {fileID: -6728555465575122298}
-  m_Layer: 8
-  m_Name: AttkCollisionZone1
+  m_Layer: 0
+  m_Name: AttkTriggerCollider_1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -121,3 +121,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2a276e788c10a9439e0ce61531412bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  myCombatEntity: {fileID: 0}
+  collideWith:
+    serializedVersion: 2
+    m_Bits: 256

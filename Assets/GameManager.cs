@@ -16,6 +16,7 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         controlls = player.GetComponent<ControllsHandler>();
+        player.gameObject.SetActive(false);
     }
 
     private void Start()

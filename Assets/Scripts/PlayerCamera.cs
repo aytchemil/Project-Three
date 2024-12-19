@@ -56,13 +56,13 @@ public class PlayerCamera : MonoBehaviour
         inCombat = false;
 
         //Callback Additions
-        controls.EnterCombat += EnterCombat;
+        controls.CombatFollowTarget += EnterCombatAndFollowTarget;
         controls.ExitCombat += ExitCombat;
     }
 
     private void OnDisable()
     {
-        controls.EnterCombat -= EnterCombat;
+        controls.CombatFollowTarget -= EnterCombatAndFollowTarget;
         controls.ExitCombat -= ExitCombat;
     }
 
@@ -182,7 +182,7 @@ public class PlayerCamera : MonoBehaviour
     /// Observer Method for the player camera to enter combat
     /// </summary>
     /// <param name="target"></param>
-    void EnterCombat(CombatEntity target)
+    void EnterCombatAndFollowTarget(CombatEntity target)
     {
         inCombat = true;
         this.target = target;
@@ -192,7 +192,7 @@ public class PlayerCamera : MonoBehaviour
     /// Observer method player exiting combat
     /// </summary>
     /// <param name="target"></param>
-    void ExitCombat(CombatEntity target)
+    void ExitCombat()
     {
         //Debug.Log("Exiting Combat");
 

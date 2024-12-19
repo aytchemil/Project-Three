@@ -20,12 +20,6 @@ public class CombatEntity : MonoBehaviour
     public bool isLockedOnto;
     public bool inRange;
 
-
-    protected virtual void Awake()
-    {
-        Respawn();
-    }
-
     protected virtual void Respawn()
     {
         InstantiateColliderDetector();
@@ -55,22 +49,22 @@ public class CombatEntity : MonoBehaviour
 
     protected virtual void AttemptLock()
     {
-        //Debug.Log("Attempting a lock");
+        Debug.Log("Attempting a lock");
         if (!isLockedOnto)
         {
-           //Debug.Log("Is not locked onto something already");
+           Debug.Log("Is not locked onto something already");
 
             if (combatEntityInLockedZone)
             {
-                //Debug.Log("Found something to lock onto");
-               // Debug.Log("Locking On");
+                Debug.Log("Found something to lock onto");
+                Debug.Log("Locking On");
 
                 Lock();
             }
         }
         else
         {
-           // Debug.Log("Is already locked onto, will delock");
+            Debug.Log("Is already locked onto, will delock");
             DeLock();
         }
     }

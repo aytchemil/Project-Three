@@ -10,8 +10,12 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68d416ff0e8c367469377eb83d6a499f, type: 3}
-  m_Name: Attack 7
+  m_Name: Side Slash
   m_EditorClassIdentifier: 
-  type: 0
-  icon: {fileID: 2800000, guid: d6c4f60ce6f2c0a4aaf0e1bab545141c, type: 3}
-  damage: 1
+  archetype: 0
+  collisionType: 0
+  attackTriggerCollider: {fileID: 8475917669229452261, guid: 54eaad126c9bcaa498c827fb9317d41d, type: 3}
+  attackName: Side Slash
+  icon: {fileID: 2800000, guid: 716455f41f856fa4aa69d5d332444551, type: 3}
+  speed: 2
+  damage: 0.8

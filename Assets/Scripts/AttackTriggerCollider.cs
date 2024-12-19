@@ -15,13 +15,14 @@ public class AttackTriggerCollider : MonoBehaviour
     //Scritpable Object Current Attk
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("In Range");
+       // Debug.Log("In Range");
         myCombatEntity.inRange = true;
+        //other.GetComponent<AttackbleEntity>().Attacked();
     }
 
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log("OutOfRange Range");
+       // Debug.Log("OutOfRange Range");
         myCombatEntity.inRange = false;
     }
 

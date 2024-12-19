@@ -10,6 +10,14 @@ public class ControllsHandler : MonoBehaviour
     public Action<CombatEntity> EnterCombat;
     public Action<CombatEntity> ExitCombat;
 
+    public Action<string> UtilizeAbility;
+    public Ability a_current;
+    public Ability a_right;
+    public Ability a_left;
+    public Ability a_up;
+    public Ability a_down;
+
+
     //Input Actions
     public InputAction look;
     public InputAction move;

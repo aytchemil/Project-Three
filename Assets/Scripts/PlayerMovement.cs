@@ -184,7 +184,9 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
-    //Caps the max linear velocity of the player
+    /// <summary>
+    /// Caps the max linear velocity of the player
+    /// </summary>
     void SpeedHandler()
     {
 
@@ -205,6 +207,9 @@ public class PlayerMovement : MonoBehaviour
         moveSpeed = playerStates.UpdateSpeed(state);
     }
 
+    /// <summary>
+    /// Detects if the player is on a slope, sets a global flag
+    /// </summary>
     void OnSlope()
     {
         RaycastHit slopeHit;
@@ -216,11 +221,19 @@ public class PlayerMovement : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Calculates the move direction when the player is on a plane
+    /// </summary>
+    /// <param name="moveDirection"></param>
+    /// <returns></returns>
     Vector3 GetSlopeMoveDirection(Vector3 moveDirection)
     {
         return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
     }
 
+    /// <summary>
+    /// Button press methods
+    /// </summary>
     #region Button Presses
     void OnSprintPressed()
     {
@@ -234,17 +247,31 @@ public class PlayerMovement : MonoBehaviour
             state = PlayerStates.CurrentState.notSprinting;
     }
     #endregion
+
+    /// <summary>
+    /// Observer method for when the player enters combat
+    /// </summary>
+    /// <param name="target"></param>
     void EnterCombat(CombatEntity target)
     {
         //Debug.Log("Player movement entering combat");
         state = PlayerStates.CurrentState.combat;
     }
+
+    /// <summary>
+    /// Observer method for when the player exits combat
+    /// </summary>
+    /// <param name="target"></param>
     private void ExitCombat(CombatEntity target)
     {
         //Debug.Log("Player movement exiting combat");
         state = PlayerStates.CurrentState.notSprinting;
     }
 
+
+    /// <summary>
+    /// Attempts a dash in a direction relative to the given player inputs
+    /// </summary>
     void DashDirection()
     {
         Debug.Log("Attempted a dash");
@@ -264,9 +291,15 @@ public class PlayerMovement : MonoBehaviour
         Dash(moveInput);
     }
 
+    /// <summary>
+    /// Adds force to the player for a dash direction
+    /// </summary>
+    /// <param name="dir"></param>
     void Dash(Vector2 dir)
     {
-        Debug.Log("Attempting Dashing In Direction:  " + dir);
+        //Debug.Log("Attempting Dashing In Direction:  " + dir);
+
+
         //The vector which is left of the orientation
         Vector3 moveDirection = new Vector3();
         if (dir.x < 0)
@@ -281,27 +314,35 @@ public class PlayerMovement : MonoBehaviour
 
         if (isGrounded)
         {
+            //If the player is not on a slope, dash regularly
             if (!onSlope)
             {
                 Debug.Log("Dashing Left");
                 rb.AddForce(moveDirection.normalized * dashSpeedMultiplier, ForceMode.VelocityChange);
 
             }
-            else
+            else //if the player is on a slope, dash relative to the slope's move direction
                 rb.AddForce(GetSlopeMoveDirection(moveDirection) * dashSpeedMultiplier, ForceMode.VelocityChange);
 
             state = PlayerStates.CurrentState.dashing;
         }
 
+        //Dash cooldown
         Invoke("StopDash", playerStates.dashTime);
         Invoke("DashCooldown", dashCooldown);
     }
 
+    /// <summary>
+    /// Method that is invoked with a delay to for dash cooldown
+    /// </summary>
     void StopDash()
     {
         state = PlayerStates.CurrentState.combat;
     }
 
+    /// <summary>
+    /// Method that is invoked with a delay to for dash cooldown
+    /// </summary>
     void DashCooldown()
     {
         dashOnCooldown = false;

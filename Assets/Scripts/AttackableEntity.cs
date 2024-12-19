@@ -17,7 +17,7 @@ public class AttackbleEntity : MonoBehaviour
     
     public virtual void Attacked(Ability atkedWithAbility)
     {
-
+        print("I was attacked");
     }
 
 

@@ -66,7 +66,7 @@ public class CombatUI : MonoBehaviour
     }
     private void Start()
     {
-        DisableUI(null);
+        DisableUI();
     }
 
 
@@ -123,7 +123,11 @@ public class CombatUI : MonoBehaviour
 
         //Return gates for: cooldown and if in deadzone
         if (changeOnCooldown) return;
-        if (inXDeadZone2 && inYDeadZone2) { print("In deadzone"); return; }
+        if (inXDeadZone2 && inYDeadZone2) 
+        { 
+            //print("In deadzone"); 
+            return; 
+        }
 
         //Start the cooldown of time changeCooldown
         changeOnCooldown = true;
@@ -147,7 +151,7 @@ public class CombatUI : MonoBehaviour
         if (Mathf.Abs(mouseInput.x) > Mathf.Abs(mouseInput.y))
         {
             //Further specifiy which one out of left right, (the right or the left one)
-            Debug.Log(mouseInput);
+            //Debug.Log(mouseInput);
             if (mouseInput.x > 0)//Right{
                 lookDir = "right"; 
             else if (mouseInput.x < 0) //Left
@@ -166,7 +170,7 @@ public class CombatUI : MonoBehaviour
 
         //Pushes the direction to the functionality (and any other listeners)
         controlls.UtilizeAbility?.Invoke(lookDir);
-        Debug.Log(lookDir);
+        //Debug.Log(lookDir);
 
 
 
@@ -183,7 +187,7 @@ public class CombatUI : MonoBehaviour
     /// Enables the The root combat UI
     /// </summary>
     /// <param name="targ"></param>
-    void EnableUI(CombatEntity targ)
+    void EnableUI()
     {
         combatUIParent.SetActive(true);
         ChangeAllImageIcons();
@@ -193,7 +197,7 @@ public class CombatUI : MonoBehaviour
     /// Disabled the root combat ui
     /// </summary>
     /// <param name="targ"></param>
-    void DisableUI(CombatEntity targ)
+    void DisableUI()
     {
         combatUIParent.SetActive(false);
     }

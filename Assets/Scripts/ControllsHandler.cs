@@ -7,8 +7,9 @@ public class ControllsHandler : MonoBehaviour
     public PlayerInputActions controls;
 
     //Action Delegates
-    public Action<CombatEntity> EnterCombat;
-    public Action<CombatEntity> ExitCombat;
+    public Action EnterCombat;
+    public Action ExitCombat;
+    public Action<CombatEntity> CombatFollowTarget;
 
     public Action<string> UtilizeAbility;
     public Ability a_current;
@@ -24,6 +25,7 @@ public class ControllsHandler : MonoBehaviour
     public InputAction sprint;
     public InputAction lockOn;
     public InputAction dash;
+    public InputAction attack;
 
     private void Awake()
     {
@@ -35,9 +37,7 @@ public class ControllsHandler : MonoBehaviour
         sprint = controls.Player.Sprint;
         lockOn = controls.Player.LockOn;
         dash = controls.Player.Dash;
-
-
-        lockOn.performed += ctx => TestLockOn();
+        attack = controls.Player.Attack;
     }
 
 
@@ -50,6 +50,7 @@ public class ControllsHandler : MonoBehaviour
         sprint.Enable();
         lockOn.Enable();
         dash.Enable();
+        attack.Enable();
     }
 
     private void OnDisable()
@@ -59,13 +60,10 @@ public class ControllsHandler : MonoBehaviour
         sprint.Disable();
         lockOn.Disable();
         dash.Disable();
+        attack.Disable();
     }
     #endregion 
 
-    void TestLockOn()
-    {
-        //Debug.Log("Lock on Pressed");
-    }
 
 
 

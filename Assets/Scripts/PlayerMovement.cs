@@ -252,7 +252,7 @@ public class PlayerMovement : MonoBehaviour
     /// Observer method for when the player enters combat
     /// </summary>
     /// <param name="target"></param>
-    void EnterCombat(CombatEntity target)
+    void EnterCombat()
     {
         //Debug.Log("Player movement entering combat");
         state = PlayerStates.CurrentState.combat;
@@ -262,7 +262,7 @@ public class PlayerMovement : MonoBehaviour
     /// Observer method for when the player exits combat
     /// </summary>
     /// <param name="target"></param>
-    private void ExitCombat(CombatEntity target)
+    private void ExitCombat()
     {
         //Debug.Log("Player movement exiting combat");
         state = PlayerStates.CurrentState.notSprinting;

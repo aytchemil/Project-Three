@@ -12,7 +12,7 @@ public class ColliderDetector : MonoBehaviour
     public CombatEntity myCombatEntity;
     public LayerMask collideWith;
 
-    GameObject[] myAttackTriggers;
+    GameObject[] myAttackTriggers = new GameObject[4];
         
     private void Awake()
     {
@@ -81,8 +81,18 @@ public class ColliderDetector : MonoBehaviour
 
     public void DisableAttackTriggers()
     {
-        Debug.Log("Disabling Attack Triggers");
+        //Debug.Log("Disabling Attack Triggers");
         foreach (GameObject attkTrigger in myAttackTriggers)
             attkTrigger.SetActive(false);
+    }
+
+    public void InstantiateAttackTriggers(Ability[] abilites)
+    {
+        for(int i = 0; i < abilites.Length; i++)
+        {
+            //Debug.Log("Collider detector given ability i: " + i + " ability :" + abilites[i].name);
+            myAttackTriggers[i] = Instantiate(abilites[i].attackTriggerCollider, transform, false);
+            myAttackTriggers[i].GetComponent<AttackTriggerCollider>().myCombatEntity = myCombatEntity;
+        }
     }
 }

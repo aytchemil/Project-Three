@@ -8,32 +8,32 @@ public class PlayerCombatEntity : CombatEntity
 {
     //Cache
     ControllsHandler controls;
-
-    public GameObject AttkTriggerColliderPrefab;
     public float damage;
 
-    public Ability[] abilities;
-
-
-    protected override void Awake()
+    protected virtual void Awake()
     {
-        base.Awake();
         controls = gameObject.GetComponent<ControllsHandler>();
-
     }
 
 
     private void Start()
     {
+        Debug.Log("start : PLayer");
         //Input Action Callback Additions
         controls.lockOn.performed += ctx => AttemptLock();
+        Respawn();
+    }
+
+    private void OnEnable()
+    {
+        Debug.Log("OnEnable : PLayer");
     }
 
 
 
     protected override void Respawn()
     {
-        base.Respawn();
+        InstantiateColliderDetector();
     }
 
     protected override void Lock()
@@ -58,21 +58,37 @@ public class PlayerCombatEntity : CombatEntity
     {
        // Debug.Log("PlayerCombatEntity: Entering Combat");
 
-        controls.EnterCombat?.Invoke(lockedTarget);
+        controls.EnterCombat?.Invoke();
+        controls.CombatFollowTarget?.Invoke(lockedTarget);
     }
 
     private void ExitCombat()
     {
         //Debug.Log("PlayerCombatEntity: Exiting Combat");
         
-        controls.ExitCombat?.Invoke(lockedTarget);
+        controls.ExitCombat?.Invoke();
     }
     public override ColliderDetector InstantiateColliderDetector()
     {
+        //Debug.Log("Player creating Collider Detector");
         ColliderDetector colliderDetector = base.InstantiateColliderDetector();
 
-        GameObject attkTrigger = InstantiateAttkCollider();
-        attkTrigger.GetComponent<AttackTriggerCollider>().myCombatEntity = this;
+        //Debug.Log(colliderDetector);
+
+        //Instantiate the attack triggers based on the current abilites
+        ControllsHandler c = controls;
+
+        //Debug.Log(controls);
+
+        Ability[] abilities = { c.a_right, c.a_left, c.a_up, c.a_down };
+
+        //Debug.Log(abilities);
+
+        colliderDetector.InstantiateAttackTriggers(abilities);
+
+
+        //GameObject attkTrigger = InstantiateAttkCollider();
+        //attkTrigger.GetComponent<AttackTriggerCollider>().myCombatEntity = this;
 
 
         colliderDetector.Init();
@@ -82,10 +98,10 @@ public class PlayerCombatEntity : CombatEntity
 
     }
 
-    GameObject InstantiateAttkCollider()
-    {
-        return Instantiate(AttkTriggerColliderPrefab, GetComponentInChildren<ColliderDetector>().transform, false);
-    }
+   // GameObject InstantiateAttkCollider()
+   // {
+   //    // return Instantiate(AttkTriggerColliderPrefab, GetComponentInChildren<ColliderDetector>().transform, false);
+   // }
 
     public override void ColliderLockOntoTarget()
     {

@@ -1210,7 +1210,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 4037f552c87eaec4bb8b79a179f86fde, type: 3}
+  m_Texture: {fileID: 2800000, guid: 8fae767edec4f854791ddf103b5a6cb3, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -1908,7 +1908,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 5701783b2851f7c47bc7826bb1b2db7a, type: 3}
+  m_Texture: {fileID: 2800000, guid: 8fae767edec4f854791ddf103b5a6cb3, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -3668,7 +3668,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 812389207}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
   m_Name: 
@@ -4642,7 +4642,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 6c13344807941ad4080580d201b5a4f1, type: 3}
+  m_Texture: {fileID: 2800000, guid: 8fae767edec4f854791ddf103b5a6cb3, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -4714,7 +4714,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Texture: {fileID: 2800000, guid: 437f1c593b882824dacd4eb0c0aaca56, type: 3}
+  m_Texture: {fileID: 2800000, guid: 8fae767edec4f854791ddf103b5a6cb3, type: 3}
   m_UVRect:
     serializedVersion: 2
     x: 0
@@ -5720,9 +5720,7 @@ MonoBehaviour:
   isLockedBy: 0
   isLockedOnto: 0
   inRange: 0
-  AttkTriggerColliderPrefab: {fileID: 8475917669229452261, guid: 54eaad126c9bcaa498c827fb9317d41d, type: 3}
   damage: 0
-  abilities: []
 --- !u!114 &1368657298
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5781,6 +5779,15 @@ MonoBehaviour:
     m_Type: 0
     m_ExpectedControlType: 
     m_Id: 915235a9-0dcd-4aa1-973a-f23cce7b9339
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  attack:
+    m_Name: Attack
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 9b05b214-3b2c-4bcc-80df-aae6e1474a22
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings: []

@@ -191,9 +191,6 @@ public class CombatUI : MonoBehaviour
     {
         combatUIParent.SetActive(true);
         ChangeAllImageIcons();
-
-        //Auto Set the current ability
-        controls.a_current = controls.a_up;
     }
 
     /// <summary>

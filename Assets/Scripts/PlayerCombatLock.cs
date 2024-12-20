@@ -74,20 +74,7 @@ public class PlayerCombatLock : CombatLock
         ColliderDetector colliderDetector = base.InstantiateColliderDetector();
 
         //Debug.Log(colliderDetector);
-
-        //Instantiate the attack triggers based on the current abilites
-        PlayerController c = controls;
-
-        colliderDetector.InstantiateAttackTriggers(c.a_right, c.a_left, c.a_up, c.a_down);
-
-
-        //GameObject attkTrigger = InstantiateAttkCollider();
-        //attkTrigger.GetComponent<AttackTriggerCollider>().myCombatEntity = this;
-
-
-        colliderDetector.Init();
         
-
         return colliderDetector;
 
     }

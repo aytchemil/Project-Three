@@ -9,7 +9,7 @@ using static UnityEngine.GraphicsBuffer;
 public class CombatUI : MonoBehaviour
 {
     //Cache
-    PlayerController controlls;
+    PlayerController controls;
 
     #region UI and Basic Functionality
 
@@ -48,21 +48,21 @@ public class CombatUI : MonoBehaviour
     {
 
         //Cache
-        controlls = GetComponent<PlayerController>();
+        controls = GetComponent<PlayerController>();
     }
 
     private void OnEnable()
     {
         //Input Action Observers
-        controlls.EnterCombat += EnableUI;
-        controlls.ExitCombat += DisableUI;
+        controls.EnterCombat += EnableUI;
+        controls.ExitCombat += DisableUI;
     }
 
     private void OnDisable()
     {
         //Input Action Observers
-        controlls.EnterCombat -= EnableUI;
-        controlls.ExitCombat -= DisableUI;
+        controls.EnterCombat -= EnableUI;
+        controls.ExitCombat -= DisableUI;
     }
     private void Start()
     {
@@ -73,8 +73,8 @@ public class CombatUI : MonoBehaviour
     private void Update()
     {
         //Updates the Attack Indicator rotation
-        if (!changeOnCooldown)
-            UpdateAttackIndicatorRotation(controlls.look.ReadValue<Vector2>());
+        if (!changeOnCooldown && combatUIParent.activeInHierarchy)
+            UpdateAttackIndicatorRotation(controls.look.ReadValue<Vector2>());
     }
 
     #region UI and Basic Functionality
@@ -169,7 +169,7 @@ public class CombatUI : MonoBehaviour
         UpdateCombatUIVisuals(lookDir);
 
         //Pushes the direction to the functionality (and any other listeners)
-        controlls.SelectCertainAbility?.Invoke(lookDir);
+        controls.SelectCertainAbility?.Invoke(lookDir);
         //Debug.Log(lookDir);
 
 
@@ -191,6 +191,9 @@ public class CombatUI : MonoBehaviour
     {
         combatUIParent.SetActive(true);
         ChangeAllImageIcons();
+
+        //Auto Set the current ability
+        controls.a_current = controls.a_up;
     }
 
     /// <summary>
@@ -267,10 +270,10 @@ public class CombatUI : MonoBehaviour
 
     void ChangeAllImageIcons()
     {
-        rightImgRef.texture = controlls.a_right.icon;
-        leftImgRef.texture = controlls.a_left.icon;
-        upImgRef.texture = controlls.a_up.icon;
-        downImgRef.texture = controlls.a_down.icon;
+        rightImgRef.texture = controls.a_right.icon;
+        leftImgRef.texture = controls.a_left.icon;
+        upImgRef.texture = controls.a_up.icon;
+        downImgRef.texture = controls.a_down.icon;
     }
 
 

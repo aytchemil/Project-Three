@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using System.Linq;
+using UnityEditor.ShaderGraph;
 
 
 [RequireComponent(typeof(CombatEntityController))]
@@ -47,10 +48,29 @@ public class CombatFunctionality : MonoBehaviour
         Controls.ExitCombat -= ExitCombat;
     }
 
+    void InCombat()
+    {
+        isLockedOn = true;
+        //Auto Set the current ability
+        Controls.a_current = Controls.a_up;
+
+        if (!initializedAttackTriggers)
+            InstantiateAttackTriggers(Controls.a_right, Controls.a_left, Controls.a_up, Controls.a_down);
+
+        EnableAttackTriggers();
+
+    }
+    void ExitCombat()
+    {
+        isLockedOn = false;
+        DisableAttackTriggers();
+    }
+
+    #region Trigger Generation
 
     void CacheAttackTriggers()
     {
-        Debug.Log("Caching attack triggers of childcount: " + attackTriggerParent.childCount);
+        //Debug.Log("Caching attack triggers of childcount: " + attackTriggerParent.childCount);
         for (int i = 0; i < attackTriggerParent.childCount; i++)
         {
             myAttackTriggers[i] = attackTriggerParent.GetChild(i).gameObject;
@@ -72,7 +92,7 @@ public class CombatFunctionality : MonoBehaviour
 
     public void DisableAttackTriggers()
     {
-        Debug.Log("Disabling Attack Triggers");
+        //Debug.Log("Disabling Attack Triggers");
         foreach (GameObject attkTrigger in myAttackTriggers)
             attkTrigger.SetActive(false);
     }
@@ -98,6 +118,10 @@ public class CombatFunctionality : MonoBehaviour
         foreach (GameObject attkTrigger in myAttackTriggers)
             attkTrigger.GetComponent<AttackTriggerCollider>().combatFunctionality = this;
     }
+
+    #endregion
+
+    #region Combat Functionality
 
     void EnableAbility(string dir)
     {
@@ -144,23 +168,8 @@ public class CombatFunctionality : MonoBehaviour
         Debug.Log("Box attack");
     }
 
-    void InCombat()
-    {
-        isLockedOn = true;
 
-        if (!initializedAttackTriggers)
-            InstantiateAttackTriggers(Controls.a_right, Controls.a_left, Controls.a_up, Controls.a_down);
-
-        EnableAttackTriggers();
-
-
-    }
-    void ExitCombat()
-    {
-        isLockedOn = false;
-        DisableAttackTriggers();
-    }
-
+    #endregion
 
 
 

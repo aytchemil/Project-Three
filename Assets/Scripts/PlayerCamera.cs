@@ -184,7 +184,7 @@ public class PlayerCamera : MonoBehaviour
     /// <param name="target"></param>
     void EnterCombatAndFollowTarget(CombatEntityController target)
     {
-        Debug.Log("Entering Combat and following target: " + target);
+        //Debug.Log("Entering Combat and following target: " + target);
         inCombat = true;
         this.target = target;
     }

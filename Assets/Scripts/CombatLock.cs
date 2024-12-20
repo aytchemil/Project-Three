@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class CombatLock : MonoBehaviour
 {
+    protected virtual CombatEntityController Controls { get; set; }
 
     //Component References
     public CombatEntityController lockedTarget;
@@ -18,6 +19,16 @@ public class CombatLock : MonoBehaviour
     //Flags
     public bool isLockedBy; //Later make this a list so multiple things can lock onto a Combat Entity
     public bool isLockedOnto;
+
+    protected virtual void Awake()
+    {
+        Controls = GetComponent<CombatEntityController>();
+    }
+
+    protected virtual void Start()
+    {
+        Respawn();
+    }
 
     protected virtual void Respawn()
     {
@@ -35,32 +46,35 @@ public class CombatLock : MonoBehaviour
     public virtual void DeLock()
     {
         isLockedOnto = false;
+        Controls.ExitCombat?.Invoke();
     }
 
     protected virtual void Lock()
     {
         isLockedOnto = true;
+        Controls.EnterCombat?.Invoke();
+        Controls.CombatFollowTarget?.Invoke(lockedTarget);
     }
 
 
     protected virtual void AttemptLock()
     {
-        Debug.Log("Attempting a lock");
+        //Debug.Log("Attempting a lock");
         if (!isLockedOnto)
         {
-           Debug.Log("Is not locked onto something already");
+           //Debug.Log("Is not locked onto something already");
 
             if (combatEntityInLockedZone)
             {
-                Debug.Log("Found something to lock onto");
-                Debug.Log("Locking On");
+               // Debug.Log("Found something to lock onto");
+                //Debug.Log("Locking On");
 
                 Lock();
             }
         }
         else
         {
-            Debug.Log("Is already locked onto, will delock");
+           // Debug.Log("Is already locked onto, will delock");
             DeLock();
         }
     }

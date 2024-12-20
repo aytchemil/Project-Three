@@ -32,4 +32,12 @@ public class AttackTriggerCollider : MonoBehaviour
         combatFunctionality.inRange = false;
     }
 
+
+    public void AttackTriggerAttack()
+    {
+        Debug.Log("Attack Trigger attacking!");
+        attacking = true;
+
+    }
+
 }

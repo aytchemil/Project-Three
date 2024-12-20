@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : CombatEntityController
 {
+    //Rule of thumb : Keep these such that they are always set on the outside, never during gameplay
     public PlayerInputActions controls;
 
 

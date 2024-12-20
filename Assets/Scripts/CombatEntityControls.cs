@@ -7,11 +7,11 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class CombatEntityController : MonoBehaviour
 {
+    //Rule of thumb : Keep these such that they are always set on the outside, never during gameplay
     public Action EnterCombat;
     public Action ExitCombat;
     public Action<CombatEntityController> CombatFollowTarget;
     public Action<string> SelectCertainAbility;
-    public Ability a_current;
     [Space]
     public Ability a_right;
     public Ability a_left;

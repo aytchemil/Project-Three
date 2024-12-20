@@ -18,7 +18,6 @@ public class CombatLock : MonoBehaviour
     //Flags
     public bool isLockedBy; //Later make this a list so multiple things can lock onto a Combat Entity
     public bool isLockedOnto;
-    public bool inRange;
 
     protected virtual void Respawn()
     {
@@ -36,14 +35,11 @@ public class CombatLock : MonoBehaviour
     public virtual void DeLock()
     {
         isLockedOnto = false;
-        myColliderDetector.DisableAttackTriggers();
     }
 
     protected virtual void Lock()
     {
         isLockedOnto = true;
-        myColliderDetector.EnableAttackTriggers();
-
     }
 
 
@@ -75,8 +71,6 @@ public class CombatLock : MonoBehaviour
         transform.LookAt(lockedTarget.transform.position);
         transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, transform.localEulerAngles.z);
     }
-
-
 
 
 }

@@ -7,7 +7,6 @@ using UnityEngine.InputSystem;
 /// </summary>
 public class CombatEntityController : MonoBehaviour
 {
-    //Action Delegates
     public Action EnterCombat;
     public Action ExitCombat;
     public Action<CombatEntityController> CombatFollowTarget;

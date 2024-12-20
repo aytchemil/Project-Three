@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class AttackTriggerCollider : MonoBehaviour
 {
-    public CombatLock combatLock;
+    public CombatFunctionality combatFunctionality;
     public LayerMask collideWith;
 
     public bool attacking;
@@ -19,7 +19,7 @@ public class AttackTriggerCollider : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // Debug.Log("In Range");
-        combatLock.inRange = true;
+        combatFunctionality.inRange = true;
         if (attacking)
         {
             Debug.Log("Collider attacking");
@@ -29,7 +29,7 @@ public class AttackTriggerCollider : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         // Debug.Log("OutOfRange Range");
-        combatLock.inRange = false;
+        combatFunctionality.inRange = false;
     }
 
 }

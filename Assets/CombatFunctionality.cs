@@ -1,24 +1,27 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
-[RequireComponent(typeof(ControllsHandler))]
+[RequireComponent(typeof(PlayerController))]
 public class CombatFunctionality : MonoBehaviour
 {
     //Cache
-    ControllsHandler c;
+    PlayerController c;
+
+
+    AttackTriggerCollider attackTrigger_current;
 
     bool isLockedOn;
 
     private void Awake()
     {
-        c = GetComponent<ControllsHandler>();
+        c = GetComponent<PlayerController>();
     }
 
     private void OnEnable()
     {
         //Debug.Log("Combat functionaly enable");
         c.attack.performed += ctx => UseAttackAbility();
-        c.UtilizeAbility += EnableAbility;
+        c.SelectCertainAbility += EnableAbility;
         c.EnterCombat += InCombat;
 
 
@@ -27,7 +30,7 @@ public class CombatFunctionality : MonoBehaviour
     private void OnDisable()
     {
         c.attack.performed -= ctx => UseAttackAbility();
-        c.UtilizeAbility -= EnableAbility;
+        c.SelectCertainAbility -= EnableAbility;
     }
 
     void EnableAbility(string dir)

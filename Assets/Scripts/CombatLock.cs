@@ -1,11 +1,11 @@
 using UnityEngine;
 
 
-public class CombatEntity : MonoBehaviour
+public class CombatLock : MonoBehaviour
 {
 
     //Component References
-    public CombatEntity lockedTarget;
+    public CombatEntityController lockedTarget;
     public bool combatEntityInLockedZone;
 
     //Cache
@@ -28,7 +28,7 @@ public class CombatEntity : MonoBehaviour
     public virtual ColliderDetector InstantiateColliderDetector()
     {
         myColliderDetector = Instantiate(colliderDetecterAsset, transform, false).GetComponent<ColliderDetector>();
-        myColliderDetector.myCombatEntity = this;
+        myColliderDetector.combatLock = this;
 
         return myColliderDetector;
     }

@@ -3,16 +3,16 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 
-[RequireComponent(typeof(ControllsHandler))]
-public class PlayerCombatEntity : CombatEntity
+[RequireComponent(typeof(PlayerController))]
+public class PlayerCombatLock : CombatLock
 {
     //Cache
-    ControllsHandler controls;
+    PlayerController controls;
     public float damage;
 
     protected virtual void Awake()
     {
-        controls = gameObject.GetComponent<ControllsHandler>();
+        controls = gameObject.GetComponent<PlayerController>();
     }
 
 
@@ -76,15 +76,9 @@ public class PlayerCombatEntity : CombatEntity
         //Debug.Log(colliderDetector);
 
         //Instantiate the attack triggers based on the current abilites
-        ControllsHandler c = controls;
+        PlayerController c = controls;
 
-        //Debug.Log(controls);
-
-        Ability[] abilities = { c.a_right, c.a_left, c.a_up, c.a_down };
-
-        //Debug.Log(abilities);
-
-        colliderDetector.InstantiateAttackTriggers(abilities);
+        colliderDetector.InstantiateAttackTriggers(c.a_right, c.a_left, c.a_up, c.a_down);
 
 
         //GameObject attkTrigger = InstantiateAttkCollider();

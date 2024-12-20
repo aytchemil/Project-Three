@@ -8914,8 +8914,8 @@ GameObject:
   - component: {fileID: 1996351895}
   - component: {fileID: 1996351894}
   - component: {fileID: 1996351896}
-  - component: {fileID: 1996351893}
   - component: {fileID: 1996351897}
+  - component: {fileID: 1996351898}
   m_Layer: 8
   m_Name: Dummy
   m_TagString: Untagged
@@ -8923,24 +8923,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1996351893
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1996351892}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 26456e46abb983647bf61c4d6d0dfd6c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lockedTarget: {fileID: 0}
-  combatEntityInLockedZone: 0
-  colliderDetecterAsset: {fileID: 3243137597141389865, guid: 11e14ea0d576d4e40950e72b2e820ced, type: 3}
-  isLockedBy: 0
-  isLockedOnto: 0
-  inRange: 0
 --- !u!54 &1996351894
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -9020,6 +9002,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _health: 5
   attackedEffect: {fileID: 579323309}
+--- !u!114 &1996351898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1996351892}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d667623d707b6b149b3cf630b8654d20, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  a_current: {fileID: 0}
+  a_right: {fileID: 0}
+  a_left: {fileID: 0}
+  a_up: {fileID: 0}
+  a_down: {fileID: 0}
 --- !u!1 &2002498895
 GameObject:
   m_ObjectHideFlags: 0

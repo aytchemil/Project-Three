@@ -5588,9 +5588,9 @@ GameObject:
   - component: {fileID: 1368657298}
   - component: {fileID: 1368657295}
   - component: {fileID: 1368657300}
-  - component: {fileID: 1368657302}
   - component: {fileID: 1368657303}
   - component: {fileID: 1368657304}
+  - component: {fileID: 1368657302}
   m_Layer: 8
   m_Name: Player
   m_TagString: Untagged
@@ -5714,7 +5714,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ece7caa883bce2242a96582bc276a39b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  a_current: {fileID: 0}
   a_right: {fileID: 11400000, guid: 585cc1ee8817ff74c82c4dcaa2d0609d, type: 2}
   a_left: {fileID: 11400000, guid: cc188b88764ff3c478da26feea8ec6bc, type: 2}
   a_up: {fileID: 11400000, guid: 896542e6db2ab0948a9c127016922ed4, type: 2}
@@ -5832,6 +5831,7 @@ MonoBehaviour:
   attackTrigger_left: {fileID: 0}
   attackTrigger_up: {fileID: 0}
   attackTrigger_down: {fileID: 0}
+  currentAbility: {fileID: 0}
   inRange: 0
 --- !u!114 &1368657303
 MonoBehaviour:
@@ -9023,7 +9023,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d667623d707b6b149b3cf630b8654d20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  a_current: {fileID: 0}
   a_right: {fileID: 0}
   a_left: {fileID: 0}
   a_up: {fileID: 0}

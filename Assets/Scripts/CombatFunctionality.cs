@@ -15,6 +15,9 @@ public class CombatFunctionality : MonoBehaviour
     public AttackTriggerCollider attackTrigger_up;
     public AttackTriggerCollider attackTrigger_down;
 
+    public Ability currentAbility;
+    string direction;
+
     // Virtual property for 'Controls'
     protected virtual CombatEntityController Controls { get; set; }
 
@@ -52,7 +55,7 @@ public class CombatFunctionality : MonoBehaviour
     {
         isLockedOn = true;
         //Auto Set the current ability
-        Controls.a_current = Controls.a_up;
+        currentAbility = Controls.a_up;
 
         if (!initializedAttackTriggers)
             InstantiateAttackTriggers(Controls.a_right, Controls.a_left, Controls.a_up, Controls.a_down);
@@ -125,19 +128,20 @@ public class CombatFunctionality : MonoBehaviour
 
     void EnableAbility(string dir)
     {
+        direction = dir;
         switch (dir)
         {
             case "right":
-                Controls.a_current= Controls.a_right;
+                currentAbility = Controls.a_right;
                  break;
             case "left":
-                Controls.a_current = Controls.a_left;
+                currentAbility = Controls.a_left;
                 break;
             case "up":
-                Controls.a_current = Controls.a_up;
+                currentAbility = Controls.a_up;
                 break;
             case "down":
-                Controls.a_current = Controls.a_right;
+                currentAbility = Controls.a_right;
                 break;
         }
 
@@ -148,13 +152,19 @@ public class CombatFunctionality : MonoBehaviour
     {
         if (!isLockedOn) return;
 
-        if (Controls.a_current == null)
+        if (currentAbility == null)
             Debug.LogError("There is currently no selected ability (a_current) that this combat functionality script can use.");
 
         print("ATTACK");
 
+        AttackTriggerUse();
 
-        if(Controls.a_current.collisionType == Ability.CollisionType.Box)
+
+
+
+
+
+        if (currentAbility.collisionType == Ability.CollisionType.Box)
         {
             BoxAttack();
         }
@@ -168,6 +178,25 @@ public class CombatFunctionality : MonoBehaviour
         Debug.Log("Box attack");
     }
 
+
+    void AttackTriggerUse()
+    {
+        switch (direction)
+        {
+            case "right":
+                attackTrigger_right.AttackTriggerAttack();
+                break;
+            case "left":
+                attackTrigger_left.AttackTriggerAttack();
+                break;
+            case "up":
+                attackTrigger_up.AttackTriggerAttack();
+                break;
+            case "down":
+                attackTrigger_down.AttackTriggerAttack();
+                break;
+        }
+    }
 
     #endregion
 

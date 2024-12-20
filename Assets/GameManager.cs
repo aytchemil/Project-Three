@@ -8,14 +8,14 @@ public class GameManager : MonoBehaviour
 
     //Just for now
     public GameObject player;
-    ControllsHandler controlls;
+    PlayerController controlls;
     public GameObject menu;
 
     public DropdownMenu dd;
 
     private void Awake()
     {
-        controlls = player.GetComponent<ControllsHandler>();
+        controlls = player.GetComponent<PlayerController>();
         player.gameObject.SetActive(false);
     }
 

@@ -1,18 +1,20 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-
-
 public class ColliderDetector : MonoBehaviour
 {
 /// <summary>
 /// Colliider detector class controls : Itself, Attack collide triggers
 /// Turns on and off the attack triggers
 /// </summary>
-    public CombatEntity myCombatEntity;
+    public CombatLock combatLock;
     public LayerMask collideWith;
 
     GameObject[] myAttackTriggers = new GameObject[4];
+    AttackTriggerCollider attackTrigger_right;
+    AttackTriggerCollider attackTrigger_left;
+    AttackTriggerCollider attackTrigger_up;
+    AttackTriggerCollider attackTrigger_down;
         
     private void Awake()
     {
@@ -22,7 +24,7 @@ public class ColliderDetector : MonoBehaviour
     }
     private void OnEnable()
     {
-        //Init();
+        //myCombatEntity.control
     }
 
     /// <summary>
@@ -37,26 +39,28 @@ public class ColliderDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        myCombatEntity.combatEntityInLockedZone = true;
-        myCombatEntity.lockedTarget = other.GetComponent<CombatEntity>();
+        combatLock.combatEntityInLockedZone = true;
+        combatLock.lockedTarget = other.GetComponent<CombatEntityController>();
+        if (other.GetComponent<CombatEntityController>() == null)
+            Debug.LogError("Error: Combat entity controller script not given to a combat entity : " + other.name);
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if (myCombatEntity.isLockedOnto)
+        if (combatLock.isLockedOnto)
         {
-            myCombatEntity.ColliderLockOntoTarget();
+            combatLock.ColliderLockOntoTarget();
         }
     }
 
 
     private void OnTriggerExit(Collider other)
     {
-        myCombatEntity.combatEntityInLockedZone = false;
-        myCombatEntity.lockedTarget = null;
-        if (myCombatEntity.isLockedOnto)
+        combatLock.combatEntityInLockedZone = false;
+        combatLock.lockedTarget = null;
+        if (combatLock.isLockedOnto)
         {
-            myCombatEntity.DeLock();
+            combatLock.DeLock();
         }
 
 
@@ -68,7 +72,6 @@ public class ColliderDetector : MonoBehaviour
         myAttackTriggers = new GameObject[transform.childCount];
         for(int i = 0; i < transform.childCount; i++)
         {
-            
             myAttackTriggers[i] = transform.GetChild(i).gameObject;
         }
     }
@@ -86,13 +89,19 @@ public class ColliderDetector : MonoBehaviour
             attkTrigger.SetActive(false);
     }
 
-    public void InstantiateAttackTriggers(Ability[] abilites)
+    public void InstantiateAttackTriggers(Ability right, Ability left, Ability up, Ability down)
     {
-        for(int i = 0; i < abilites.Length; i++)
-        {
-            //Debug.Log("Collider detector given ability i: " + i + " ability :" + abilites[i].name);
-            myAttackTriggers[i] = Instantiate(abilites[i].attackTriggerCollider, transform, false);
-            myAttackTriggers[i].GetComponent<AttackTriggerCollider>().myCombatEntity = myCombatEntity;
-        }
+        attackTrigger_right = Instantiate(right.attackTriggerCollider, transform, false).GetComponent<AttackTriggerCollider>();
+        attackTrigger_left = Instantiate(left.attackTriggerCollider, transform, false).GetComponent<AttackTriggerCollider>();
+        attackTrigger_up = Instantiate(up.attackTriggerCollider, transform, false).GetComponent<AttackTriggerCollider>();
+        attackTrigger_down = Instantiate(down.attackTriggerCollider, transform, false).GetComponent<AttackTriggerCollider>();
+        CacheAttackTriggers();
+        foreach (GameObject attkTrigger in myAttackTriggers)
+            attkTrigger.GetComponent<AttackTriggerCollider>().combatLock = combatLock;
+    }
+
+    public void EnableCurrentAttackTrigger(string dir)
+    {
+
     }
 }

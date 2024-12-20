@@ -56,7 +56,7 @@ public struct PlayerStates
     }
 }
 
-[RequireComponent(typeof(ControllsHandler))]
+[RequireComponent(typeof(PlayerController))]
 public class PlayerMovement : MonoBehaviour
 {
 
@@ -93,13 +93,13 @@ public class PlayerMovement : MonoBehaviour
     //Cached Component Refernces
     Transform orientation;
     Rigidbody rb;
-    ControllsHandler controls;
+    PlayerController controls;
 
 
     private void Awake()
     {
         //Cache
-        controls = gameObject.GetComponent<ControllsHandler>();
+        controls = gameObject.GetComponent<PlayerController>();
         rb = GetComponent<Rigidbody>();
         orientation = transform;
 

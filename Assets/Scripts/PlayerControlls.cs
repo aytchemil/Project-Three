@@ -2,21 +2,9 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class ControllsHandler : MonoBehaviour
+public class PlayerController : CombatEntityController
 {
     public PlayerInputActions controls;
-
-    //Action Delegates
-    public Action EnterCombat;
-    public Action ExitCombat;
-    public Action<CombatEntity> CombatFollowTarget;
-
-    public Action<string> UtilizeAbility;
-    public Ability a_current;
-    public Ability a_right;
-    public Ability a_left;
-    public Ability a_up;
-    public Ability a_down;
 
 
     //Input Actions

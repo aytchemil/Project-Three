@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
-[RequireComponent(typeof(ControllsHandler))]
+[RequireComponent(typeof(PlayerController))]
 public class PlayerCamera : MonoBehaviour
 {
     //Real-Time Adjustable Variables
@@ -23,9 +23,9 @@ public class PlayerCamera : MonoBehaviour
     public Camera myCamera;
 
     //Cached Component References
-    ControllsHandler controls;
+    PlayerController controls;
     Transform camTransform;
-    CombatEntity target;
+    CombatEntityController target;
 
     //Privates
     public Vector3 savedTargetLocation;
@@ -42,7 +42,7 @@ public class PlayerCamera : MonoBehaviour
     private void Awake()
     {
         //Cache
-        controls = GetComponent<ControllsHandler>();
+        controls = GetComponent<PlayerController>();
         camTransform = myCamera.GetComponent<Transform>(); 
         //Debug.Log(camTransform);
     }
@@ -182,8 +182,9 @@ public class PlayerCamera : MonoBehaviour
     /// Observer Method for the player camera to enter combat
     /// </summary>
     /// <param name="target"></param>
-    void EnterCombatAndFollowTarget(CombatEntity target)
+    void EnterCombatAndFollowTarget(CombatEntityController target)
     {
+        Debug.Log("Entering Combat and following target: " + target);
         inCombat = true;
         this.target = target;
     }

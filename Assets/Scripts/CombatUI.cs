@@ -5,11 +5,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using static UnityEngine.GraphicsBuffer;
 
-[RequireComponent(typeof(ControllsHandler))]
+[RequireComponent(typeof(PlayerController))]
 public class CombatUI : MonoBehaviour
 {
     //Cache
-    ControllsHandler controlls;
+    PlayerController controlls;
 
     #region UI and Basic Functionality
 
@@ -48,7 +48,7 @@ public class CombatUI : MonoBehaviour
     {
 
         //Cache
-        controlls = GetComponent<ControllsHandler>();
+        controlls = GetComponent<PlayerController>();
     }
 
     private void OnEnable()
@@ -169,7 +169,7 @@ public class CombatUI : MonoBehaviour
         UpdateCombatUIVisuals(lookDir);
 
         //Pushes the direction to the functionality (and any other listeners)
-        controlls.UtilizeAbility?.Invoke(lookDir);
+        controlls.SelectCertainAbility?.Invoke(lookDir);
         //Debug.Log(lookDir);
 
 

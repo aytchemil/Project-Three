@@ -55,17 +55,21 @@ public class CombatLock : MonoBehaviour
 
     void ExitCombat()
     {
+        //combatEntityInLockedZone = false;
         isLockedOnto = false;
     }
 
     public virtual void DeLock()
     {
+        Debug.Log("Combat lock : Delocking");
         isLockedOnto = false;
         Controls.ExitCombat?.Invoke();
+        myColliderDetector.UnLockFromCombatLock();
     }
 
     protected virtual void Lock()
     {
+        Debug.Log("Combat Lock: Locking on");
         isLockedOnto = true;
         Controls.EnterCombat?.Invoke();
         Controls.CombatFollowTarget?.Invoke(lockedTarget);
@@ -75,22 +79,22 @@ public class CombatLock : MonoBehaviour
 
     protected virtual void AttemptLock()
     {
-        //Debug.Log("Attempting a lock");
+        Debug.Log("Attempting a lock");
         if (!isLockedOnto)
         {
-           //Debug.Log("Is not locked onto something already");
+           Debug.Log("Is not locked onto something already");
 
             if (combatEntityInLockedZone)
             {
-               // Debug.Log("Found something to lock onto");
-                //Debug.Log("Locking On");
+                Debug.Log("Found something to lock onto");
+                Debug.Log("Locking On");
 
                 Lock();
             }
         }
         else
         {
-           // Debug.Log("Is already locked onto, will delock");
+            Debug.Log("Is already locked onto, will delock");
             DeLock();
         }
     }

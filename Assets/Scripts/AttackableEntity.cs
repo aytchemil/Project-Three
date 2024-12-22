@@ -14,12 +14,41 @@ public class AttackbleEntity : MonoBehaviour
     }
 
     public GameObject attackedEffect;
+    public bool invincibility;
+    public float invincibiliyTime;
     
     public virtual void Attacked(Ability atkedWithAbility)
     {
-        print("I was attacked");
+        if (!invincibility)
+        {
+            invincibility = true;
+            print("I was attacked");
+            attackedEffect.GetComponent<ParticleSystem>().Play();
+            Invoke("StopAttacked", invincibiliyTime);
+            TakeDamage(atkedWithAbility.damage);
+        }
+
     }
 
+    void StopAttacked()
+    {
+        invincibility = false;
+    }
+
+    void TakeDamage(float dmg)
+    {
+        health -= dmg;
+
+        if(health < 0)
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        Destroy(gameObject);
+    }
 
 
     //Tick damage over a certain time?

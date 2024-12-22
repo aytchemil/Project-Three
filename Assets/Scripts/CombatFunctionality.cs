@@ -191,28 +191,28 @@ public class CombatFunctionality : MonoBehaviour
                 attackTrigger_left.gameObject.SetActive(false);
                 attackTrigger_up.gameObject.SetActive(false);
                 attackTrigger_down.gameObject.SetActive(false);
-                attackTrigger_right.AttackTriggerAttack();
+                attackTrigger_right.AttackTriggerAttack(currentAbility);
                 break;
             case "left":
                 attackTrigger_right.gameObject.SetActive(false);
                 attackTrigger_left.gameObject.SetActive(true);
                 attackTrigger_up.gameObject.SetActive(false);
                 attackTrigger_down.gameObject.SetActive(false);
-                attackTrigger_left.AttackTriggerAttack();
+                attackTrigger_left.AttackTriggerAttack(currentAbility);
                 break;
             case "up":
                 attackTrigger_right.gameObject.SetActive(false);
                 attackTrigger_left.gameObject.SetActive(false);
                 attackTrigger_up.gameObject.SetActive(true);
                 attackTrigger_down.gameObject.SetActive(false);
-                attackTrigger_up.AttackTriggerAttack();
+                attackTrigger_up.AttackTriggerAttack(currentAbility);
                 break;
             case "down":
                 attackTrigger_right.gameObject.SetActive(false);
                 attackTrigger_left.gameObject.SetActive(false);
                 attackTrigger_up.gameObject.SetActive(false);
                 attackTrigger_down.gameObject.SetActive(true);
-                attackTrigger_down.AttackTriggerAttack();
+                attackTrigger_down.AttackTriggerAttack(currentAbility);
                 break;
         }
     }

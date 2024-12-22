@@ -94,7 +94,8 @@ public class PlayerCamera : MonoBehaviour
             }
             else
             {
-                ExitCombat();
+                //When enemy dies
+                controls.ExitCombat();
             }
         }
 

@@ -25,6 +25,16 @@ public class CombatLock : MonoBehaviour
         Controls = GetComponent<CombatEntityController>();
     }
 
+    private void OnEnable()
+    {
+        Controls.ExitCombat += ExitCombat;
+    }
+
+    private void OnDisable()
+    {
+        Controls.ExitCombat -= ExitCombat;
+    }
+
     protected virtual void Start()
     {
         Respawn();
@@ -43,6 +53,11 @@ public class CombatLock : MonoBehaviour
         return myColliderDetector;
     }
 
+    void ExitCombat()
+    {
+        isLockedOnto = false;
+    }
+
     public virtual void DeLock()
     {
         isLockedOnto = false;
@@ -54,6 +69,7 @@ public class CombatLock : MonoBehaviour
         isLockedOnto = true;
         Controls.EnterCombat?.Invoke();
         Controls.CombatFollowTarget?.Invoke(lockedTarget);
+        Controls.SelectCertainAbility?.Invoke("up");
     }
 
 

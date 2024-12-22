@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   archetype: 0
   collisionType: 0
-  attackTriggerCollider: {fileID: 8475917669229452261, guid: 54eaad126c9bcaa498c827fb9317d41d, type: 3}
+  attackTriggerCollider: {fileID: 8475917669229452261, guid: 98be2273dca22774fa9b053b0e3b6f42, type: 3}
   attackName: Side Slash
   icon: {fileID: 2800000, guid: 716455f41f856fa4aa69d5d332444551, type: 3}
   speed: 2

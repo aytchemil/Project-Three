@@ -191,6 +191,7 @@ public class CombatUI : MonoBehaviour
     {
         combatUIParent.SetActive(true);
         ChangeAllImageIcons();
+        UpdateAttackIndicatorRotation(new Vector2(0, deadZone + 1));
     }
 
     /// <summary>

@@ -93,7 +93,9 @@ public class PlayerCamera : MonoBehaviour
                 UpdateNewXY();
             }
             else
-                Debug.LogError("Player Camera: In combat with enemy that doesnt exist");
+            {
+                ExitCombat();
+            }
         }
 
         //Updates the final camera position to the one's specified in the update

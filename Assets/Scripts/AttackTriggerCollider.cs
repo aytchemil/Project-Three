@@ -6,6 +6,7 @@ public class AttackTriggerCollider : MonoBehaviour
 {
     [Header("Real-Time Variables")]
     public CombatFunctionality combatFunctionality;
+    public Ability myAbility;
     public LayerMask collideWith;
     public Animator attackTriggerAnimator;
 
@@ -36,6 +37,7 @@ public class AttackTriggerCollider : MonoBehaviour
     {
         if (attacking)
         {
+            other.GetComponent<AttackbleEntity>().Attacked(myAbility);
             Debug.Log("Collider attacking");
         }
     }
@@ -46,9 +48,10 @@ public class AttackTriggerCollider : MonoBehaviour
     }
 
 
-    public void AttackTriggerAttack()
+    public void AttackTriggerAttack(Ability currentAbility)
     {
-        Debug.Log("Attack Trigger attacking!");
+        //Debug.Log("Attack Trigger attacking!");
+        myAbility = currentAbility;
         EnableTrigger();
     }
 

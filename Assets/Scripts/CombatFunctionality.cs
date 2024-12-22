@@ -1,7 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using System.Linq;
-using UnityEditor.ShaderGraph;
+using UnityEngine.UIElements;
 
 
 [RequireComponent(typeof(CombatEntityController))]
@@ -23,7 +23,7 @@ public class CombatFunctionality : MonoBehaviour
 
     bool initializedAttackTriggers;
     bool isLockedOn;
-    public bool inRange;
+    public bool alreadyAttacking;
 
     protected virtual void Awake()
     {
@@ -60,12 +60,11 @@ public class CombatFunctionality : MonoBehaviour
         if (!initializedAttackTriggers)
             InstantiateAttackTriggers(Controls.a_right, Controls.a_left, Controls.a_up, Controls.a_down);
 
-        EnableAttackTriggers();
-
     }
     void ExitCombat()
     {
         isLockedOn = false;
+        alreadyAttacking = false;
         DisableAttackTriggers();
     }
 
@@ -120,6 +119,7 @@ public class CombatFunctionality : MonoBehaviour
         CacheAttackTriggers();
         foreach (GameObject attkTrigger in myAttackTriggers)
             attkTrigger.GetComponent<AttackTriggerCollider>().combatFunctionality = this;
+        DisableAttackTriggers();
     }
 
     #endregion
@@ -150,17 +150,20 @@ public class CombatFunctionality : MonoBehaviour
 
     protected virtual void UseAttackAbility()
     {
-        if (!isLockedOn) return;
+        if (!isLockedOn || alreadyAttacking) return;
 
         if (currentAbility == null)
             Debug.LogError("There is currently no selected ability (a_current) that this combat functionality script can use.");
 
-        print("ATTACK");
+        print("ATTEMPT ATTACK");
 
+        StartAttacking();
         AttackTriggerUse();
 
 
-
+        ///to do: create a way for it to animate,
+        ///create 4 different attack triggers(like box)
+        /// animate all 4, integrate that
 
 
 
@@ -175,7 +178,7 @@ public class CombatFunctionality : MonoBehaviour
 
     void BoxAttack()
     {
-        Debug.Log("Box attack");
+        Debug.Log("Attempting Box attack");
     }
 
 
@@ -184,18 +187,44 @@ public class CombatFunctionality : MonoBehaviour
         switch (direction)
         {
             case "right":
+                attackTrigger_right.gameObject.SetActive(true);
+                attackTrigger_left.gameObject.SetActive(false);
+                attackTrigger_up.gameObject.SetActive(false);
+                attackTrigger_down.gameObject.SetActive(false);
                 attackTrigger_right.AttackTriggerAttack();
                 break;
             case "left":
+                attackTrigger_right.gameObject.SetActive(false);
+                attackTrigger_left.gameObject.SetActive(true);
+                attackTrigger_up.gameObject.SetActive(false);
+                attackTrigger_down.gameObject.SetActive(false);
                 attackTrigger_left.AttackTriggerAttack();
                 break;
             case "up":
+                attackTrigger_right.gameObject.SetActive(false);
+                attackTrigger_left.gameObject.SetActive(false);
+                attackTrigger_up.gameObject.SetActive(true);
+                attackTrigger_down.gameObject.SetActive(false);
                 attackTrigger_up.AttackTriggerAttack();
                 break;
             case "down":
+                attackTrigger_right.gameObject.SetActive(false);
+                attackTrigger_left.gameObject.SetActive(false);
+                attackTrigger_up.gameObject.SetActive(false);
+                attackTrigger_down.gameObject.SetActive(true);
                 attackTrigger_down.AttackTriggerAttack();
                 break;
         }
+    }
+    
+    void StartAttacking()
+    {
+        alreadyAttacking = true;
+    }
+
+    public void FinishAttacking()
+    {
+        alreadyAttacking = false;
     }
 
     #endregion

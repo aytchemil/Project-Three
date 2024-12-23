@@ -24,7 +24,7 @@ public class PlayerCombatLock : CombatLock
     protected override void Start()
     {
         base.Start();
-        Debug.Log("Start : PLayer");
+        //Debug.Log("Start : PLayer");
 
         //Input Action Callback Additions
         playerController.lockOn.performed += ctx => AttemptLock();

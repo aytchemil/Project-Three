@@ -8,6 +8,8 @@ public class CombatLock : MonoBehaviour
     //Component References
     public CombatEntityController lockedTarget;
     public bool combatEntityInLockedZone;
+    public bool lockUnlockDelayInEffect = false;
+    public float lockUnlockDelay = 0.5f;
 
     //Cache
     ColliderDetector myColliderDetector;
@@ -116,6 +118,10 @@ public class CombatLock : MonoBehaviour
     /// </summary>
     protected virtual void AttemptLock()
     {
+        if (lockUnlockDelayInEffect) return;
+
+        UnlockDelockDelay();
+
         //Debug.Log("Attempting a lock");
         if (!isLockedOnto)
         {
@@ -132,7 +138,7 @@ public class CombatLock : MonoBehaviour
         else
         {
             //Debug.Log("Is already locked onto, will delock");
-            DeLockCaller();
+            CantUnlockWhileAttackingOtherwiseUnlock();
         }
     }
 
@@ -162,5 +168,30 @@ public class CombatLock : MonoBehaviour
 
     #endregion
 
+    /// <summary>
+    /// If the player is already attacking, you cant unlock
+    ///- Integration with CombatFunctionality to check if the player is attacking
+    /// </summary>
+    void CantUnlockWhileAttackingOtherwiseUnlock()
+    {
+        if (GetComponent<CombatFunctionality>() != null)
+            if (!GetComponent<CombatFunctionality>().alreadyAttacking)
+                DeLockCaller();
+    }
+
+    #region LockUnlockDelay
+    void UnlockDelockDelay()
+    {
+        lockUnlockDelayInEffect = true;
+        Invoke("DisableUnlockDelockDelay", lockUnlockDelay);
+        
+    }
+
+    void DisableUnlockDelockDelay()
+    {
+        lockUnlockDelayInEffect = false;
+    }
+
+    #endregion
 
 }

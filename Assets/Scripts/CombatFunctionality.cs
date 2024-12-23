@@ -30,20 +30,27 @@ public class CombatFunctionality : MonoBehaviour
         Controls = GetComponent<CombatEntityController>();     
     }
 
+    #region Enable/Disable
+
     protected virtual void OnEnable()
     {
+        //If the attack trigger parent DNE, then create it
         if (attackTriggerParent == null)
         {
             attackTriggerParent = Instantiate(new GameObject(), transform, false).transform;
             attackTriggerParent.name = "Attack Triggers Parent";
         }
 
+        //Adding methods to Action Delegates
         //Debug.Log("Combat functionaly enable");
         Controls.SelectCertainAbility += EnableAbility;
         Controls.EnterCombat += InCombat;
         Controls.ExitCombat += ExitCombat;
     }
 
+    /// <summary>
+    /// Remove the Action Delegates on Disable
+    /// </summary>
     protected virtual void OnDisable()
     {
         Controls.SelectCertainAbility -= EnableAbility;
@@ -51,6 +58,14 @@ public class CombatFunctionality : MonoBehaviour
         Controls.ExitCombat -= ExitCombat;
     }
 
+    #endregion
+
+    /// <summary>
+    /// Action Delegate Method for Being "In Combat" 
+    /// - Sets Locked on flag
+    /// - Sets the current Ability to default (up)
+    /// - Initialize the Attack triggers on the parent with the player's inputted abilities
+    /// </summary>
     void InCombat()
     {
         isLockedOn = true;
@@ -61,6 +76,13 @@ public class CombatFunctionality : MonoBehaviour
             InstantiateAttackTriggers(Controls.a_right, Controls.a_left, Controls.a_up, Controls.a_down);
 
     }
+
+    /// <summary>
+    /// Action Delegate Method for exiting combat
+    /// - Sets the locked flag to false
+    /// - Sets the attacking flag to false for ensuring player isnt attacking
+    /// - disables the attack triggers (performance)
+    /// </summary>
     void ExitCombat()
     {
         isLockedOn = false;
@@ -70,6 +92,9 @@ public class CombatFunctionality : MonoBehaviour
 
     #region Trigger Generation
 
+    /// <summary>
+    /// Cache the attack triggers to a List for easy referenceing
+    /// </summary>
     void CacheAttackTriggers()
     {
         //Debug.Log("Caching attack triggers of childcount: " + attackTriggerParent.childCount);
@@ -82,6 +107,9 @@ public class CombatFunctionality : MonoBehaviour
             Debug.LogError("Items in attack trigger not properly cached, please look");
     }
 
+    /// <summary>
+    /// Enables all the attack triggers
+    /// </summary>
     public void EnableAttackTriggers()
     {
         if (myAttackTriggers.Any(item => item == null))
@@ -92,6 +120,9 @@ public class CombatFunctionality : MonoBehaviour
             attkTrigger.SetActive(true);
     }
 
+    /// <summary>
+    /// Disables all the attack triggers
+    /// </summary>
     public void DisableAttackTriggers()
     {
         //Debug.Log("Disabling Attack Triggers");
@@ -99,6 +130,19 @@ public class CombatFunctionality : MonoBehaviour
             attkTrigger.SetActive(false);
     }
 
+    /// <summary>
+    /// Instantiates all the attack triggers on the attack trigger parent
+    /// - Checks if the abilities inputted to the parameter list are null
+    /// - Sets the initialized attack triggers flag to true
+    /// - Initializes all the attack triggers on the parent, and caches them to this script
+    /// - Cache them to the list
+    /// - Set's their combat functionality reference to this script
+    /// - Disables the attack triggers
+    /// </summary>
+    /// <param name="right"></param>
+    /// <param name="left"></param>
+    /// <param name="up"></param>
+    /// <param name="down"></param>
     public void InstantiateAttackTriggers(Ability right, Ability left, Ability up, Ability down)
     {
         if(right == null ||  left == null || up == null || down == null)
@@ -126,6 +170,10 @@ public class CombatFunctionality : MonoBehaviour
 
     #region Combat Functionality
 
+    /// <summary>
+    /// Enables the currently selected ability
+    /// </summary>
+    /// <param name="dir"></param>
     void EnableAbility(string dir)
     {
         direction = dir;
@@ -147,7 +195,9 @@ public class CombatFunctionality : MonoBehaviour
 
     }
 
-
+    /// <summary>
+    /// Uses the currently selected ability
+    /// </summary>
     protected virtual void UseAttackAbility()
     {
         if (!isLockedOn || alreadyAttacking) return;
@@ -166,22 +216,59 @@ public class CombatFunctionality : MonoBehaviour
         /// animate all 4, integrate that
 
 
-
-        if (currentAbility.collisionType == Ability.CollisionType.Box)
+        switch(currentAbility.collisionType)
         {
-            BoxAttack();
+            case Ability.CollisionType.Box:
+
+                BoxAttack();
+
+                break;
+            case Ability.CollisionType.Overhead:
+
+                OverheadAttack();
+
+                break;
+            case Ability.CollisionType.Pierce:
+
+                PierceAttack();
+
+                break;
+            case Ability.CollisionType.SideSlash:
+
+                SideSlashAttack();
+
+                break;
+
+
         }
 
     }
 
     
-
+    /// <summary>
+    /// Attack with the box attack
+    /// </summary>
     void BoxAttack()
     {
         Debug.Log("Attempting Box attack");
     }
+    void OverheadAttack()
+    {
+        Debug.Log("Attempting Overhead attack");
+    }
+    void PierceAttack()
+    {
+        Debug.Log("Attempting Pierce attack");
+    }
 
+    void SideSlashAttack()
+    {
+        Debug.Log("Attempting Side Slash attack");
+    }
 
+    /// <summary>
+    /// Enables the selected direction's attack trigger and uses that attack trigger's attacktriggerattack method call with the current ability
+    /// </summary>
     void AttackTriggerUse()
     {
         switch (direction)
@@ -217,20 +304,35 @@ public class CombatFunctionality : MonoBehaviour
         }
     }
     
+    /// <summary>
+    /// Sets the attacking flag
+    /// </summary>
     void StartAttacking()
     {
         alreadyAttacking = true;
     }
 
+    /// <summary>
+    /// sets the attacking flag
+    /// </summary>
     public void FinishAttacking()
     {
         alreadyAttacking = false;
     }
 
+    #endregion
+
+    #region Target Death
+
+    /// <summary>
+    /// Caller for the Target's death Action Delegate on the controls
+    /// </summary>
+    /// <param name="target"></param>
     public void TargetDeathCaller(CombatEntityController target)
     {
         Controls.TargetDeath(target);
     }
+
 
     #endregion
 

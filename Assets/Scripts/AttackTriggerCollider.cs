@@ -14,11 +14,15 @@ public class AttackTriggerCollider : MonoBehaviour
 
     private void Awake()
     {
+        //Cache
         Collider col = GetComponent<Collider>();
+        if (attackTriggerAnimator == null)
+            attackTriggerAnimator = GetComponent<Animator>();
+
+        //Sets the collision's layers
         col.includeLayers = collideWith;
         col.excludeLayers = ~collideWith;
-        if(attackTriggerAnimator == null)
-            attackTriggerAnimator = GetComponent<Animator>();
+        
     }
 
     private void OnDisable()
@@ -26,21 +30,35 @@ public class AttackTriggerCollider : MonoBehaviour
         DisableTrigger();
     }
 
+    /// <summary>
+    /// Where the actual attack takes place
+    /// </summary>
+    /// <param name="other"></param>
     private void OnTriggerStay(Collider other)
     {
         float newEnemyHealth;
         if (attacking)
         {
+
+            #region Death
+            ///If the Entity being attacked's health reaches less than 0, tell OUR Controller to call the target death delegate action
             newEnemyHealth = other.GetComponent<AttackbleEntity>().Attacked(myAbility);
             if (newEnemyHealth < 0)
             {
                 combatFunctionality.TargetDeathCaller(other.GetComponent<CombatEntityController>());
             }
-            Debug.Log("Collider attacking");
+
+            #endregion
+
+
+            //Debug.Log("Collider attacking");
         }
     }
 
-
+    /// <summary>
+    /// Tells this script what its attack parameters are
+    /// </summary>
+    /// <param name="currentAbility"></param>
     public void AttackTriggerAttack(Ability currentAbility)
     {
         //Debug.Log("Attack Trigger attacking!");
@@ -49,12 +67,21 @@ public class AttackTriggerCollider : MonoBehaviour
     }
 
 
-
+    /// <summary>
+    /// Sets the attacking flag
+    /// </summary>
     void EnableTrigger()
     {
         attacking = true;
     }
 
+
+    /// <summary>
+    /// Disables this trigger's functionality
+    /// - sets the attacking flag to false
+    /// - Tell's the CombatFunctionality to finish attacking
+    /// - Disables this GameObject
+    /// </summary>
     void DisableTrigger()
     {
         attacking = false;

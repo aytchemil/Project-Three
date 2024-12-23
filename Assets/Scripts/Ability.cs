@@ -13,6 +13,9 @@ public class Ability : ScriptableObject
     public enum CollisionType
     {
         Box = 0,
+        Overhead = 1,
+        Pierce = 2,
+        SideSlash = 3,
     }
     public CollisionType collisionType;
     public GameObject attackTriggerCollider;

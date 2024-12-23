@@ -28,11 +28,13 @@ public class CombatLock : MonoBehaviour
     private void OnEnable()
     {
         Controls.ExitCombat += ExitCombat;
+        Controls.TargetDeath += TargetDeath;
     }
 
     private void OnDisable()
     {
         Controls.ExitCombat -= ExitCombat;
+        Controls.TargetDeath -= TargetDeath;
     }
 
     protected virtual void Start()
@@ -104,6 +106,12 @@ public class CombatLock : MonoBehaviour
         Transform transform = myColliderDetector.gameObject.transform;
         transform.LookAt(lockedTarget.transform.position);
         transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, transform.localEulerAngles.z);
+    }
+
+    void TargetDeath(CombatEntityController target)
+    {
+        print("Combat lock: target death: " + target.name);
+        myColliderDetector.OnTriggerExit(target.gameObject.GetComponent<Collider>());
     }
 
 

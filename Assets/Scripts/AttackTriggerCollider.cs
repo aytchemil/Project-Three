@@ -21,13 +21,6 @@ public class AttackTriggerCollider : MonoBehaviour
             attackTriggerAnimator = GetComponent<Animator>();
     }
 
-
-    //Scritpable Object Current Attk
-    private void OnTriggerEnter(Collider other)
-    {
-        // Debug.Log("In Range");
-    }
-
     private void OnDisable()
     {
         DisableTrigger();
@@ -35,16 +28,16 @@ public class AttackTriggerCollider : MonoBehaviour
 
     private void OnTriggerStay(Collider other)
     {
+        float newEnemyHealth;
         if (attacking)
         {
-            other.GetComponent<AttackbleEntity>().Attacked(myAbility);
+            newEnemyHealth = other.GetComponent<AttackbleEntity>().Attacked(myAbility);
+            if (newEnemyHealth < 0)
+            {
+                combatFunctionality.TargetDeathCaller(other.GetComponent<CombatEntityController>());
+            }
             Debug.Log("Collider attacking");
         }
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        // Debug.Log("OutOfRange Range");
     }
 
 

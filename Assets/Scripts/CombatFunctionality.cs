@@ -227,6 +227,11 @@ public class CombatFunctionality : MonoBehaviour
         alreadyAttacking = false;
     }
 
+    public void TargetDeathCaller(CombatEntityController target)
+    {
+        Controls.TargetDeath(target);
+    }
+
     #endregion
 
 

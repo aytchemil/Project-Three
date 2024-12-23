@@ -12,6 +12,7 @@ public class CombatEntityController : MonoBehaviour
     public Action ExitCombat;
     public Action<CombatEntityController> CombatFollowTarget;
     public Action<string> SelectCertainAbility;
+    public Action<CombatEntityController> TargetDeath;
     [Space]
     public Ability a_right;
     public Ability a_left;

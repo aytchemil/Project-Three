@@ -1,14 +1,15 @@
 using NUnit.Framework;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
 public class ColliderDetector : MonoBehaviour
 {
-/// <summary>
-/// Colliider detector class controls : Itself, Attack collide triggers
-/// Turns on and off the attack triggers
-/// </summary>
+    /// <summary>
+    /// Colliider detector class controls : Itself, Attack collide triggers
+    /// Turns on and off the attack triggers
+    /// </summary>
     public CombatLock combatLock;
     public LayerMask collideWith;
 
@@ -16,7 +17,7 @@ public class ColliderDetector : MonoBehaviour
     public GameObject previousClosestCombatEntity;
     public List<GameObject> collidedWithCombatEntities;
     public bool targetDescisionMade = false;
-        
+
     private void Awake()
     {
         Collider col = GetComponent<Collider>();
@@ -26,9 +27,12 @@ public class ColliderDetector : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        collidedWithCombatEntities.Add(other.gameObject); //must Be first
+        if (other.GetComponent<AttackbleEntity>().isAlive)
+        {
+            collidedWithCombatEntities.Add(other.gameObject); //must Be first
 
-        CollideWithNewCombatEntity(other);
+            CollideWithNewCombatEntity(other);
+        }
     }
 
     private void OnTriggerStay(Collider other)
@@ -37,27 +41,30 @@ public class ColliderDetector : MonoBehaviour
         combatLock.combatEntityInLockedZone = true;
 
 
-        if (combatLock.isLockedOnto && !targetDescisionMade)
+        if (combatLock.isLockedOnto && !targetDescisionMade && other.GetComponent<AttackbleEntity>().isAlive)
         {
             Debug.Log("Stay");
             combatLock.ColliderLockOntoTarget();
 
             previousClosestCombatEntity = closestCombatEntity;
 
-            if(collidedWithCombatEntities.Count > 1)
+            if (collidedWithCombatEntities.Count > 1)
                 DetermineIfWantToSwitchToOtherTargetAvaliable();
             targetDescisionMade = true;
         }
     }
 
 
-    private void OnTriggerExit(Collider other)
+    public void OnTriggerExit(Collider other)
     {
+        GuerenteeRemovalOfDeadEnemy();
         collidedWithCombatEntities.Remove(other.gameObject);
 
-        if(collidedWithCombatEntities.Count == 1)
+        //Checks if the removed one is the same as the one still in, if it isnt (which it is sometimes) set the new locked target to the one thats still in the collider
+        if (collidedWithCombatEntities.Count == 1)
             if (collidedWithCombatEntities[0] != combatLock.lockedTarget.gameObject)
                 combatLock.lockedTarget = collidedWithCombatEntities[0].GetComponent<CombatEntityController>();
+
 
         bool switchingOffWhileTargetting = false;
         if (other.gameObject != previousClosestCombatEntity && other.gameObject != closestCombatEntity)
@@ -77,21 +84,7 @@ public class ColliderDetector : MonoBehaviour
 
 
             transform.localEulerAngles = Vector3.zero;
-
-
         }
-
-        //bool lockOnNewBecauseOfClosestGoingOutOfRange = false;
-
-        //if (other.gameObject == closestCombatEntity)
-        //    if (collidedWithCombatEntities.Count-1 > 0)
-        //        lockOnNewBecauseOfClosestGoingOutOfRange = true;
-
-
-
-        //if (lockOnNewBecauseOfClosestGoingOutOfRange)
-        //    OnTriggerStay(collidedWithCombatEntities[0].GetComponent<Collider>());
-
     }
 
     void Delock()
@@ -128,7 +121,7 @@ public class ColliderDetector : MonoBehaviour
 
     GameObject DetermineWhichCombatEntityIsClosest()
     {
-        if(collidedWithCombatEntities.Count == 1)
+        if (collidedWithCombatEntities.Count == 1)
             return collidedWithCombatEntities[0];
 
         GameObject closest = null;
@@ -136,13 +129,13 @@ public class ColliderDetector : MonoBehaviour
         Vector3 playerPos = transform.position;
 
 
-        foreach(GameObject target in collidedWithCombatEntities)
+        foreach (GameObject target in collidedWithCombatEntities)
         {
             //Debug.Log(target);
             Vector3 targetPos = target.transform.position;
 
             float dist = Vector3.Distance(playerPos, targetPos);
-            if(dist < closestDistance)
+            if (dist < closestDistance)
             {
                 closestDistance = dist;
                 closest = target;
@@ -181,6 +174,20 @@ public class ColliderDetector : MonoBehaviour
     public void UnLockFromCombatLock()
     {
         targetDescisionMade = false;
+    }
+
+    public void GuerenteeRemovalOfDeadEnemy()
+    {
+        Debug.Log(collidedWithCombatEntities.Count);
+        if (collidedWithCombatEntities.Capacity > 0)
+        {
+            for (int i = 0; i < collidedWithCombatEntities.Count - 1; i++)
+            {
+                Debug.Log(collidedWithCombatEntities[0]);
+                if (collidedWithCombatEntities[i] == null)
+                    collidedWithCombatEntities.RemoveAt(i);
+            }
+        }
     }
 
 }

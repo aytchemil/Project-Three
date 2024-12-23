@@ -5888,6 +5888,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _health: 5
+  isAlive: 1
   attackedEffect: {fileID: 0}
   animator: {fileID: 0}
   invincibility: 0
@@ -5959,6 +5960,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   lockedTarget: {fileID: 0}
   combatEntityInLockedZone: 0
+  lockUnlockDelayInEffect: 0
+  lockUnlockDelay: 0.1
   colliderDetecterAsset: {fileID: 3243137597141389865, guid: 11e14ea0d576d4e40950e72b2e820ced, type: 3}
   isLockedBy: 0
   isLockedOnto: 0

@@ -50,7 +50,8 @@ public class AttackTriggerCollider : MonoBehaviour
                 combatFunctionality.TargetDeathCaller(other.GetComponent<CombatEntityController>());
 
                 //Enemy exits combat when dieing
-                other.gameObject.GetComponent<CombatLock>().ExitCombatCaller();
+                if(other.gameObject.GetComponent<CombatLock>() != null)
+                    other.gameObject.GetComponent<CombatLock>().ExitCombatCaller();
             }
 
             #endregion

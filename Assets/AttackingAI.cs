@@ -49,7 +49,7 @@ public class AttackingAI : MonoBehaviour
     {
         if (!controls.isAlive)
         {
-            print(gameObject.name + " is no longer alive");
+            //print("This Entity: " + gameObject.name + " is no longer alive");
 
             return;
         }

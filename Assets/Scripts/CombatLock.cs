@@ -75,7 +75,7 @@ public class CombatLock : MonoBehaviour
     public virtual void ExitCombatCaller()
     {
         //EXIT COMBAT:
-        Debug.Log(gameObject.name + " | Combat lock : ExitCombatCaller Caller Executed");
+        //Debug.Log(gameObject.name + " | Combat lock : ExitCombatCaller Caller Executed");
 
 
         //if (Controls.ExitCombat != null)
@@ -130,28 +130,28 @@ public class CombatLock : MonoBehaviour
     /// </summary>
     public virtual void AttemptLock()
     {
-        //Debug.Log("attemping lock");
+        //Debug.Log(gameObject.name + " | attemping lock");
 
         if (lockUnlockDelayInEffect && Controls.isAlive) return;
 
         UnlockDelockDelay();
 
-       // Debug.Log("Attempting a lock");
+        // Debug.Log(gameObject.name + " | Attempting a lock");
         if (!Controls.isLockedOn)
         {
-         //  Debug.Log("Is not locked onto something already");
+            //  Debug.Log(gameObject.name + " | Is not locked onto something already");
 
             if (combatEntityInLockedZone)
             {
-           //     Debug.Log("Found something to lock onto");
-                //Debug.Log("Locking On");
+                //Debug.Log(gameObject.name + " | Found something to lock onto");
+                //Debug.Log(gameObject.name + " | Locking On");
 
                 EnterCombatCaller();
             }
         }
         else
         {
-            //Debug.Log("Is already locked onto, will delock");
+            //Debug.Log(gameObject.name + " | Is already locked onto, will delock");
             UnlockWhileNotAttacking();
         }
     }

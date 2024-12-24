@@ -34,11 +34,15 @@ public class ColliderDetector : MonoBehaviour
     {
         if (other.GetComponent<AttackbleEntity>().isAlive)
         {
-            collidedWithCombatEntities.Add(other.gameObject); //must Be first
-
             if (collidedWithCombatEntities.Count <= 0)
             {
+                //print("Enter");
+                collidedWithCombatEntities.Add(other.gameObject); //must Be first
                 CollideWithNewCombatEntity(other);
+            }
+            else
+            {
+                collidedWithCombatEntities.Add(other.gameObject); //must Be first
             }
         }
     }
@@ -102,17 +106,6 @@ public class ColliderDetector : MonoBehaviour
         //Remove the target thats exiting the bounds
         collidedWithCombatEntities.Remove(other.gameObject);
 
-        //Checks if the removed one is the same as the one still in, if it isnt (which it is sometimes) set the new locked target to the one thats still in the collider
-        if (collidedWithCombatEntities.Count >= 1)
-        {
-            print("s");
-            if (collidedWithCombatEntities[0] != combatLock.lockedTarget.gameObject)
-            {
-                print("Setting locked targ as the closest on list");
-                combatLock.lockedTarget = collidedWithCombatEntities[0].GetComponent<CombatEntityController>();
-            }
-        }
-
 
         //Retargetting 
         bool switchingOffWhileTargetting = false;
@@ -132,7 +125,6 @@ public class ColliderDetector : MonoBehaviour
         if(collidedWithCombatEntities.Count <= 0)
         {
             combatLock.combatEntityInLockedZone = false;
-            combatLock.lockedTarget = null;
         }
 
         //Checks if this is the last enemy that has left the zone, and we are not switching off while targetting
@@ -164,13 +156,9 @@ public class ColliderDetector : MonoBehaviour
     void CollideWithNewCombatEntity(Collider other)
     {
         print("Collided with new combat entity");
-        
+    
         closestCombatEntity = DetermineWhichCombatEntityIsClosest();
         Debug.Log("Making the closest combat entity: " + closestCombatEntity.gameObject.name);
-
-        closestCombatEntity = DetermineWhichCombatEntityIsClosest();
-        Debug.Log("Making the closest combat entity: " + closestCombatEntity.gameObject.name);
-        combatLock.lockedTarget = closestCombatEntity.GetComponent<CombatEntityController>();
 
         if (closestCombatEntity.GetComponent<CombatEntityController>() == null)
             Debug.LogError("Error: Combat entity controller script not given to a combat entity : " + other.name);
@@ -230,7 +218,6 @@ public class ColliderDetector : MonoBehaviour
         closestCombatEntity = newTarget;
         previousClosestCombatEntity = newTarget;
 
-        combatLock.lockedTarget = newTarget.GetComponent<CombatEntityController>();
         //combatLock.Controls.CombatFollowTarget?.Invoke(newTarget.GetComponent<CombatEntityController>());
 
         targetDescisionMade = true;

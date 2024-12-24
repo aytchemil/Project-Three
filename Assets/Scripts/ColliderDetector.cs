@@ -103,7 +103,7 @@ public class ColliderDetector : MonoBehaviour
         collidedWithCombatEntities.Remove(other.gameObject);
 
         //Checks if the removed one is the same as the one still in, if it isnt (which it is sometimes) set the new locked target to the one thats still in the collider
-        if (collidedWithCombatEntities.Count == 1)
+        if (collidedWithCombatEntities.Count >= 1)
         {
             print("s");
             if (collidedWithCombatEntities[0] != combatLock.lockedTarget.gameObject)
@@ -129,6 +129,12 @@ public class ColliderDetector : MonoBehaviour
         if (other.gameObject == closestCombatEntity)
             closestCombatEntity = null;
 
+        if(collidedWithCombatEntities.Count <= 0)
+        {
+            combatLock.combatEntityInLockedZone = false;
+            combatLock.lockedTarget = null;
+        }
+
         //Checks if this is the last enemy that has left the zone, and we are not switching off while targetting
         if (collidedWithCombatEntities.Count == 0 && !switchingOffWhileTargetting)
         {
@@ -144,8 +150,6 @@ public class ColliderDetector : MonoBehaviour
     /// </summary>
     void Delock()
     {
-        combatLock.combatEntityInLockedZone = false;
-        combatLock.lockedTarget = null;
         if (combatLock.isLockedOnto)
         {
             Debug.Log("Delock from Collider Detector");

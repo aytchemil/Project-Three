@@ -6,7 +6,6 @@ public class CombatLock : MonoBehaviour
     public virtual CombatEntityController Controls { get; set; }
 
     //Component References
-    public CombatEntityController lockedTarget;
     public bool combatEntityInLockedZone;
     public bool lockUnlockDelayInEffect = false;
     public float lockUnlockDelay = 0.5f;
@@ -148,7 +147,7 @@ public class CombatLock : MonoBehaviour
     public virtual void ColliderLockOntoTarget(CombatEntityController target)
     {
         Transform transform = myColliderDetector.gameObject.transform;
-        transform.LookAt(lockedTarget.transform.position);
+        transform.LookAt(target.transform.position);
         transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, transform.localEulerAngles.z);
     }
 

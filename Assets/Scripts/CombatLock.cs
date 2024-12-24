@@ -75,7 +75,7 @@ public class CombatLock : MonoBehaviour
     public virtual void ExitCombatCaller()
     {
         //EXIT COMBAT:
-        //Debug.Log("Combat lock : ExitCombatCaller Caller Executed");
+        Debug.Log(gameObject.name + " | Combat lock : ExitCombatCaller Caller Executed");
 
 
         //if (Controls.ExitCombat != null)
@@ -132,7 +132,7 @@ public class CombatLock : MonoBehaviour
     {
         //Debug.Log("attemping lock");
 
-        if (lockUnlockDelayInEffect) return;
+        if (lockUnlockDelayInEffect && Controls.isAlive) return;
 
         UnlockDelockDelay();
 

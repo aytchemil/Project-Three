@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Animator))]
 public class AttackbleEntity : MonoBehaviour
 {
-    CombatEntityController controls;
+    public CombatEntityController controls;
 
     [SerializeField] private float _health;
     public float health
@@ -23,7 +23,6 @@ public class AttackbleEntity : MonoBehaviour
             animator = GetComponent<Animator>();
     }
 
-    public bool isAlive = true;
     public GameObject attackedEffect;
     public Animator animator;
     public bool invincibility;
@@ -51,7 +50,7 @@ public class AttackbleEntity : MonoBehaviour
         if (health < 0)
         {
             animator.SetBool("Die", true);
-            isAlive = false;
+            controls.isAlive = false;
             Invoke("Die", deathTime);
             //For right now invoke death at a delay, later do a death animation, and have the animation event on finish call death
         }

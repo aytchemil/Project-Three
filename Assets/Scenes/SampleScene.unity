@@ -409,7 +409,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 1015
+    m_Bits: 4294967295
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 3246a582e4fd90c46be516a541f02633, type: 2}
   m_TargetDisplay: 2
@@ -7296,6 +7296,7 @@ MonoBehaviour:
   alreadyAttacking: 0
   isBlocking: 0
   currentlyRetargetting: 0
+  isAlive: 1
   look:
     m_Name: Look
     m_Type: 0
@@ -7394,8 +7395,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b5324de348bf3045ba50a1fe1418c48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  controls: {fileID: 0}
   _health: 5
-  isAlive: 1
   attackedEffect: {fileID: 2037828794}
   animator: {fileID: 1368657305}
   invincibility: 0
@@ -13709,8 +13710,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b5324de348bf3045ba50a1fe1418c48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  controls: {fileID: 0}
   _health: 5
-  isAlive: 1
   attackedEffect: {fileID: 2383292521024057675}
   animator: {fileID: 234864354855674010}
   invincibility: 0
@@ -18612,6 +18613,7 @@ MonoBehaviour:
   alreadyAttacking: 0
   isBlocking: 0
   currentlyRetargetting: 0
+  isAlive: 1
 --- !u!1 &2610608316262535823
 GameObject:
   m_ObjectHideFlags: 0

@@ -27,8 +27,6 @@ public class AttackingAI : MonoBehaviour
 
     protected void OnEnable()
     {
-        controls.CombatFollowTarget += CombatFollowTarget;
-
         attack += combatFunctionality.UseAttackAbility;
         lockOn += combatLock.AttemptLock;
 
@@ -40,8 +38,6 @@ public class AttackingAI : MonoBehaviour
 
     protected void OnDisable()
     {
-        controls.CombatFollowTarget -= CombatFollowTarget;
-
         attack -= combatFunctionality.UseAttackAbility;
         lockOn -= combatLock.AttemptLock;
 
@@ -51,6 +47,13 @@ public class AttackingAI : MonoBehaviour
 
     private void FixedUpdate()
     {
+        if (!controls.isAlive)
+        {
+            print(gameObject.name + " is no longer alive");
+
+            return;
+        }
+
         if (!controls.isLockedOn)
         {
             //print("f");
@@ -70,12 +73,6 @@ public class AttackingAI : MonoBehaviour
         lockOn?.Invoke();
     }
 
-
-    void CombatFollowTarget(CombatEntityController target)
-    {
-        entityLook.CameraLookAtLockTarget(target.transform.position);
-        entityLook.TransformLookAtTarget(target.transform.position);
-    }
 
 
     void BlockCaller()

@@ -123,14 +123,14 @@ public class CombatLock : MonoBehaviour
 
         UnlockDelockDelay();
 
-        Debug.Log("Attempting a lock");
+       // Debug.Log("Attempting a lock");
         if (!isLockedOnto)
         {
-           Debug.Log("Is not locked onto something already");
+         //  Debug.Log("Is not locked onto something already");
 
             if (combatEntityInLockedZone)
             {
-                Debug.Log("Found something to lock onto");
+           //     Debug.Log("Found something to lock onto");
                 Debug.Log("Locking On");
 
                 LockOnCaller();
@@ -138,7 +138,7 @@ public class CombatLock : MonoBehaviour
         }
         else
         {
-            Debug.Log("Is already locked onto, will delock");
+       //     Debug.Log("Is already locked onto, will delock");
             CantUnlockWhileAttackingOtherwiseUnlock();
         }
     }

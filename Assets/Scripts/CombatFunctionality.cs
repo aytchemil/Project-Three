@@ -244,7 +244,7 @@ public class CombatFunctionality : MonoBehaviour
     /// <param name="target"></param>
     public virtual void CombatFunctionalityElementsLockOntoTarget(CombatEntityController target)
     {
-        Debug.Log("locking onto target");
+       // Debug.Log("locking onto target");
         CombatFunctionalityElementLockOntoTarget(target, attackTriggerParent);
         CombatFunctionalityElementLockOntoTarget(target, blockingTriggerParent);
     }

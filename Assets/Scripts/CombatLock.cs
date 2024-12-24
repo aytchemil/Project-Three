@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 
@@ -34,6 +35,7 @@ public class CombatLock : MonoBehaviour
     #region EnableDisable
     private void OnEnable()
     {
+        Controls.EnterCombat += EnterCombat;
         Controls.ExitCombat += ExitCombat;
         Controls.TargetDeath += TargetDeath;
         Controls.CombatFollowTarget += ColliderLockOntoTarget;
@@ -41,6 +43,7 @@ public class CombatLock : MonoBehaviour
 
     private void OnDisable()
     {
+        Controls.EnterCombat -= EnterCombat;
         Controls.ExitCombat -= ExitCombat;
         Controls.TargetDeath -= TargetDeath;
         Controls.CombatFollowTarget -= ColliderLockOntoTarget;
@@ -68,15 +71,25 @@ public class CombatLock : MonoBehaviour
         return myColliderDetector;
     }
 
+    void EnterCombat()
+    {
+
+    }
+
+
     /// <summary>
     /// Method given to the ExitCombat action delegate 
     /// - Sets the flag for locked onto something to false
     /// </summary>
     void ExitCombat()
     {
+        print("Combatlock exiting combat");
         //combatEntityInLockedZone = false;
         isLockedOnto = false;
+        StartCoroutine(myColliderDetector.ReturnToPreLockedUnlockedState());
+        //myColliderDetector.ReturnToPreLockedUnlockedState();
     }
+
 
     #region Combat Lock
 
@@ -117,6 +130,8 @@ public class CombatLock : MonoBehaviour
     /// </summary>
     protected virtual void AttemptLock()
     {
+        Debug.Log("attemping lock");
+
         if (lockUnlockDelayInEffect) return;
 
         UnlockDelockDelay();

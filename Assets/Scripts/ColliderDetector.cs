@@ -1,4 +1,6 @@
+using System.Collections;
 using System.Collections.Generic;
+using Unity.PlasticSCM.Editor.WebApi;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
@@ -15,6 +17,8 @@ public class ColliderDetector : MonoBehaviour
     public GameObject previousClosestCombatEntity;
     public List<GameObject> collidedWithCombatEntities;
     public bool targetDescisionMade = false;
+    public float retargetTime = 1f;
+
 
     private void Awake()
     {
@@ -25,6 +29,7 @@ public class ColliderDetector : MonoBehaviour
         col.includeLayers = collideWith;
         col.excludeLayers = ~collideWith;
     }
+
 
     /// <summary>
     /// If we collide with a new combat entity and its alive, then add it to the collidedWithCombatEntities list
@@ -58,24 +63,33 @@ public class ColliderDetector : MonoBehaviour
         if(other.GetComponent<AttackbleEntity>().isAlive)
             combatLock.combatEntityInLockedZone = true;
 
+        if(!combatLock.isLockedOnto && other.GetComponent<AttackbleEntity>().isAlive && !combatLock.Controls.currentlyRetargetting)
+        {
+            closestCombatEntity = DetermineWhichCombatEntityIsClosest();
+            //previousClosestCombatEntity = null;
+        }
+
         //If the CombatLock says we need to lock onto something, and we havn't already locked onto anything (targetDesisiconMade) and the target we are checking for (other) is alive
         // - Then lock onto it
         if (combatLock.isLockedOnto && other.GetComponent<AttackbleEntity>().isAlive)
         {
-            //Debug.Log("Stay");
+            Debug.Log("Stay");
             //Tells combatLock that the collisonDectector (this script) is to lock onto it
             //If its the current locked on dude
 
             if (!targetDescisionMade)
             {
+                CancelInvoke("StopRetargetting");
                 Debug.Log("OnStay wants to lock onto: " + other.gameObject.name);
+                ///RETARGET
+                //If we have more than 1 potentiatl target we are colliding with, determine if we want to retarget
+                if (previousClosestCombatEntity == closestCombatEntity)
+                    DetermineIfWantToSwitchToOtherTargetAvaliable();
+
+
                 //Saves this new target as the previous Closest Target
                 previousClosestCombatEntity = closestCombatEntity;
 
-                ///RETARGET
-                //If we have more than 1 potentiatl target we are colliding with, determine if we want to retarget
-                if (collidedWithCombatEntities.Count > 1)
-                    DetermineIfWantToSwitchToOtherTargetAvaliable();
 
                 //Sets the flag that we have concluded targgeting
                 targetDescisionMade = true;
@@ -88,7 +102,11 @@ public class ColliderDetector : MonoBehaviour
                 combatLock.Controls.CombatFollowTarget?.Invoke(other.gameObject.GetComponent<CombatEntityController>());
                 print("Following locked target caller called : " + other.gameObject.name);
             }
-
+        }
+        if (combatLock.isLockedOnto && closestCombatEntity == null )
+        {
+            Debug.Log("Out of bounds");
+            Delock();
         }
 
     }
@@ -142,6 +160,7 @@ public class ColliderDetector : MonoBehaviour
     /// </summary>
     void Delock()
     {
+       // print("Delocking");
         if (combatLock.isLockedOnto)
         {
             Debug.Log("Delock from Collider Detector");
@@ -155,7 +174,7 @@ public class ColliderDetector : MonoBehaviour
     /// <param name="other"></param>
     void CollideWithNewCombatEntity(Collider other)
     {
-        print("Collided with new combat entity");
+        //print("Collided with new combat entity");
     
         closestCombatEntity = DetermineWhichCombatEntityIsClosest();
         Debug.Log("Making the closest combat entity: " + closestCombatEntity.gameObject.name);
@@ -213,6 +232,11 @@ public class ColliderDetector : MonoBehaviour
     void RetargetTo(GameObject newTarget)
     {
         print("retargeting to new target: " + newTarget.name);
+        CancelInvoke("StopRetargetting");
+
+        combatLock.Controls.currentlyRetargetting = true;
+        Invoke("StopRetargetting", retargetTime);
+        
         combatLock.combatEntityInLockedZone = true;
 
         closestCombatEntity = newTarget;
@@ -266,8 +290,9 @@ public class ColliderDetector : MonoBehaviour
     /// </summary>
     public void UnLockFromCombatLock()
     {
-       // print("collider detector: unlocking from combat");
+        //print("collider detector: unlocking from combat");
         targetDescisionMade = false;
+        //previousClosestCombatEntity = null;
     }
 
     /// <summary>
@@ -289,4 +314,22 @@ public class ColliderDetector : MonoBehaviour
         }
     }
 
+    public IEnumerator ReturnToPreLockedUnlockedState()
+    {
+        yield return new WaitForSeconds(retargetTime + 0.5f);
+        print("Returning to prelocked unlocked state");
+        if (!combatLock.isLockedOnto && !combatLock.Controls.currentlyRetargetting)
+        {
+            previousClosestCombatEntity = null;
+            print("Returning to prelocked unlocked state");
+
+        }
+    }
+
+
+    void StopRetargetting()
+    {
+        print("retargetting period ended");
+       combatLock.Controls.currentlyRetargetting = false;
+    }
 }

@@ -89,8 +89,7 @@ public class CombatLock : MonoBehaviour
     /// </summary>
     public virtual void DeLockCaller()
     {
-        //Debug.Log("Combat lock : Delocking");
-        isLockedOnto = false;
+       // Debug.Log("Combat lock : Delocking Caller Executed");
         Controls.ExitCombat?.Invoke();
         myColliderDetector.UnLockFromCombatLock();
     }
@@ -131,7 +130,7 @@ public class CombatLock : MonoBehaviour
             if (combatEntityInLockedZone)
             {
            //     Debug.Log("Found something to lock onto");
-                Debug.Log("Locking On");
+                //Debug.Log("Locking On");
 
                 LockOnCaller();
             }

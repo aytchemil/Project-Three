@@ -18,4 +18,16 @@ public class CombatEntityController : MonoBehaviour
     public Ability a_left;
     public Ability a_up;
     public Ability a_down;
+    [Space]
+    public Action Block;
+    public Action StopBlocking;
+
+    [Header("Central Flags")]
+    public bool dashOnCooldown;
+    public bool isLockedOn;
+    public bool alreadyAttacking;
+    public bool isBlocking;
+
+
+
 }

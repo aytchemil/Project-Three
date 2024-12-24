@@ -6,7 +6,7 @@ public class PlayerCombatFunctionality : CombatFunctionality
     private PlayerController playerControls;
 
     // Override the base property to return PlayerController instead
-    protected override CombatEntityController Controls
+    public override CombatEntityController Controls
     {
         get => playerControls;
         set => playerControls = value as PlayerController;
@@ -23,11 +23,30 @@ public class PlayerCombatFunctionality : CombatFunctionality
     {
         base.OnEnable();
         playerControls.attack.performed += ctx => UseAttackAbility();
+        //print("f");
+        playerControls.block.started += ctx => BlockCaller();
+        playerControls.block.canceled += ctx => StopBlockingCaller();
+
     }
 
     protected override void OnDisable()
     {
         base.OnDisable();
         playerControls.attack.performed -= ctx => UseAttackAbility();
+
+        playerControls.block.started -= ctx => BlockCaller();
+        playerControls.block.canceled -= ctx => StopBlockingCaller();
+    }
+
+    void BlockCaller()
+    {
+       // print("Player Combat : Block Caller called");
+        playerControls.Block?.Invoke();
+    }
+
+    void StopBlockingCaller()
+    {
+        //print("Player Combat : Stop Blocking Caller called");
+        playerControls.StopBlocking?.Invoke();
     }
 }

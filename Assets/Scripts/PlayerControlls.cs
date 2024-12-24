@@ -15,6 +15,7 @@ public class PlayerController : CombatEntityController
     public InputAction lockOn;
     public InputAction dash;
     public InputAction attack;
+    public InputAction block;
 
     private void Awake()
     {
@@ -27,10 +28,11 @@ public class PlayerController : CombatEntityController
         lockOn = controls.Player.LockOn;
         dash = controls.Player.Dash;
         attack = controls.Player.Attack;
+        block = controls.Player.Block;
     }
 
 
-    #region enable/disable movement
+    #region enable/disable
 
     private void OnEnable()
     {
@@ -40,6 +42,7 @@ public class PlayerController : CombatEntityController
         lockOn.Enable();
         dash.Enable();
         attack.Enable();
+        block.Enable();
     }
 
     private void OnDisable()
@@ -50,6 +53,7 @@ public class PlayerController : CombatEntityController
         lockOn.Disable();
         dash.Disable();
         attack.Disable();
+        block.Disable();
     }
     #endregion 
 

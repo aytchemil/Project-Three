@@ -11,7 +11,7 @@ public class AttackbleEntity : MonoBehaviour
         get => _health;
         set
         {
-            Debug.Log("Setting Health");
+            //Debug.Log("Setting Health");
             _health = value;
         }
     }
@@ -37,14 +37,14 @@ public class AttackbleEntity : MonoBehaviour
         if (!invincibility)
         {
             invincibility = true;
-            print("I was attacked");
+           // print("I was attacked");
             attackedEffect.GetComponent<ParticleSystem>().Play();
             Invoke("StopAttacked", invincibiliyTime);
             newHealth = TakeDamage(atkedWithAbility.damage);
         }
         else
         {
-            print("Attacked while invincible, or already taken damage");
+            //print("Attacked while invincible, or already taken damage");
             newHealth = health;
         }
 

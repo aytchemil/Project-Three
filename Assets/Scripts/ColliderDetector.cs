@@ -316,11 +316,11 @@ public class ColliderDetector : MonoBehaviour
     public IEnumerator ReturnToPreLockedUnlockedState()
     {
         yield return new WaitForSeconds(retargetTime + 0.5f);
-        print("Returning to prelocked unlocked state");
+        //print("Returning to prelocked unlocked state");
         if (!combatLock.Controls.isLockedOn && !combatLock.Controls.currentlyRetargetting)
         {
             previousClosestCombatEntity = null;
-            print("Returning to prelocked unlocked state");
+            //print("Returned");
 
         }
     }

@@ -28,14 +28,16 @@ public class PlayerCombatLock : CombatLock
 
     }
 
-    private void OnEnable()
+    protected override void OnEnable()
     {
+        base.OnEnable();
         //Input Action Callback Additions
         playerController.lockOn.performed += ctx => AttemptLock();
     }
 
-    private void OnDisable()
+    protected override void OnDisable()
     {
+        base.OnDisable();
         //Input Action Callback Additions
         playerController.lockOn.performed -= ctx => AttemptLock();
     }

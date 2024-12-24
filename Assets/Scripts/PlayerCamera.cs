@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
@@ -18,22 +17,17 @@ public class PlayerCamera : MonoBehaviour
 
 
     //Adjustable Component References
-    public Transform camOrientation;
     public Transform cameraPosition;
     public Camera myCamera;
 
     //Cached Component References
     PlayerController controls;
     Transform camTransform;
-    CombatEntityController target;
 
     //Privates
     public Vector3 savedTargetLocation;
     Vector2 currentXY;
     Vector2 finalUnlockedXYPos;
-
-    //Flags
-    bool inCombat = false;
 
     public float yRot;
     public float xRot;
@@ -53,8 +47,6 @@ public class PlayerCamera : MonoBehaviour
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         UnityEngine.Cursor.visible = false;
 
-        inCombat = false;
-
         //Callback Additions
         controls.CombatFollowTarget += EnterCombatAndFollowTarget;
         controls.ExitCombat += ExitCombat;
@@ -70,8 +62,9 @@ public class PlayerCamera : MonoBehaviour
     private void Update()
     {
         //If not in combat,"Look regularly". else "combat look"
-        if (!inCombat)
+        if (!controls.isLockedOn)
         {
+           // Debug.Log("Mouse looking normally");
             MouseLooking(controls.look.ReadValue<Vector2>());
             //set the current xRot yRot
             GetCurrentXY();
@@ -81,22 +74,6 @@ public class PlayerCamera : MonoBehaviour
             if (yRot > 180f) yRot -= 360f;
             if (xRot < -180f) xRot += 360f;
             if (yRot < -180f) yRot += 360f;
-        }
-        else
-        {
-            //"combat look"
-            if (target != null)
-            {
-                //Debug.Log("Locked onto target by cam");
-                CameraLookAtLockTarget(target.transform.position);
-                TransformLookAtTarget(target.transform.position);
-                UpdateNewXY();
-            }
-            else
-            {
-                //When enemy dies
-                controls.ExitCombat();
-            }
         }
 
         //Updates the final camera position to the one's specified in the update
@@ -123,8 +100,9 @@ public class PlayerCamera : MonoBehaviour
         Vector2 xyRot = CalculateXYRot(lookInput);
 
         //Sets the rotation to the player inputted rotations
+        //print(xyRot);
         transform.rotation = Quaternion.Euler(0, xyRot.x, 0);
-        camOrientation.rotation = Quaternion.Euler(xyRot.y, xyRot.x, 0);
+        cameraPosition.rotation = Quaternion.Euler(xyRot.y, xyRot.x, 0);
     }
 
     /// <summary>
@@ -155,8 +133,9 @@ public class PlayerCamera : MonoBehaviour
     /// <param name="target"></param>
     void CameraLookAtLockTarget(Vector3 target)
     {
-        camOrientation.LookAt(target);
-        camOrientation.localEulerAngles = new Vector3(camOrientation.localEulerAngles.x, 0, 0);
+        //print("Cam orientation changing");
+        cameraPosition.LookAt(target);
+        cameraPosition.localEulerAngles = new Vector3(cameraPosition.localEulerAngles.x, 0, 0);
 
     }
 
@@ -169,14 +148,13 @@ public class PlayerCamera : MonoBehaviour
         transform.LookAt(target);
         transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, 0);
     }
-    private Vector3 positionVelocity = Vector3.zero; // Velocity for position SmoothDamp
-    private Quaternion rotationVelocity;             // Placeholder for rotation smoothing
 
     /// <summary>
     /// Sets the Cam position to the desired location set by this script
     /// </summary>
     void UpdateCamPosition()
     {
+        //print("updating cam position");
         camTransform.position = cameraPosition.position;
         camTransform.rotation = cameraPosition.rotation;
     }
@@ -187,9 +165,10 @@ public class PlayerCamera : MonoBehaviour
     /// <param name="target"></param>
     void EnterCombatAndFollowTarget(CombatEntityController target)
     {
-        //Debug.Log("Entering Combat and following target: " + target);
-        inCombat = true;
-        this.target = target;
+        Debug.Log("Entering Combat and following target: " + target);
+        CameraLookAtLockTarget(target.transform.position);
+        TransformLookAtTarget(target.transform.position);
+        UpdateNewXY();
     }
 
     /// <summary>
@@ -202,9 +181,6 @@ public class PlayerCamera : MonoBehaviour
 
         UpdateNewXY();
         ApplyNewXYPosition();
-
-        inCombat = false;
-        this.target = null;
     }
 
 

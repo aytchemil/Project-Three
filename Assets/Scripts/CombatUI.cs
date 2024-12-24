@@ -49,6 +49,7 @@ public class CombatUI : MonoBehaviour
 
         //Cache
         controls = GetComponent<PlayerController>();
+
     }
 
     private void OnEnable()
@@ -63,10 +64,6 @@ public class CombatUI : MonoBehaviour
         //Input Action Observers
         controls.EnterCombat -= EnableUI;
         controls.ExitCombat -= DisableUI;
-    }
-    private void Start()
-    {
-        DisableUI();
     }
 
 
@@ -189,6 +186,7 @@ public class CombatUI : MonoBehaviour
     /// <param name="targ"></param>
     void EnableUI()
     {
+        //print("enabling ui");
         combatUIParent.SetActive(true);
         ChangeAllImageIcons();
         UpdateAttackIndicatorRotation(new Vector2(0, deadZone + 1));
@@ -200,6 +198,7 @@ public class CombatUI : MonoBehaviour
     /// <param name="targ"></param>
     void DisableUI()
     {
+       // print("disabling ui");
         combatUIParent.SetActive(false);
     }
 

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8678877782007549811}
   - component: {fileID: 6945801283386056576}
   - component: {fileID: 8368257347073302744}
-  m_Layer: 8
+  m_Layer: 0
   m_Name: BlockingTrigger
   m_TagString: Untagged
   m_Icon: {fileID: 0}

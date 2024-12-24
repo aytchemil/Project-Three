@@ -1235,7 +1235,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 439
+    m_Bits: 951
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -4096,18 +4096,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'CONTROLS
-
-    F - Lock On
-
-    SHIFT - Sprint
-
-    MOUSE1 - Attack
-
-    Mouse
-    Movement - Change Attack
-
-    SPACE (While Locked) - Dash'
+  m_text: "CONTROLS\n==========\nF - Lock On\nSHIFT - Sprint\n\nWHILE LOCKED\n-----------------------\nMOUSE1
+    - Attack\nMOUSE2 - Block \nMouse Movement - Change Attack\nSPACE - Dash"
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -6023,6 +6013,15 @@ MonoBehaviour:
     m_Interactions: 
     m_SingletonActionBindings: []
     m_Flags: 0
+  block:
+    m_Name: Block
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: c9916123-e804-48c5-9d63-a2ea2be0c6eb
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
 --- !u!136 &1368657299
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -6090,6 +6089,10 @@ MonoBehaviour:
   attackTrigger_down: {fileID: 0}
   currentAbility: {fileID: 0}
   alreadyAttacking: 0
+  isBlocking: 0
+  blockingTrigger: {fileID: 0}
+  blockingTriggerPrefab: {fileID: 1036016201369694723, guid: b0f85c3895f57f44198817b368468064, type: 3}
+  blockingTriggerParent: {fileID: 0}
 --- !u!114 &1368657303
 MonoBehaviour:
   m_ObjectHideFlags: 0

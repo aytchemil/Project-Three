@@ -19,11 +19,15 @@ public class CombatFunctionality : MonoBehaviour
     string direction;
 
     // Virtual property for 'Controls'
-    protected virtual CombatEntityController Controls { get; set; }
+    public virtual CombatEntityController Controls { get; set; }
 
     bool initializedAttackTriggers;
-    bool isLockedOn;
-    public bool alreadyAttacking;
+    bool initializedBlockingTrigger;
+
+    [Header("Blocking")]
+    public BlockingTriggerCollider blockingTrigger;
+    public GameObject blockingTriggerPrefab;
+    public Transform blockingTriggerParent;
 
     protected virtual void Awake()
     {
@@ -42,12 +46,26 @@ public class CombatFunctionality : MonoBehaviour
             attackTriggerParent.name = "Attack Triggers Parent";
         }
 
+        if(blockingTriggerParent == null)
+        {
+            blockingTriggerParent = Instantiate(new GameObject(), transform, false).transform;
+            blockingTriggerParent.rotation = Quaternion.identity;
+            blockingTriggerParent.name = "Blocking Trigger Parent";
+        }
+
         //Adding methods to Action Delegates
         //Debug.Log("Combat functionaly enable");
+        //UI
         Controls.SelectCertainAbility += EnableAbility;
+
+        //Attacking
         Controls.EnterCombat += InCombat;
         Controls.ExitCombat += ExitCombat;
-        Controls.CombatFollowTarget += AttackTriggersLockOntoTarget;
+        Controls.CombatFollowTarget += CombatFunctionalityElementsLockOntoTarget;
+
+        //Blocking
+        Controls.Block += Block;
+        Controls.StopBlocking += StopBlock;
     }
 
     /// <summary>
@@ -55,11 +73,17 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     protected virtual void OnDisable()
     {
+        //UI
         Controls.SelectCertainAbility -= EnableAbility;
+
+        //Attacking
         Controls.EnterCombat -= InCombat;
         Controls.ExitCombat -= ExitCombat;
-        Controls.CombatFollowTarget -= AttackTriggersLockOntoTarget;
+        Controls.CombatFollowTarget -= CombatFunctionalityElementsLockOntoTarget;
 
+        //Blocking
+        Controls.Block -= Block;
+        Controls.StopBlocking -= StopBlock;
     }
 
     #endregion
@@ -72,12 +96,15 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     void InCombat()
     {
-        isLockedOn = true;
+        Controls.isLockedOn = true;
         //Auto Set the current ability
         currentAbility = Controls.a_up;
 
         if (!initializedAttackTriggers)
             InstantiateAttackTriggers(Controls.a_right, Controls.a_left, Controls.a_up, Controls.a_down);
+
+        if (!initializedBlockingTrigger)
+            InitializeBlockingTrigger();
 
     }
 
@@ -89,9 +116,21 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     void ExitCombat()
     {
-        isLockedOn = false;
-        alreadyAttacking = false;
+        StopBlock(); //Must be first
+        Controls.isLockedOn = false;
+        Controls.alreadyAttacking = false;
         DisableAttackTriggers();
+    }
+
+    public void CombatFunctionalityElementLockOntoTarget(CombatEntityController target, Transform elementTransform)
+    {
+        if (target != null)
+        {
+            Transform transform = elementTransform.transform;
+            transform.LookAt(target.transform.position);
+            transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, 0, transform.localEulerAngles.z);
+
+        }
     }
 
     #region Trigger Generation
@@ -199,16 +238,15 @@ public class CombatFunctionality : MonoBehaviour
 
     }
 
-    public virtual void AttackTriggersLockOntoTarget(CombatEntityController target)
+    /// <summary>
+    /// Makes the attack triggers lock on to the target, restricted to X and Z (no Y)
+    /// </summary>
+    /// <param name="target"></param>
+    public virtual void CombatFunctionalityElementsLockOntoTarget(CombatEntityController target)
     {
-        if (target != null)
-        {
-            Transform transform = attackTriggerParent.transform;
-            transform.LookAt(target.transform.position);
-            transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, 0, transform.localEulerAngles.z);
-
-        }
-
+        Debug.Log("locking onto target");
+        CombatFunctionalityElementLockOntoTarget(target, attackTriggerParent);
+        CombatFunctionalityElementLockOntoTarget(target, blockingTriggerParent);
     }
 
 
@@ -217,12 +255,12 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     protected virtual void UseAttackAbility()
     {
-        if (!isLockedOn || alreadyAttacking) return;
+        if (!Controls.isLockedOn || Controls.alreadyAttacking || Controls.isBlocking) return;
 
         if (currentAbility == null)
             Debug.LogError("There is currently no selected ability (a_current) that this combat functionality script can use.");
 
-        print("ATTEMPT ATTACK");
+        //print("ATTEMPT ATTACK");
 
         StartAttacking();
         AttackTriggerUse();
@@ -267,20 +305,20 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     void BoxAttack()
     {
-        Debug.Log("Attempting Box attack");
+        //Debug.Log("Attempting Box attack");
     }
     void OverheadAttack()
     {
-        Debug.Log("Attempting Overhead attack");
+        //Debug.Log("Attempting Overhead attack");
     }
     void PierceAttack()
     {
-        Debug.Log("Attempting Pierce attack");
+       // Debug.Log("Attempting Pierce attack");
     }
 
     void SideSlashAttack()
     {
-        Debug.Log("Attempting Side Slash attack");
+        //Debug.Log("Attempting Side Slash attack");
     }
 
     /// <summary>
@@ -326,7 +364,7 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     void StartAttacking()
     {
-        alreadyAttacking = true;
+        Controls.alreadyAttacking = true;
     }
 
     /// <summary>
@@ -334,7 +372,7 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     public void FinishAttacking()
     {
-        alreadyAttacking = false;
+        Controls.alreadyAttacking = false;
     }
 
     #endregion
@@ -352,6 +390,33 @@ public class CombatFunctionality : MonoBehaviour
 
 
     #endregion
+
+    void InitializeBlockingTrigger()
+    {
+        initializedBlockingTrigger = true;
+        blockingTrigger = Instantiate(blockingTriggerPrefab, blockingTriggerParent, false).GetComponent<BlockingTriggerCollider>();
+        blockingTrigger.myCombatFunctionality = this;
+        blockingTrigger.gameObject.SetActive(false);
+    }
+
+
+    void Block()
+    {
+        if (!Controls.isLockedOn || Controls.alreadyAttacking) return;
+
+        Controls.isBlocking = true;
+        blockingTrigger.gameObject.SetActive(true);
+
+    }
+
+    void StopBlock()
+    {
+        if (!Controls.isLockedOn || Controls.alreadyAttacking || !Controls.isBlocking) return;
+
+        Controls.isBlocking = false;
+        blockingTrigger.gameObject.SetActive(false);
+
+    }
 
 
 

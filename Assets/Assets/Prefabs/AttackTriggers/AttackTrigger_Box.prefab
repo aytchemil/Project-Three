@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 377499401562837398}
   - component: {fileID: -6728555465575122298}
   - component: {fileID: 5631300544593607017}
-  m_Layer: 0
+  m_Layer: 9
   m_Name: AttackTrigger_Box
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -122,11 +122,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2a276e788c10a9439e0ce61531412bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  combatFunctionality: {fileID: 0}
+  myAbility: {fileID: 0}
   collideWith:
     serializedVersion: 2
     m_Bits: 256
   attackTriggerAnimator: {fileID: 5631300544593607017}
-  attackDuration: 1
   attacking: 0
 --- !u!95 &5631300544593607017
 Animator:

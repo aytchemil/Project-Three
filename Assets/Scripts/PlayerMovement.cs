@@ -80,7 +80,6 @@ public class PlayerMovement : MonoBehaviour
     //Flags
     [SerializeField] private bool isGrounded;
     [SerializeField] private bool onSlope;
-    public bool dashOnCooldown;
 
     [Header("Adjustable Component Refernces")]
     //Adjustable Component Refernces
@@ -274,13 +273,13 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     void DashDirection()
     {
-        Debug.Log("Attempted a dash");
+        //Debug.Log("Attempted a dash");
         if (state != PlayerStates.CurrentState.combat) return;
-        if (dashOnCooldown)
+        if (controls.dashOnCooldown)
             return;
         else
-            dashOnCooldown = true;
-        Debug.Log("Dashing");
+            controls.dashOnCooldown = true;
+        //Debug.Log("Dashing");
 
         Vector2 moveInput = controls.move.ReadValue<Vector2>();
         //Results in Move Input: (0.0  ,   0.0)
@@ -317,7 +316,7 @@ public class PlayerMovement : MonoBehaviour
             //If the player is not on a slope, dash regularly
             if (!onSlope)
             {
-                Debug.Log("Dashing Left");
+                //Debug.Log("Dashing Left");
                 rb.AddForce(moveDirection.normalized * dashSpeedMultiplier, ForceMode.VelocityChange);
 
             }
@@ -345,7 +344,7 @@ public class PlayerMovement : MonoBehaviour
     /// </summary>
     void DashCooldown()
     {
-        dashOnCooldown = false;
+        controls.dashOnCooldown = false;
     }
 
 }

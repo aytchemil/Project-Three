@@ -1,6 +1,4 @@
-using NUnit.Framework;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
@@ -54,23 +52,33 @@ public class ColliderDetector : MonoBehaviour
 
         //If the CombatLock says we need to lock onto something, and we havn't already locked onto anything (targetDesisiconMade) and the target we are checking for (other) is alive
         // - Then lock onto it
-        if (combatLock.isLockedOnto && !targetDescisionMade && other.GetComponent<AttackbleEntity>().isAlive)
+        if (combatLock.isLockedOnto && other.GetComponent<AttackbleEntity>().isAlive)
         {
             //Debug.Log("Stay");
             //Tells combatLock that the collisonDectector (this script) is to lock onto it
-            combatLock.ColliderLockOntoTarget();
+            //If its the current locked on dude
+            if(other.gameObject == closestCombatEntity)
+                combatLock.Controls.CombatFollowTarget?.Invoke(other.gameObject.GetComponent<CombatEntityController>());
 
-            //Saves this new target as the previous Closest Target
-            previousClosestCombatEntity = closestCombatEntity;
+            if (!targetDescisionMade)
+            {
 
-            ///RETARGET
-            //If we have more than 1 potentiatl target we are colliding with, determine if we want to retarget
-            if (collidedWithCombatEntities.Count > 1)
-                DetermineIfWantToSwitchToOtherTargetAvaliable();
+                //Saves this new target as the previous Closest Target
+                previousClosestCombatEntity = closestCombatEntity;
 
-            //Sets the flag that we have concluded targgeting
-            targetDescisionMade = true;
+                ///RETARGET
+                //If we have more than 1 potentiatl target we are colliding with, determine if we want to retarget
+                if (collidedWithCombatEntities.Count > 1)
+                    DetermineIfWantToSwitchToOtherTargetAvaliable();
+
+                //Sets the flag that we have concluded targgeting
+                targetDescisionMade = true;
+               // Debug.Log("Descision made");
+
+            }
+
         }
+
     }
 
     /// <summary>
@@ -192,7 +200,7 @@ public class ColliderDetector : MonoBehaviour
         combatLock.combatEntityInLockedZone = true;
         closestCombatEntity = newTarget;
         combatLock.lockedTarget = newTarget.GetComponent<CombatEntityController>();
-        combatLock.ColliderLockOntoTarget();
+        combatLock.ColliderLockOntoTarget(newTarget.GetComponent<CombatEntityController>());
 
         previousClosestCombatEntity = newTarget;
         targetDescisionMade = true;
@@ -256,7 +264,7 @@ public class ColliderDetector : MonoBehaviour
         {
             for (int i = 0; i < collidedWithCombatEntities.Count - 1; i++)
             {
-                Debug.Log(collidedWithCombatEntities[0]);
+                //Debug.Log(collidedWithCombatEntities[0]);
                 if (collidedWithCombatEntities[i] == null)
                     collidedWithCombatEntities.RemoveAt(i);
             }

@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class CombatLock : MonoBehaviour
 {
-    protected virtual CombatEntityController Controls { get; set; }
+    public virtual CombatEntityController Controls { get; set; }
 
     //Component References
     public CombatEntityController lockedTarget;
@@ -37,12 +37,14 @@ public class CombatLock : MonoBehaviour
     {
         Controls.ExitCombat += ExitCombat;
         Controls.TargetDeath += TargetDeath;
+        Controls.CombatFollowTarget += ColliderLockOntoTarget;
     }
 
     private void OnDisable()
     {
         Controls.ExitCombat -= ExitCombat;
         Controls.TargetDeath -= TargetDeath;
+        Controls.CombatFollowTarget -= ColliderLockOntoTarget;
     }
     #endregion
 
@@ -105,7 +107,6 @@ public class CombatLock : MonoBehaviour
         //Debug.Log("Combat Lock: Locking on");
         isLockedOnto = true;
         Controls.EnterCombat?.Invoke();
-        Controls.CombatFollowTarget?.Invoke(lockedTarget);
         Controls.SelectCertainAbility?.Invoke("up");
     }
 
@@ -122,22 +123,22 @@ public class CombatLock : MonoBehaviour
 
         UnlockDelockDelay();
 
-        //Debug.Log("Attempting a lock");
+        Debug.Log("Attempting a lock");
         if (!isLockedOnto)
         {
-           //Debug.Log("Is not locked onto something already");
+           Debug.Log("Is not locked onto something already");
 
             if (combatEntityInLockedZone)
             {
-                //Debug.Log("Found something to lock onto");
-                //Debug.Log("Locking On");
+                Debug.Log("Found something to lock onto");
+                Debug.Log("Locking On");
 
                 LockOnCaller();
             }
         }
         else
         {
-            //Debug.Log("Is already locked onto, will delock");
+            Debug.Log("Is already locked onto, will delock");
             CantUnlockWhileAttackingOtherwiseUnlock();
         }
     }
@@ -145,12 +146,13 @@ public class CombatLock : MonoBehaviour
     /// <summary>
     /// Locks on and looks at the target's location, restricted to Y and Z
     /// </summary>
-    public virtual void ColliderLockOntoTarget()
+    public virtual void ColliderLockOntoTarget(CombatEntityController target)
     {
         Transform transform = myColliderDetector.gameObject.transform;
         transform.LookAt(lockedTarget.transform.position);
         transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, transform.localEulerAngles.z);
     }
+
 
     #endregion
 
@@ -162,7 +164,7 @@ public class CombatLock : MonoBehaviour
     /// <param name="target"></param>
     void TargetDeath(CombatEntityController target)
     {
-        print("Combat lock: target death: " + target.name);
+       // print("Combat lock: target death: " + target.name);
         myColliderDetector.OnTriggerExit(target.gameObject.GetComponent<Collider>());
     }
 
@@ -175,7 +177,7 @@ public class CombatLock : MonoBehaviour
     void CantUnlockWhileAttackingOtherwiseUnlock()
     {
         if (GetComponent<CombatFunctionality>() != null)
-            if (!GetComponent<CombatFunctionality>().alreadyAttacking)
+            if (!GetComponent<CombatFunctionality>().Controls.alreadyAttacking)
                 DeLockCaller();
     }
 

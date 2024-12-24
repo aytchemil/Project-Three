@@ -8,7 +8,7 @@ public class PlayerCombatLock : CombatLock
 {
     PlayerController playerController;
 
-    protected override CombatEntityController Controls 
+    public override CombatEntityController Controls 
     {
         get => playerController;
         set => playerController = value as PlayerController;

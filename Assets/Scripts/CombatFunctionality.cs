@@ -38,6 +38,7 @@ public class CombatFunctionality : MonoBehaviour
         if (attackTriggerParent == null)
         {
             attackTriggerParent = Instantiate(new GameObject(), transform, false).transform;
+            attackTriggerParent.rotation = Quaternion.identity;
             attackTriggerParent.name = "Attack Triggers Parent";
         }
 
@@ -46,6 +47,7 @@ public class CombatFunctionality : MonoBehaviour
         Controls.SelectCertainAbility += EnableAbility;
         Controls.EnterCombat += InCombat;
         Controls.ExitCombat += ExitCombat;
+        Controls.CombatFollowTarget += AttackTriggersLockOntoTarget;
     }
 
     /// <summary>
@@ -56,6 +58,8 @@ public class CombatFunctionality : MonoBehaviour
         Controls.SelectCertainAbility -= EnableAbility;
         Controls.EnterCombat -= InCombat;
         Controls.ExitCombat -= ExitCombat;
+        Controls.CombatFollowTarget -= AttackTriggersLockOntoTarget;
+
     }
 
     #endregion
@@ -194,6 +198,19 @@ public class CombatFunctionality : MonoBehaviour
         }
 
     }
+
+    public virtual void AttackTriggersLockOntoTarget(CombatEntityController target)
+    {
+        if (target != null)
+        {
+            Transform transform = attackTriggerParent.transform;
+            transform.LookAt(target.transform.position);
+            transform.localEulerAngles = new Vector3(transform.localEulerAngles.x, 0, transform.localEulerAngles.z);
+
+        }
+
+    }
+
 
     /// <summary>
     /// Uses the currently selected ability

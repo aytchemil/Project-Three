@@ -27,6 +27,7 @@ public class CombatEntityController : MonoBehaviour
     public bool isLockedOn;
     public bool alreadyAttacking;
     public bool isBlocking;
+    public bool currentlyRetargetting;
 
 
 

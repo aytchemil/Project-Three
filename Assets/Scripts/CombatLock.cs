@@ -28,13 +28,13 @@ public class CombatLock : MonoBehaviour
     }
 
     #region EnableDisable
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
         Controls.TargetDeath += TargetDeath;
         Controls.CombatFollowTarget += ColliderLockOntoTarget;
     }
 
-    private void OnDisable()
+    protected virtual void OnDisable()
     {
         Controls.TargetDeath -= TargetDeath;
         Controls.CombatFollowTarget -= ColliderLockOntoTarget;
@@ -75,7 +75,9 @@ public class CombatLock : MonoBehaviour
     public virtual void ExitCombatCaller()
     {
         //EXIT COMBAT:
-        Debug.Log("Combat lock : ExitCombatCaller Caller Executed");
+        //Debug.Log("Combat lock : ExitCombatCaller Caller Executed");
+
+
         //if (Controls.ExitCombat != null)
         //    foreach (var subscriber in Controls.ExitCombat.GetInvocationList())
         //        Debug.Log($"Subscriber: {subscriber.Target}, Method: {subscriber.Method}");
@@ -88,7 +90,9 @@ public class CombatLock : MonoBehaviour
         StartCoroutine(myColliderDetector.ReturnToPreLockedUnlockedState());
         myColliderDetector.UnLockFromCombatLock();
 
-        //CALLER
+        //CALLER : EXIT COMBAT
+        if (Controls.ExitCombat == null)
+            Debug.LogError("ExitCombat subscribers are null, please check subscribers to ensure they are subscribed for : " + gameObject.name);
         Controls.ExitCombat?.Invoke();
     }
 
@@ -104,9 +108,16 @@ public class CombatLock : MonoBehaviour
         //Debug.Log("Combat Lock: EnterCombatCaller called");
         //ENTER COMBAT: 
         Controls.isLockedOn = true;
+
+        //CALLER : SELECT CERTAIN ABILITY CALLER (DEFAULT INPUT)
+        if (Controls.SelectCertainAbility == null)
+            Debug.LogError("Select Certain Ability subscribers are null, please check subscribers to ensure they are subscribed for : " + gameObject.name);
         Controls.SelectCertainAbility?.Invoke("up");
 
-        //CALLER
+
+        //CALLER : ENTER COMBAT 
+        if (Controls.EnterCombat == null)
+            Debug.LogError("EnterCombat subscribers are null, please check subscribers to ensure they are subscribed for : " + gameObject.name);
         Controls.EnterCombat?.Invoke();
     }
 
@@ -166,7 +177,7 @@ public class CombatLock : MonoBehaviour
     /// <param name="target"></param>
     void TargetDeath(CombatEntityController target)
     {
-       // print("Combat lock: target death: " + target.name);
+        print("Combat lock: target death: " + target.name);
         myColliderDetector.OnTriggerExit(target.gameObject.GetComponent<Collider>());
     }
 

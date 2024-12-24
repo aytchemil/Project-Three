@@ -385,7 +385,11 @@ public class CombatFunctionality : MonoBehaviour
     /// <param name="target"></param>
     public void TargetDeathCaller(CombatEntityController target)
     {
-        Controls.TargetDeath(target);
+        Debug.Log("Target Death Caller called for by : " + gameObject.name);
+        if (Controls.TargetDeath == null)
+            Debug.LogError("Target death caller null, please check subscribers to ensure theyre are some for : " + gameObject.name);
+
+        Controls.TargetDeath?.Invoke(target);
     }
 
 

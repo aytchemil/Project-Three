@@ -45,6 +45,8 @@ public class AttackTriggerCollider : MonoBehaviour
             newEnemyHealth = other.GetComponent<AttackbleEntity>().Attacked(myAbility);
             if (newEnemyHealth < 0)
             {
+                //Debug.Log("Enemy health 0, killed enemy, now calling TargetDeath to signal an enemy death");
+                Debug.Log("Enemy that died was: " + other.gameObject.name);
                 combatFunctionality.TargetDeathCaller(other.GetComponent<CombatEntityController>());
             }
 

@@ -36,7 +36,7 @@ public class EntityLook : MonoBehaviour
     /// <param name="target"></param>
     public void CameraLookAtLockTarget(Vector3 target)
     {
-        Debug.Log("entity look : cam look at target");
+        //Debug.Log("entity look : cam look at target");
         camOrientation.LookAt(target);
         camOrientation.localEulerAngles = new Vector3(camOrientation.localEulerAngles.x, 0, 0);
 
@@ -48,7 +48,7 @@ public class EntityLook : MonoBehaviour
     /// <param name="target"></param>
     public void TransformLookAtTarget(Vector3 target)
     {
-        Debug.Log("entity look : transform look at target");
+        //Debug.Log("entity look : transform look at target");
 
         transform.LookAt(target);
         transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, 0);

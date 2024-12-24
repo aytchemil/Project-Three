@@ -96,7 +96,7 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     void InCombat()
     {
-        Controls.isLockedOn = true;
+        //print("combatFunctionality: in combat");
         //Auto Set the current ability
         currentAbility = Controls.a_up;
 
@@ -116,8 +116,8 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     void ExitCombat()
     {
+        //print("exiting combat");
         StopBlock(); //Must be first
-        Controls.isLockedOn = false;
         Controls.alreadyAttacking = false;
         DisableAttackTriggers();
     }
@@ -253,7 +253,7 @@ public class CombatFunctionality : MonoBehaviour
     /// <summary>
     /// Uses the currently selected ability
     /// </summary>
-    protected virtual void UseAttackAbility()
+    public virtual void UseAttackAbility()
     {
         if (!Controls.isLockedOn || Controls.alreadyAttacking || Controls.isBlocking) return;
 

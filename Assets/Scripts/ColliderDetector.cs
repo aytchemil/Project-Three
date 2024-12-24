@@ -36,7 +36,7 @@ public class ColliderDetector : MonoBehaviour
     /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<AttackbleEntity>().isAlive)
+        if (other.GetComponent<CombatEntityController>().isAlive)
         {
             if (collidedWithCombatEntities.Count <= 0)
             {
@@ -59,10 +59,10 @@ public class ColliderDetector : MonoBehaviour
     {
         //CollideWithNewCombatEntity(other);
         //Sets the flag in CombatLock for if there is an entity in this zone
-        if(other.GetComponent<AttackbleEntity>().isAlive)
+        if(other.GetComponent<CombatEntityController>().isAlive)
             combatLock.combatEntityInLockedZone = true;
 
-        if(!combatLock.Controls.isLockedOn && other.GetComponent<AttackbleEntity>().isAlive && !combatLock.Controls.currentlyRetargetting)
+        if(!combatLock.Controls.isLockedOn && other.GetComponent<CombatEntityController>().isAlive && !combatLock.Controls.currentlyRetargetting)
         {
             closestCombatEntity = DetermineWhichCombatEntityIsClosest();
             //previousClosestCombatEntity = null;
@@ -70,7 +70,7 @@ public class ColliderDetector : MonoBehaviour
 
         //If the CombatLock says we need to lock onto something, and we havn't already locked onto anything (targetDesisiconMade) and the target we are checking for (other) is alive
         // - Then lock onto it
-        if (combatLock.Controls.isLockedOn && other.GetComponent<AttackbleEntity>().isAlive)
+        if (combatLock.Controls.isLockedOn && other.GetComponent<CombatEntityController>().isAlive)
         {
             //Debug.Log("Stay");
             //Tells combatLock that the collisonDectector (this script) is to lock onto it
@@ -116,7 +116,7 @@ public class ColliderDetector : MonoBehaviour
     /// <param name="other"></param>
     public void OnTriggerExit(Collider other)
     {
-        print("Exit");
+        print(combatLock.gameObject.name + " : Exit");
         //Checks if any dead enemies are still in the collidedWithCombatentities list, if they are remove them
         GuerenteeRemovalOfDeadEnemy();
 
@@ -260,7 +260,7 @@ public class ColliderDetector : MonoBehaviour
            // Debug.Log("Yes, switch");
 
             GameObject newTargetLock = RetargetLock();
-            Debug.Log("Retarget wants to lock onto:" + collidedWithCombatEntities[collidedWithCombatEntities.IndexOf(newTargetLock)].name);
+            Debug.Log(combatLock.gameObject.name + " : Retarget wants to lock onto:" + collidedWithCombatEntities[collidedWithCombatEntities.IndexOf(newTargetLock)].name);
             RetargetTo(newTargetLock);
         }
 

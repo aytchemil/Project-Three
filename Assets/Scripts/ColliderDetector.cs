@@ -48,7 +48,8 @@ public class ColliderDetector : MonoBehaviour
     {
         //CollideWithNewCombatEntity(other);
         //Sets the flag in CombatLock for if there is an entity in this zone
-        combatLock.combatEntityInLockedZone = true;
+        if(other.GetComponent<AttackbleEntity>().isAlive)
+            combatLock.combatEntityInLockedZone = true;
 
         //If the CombatLock says we need to lock onto something, and we havn't already locked onto anything (targetDesisiconMade) and the target we are checking for (other) is alive
         // - Then lock onto it
@@ -87,6 +88,7 @@ public class ColliderDetector : MonoBehaviour
     /// <param name="other"></param>
     public void OnTriggerExit(Collider other)
     {
+        //print("Exit");
         //Checks if any dead enemies are still in the collidedWithCombatentities list, if they are remove them
         GuerenteeRemovalOfDeadEnemy();
 
@@ -132,7 +134,7 @@ public class ColliderDetector : MonoBehaviour
         combatLock.lockedTarget = null;
         if (combatLock.isLockedOnto)
         {
-            //Debug.Log("Delock from Collider Detector");
+            Debug.Log("Delock from Collider Detector");
             combatLock.DeLockCaller();
         }
     }
@@ -143,8 +145,12 @@ public class ColliderDetector : MonoBehaviour
     /// <param name="other"></param>
     void CollideWithNewCombatEntity(Collider other)
     {
+        print("Collided with new combat entity");
         closestCombatEntity = DetermineWhichCombatEntityIsClosest();
-        combatLock.lockedTarget = closestCombatEntity.GetComponent<CombatEntityController>();
+
+        if (collidedWithCombatEntities.Count <= 0)
+            combatLock.lockedTarget = closestCombatEntity.GetComponent<CombatEntityController>();
+
         if (closestCombatEntity.GetComponent<CombatEntityController>() == null)
             Debug.LogError("Error: Combat entity controller script not given to a combat entity : " + other.name);
     }
@@ -197,10 +203,11 @@ public class ColliderDetector : MonoBehaviour
     /// <param name="newTarget"></param>
     void RetargetTo(GameObject newTarget)
     {
+        print("retargeting");
         combatLock.combatEntityInLockedZone = true;
         closestCombatEntity = newTarget;
         combatLock.lockedTarget = newTarget.GetComponent<CombatEntityController>();
-        combatLock.ColliderLockOntoTarget(newTarget.GetComponent<CombatEntityController>());
+        //combatLock.Controls.CombatFollowTarget?.Invoke(newTarget.GetComponent<CombatEntityController>());
 
         previousClosestCombatEntity = newTarget;
         targetDescisionMade = true;

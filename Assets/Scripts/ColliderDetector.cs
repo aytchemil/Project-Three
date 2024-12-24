@@ -116,7 +116,7 @@ public class ColliderDetector : MonoBehaviour
     /// <param name="other"></param>
     public void OnTriggerExit(Collider other)
     {
-        print(combatLock.gameObject.name + " : Exit");
+        //print(combatLock.gameObject.name + " : Exit");
         //Checks if any dead enemies are still in the collidedWithCombatentities list, if they are remove them
         GuerenteeRemovalOfDeadEnemy();
 

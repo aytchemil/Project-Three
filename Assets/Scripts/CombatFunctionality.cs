@@ -233,7 +233,7 @@ public class CombatFunctionality : MonoBehaviour
                 currentAbility = Controls.a_up;
                 break;
             case "down":
-                currentAbility = Controls.a_right;
+                currentAbility = Controls.a_down;
                 break;
         }
 
@@ -295,6 +295,17 @@ public class CombatFunctionality : MonoBehaviour
 
                 break;
 
+            case Ability.CollisionType.MovementForward:
+
+                MovementForwardAttack();
+
+                break;
+            case Ability.CollisionType.MovementRightOrLeft:
+
+                MovementRightOrLeftAttack();
+
+                break;
+
 
         }
 
@@ -314,7 +325,7 @@ public class CombatFunctionality : MonoBehaviour
     }
     void OverheadAttack()
     {
-        //Debug.Log("Attempting Overhead attack");
+        Debug.Log("Attempting Overhead attack");
     }
     void PierceAttack()
     {
@@ -325,6 +336,29 @@ public class CombatFunctionality : MonoBehaviour
     {
         //Debug.Log("Attempting Side Slash attack");
     }
+
+    void MovementForwardAttack()
+    {
+        Debug.Log("Attempting Movement Forward Attack");
+
+        gameObject.GetComponent<Movement>().Dash(new Vector2(0, 5), currentAbility.movementAmount);
+    }
+
+    void MovementRightOrLeftAttack()
+    {
+        Debug.Log("Attempting Movemnt left or right atack");
+    }
+
+    void MovementRightAttack()
+    {
+        Debug.Log("Right attack");
+    }
+
+    void MovementLeftAttack()
+    {
+        Debug.Log("Left attack");
+    }
+
 
     /// <summary>
     /// Enables the selected direction's attack trigger and uses that attack trigger's attacktriggerattack method call with the current ability

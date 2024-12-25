@@ -77,8 +77,8 @@ public class Movement : MonoBehaviour
 
     [Header("Flags")]
     //Flags
-    [SerializeField] private bool isGrounded;
-    [SerializeField] private bool onSlope;
+    [SerializeField] protected bool isGrounded;
+    [SerializeField] protected bool onSlope;
 
     [Header("Adjustable Component Refernces")]
     //Adjustable Component Refernces
@@ -100,7 +100,6 @@ public class Movement : MonoBehaviour
         Controls = gameObject.GetComponent<CombatEntityController>();
         rb = GetComponent<Rigidbody>();
         orientation = transform;
-
     }
 
 
@@ -138,53 +137,16 @@ public class Movement : MonoBehaviour
     }
 
 
-    private void FixedUpdate()
+    protected virtual void FixedUpdate()
     {
         GroundedCheck();
         OnSlope();
-        MovePlayer();
     }
 
-
-    //Moves the Player Forward
-    void MovePlayer()
-    {
-        //Stores input values from the InputSystem Controls
-        Vector2 moveInput = Controls.move != null ? Controls.move.Invoke() : Vector2.zero;
-
-        //Debug.Log(moveInput);
-        //Results in Move Input: (0.0  ,   0.0)
-        //                       (+-1.0,   0.0)
-        //                       (0.0  , +-1.0)
-        //                       (+-1.0, +-1.0)
-
-        if (moveInput.x == 0 && moveInput.y == 0) return;
-
-        //Stores the move direction of the player, which is always set to where the orientaion's forward and right is 
-        //the player facing forward * the move input of y (which is either neg or pos)
-        //the combined vector of all of those
-        Vector3 moveDirection = orientation.forward * moveInput.y + orientation.right * moveInput.x;
-
-        SpeedHandler();
-
-        //Adds a pushing force to the RigidBody based on movement speed
-        if (isGrounded)
-        {
-            if (!onSlope)
-                rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
-            else
-                rb.AddForce(GetSlopeMoveDirection(moveDirection) * moveSpeed * 10f, ForceMode.Force);
-
-        }
-        else
-            rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airAccelerationMultiplier, ForceMode.Force);
-
-        //Debug.Log(rb.linearVelocity);
-    }
 
 
     //Checks if the player is grounded to apply linear damping on the rigid body
-    void GroundedCheck()
+    protected void GroundedCheck()
     {
         isGrounded = Physics.Raycast(transform.position, Vector3.down, height * 0.5f, whatIsGroundMask);
         if (isGrounded && state != EntityStates.CurrentState.dashing)
@@ -203,7 +165,7 @@ public class Movement : MonoBehaviour
     /// <summary>
     /// Caps the max linear velocity of the player
     /// </summary>
-    void SpeedHandler()
+    protected void SpeedHandler()
     {
 
         //Limit X and Z velocity's but not Y (Because falling)
@@ -226,7 +188,7 @@ public class Movement : MonoBehaviour
     /// <summary>
     /// Detects if the player is on a slope, sets a global flag
     /// </summary>
-    void OnSlope()
+    protected void OnSlope()
     {
         RaycastHit slopeHit;
         if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, height * 0.5f + 0.4f))
@@ -242,7 +204,7 @@ public class Movement : MonoBehaviour
     /// </summary>
     /// <param name="moveDirection"></param>
     /// <returns></returns>
-    Vector3 GetSlopeMoveDirection(Vector3 moveDirection)
+    protected Vector3 GetSlopeMoveDirection(Vector3 moveDirection)
     {
         return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
     }
@@ -251,13 +213,13 @@ public class Movement : MonoBehaviour
     /// Button press methods
     /// </summary>
     #region Button Presses
-    void OnSprintPressed()
+    protected void OnSprintPressed()
     {
         //Debug.Log("sprint pressed");
         if (isGrounded && state != EntityStates.CurrentState.combat)
             state = EntityStates.CurrentState.sprinting;
     }
-    void OnSprintReleased()
+    protected void OnSprintReleased()
     {
         //Debug.Log("sprint releasd");
 
@@ -270,7 +232,7 @@ public class Movement : MonoBehaviour
     /// Observer method for when the player enters combat
     /// </summary>
     /// <param name="target"></param>
-    void EnterCombat()
+    protected void EnterCombat()
     {
         //Debug.Log("Player movement entering combat");
         state = EntityStates.CurrentState.combat;
@@ -280,9 +242,9 @@ public class Movement : MonoBehaviour
     /// Observer method for when the player exits combat
     /// </summary>
     /// <param name="target"></param>
-    private void ExitCombat()
+    protected private void ExitCombat()
     {
-        //Debug.Log("Player movement exiting combat");
+        Debug.Log("Player movement exiting combat");
         state = EntityStates.CurrentState.notSprinting;
     }
 
@@ -290,9 +252,9 @@ public class Movement : MonoBehaviour
     /// <summary>
     /// Attempts a dash in a direction relative to the given player inputs
     /// </summary>
-    void DashDirection()
+    protected void DashDirection()
     {
-        Debug.Log("Attempted a dash");
+        //Debug.Log("Attempted a dash");
         if (state != EntityStates.CurrentState.combat) return;
         if (Controls.dashOnCooldown)
             return;
@@ -313,7 +275,7 @@ public class Movement : MonoBehaviour
     /// Adds force to the player for a dash direction
     /// </summary>
     /// <param name="dir"></param>
-    void Dash(Vector2 dir)
+    protected void Dash(Vector2 dir)
     {
         //Debug.Log("Attempting Dashing In Direction:  " + dir);
 
@@ -346,6 +308,7 @@ public class Movement : MonoBehaviour
         }
 
         //Dash cooldown
+        Controls.dashing = true;
         Invoke("StopDash", entityStates.dashTime);
         Invoke("DashCooldown", dashCooldown);
     }
@@ -353,15 +316,16 @@ public class Movement : MonoBehaviour
     /// <summary>
     /// Method that is invoked with a delay to for dash cooldown
     /// </summary>
-    void StopDash()
+    protected void StopDash()
     {
         state = EntityStates.CurrentState.combat;
+        Controls.dashing = false;
     }
 
     /// <summary>
     /// Method that is invoked with a delay to for dash cooldown
     /// </summary>
-    void DashCooldown()
+    protected void DashCooldown()
     {
         Controls.dashOnCooldown = false;
     }

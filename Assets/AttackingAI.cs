@@ -1,24 +1,18 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.ShaderGraph;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 public class AttackingAI : MonoBehaviour
 {
-    CombatEntityController controls;
+    CombatEntityController Controls;
     CombatLock combatLock;
     CombatFunctionality combatFunctionality;
     EntityLook entityLook;
 
     public List<EntityAttackPattern> preSelectedAttackPatterns;
-    public Action look;
-    public Action move;
-    public Action sprint;
-    public Action lockOn;
-    public Action dash;
-    public Action attack;
-    public Action block;
 
     public bool thinking;
     public Vector2 thinkingPeriodBetweenAttackPatternsRange;
@@ -28,7 +22,7 @@ public class AttackingAI : MonoBehaviour
 
     private void Awake()
     {
-        controls = GetComponent<CombatEntityController>();
+        Controls = GetComponent<CombatEntityController>();
         combatLock = GetComponent<CombatLock>();
         combatFunctionality = GetComponent<CombatFunctionality>();
         entityLook = GetComponent<EntityLook>();
@@ -36,38 +30,31 @@ public class AttackingAI : MonoBehaviour
 
     protected void OnEnable()
     {
-        attack += combatFunctionality.UseAttackAbility;
-        lockOn += combatLock.AttemptLock;
-
-        //print("f");
-        block += BlockCaller;
-        block += StopBlockingCaller;
+        Controls.attack += combatFunctionality.UseAttackAbility;
+        Controls.lockOn += combatLock.AttemptLock;
 
     }
 
     protected void OnDisable()
     {
-        attack -= combatFunctionality.UseAttackAbility;
-        lockOn -= combatLock.AttemptLock;
-
-        block -= BlockCaller;
-        block -= StopBlockingCaller;
+        Controls.attack -= combatFunctionality.UseAttackAbility;
+        Controls.lockOn -= combatLock.AttemptLock;
     }
 
     private void FixedUpdate()
     {
-        if (!controls.isAlive) return;
+        if (!Controls.isAlive) return;
 
 
-        if (!controls.isLockedOn)
+        if (!Controls.isLockedOn)
             AttemptLockOn();
 
         //If not in combat,"Look regularly". else "combat look"
-        if (controls.isLockedOn)
+        if (Controls.isLockedOn)
         {
-            controls.CombatFollowTarget?.Invoke(combatLock.myColliderDetector.closestCombatEntity.GetComponent<CombatEntityController>());
+            Controls.CombatFollowTarget?.Invoke(combatLock.myColliderDetector.closestCombatEntity.GetComponent<CombatEntityController>());
 
-            if(!thinking && !controls.alreadyAttacking && !attackingWithPattern)
+            if(!thinking && !Controls.alreadyAttacking && !attackingWithPattern)
             {
                 EntityAttackPattern attackPattern = ChoseRandomAttackPattern();
                 StartCoroutine(Attack(attackPattern));
@@ -82,21 +69,7 @@ public class AttackingAI : MonoBehaviour
     void AttemptLockOn()
     {
         //print(gameObject.name + " attempting to lock on");
-        lockOn?.Invoke();
-    }
-
-
-
-    void BlockCaller()
-    {
-        // print("Player Combat : Block Caller called");
-        controls.Block?.Invoke();
-    }
-
-    void StopBlockingCaller()
-    {
-        //print("Player Combat : Stop Blocking Caller called");
-        controls.StopBlocking?.Invoke();
+        Controls.lockOn?.Invoke();
     }
 
     EntityAttackPattern ChoseRandomAttackPattern()
@@ -124,14 +97,14 @@ public class AttackingAI : MonoBehaviour
         {
             Debug.Log("ACTUAL ATTACK: (i=" + i + ")   |  DIRECTION: " + attackPattern.attackDir[i]);
 
-            controls.SelectCertainAbility?.Invoke(attackPattern.attackDir[i].ToString());
-            attack?.Invoke();
+            Controls.SelectCertainAbility?.Invoke(attackPattern.attackDir[i].ToString());
+            Controls.attack?.Invoke();
 
             while (attackPatternProgress[i] == false)
             {
 
                 yield return new WaitForSeconds(1f);
-                if (!controls.isAlive)
+                if (!Controls.isAlive)
                 {
                     ResetAttacking();
                     print("Died, stopping attacking");

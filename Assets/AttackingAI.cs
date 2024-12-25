@@ -46,7 +46,7 @@ public class AttackingAI : MonoBehaviour
         if (!Controls.isAlive) return;
 
 
-        if (!Controls.isLockedOn)
+        if (!Controls.isLockedOn && !combatLock.myColliderDetector.targetDescisionMade)
             AttemptLockOn();
 
         //If not in combat,"Look regularly". else "combat look"

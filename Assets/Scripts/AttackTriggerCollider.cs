@@ -51,7 +51,10 @@ public class AttackTriggerCollider : MonoBehaviour
 
                 //Enemy exits combat when dieing
                 if(other.gameObject.GetComponent<CombatLock>() != null)
+                {
                     other.gameObject.GetComponent<CombatLock>().ExitCombatCaller();
+                    print("enemy dead, delocking caller called");
+                }
             }
 
             #endregion

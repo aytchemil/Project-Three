@@ -268,14 +268,14 @@ public class Movement : MonoBehaviour
         //                       (0.0  , +-1.0)
         //                       (+-1.0, +-1.0)
 
-        Dash(moveInput);
+        Dash(moveInput, dashSpeedMultiplier);
     }
 
     /// <summary>
     /// Adds force to the player for a dash direction
     /// </summary>
     /// <param name="dir"></param>
-    protected void Dash(Vector2 dir)
+    public void Dash(Vector2 dir, float multiplier)
     {
         //Debug.Log("Attempting Dashing In Direction:  " + dir);
 
@@ -298,7 +298,7 @@ public class Movement : MonoBehaviour
             if (!onSlope)
             {
                 //Debug.Log("Dashing Left");
-                rb.AddForce(moveDirection.normalized * dashSpeedMultiplier, ForceMode.VelocityChange);
+                rb.AddForce(moveDirection.normalized * multiplier, ForceMode.VelocityChange);
 
             }
             else //if the player is on a slope, dash relative to the slope's move direction

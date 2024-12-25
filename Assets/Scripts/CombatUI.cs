@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
+using UnityEditor.ShaderGraph;
 
 [RequireComponent(typeof(PlayerController))]
 public class CombatUI : MonoBehaviour
@@ -39,6 +41,7 @@ public class CombatUI : MonoBehaviour
     [SerializeField] private RawImage downImgRef;
     [SerializeField] private RawImage leftImgRef;
     [SerializeField] private RawImage rightImgRef;
+    [SerializeField] private TextMeshProUGUI text;
 
     #endregion
 
@@ -55,6 +58,7 @@ public class CombatUI : MonoBehaviour
         //Input Action Observers
         controls.EnterCombat += EnableUI;
         controls.ExitCombat += DisableUI;
+        controls.SelectCertainAbility += UpdateCurrentAbilityText;
     }
 
     private void OnDisable()
@@ -62,6 +66,8 @@ public class CombatUI : MonoBehaviour
         //Input Action Observers
         controls.EnterCombat -= EnableUI;
         controls.ExitCombat -= DisableUI;
+        controls.SelectCertainAbility -= UpdateCurrentAbilityText;
+
     }
 
 
@@ -260,6 +266,22 @@ public class CombatUI : MonoBehaviour
                 up.SetActive(false);
                 down.SetActive(true);
                 break;
+        }
+    }
+
+    void UpdateCurrentAbilityText(string dir)
+    {
+        switch (dir)
+        {
+            case "right":
+                text.text = "Current Attack: " + controls.a_right.attackName;
+                break;
+            case "left":
+                text.text = "Current Attack: " + controls.a_left.attackName; break;
+            case "up":
+                text.text = "Current Attack: " + controls.a_up.attackName; break;
+            case "down":
+                text.text = "Current Attack: " + controls.a_down.attackName; break;
         }
     }
 

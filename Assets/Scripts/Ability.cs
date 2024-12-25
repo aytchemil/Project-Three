@@ -16,7 +16,10 @@ public class Ability : ScriptableObject
         Overhead = 1,
         Pierce = 2,
         SideSlash = 3,
+        MovementForward = 4,
+        MovementRightOrLeft = 5,
     }
+    public float movementAmount;
     public CollisionType collisionType;
     public GameObject attackTriggerCollider;
     public string attackName;

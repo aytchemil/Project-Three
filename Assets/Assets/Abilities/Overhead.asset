@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Overhead
   m_EditorClassIdentifier: 
   archetype: 0
+  movementAmount: 0
   collisionType: 1
   attackTriggerCollider: {fileID: 8475917669229452261, guid: c53d5c0878e9175428ea4a958d9e3162, type: 3}
   attackName: Shield Breaker

@@ -134,7 +134,7 @@ public class CombatLock : MonoBehaviour
     {
         //Debug.Log(gameObject.name + " | attemping lock");
 
-        if (lockUnlockDelayInEffect && Controls.isAlive) return;
+        if (lockUnlockDelayInEffect && Controls.isAlive && Controls.dashing) return;
 
         UnlockDelockDelay();
 

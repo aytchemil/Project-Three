@@ -61,9 +61,11 @@ public class CombatFunctionality : MonoBehaviour
         Controls.ExitCombat += ExitCombat;
         Controls.CombatFollowTarget += CombatFunctionalityElementsLockOntoTarget;
 
-        //Blocking
-        Controls.Block += Block;
-        Controls.StopBlocking += StopBlock;
+        Controls.attack += UseAttackAbility;
+
+        Controls.blockStart += Block;
+        Controls.blockStop += StopBlock;
+
     }
 
     /// <summary>
@@ -79,9 +81,10 @@ public class CombatFunctionality : MonoBehaviour
         Controls.ExitCombat -= ExitCombat;
         Controls.CombatFollowTarget -= CombatFunctionalityElementsLockOntoTarget;
 
-        //Blocking
-        Controls.Block -= Block;
-        Controls.StopBlocking -= StopBlock;
+        Controls.attack -= UseAttackAbility;
+
+        Controls.blockStart -= Block;
+        Controls.blockStop -= StopBlock;
     }
 
     #endregion

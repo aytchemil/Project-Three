@@ -7168,8 +7168,8 @@ GameObject:
   - component: {fileID: 1368657294}
   - component: {fileID: 1368657295}
   - component: {fileID: 1368657306}
+  - component: {fileID: 1368657307}
   - component: {fileID: 1368657303}
-  - component: {fileID: 1368657302}
   - component: {fileID: 1368657300}
   - component: {fileID: 1368657305}
   m_Layer: 8
@@ -7296,19 +7296,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ece7caa883bce2242a96582bc276a39b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  block:
-    m_Name: Block
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: c9916123-e804-48c5-9d63-a2ea2be0c6eb
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings: []
-    m_Flags: 0
   a_right: {fileID: 11400000, guid: 585cc1ee8817ff74c82c4dcaa2d0609d, type: 2}
   a_left: {fileID: 11400000, guid: cc188b88764ff3c478da26feea8ec6bc, type: 2}
   a_up: {fileID: 11400000, guid: 896542e6db2ab0948a9c127016922ed4, type: 2}
   a_down: {fileID: 11400000, guid: 57c8b27f3b1a8134b8e9c7edb069b681, type: 2}
+  dashing: 0
   dashOnCooldown: 0
   isLockedOn: 0
   alreadyAttacking: 0
@@ -7353,7 +7345,7 @@ MonoBehaviour:
     m_SingletonActionBindings: []
     m_Flags: 0
   ia_dash:
-    m_Name: 
+    m_Name: Ia_dash
     m_Type: 0
     m_ExpectedControlType: 
     m_Id: c5a757d8-8c16-47e3-9d87-10079af0ea75
@@ -7362,10 +7354,19 @@ MonoBehaviour:
     m_SingletonActionBindings: []
     m_Flags: 0
   ia_attack:
-    m_Name: 
+    m_Name: Ia_attack
     m_Type: 0
     m_ExpectedControlType: 
     m_Id: d5f38b34-aca2-40fc-8e44-4dc1d8f8e501
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings: []
+    m_Flags: 0
+  ia_block:
+    m_Name: Ia_block
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: a54d3070-4f91-4454-b3cb-dcace2e41274
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings: []
@@ -7413,32 +7414,6 @@ MonoBehaviour:
   invincibiliyTime: 0.5
   deathTime: 2
   corpseDeathTime: 0
---- !u!114 &1368657302
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1368657291}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4584e62f72cd4da4080d66385406f37a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attackTriggerParent: {fileID: 0}
-  myAttackTriggers:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  attackTrigger_right: {fileID: 0}
-  attackTrigger_left: {fileID: 0}
-  attackTrigger_up: {fileID: 0}
-  attackTrigger_down: {fileID: 0}
-  currentAbility: {fileID: 0}
-  blockingTrigger: {fileID: 0}
-  blockingTriggerPrefab: {fileID: 1036016201369694723, guid: b0f85c3895f57f44198817b368468064, type: 3}
-  blockingTriggerParent: {fileID: 0}
 --- !u!114 &1368657303
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7505,6 +7480,32 @@ MonoBehaviour:
   lockUnlockDelay: 0.1
   myColliderDetector: {fileID: 0}
   colliderDetecterAsset: {fileID: 3243137597141389865, guid: 11e14ea0d576d4e40950e72b2e820ced, type: 3}
+--- !u!114 &1368657307
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1368657291}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cab37fd0049e6df408e00b528156d567, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackTriggerParent: {fileID: 0}
+  myAttackTriggers:
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
+  attackTrigger_right: {fileID: 0}
+  attackTrigger_left: {fileID: 0}
+  attackTrigger_up: {fileID: 0}
+  attackTrigger_down: {fileID: 0}
+  currentAbility: {fileID: 0}
+  blockingTrigger: {fileID: 0}
+  blockingTriggerPrefab: {fileID: 1036016201369694723, guid: b0f85c3895f57f44198817b368468064, type: 3}
+  blockingTriggerParent: {fileID: 0}
 --- !u!1 &1379316844
 GameObject:
   m_ObjectHideFlags: 0
@@ -18630,19 +18631,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d667623d707b6b149b3cf630b8654d20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  block:
-    m_Name: 
-    m_Type: 0
-    m_ExpectedControlType: 
-    m_Id: d656bf29-7e94-4ac9-9e5f-8f12b8dc123f
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings: []
-    m_Flags: 0
   a_right: {fileID: 11400000, guid: 585cc1ee8817ff74c82c4dcaa2d0609d, type: 2}
   a_left: {fileID: 11400000, guid: 57c8b27f3b1a8134b8e9c7edb069b681, type: 2}
   a_up: {fileID: 11400000, guid: 896542e6db2ab0948a9c127016922ed4, type: 2}
   a_down: {fileID: 11400000, guid: cc188b88764ff3c478da26feea8ec6bc, type: 2}
+  dashing: 0
   dashOnCooldown: 0
   isLockedOn: 0
   alreadyAttacking: 0

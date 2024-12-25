@@ -8,45 +8,33 @@ using UnityEngine.InputSystem;
 public class CombatEntityController : MonoBehaviour
 {
     //Rule of thumb : Keep these such that they are always set on the outside, never during gameplay
+
+    [Header("Controls")]
     public Func<Vector2> look;
-    //public Action<Vector2> move;
-    //public Action sprintStarted;
-    //public Action sprintCancelled;
-    //public Action lockOn;
-    //public Action dash;
-    //public Action attack;
-
     public Func<Vector2> move;
-
     public Action sprintStart;
     public Action sprintStop;
-
     public Action lockOn;
-
     public Action dash;
-
     public Action attack;
-
     public Action blockStart;
     public Action blockStop;
 
-
-
+    [Header("Observer Events")]
     public Action EnterCombat;
     public Action ExitCombat;
     public Action<CombatEntityController> CombatFollowTarget;
     public Action<string> SelectCertainAbility;
     public Action<CombatEntityController> TargetDeath;
-    [Space]
+
+    [Header("Pre-Selected Abilities")]
     public Ability a_right;
     public Ability a_left;
     public Ability a_up;
     public Ability a_down;
-    [Space]
-    public Action Block;
-    public Action StopBlocking;
 
     [Header("Central Flags")]
+    public bool dashing;
     public bool dashOnCooldown;
     public bool isLockedOn;
     public bool alreadyAttacking;

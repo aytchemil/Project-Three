@@ -173,8 +173,10 @@ public class PlayerCamera : MonoBehaviour
         //    TransformLookAtTarget(target.transform.position);
         //}
 
-        CameraLookAtLockTarget(target.transform.position);
-        TransformLookAtTarget(target.transform.position);
+        Vector3 lookAtPos = new Vector3(target.transform.position.x, target.transform.position.y + 4, target.transform.position.z);
+        
+        CameraLookAtLockTarget(lookAtPos);
+        TransformLookAtTarget(lookAtPos);
         UpdateNewXY();
     }
 

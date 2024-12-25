@@ -22,20 +22,20 @@ public class PlayerCombatFunctionality : CombatFunctionality
     protected override void OnEnable()
     {
         base.OnEnable();
-        playerControls.attack.performed += ctx => UseAttackAbility();
+        playerControls.attack += UseAttackAbility;
         //print("f");
-        playerControls.block.started += ctx => BlockCaller();
-        playerControls.block.canceled += ctx => StopBlockingCaller();
+        playerControls.blockStart += BlockCaller;
+        playerControls.blockStop += StopBlockingCaller;
 
     }
 
     protected override void OnDisable()
     {
         base.OnDisable();
-        playerControls.attack.performed -= ctx => UseAttackAbility();
+        playerControls.attack -= UseAttackAbility;
 
-        playerControls.block.started -= ctx => BlockCaller();
-        playerControls.block.canceled -= ctx => StopBlockingCaller();
+        playerControls.blockStart -= BlockCaller;
+        playerControls.blockStop -= StopBlockingCaller;
     }
 
     void BlockCaller()

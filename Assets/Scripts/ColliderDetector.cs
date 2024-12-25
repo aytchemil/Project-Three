@@ -98,7 +98,11 @@ public class ColliderDetector : MonoBehaviour
 
             if (other.gameObject == closestCombatEntity)
             {
+                //If not attacking
+
+                //Testing for attacking then missing
                 combatLock.Controls.CombatFollowTarget?.Invoke(other.gameObject.GetComponent<CombatEntityController>());
+
                 //print("Following locked target caller called : " + other.gameObject.name);
             }
         }

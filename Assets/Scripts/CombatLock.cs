@@ -32,12 +32,14 @@ public class CombatLock : MonoBehaviour
     {
         Controls.TargetDeath += TargetDeath;
         Controls.CombatFollowTarget += ColliderLockOntoTarget;
+        Controls.lockOn += AttemptLock;
     }
 
     protected virtual void OnDisable()
     {
         Controls.TargetDeath -= TargetDeath;
         Controls.CombatFollowTarget -= ColliderLockOntoTarget;
+        Controls.lockOn -= AttemptLock;
     }
     #endregion
 

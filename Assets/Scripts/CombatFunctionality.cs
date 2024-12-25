@@ -1,7 +1,5 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using System.Linq;
-using UnityEngine.UIElements;
 
 
 [RequireComponent(typeof(CombatEntityController))]
@@ -264,7 +262,7 @@ public class CombatFunctionality : MonoBehaviour
 
         StartAttacking();
         AttackTriggerUse();
-
+        AnimationAttackLookAtBufferPeriod();
 
         ///to do: create a way for it to animate,
         ///create 4 different attack triggers(like box)
@@ -299,7 +297,11 @@ public class CombatFunctionality : MonoBehaviour
 
     }
 
-    
+    void AnimationAttackLookAtBufferPeriod()
+    {
+
+    }
+
     /// <summary>
     /// Attack with the box attack
     /// </summary>

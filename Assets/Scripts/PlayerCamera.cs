@@ -2,7 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 
 [RequireComponent(typeof(PlayerController))]
 public class PlayerCamera : MonoBehaviour
@@ -48,13 +47,13 @@ public class PlayerCamera : MonoBehaviour
         UnityEngine.Cursor.visible = false;
 
         //Callback Additions
-        controls.CombatFollowTarget += EnterCombatAndFollowTarget;
+        controls.CombatFollowTarget += InCombatFollowingTarget;
         controls.ExitCombat += ExitCombat;
     }
 
     private void OnDisable()
     {
-        controls.CombatFollowTarget -= EnterCombatAndFollowTarget;
+        controls.CombatFollowTarget -= InCombatFollowingTarget;
         controls.ExitCombat -= ExitCombat;
     }
 
@@ -65,7 +64,7 @@ public class PlayerCamera : MonoBehaviour
         if (!controls.isLockedOn)
         {
            // Debug.Log("Mouse looking normally");
-            MouseLooking(controls.look.ReadValue<Vector2>());
+            MouseLooking(controls.look != null ? controls.look.Invoke() : Vector2.zero);
             //set the current xRot yRot
             GetCurrentXY();
 
@@ -163,9 +162,17 @@ public class PlayerCamera : MonoBehaviour
     /// Observer Method for the player camera to enter combat
     /// </summary>
     /// <param name="target"></param>
-    void EnterCombatAndFollowTarget(CombatEntityController target)
+    void InCombatFollowingTarget(CombatEntityController target)
     {
         //Debug.Log("Entering Combat and following target: " + target);
+
+        ////Testing for dash invunrability before it
+        //if (!controls.alreadyAttacking)
+        //{
+        //    CameraLookAtLockTarget(target.transform.position);
+        //    TransformLookAtTarget(target.transform.position);
+        //}
+
         CameraLookAtLockTarget(target.transform.position);
         TransformLookAtTarget(target.transform.position);
         UpdateNewXY();

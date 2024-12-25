@@ -1,9 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.GraphicsBuffer;
 
 [RequireComponent(typeof(PlayerController))]
 public class CombatUI : MonoBehaviour
@@ -71,7 +69,7 @@ public class CombatUI : MonoBehaviour
     {
         //Updates the Attack Indicator rotation
         if (!changeOnCooldown && combatUIParent.activeInHierarchy)
-            UpdateAttackIndicatorRotation(controls.look.ReadValue<Vector2>());
+            UpdateAttackIndicatorRotation(controls.ia_look.ReadValue<Vector2>());
     }
 
     #region UI and Basic Functionality

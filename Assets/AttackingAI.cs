@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -123,7 +122,10 @@ public class AttackingAI : MonoBehaviour
 
         for(int i = 0; i < attackPatternLength; i++)
         {
-            Debug.Log("Actual attack of : " + i);
+            Debug.Log("ACTUAL ATTACK: (i=" + i + ")   |  DIRECTION: " + attackPattern.attackDir[i]);
+
+            controls.SelectCertainAbility?.Invoke(attackPattern.attackDir[i].ToString());
+            attack?.Invoke();
 
             while (attackPatternProgress[i] == false)
             {

@@ -163,7 +163,7 @@ public class ColliderDetector : MonoBehaviour
     /// </summary>
     void Delock()
     {
-        //print("Delocking");
+        print("Delocking");
         if (combatLock.Controls.isLockedOn)
         {
             //Debug.Log("Delock from Collider Detector");

@@ -12,4 +12,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d3bd1ebb642d294796c49266934fb27, type: 3}
   m_Name: Attack 1
   m_EditorClassIdentifier: 
-  attackDir: 01000000020000000300000004000000
+  attackDir: 00000000010000000300000002000000

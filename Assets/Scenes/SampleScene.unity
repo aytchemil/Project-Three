@@ -3473,6 +3473,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3179adc5982ad04498f507a9f3411489, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  preSelectedAttackPatterns:
+  - {fileID: 11400000, guid: be289609191c85141ae7c34c2615ab96, type: 2}
+  thinking: 0
+  thinkingPeriodBetweenAttackPatternsRange: {x: 3, y: 8}
+  attackingWithPattern: 0
+  attackPatternProgress: 
+  currentAttackInAttackPattern: 0
 --- !u!4 &598949395 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 335518614021717081, guid: 055ee2869c17131408e7c1555b84e44d, type: 3}

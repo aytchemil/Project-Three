@@ -7377,6 +7377,7 @@ MonoBehaviour:
     combatSpeed: 10
     dashSpeed: 30
     dashTime: 0.2
+    missedAttackSpeed: 5
   state: 0
   groundLinearDampeningDrag: 7
   height: 21
@@ -7434,7 +7435,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   a_right: {fileID: 11400000, guid: f70474e9dbc7cb74e9e11772d7ab18fc, type: 2}
-  a_left: {fileID: 11400000, guid: cc188b88764ff3c478da26feea8ec6bc, type: 2}
+  a_left: {fileID: 11400000, guid: 585cc1ee8817ff74c82c4dcaa2d0609d, type: 2}
   a_up: {fileID: 11400000, guid: 896542e6db2ab0948a9c127016922ed4, type: 2}
   a_down: {fileID: 11400000, guid: 57c8b27f3b1a8134b8e9c7edb069b681, type: 2}
   dashing: 0

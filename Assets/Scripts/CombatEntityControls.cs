@@ -26,6 +26,8 @@ public class CombatEntityController : MonoBehaviour
     public Action<CombatEntityController> CombatFollowTarget;
     public Action<string> SelectCertainAbility;
     public Action<CombatEntityController> TargetDeath;
+    public Action ResetAttack;
+    public Action MissedAttack;
 
     [Header("Pre-Selected Abilities")]
     public Ability a_right;

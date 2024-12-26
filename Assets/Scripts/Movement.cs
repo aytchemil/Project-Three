@@ -13,6 +13,7 @@ public struct EntityStates
         sprinting = 1,
         combat = 2,
         dashing = 3,
+        missedAttack = 4,
     }
 
     [Space]
@@ -21,15 +22,17 @@ public struct EntityStates
     public float combatSpeed;
     public float dashSpeed;
     public float dashTime;
+    public float missedAttackSpeed;
 
     //Constructor
-    public EntityStates(float walkSpeed, float sprintSpeed, float combatSpeed, float dashSpeed, float dashTime)
+    public EntityStates(float walkSpeed, float sprintSpeed, float combatSpeed, float dashSpeed, float dashTime, float missedAttackSpeed)
     {
         this.walkSpeed = walkSpeed;
         this.sprintSpeed = sprintSpeed;
         this.combatSpeed = combatSpeed;
         this.dashSpeed = dashSpeed;
         this.dashTime = dashTime;
+        this.missedAttackSpeed = missedAttackSpeed;
     }
 
     public float UpdateSpeed(CurrentState state)
@@ -49,6 +52,9 @@ public struct EntityStates
                 break;
             case CurrentState.dashing:
                 playerSpeed = dashSpeed;
+                break;
+            case CurrentState.missedAttack:
+                playerSpeed = missedAttackSpeed;
                 break;
         }
 
@@ -120,8 +126,15 @@ public class Movement : MonoBehaviour
         Controls.dash += DashDirection;
 
         //Action Callback additions
+
+        //Enter/Exit Combat
         Controls.EnterCombat += EnterCombat;
         Controls.ExitCombat += ExitCombat;
+
+
+        //Missed Attack
+        Controls.MissedAttack += MissedAttack;
+        Controls.ResetAttack += ResetAttack;
     }
 
     private void OnDisable()
@@ -132,8 +145,15 @@ public class Movement : MonoBehaviour
         Controls.dash -= DashDirection;
 
         //Action Callback additions
+
+        //Enter/Exit Combat
         Controls.EnterCombat -= EnterCombat;
         Controls.ExitCombat -= ExitCombat;
+
+
+        //Missed Attack
+        Controls.MissedAttack -= MissedAttack;
+        Controls.ResetAttack -= ResetAttack;
     }
 
 
@@ -167,7 +187,7 @@ public class Movement : MonoBehaviour
     /// </summary>
     protected void SpeedHandler()
     {
-
+        //print("Handling speed");
         //Limit X and Z velocity's but not Y (Because falling)
         if (rb.linearVelocity.x > moveSpeed || rb.linearVelocity.x < -moveSpeed)
         {
@@ -183,6 +203,8 @@ public class Movement : MonoBehaviour
 
 
         moveSpeed = entityStates.UpdateSpeed(state);
+        print(state);
+        print(gameObject.name + " | movement's SpeedHandler() : new movespeed is : " + moveSpeed);
     }
 
     /// <summary>
@@ -328,6 +350,16 @@ public class Movement : MonoBehaviour
     protected void DashCooldown()
     {
         Controls.dashOnCooldown = false;
+    }
+
+    protected void MissedAttack()
+    {
+        state = EntityStates.CurrentState.missedAttack;
+    }
+
+    protected void ResetAttack()
+    {
+        state = EntityStates.CurrentState.combat;
     }
 
 }

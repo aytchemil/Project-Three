@@ -11,11 +11,15 @@ public class AttackTriggerCollider : MonoBehaviour
     public Animator attackTriggerAnimator;
 
     public bool attacking;
+    public bool hitAttack;
+
+    //Cache
+    Collider col;
 
     private void Awake()
     {
         //Cache
-        Collider col = GetComponent<Collider>();
+        col = GetComponent<Collider>();
         if (attackTriggerAnimator == null)
             attackTriggerAnimator = GetComponent<Animator>();
 
@@ -23,6 +27,13 @@ public class AttackTriggerCollider : MonoBehaviour
         col.includeLayers = collideWith;
         col.excludeLayers = ~collideWith;
         
+    }
+
+    private void OnEnable()
+    {
+        hitAttack = false;
+        gameObject.GetComponent<MeshRenderer>().material.color = Color.red;
+        col.enabled = true;
     }
 
     private void OnDisable()
@@ -39,7 +50,7 @@ public class AttackTriggerCollider : MonoBehaviour
         float newEnemyHealth;
         if (attacking)
         {
-
+            HitAttack();
             #region Death
             ///If the Entity being attacked's health reaches less than 0, tell OUR Controller to call the target death delegate action
             newEnemyHealth = other.GetComponent<AttackbleEntity>().Attacked(myAbility);
@@ -95,6 +106,40 @@ public class AttackTriggerCollider : MonoBehaviour
     {
         attacking = false;
         combatFunctionality.FinishAttacking();
+        ResetAttackCaller();
         gameObject.SetActive(false);
+    }
+
+    void ResetAttackCaller()
+    {
+        combatFunctionality.Controls.ResetAttack?.Invoke();
+    }
+
+    void HitAttack()
+    {
+        hitAttack = true;
+        DisableAttack(Color.green);
+    }
+
+    void DisableAttack(Color color)
+    {
+        gameObject.GetComponent<MeshRenderer>().material.color = color;
+        col.enabled = false;
+    }
+
+    void MissAttackCuttoff()
+    {
+        if (hitAttack) return;
+
+        print("missed attack");
+        hitAttack = false;
+
+        DisableAttack(Color.grey);
+        MissedAttackCaller();
+    }
+
+    void MissedAttackCaller()
+    {
+        combatFunctionality.Controls.MissedAttack?.Invoke();
     }
 }

@@ -7545,7 +7545,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controls: {fileID: 0}
-  _health: 5
+  _health: 30
   attackedEffect: {fileID: 2037828794}
   animator: {fileID: 1368657305}
   invincibility: 0

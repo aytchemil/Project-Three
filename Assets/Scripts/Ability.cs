@@ -19,7 +19,6 @@ public class Ability : ScriptableObject
         MovementForward = 4,
         MovementRightOrLeft = 5,
     }
-    public float movementAmount;
     public CollisionType collisionType;
     public GameObject attackTriggerCollider;
     public string attackName;
@@ -27,6 +26,8 @@ public class Ability : ScriptableObject
     public float speed;
 
     public float damage;
+    public float movementAmount;
 
+    public float nextAttacksComboDelay = 0.2f;
 
 }

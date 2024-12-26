@@ -129,7 +129,12 @@ public class AttackTriggerCollider : MonoBehaviour
 
     void MissAttackCuttoff()
     {
-        if (hitAttack) return;
+        if (hitAttack)
+        {
+            Invoke(nameof(ComboOffOfHit), myAbility.nextAttacksComboDelay);
+            ComboOffOfHit();
+            return;
+        }
 
         print("missed attack");
         hitAttack = false;
@@ -141,5 +146,11 @@ public class AttackTriggerCollider : MonoBehaviour
     void MissedAttackCaller()
     {
         combatFunctionality.Controls.MissedAttack?.Invoke();
+    }
+
+    void ComboOffOfHit()
+    {
+        print("Can now combo attack");
+        DisableTrigger();
     }
 }

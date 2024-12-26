@@ -19,3 +19,5 @@ MonoBehaviour:
   icon: {fileID: 2800000, guid: fdec4f40414980f458d17e96eb486e8c, type: 3}
   speed: 2
   damage: 2
+  movementAmount: 0
+  nextAttacksComboDelay: 0.3

@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Forward Lunge
   m_EditorClassIdentifier: 
   archetype: 0
-  movementAmount: 30
   collisionType: 4
   attackTriggerCollider: {fileID: 9152381543741592740, guid: 876364ef1f1b2f94ebb3893dea57a553, type: 3}
   attackName: Forward Lunge
   icon: {fileID: 2800000, guid: c7f1ce3715d640c46b11327dd7472006, type: 3}
   speed: 1
   damage: 1
+  movementAmount: 30
+  nextAttacksComboDelay: 0.3

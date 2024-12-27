@@ -57,6 +57,8 @@ public class ColliderDetector : MonoBehaviour
     /// <param name="other"></param>
     private void OnTriggerStay(Collider other)
     {
+        if (other.gameObject == combatLock.gameObject) return;
+
         //CollideWithNewCombatEntity(other);
         //Sets the flag in CombatLock for if there is an entity in this zone
         if(other.GetComponent<CombatEntityController>().isAlive)

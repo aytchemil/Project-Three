@@ -68,7 +68,7 @@ public class Movement : MonoBehaviour
     [Header("Adjustable Variables")]
     //Adjustable Variables
     public EntityStates entityStates;
-    public EntityStates.CurrentState state { get; private set; }
+    [field:SerializeField] public EntityStates.CurrentState state { get; private set; }
     [Space]
 
     public float groundLinearDampeningDrag;
@@ -79,6 +79,7 @@ public class Movement : MonoBehaviour
     public float maxSlopeAngle;
     [Space]
     public float dashSpeedMultiplier;
+    public float afterDashPeriodTimeLength = 1.2f;
     public float dashCooldown;
 
     [Header("Flags")]
@@ -331,21 +332,27 @@ public class Movement : MonoBehaviour
 
         //Dash cooldown
         Controls.dashing = true;
-        Invoke(nameof(StopDash), entityStates.dashTime);
-        Invoke("DashCooldown", dashCooldown);
+        StartCoroutine(StopDash());
+        Invoke("DashCooldown", dashCooldown + afterDashPeriodTimeLength);
     }
 
     /// <summary>
     /// Method that is invoked with a delay to for dash cooldown
     /// </summary>
-    protected void StopDash()
-    {
-        //print("Stop dash setting current state to combat");
 
+    protected IEnumerator StopDash()
+    {
+        yield return new WaitForSeconds(entityStates.dashTime);
+
+        //print("Stop dash setting current state to combat");
         if (Controls.GetTarget?.Invoke() != null)
             state = EntityStates.CurrentState.combat;
         else
             print(gameObject.name + " | StopDash: Target null, keeping current state");
+
+        yield return new WaitForSeconds(afterDashPeriodTimeLength);
+
+
         Controls.dashing = false;
     }
 
@@ -359,13 +366,13 @@ public class Movement : MonoBehaviour
 
     protected void MissedAttack()
     {
-        //Debug.Log("setting current state to missed attack");
+        Debug.Log("setting current state to missed attack");
         state = EntityStates.CurrentState.missedAttack;
     }
 
     protected void ResetAttack()
     {
-        //Debug.Log("resseting attack back to combat");
+        Debug.Log(gameObject.name + " | Movement : resseting attack back to combat");
         state = EntityStates.CurrentState.combat;
     }
 

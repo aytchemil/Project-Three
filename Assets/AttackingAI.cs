@@ -33,12 +33,17 @@ public class AttackingAI : MonoBehaviour
         Controls.attack += combatFunctionality.UseAttackAbility;
         Controls.lockOn += combatLock.AttemptLock;
 
+        Controls.CompletedAttack += CompleteAttackInPattern;
+
     }
 
     protected void OnDisable()
     {
         Controls.attack -= combatFunctionality.UseAttackAbility;
         Controls.lockOn -= combatLock.AttemptLock;
+
+        Controls.CompletedAttack -= CompleteAttackInPattern;
+
     }
 
     private void FixedUpdate()
@@ -112,28 +117,26 @@ public class AttackingAI : MonoBehaviour
 
         for(int i = 0; i < attackPatternLength; i++)
         {
-           // Debug.Log("ACTUAL ATTACK: (i=" + i + ")   |  DIRECTION: " + attackPattern.attackDir[i]);
+            //Debug.Log("ACTUAL ATTACK DIRECTION: " + attackPattern.attackDir[i]);
 
             Controls.SelectCertainAbility?.Invoke(attackPattern.attackDir[i].ToString());
             Controls.attack?.Invoke();
 
             while (attackPatternProgress[i] == false)
             {
-
-                yield return new WaitForSeconds(1f);
+                //Debug.Log("attack in progress");
+                yield return new WaitForEndOfFrame();
                 if (!Controls.isAlive)
                 {
                     ResetAttacking();
                     //print("Died, stopping attacking");
                     yield break;
                 }
-
-                CompleteAttackInPattern();// For now
+    
             }
-
-           // print("Ended: " + i);
+            // print("Ended: " + i);
         }
-        //print("Coroutine Period of attacking over, on thinking cooldown");
+       // print("Attacking Period over, Thinking....");
         thinking = true;
         ResetAttacking();
         Invoke("AttackThinkingPeriodEnd", UnityEngine.Random.Range(thinkingPeriodBetweenAttackPatternsRange.x, thinkingPeriodBetweenAttackPatternsRange.y));
@@ -144,15 +147,18 @@ public class AttackingAI : MonoBehaviour
     /// </summary>
     public void CompleteAttackInPattern()
     {
-        if (attackPatternProgress[attackPatternProgress.Count-1] == false)
+        int lastIndex = attackPatternProgress.Count - 1;
+
+        //Debug.Log("Completing attack [" + currentAttackInAttackPattern + "] in pattern of length " + lastIndex);
+
+        if (lastIndex == -1) return;
+
+        //print("Last attack in attack pattern is : " + attackPatternProgress[lastIndex]);
+        if (attackPatternProgress[lastIndex] == false)
         {
             //print("Completeing: " + currentAttackInAttackPattern);
             attackPatternProgress[currentAttackInAttackPattern] = true;
             currentAttackInAttackPattern++;
-        }
-        else
-        {
-            //print("All Attacks complete");
         }
     }
 

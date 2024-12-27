@@ -24,10 +24,9 @@ public class Ability : ScriptableObject
     public string attackName;
     public Texture icon;
     public float speed;
+    public float initialAttackDelay = 0.3f;
 
     public float damage;
     public float movementAmount;
-
-    public float nextAttacksComboDelay = 0.2f;
 
 }

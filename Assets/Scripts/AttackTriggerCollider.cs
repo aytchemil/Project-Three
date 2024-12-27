@@ -1,5 +1,4 @@
 using System.Collections;
-using UnityEditor.Build;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
@@ -13,8 +12,6 @@ public class AttackTriggerCollider : MonoBehaviour
 
     public bool attacking;
     public bool hitAttack;
-    public bool initialAttackDelayOver;
-
     //Cache
     Collider col;
 
@@ -38,7 +35,7 @@ public class AttackTriggerCollider : MonoBehaviour
     private void OnTriggerStay(Collider other)
     {
         float newEnemyHealth;
-        if (attacking && initialAttackDelayOver)
+        if (attacking && combatFunctionality.initialAttackDelayOver)
         {
             HitAttack();
             #region Death
@@ -77,9 +74,10 @@ public class AttackTriggerCollider : MonoBehaviour
     public void StartAttackFromAttackTrigger(Ability currentAbility)
     {
         if(attacking) { print("already attacking, cannot re attack"); return; }
-        //Debug.Log("Attack Trigger attacking!");
+        //Debug.Log("Starting an Attack: " + currentAbility.name);
         myAbility = currentAbility;
         InitializeTrigger();
+        Invoke(nameof(InitialAttackDelayOverReEnableTrigger), currentAbility.initialAttackDelay);
     }
 
 
@@ -88,10 +86,12 @@ public class AttackTriggerCollider : MonoBehaviour
     /// </summary>
     void InitializeTrigger()
     {
-        print("initializing attack trigger: " + gameObject.name);
+        //print("initializing attack trigger: " + gameObject.name);
         attacking = true;
         hitAttack = false;
-        initialAttackDelayOver = false;
+        combatFunctionality.initialAttackDelayOver = false;
+        attackTriggerAnimator.SetBool("windupDone", false);
+
         DisableAttack(Color.grey);
     }
 
@@ -102,36 +102,57 @@ public class AttackTriggerCollider : MonoBehaviour
     /// - Tell's the CombatFunctionality to finish attacking
     /// - Disables this GameObject
     /// </summary>
-    void DisableTrigger()
+    public void DisableTrigger()
     {
-        print("Disabling trigger");
+        //print("Disabling trigger");
+        CompleteAttackCaller();
         attacking = false;
-        initialAttackDelayOver = false;
+        combatFunctionality.initialAttackDelayOver = false;
         combatFunctionality.FinishAttacking();
 
 
         if(combatFunctionality.Controls.GetTarget?.Invoke() != null)
         {
             ResetAttackCaller();
-            print("Disabling trigger from : " + gameObject.name + " Target: " + combatFunctionality.Controls.GetTarget?.Invoke());
+            //print("Disabling trigger from : " + gameObject.name + " Target: " + combatFunctionality.Controls.GetTarget?.Invoke());
         }
         else
         {
-            print("Target is already null when trying to reset attack caller");
+            //print("Target is already null when trying to reset attack caller");
         }
 
         gameObject.SetActive(false);
     }
 
+    public void EndOfAnimationDebug()
+    {
+       // print("Hit end of attack animation");
+    }
+
+    void CompleteAttackCaller()
+    {
+        //Debug.Log("Compeleted Attack");
+        combatFunctionality.Controls.CompletedAttack?.Invoke();
+    }
+
     void ResetAttackCaller()
     {
-       // print("Attack Trigger: ResetAttackCaller()");
+        print("Attack Trigger: ResetAttackCaller()");
+
+        foreach (var subscriber in combatFunctionality.Controls.ResetAttack.GetInvocationList())
+        {
+            if (subscriber != null)
+                print(subscriber);
+            else
+                Debug.LogError("No subscribers found in reset attack, this needs movement subscribed to it, check for that first");
+        }
 
         combatFunctionality.Controls.ResetAttack?.Invoke();
     }
 
     void HitAttack()
     {
+        //Debug.Log("Attack hit registered");
         hitAttack = true;
         DisableAttack(Color.green);
     }
@@ -143,16 +164,11 @@ public class AttackTriggerCollider : MonoBehaviour
     }
 
     void MissAttackCuttoff()
-    {
-        if (hitAttack)
-        {
-            print("Did not miss, can now combo");
-            Invoke(nameof(ComboOffOfHit), myAbility.nextAttacksComboDelay);
+    { 
+        //print("Miss Attack Cuttoff Reached");
+        if (hitAttack) return;
 
-            return;
-        }
-
-        print("missed attack");
+        //print("missed attack");
         hitAttack = false;
 
         DisableAttack(Color.grey);
@@ -164,16 +180,21 @@ public class AttackTriggerCollider : MonoBehaviour
         combatFunctionality.Controls.MissedAttack?.Invoke();
     }
 
-    void ComboOffOfHit()
+    public void ComboOffOfHitNowAvaliable()
     {
-       // print("Can now combo attack");
-        DisableTrigger();
+        if (hitAttack)
+        {
+            //print("Combo off hit time period reached, can now combo because attack hit");
+            print("Disabling this attack to allow for combo");
+            DisableTrigger();
+        }
     }
 
     public void InitialAttackDelayOverReEnableTrigger()
     {
-        print("Initial Attack Delay over, reenbling trigger");
-        initialAttackDelayOver = true;
+        // print("Initial Attack Delay over, reenbling trigger");
+        combatFunctionality.initialAttackDelayOver = true;
+        attackTriggerAnimator.SetBool("windupDone", true);
         gameObject.GetComponent<MeshRenderer>().material.color = Color.red;
         col.enabled = true;
     }

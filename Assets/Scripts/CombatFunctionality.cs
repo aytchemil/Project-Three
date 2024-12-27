@@ -1,5 +1,6 @@
 using UnityEngine;
 using System.Linq;
+using System.Collections;
 
 
 [RequireComponent(typeof(CombatEntityController))]
@@ -21,6 +22,7 @@ public class CombatFunctionality : MonoBehaviour
 
     bool initializedAttackTriggers;
     bool initializedBlockingTrigger;
+    public bool initialAttackDelayOver;
 
     [Header("Blocking")]
     public BlockingTriggerCollider blockingTrigger;
@@ -301,7 +303,7 @@ public class CombatFunctionality : MonoBehaviour
 
             case Ability.CollisionType.MovementForward:
 
-                MovementForwardAttack();
+                StartCoroutine(MovementForwardAttack());
 
                 break;
             case Ability.CollisionType.MovementRightOrLeft:
@@ -329,7 +331,7 @@ public class CombatFunctionality : MonoBehaviour
     }
     void OverheadAttack()
     {
-        Debug.Log("Attempting Overhead attack");
+        //Debug.Log("Attempting Overhead attack");
     }
     void PierceAttack()
     {
@@ -341,9 +343,15 @@ public class CombatFunctionality : MonoBehaviour
         //Debug.Log("Attempting Side Slash attack");
     }
 
-    void MovementForwardAttack()
+    IEnumerator MovementForwardAttack()
     {
         Debug.Log("Attempting Movement Forward Attack");
+
+        while (!initialAttackDelayOver)
+        {
+            print("Waiting for attack to start");
+            yield return new WaitForEndOfFrame();
+        }
 
         gameObject.GetComponent<Movement>().Dash(new Vector2(0, 5), currentAbility.movementAmount);
     }
@@ -428,7 +436,7 @@ public class CombatFunctionality : MonoBehaviour
     /// <param name="target"></param>
     public void TargetDeathCaller(CombatEntityController target)
     {
-        //Debug.Log("Target Death Caller called for by : " + gameObject.name);
+        Debug.Log("Target Death Caller called for by : " + gameObject.name);
         if (Controls.TargetDeath == null)
             Debug.LogError("Target death caller null, please check subscribers to ensure theyre are some for : " + gameObject.name);
         else
@@ -436,9 +444,17 @@ public class CombatFunctionality : MonoBehaviour
             //Debug.Log(gameObject.name + "'s target (" + target.name + ") has died, now calling TargetDeathCaller functionality for " + gameObject.name);
         }
 
+        ResetAllAttackTriggers();
         Controls.TargetDeath?.Invoke(target);
     }
 
+    public void ResetAllAttackTriggers()
+    {
+        foreach(GameObject attackTrigger in myAttackTriggers)
+        {
+            attackTrigger.GetComponent<AttackTriggerCollider>().DisableTrigger();
+        }
+    }
 
     #endregion
 

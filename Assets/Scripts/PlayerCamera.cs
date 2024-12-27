@@ -9,6 +9,7 @@ public class PlayerCamera : MonoBehaviour
     //Real-Time Adjustable Variables
     public float xSens;
     public float ySens;
+    public float lockOnVerticalOffset = 6f;
     public Vector3 cameraOffset = new Vector3(0, 1.8f, -3);
     public float smoothTime = 0.3f;
     public float camLerpTime = 0.01f;
@@ -173,7 +174,7 @@ public class PlayerCamera : MonoBehaviour
         //    TransformLookAtTarget(target.transform.position);
         //}
 
-        Vector3 lookAtPos = new Vector3(target.transform.position.x, target.transform.position.y + 4, target.transform.position.z);
+        Vector3 lookAtPos = new Vector3(target.transform.position.x, target.transform.position.y + lockOnVerticalOffset, target.transform.position.z);
         
         CameraLookAtLockTarget(lookAtPos);
         TransformLookAtTarget(lookAtPos);

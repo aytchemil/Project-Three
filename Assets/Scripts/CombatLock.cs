@@ -98,7 +98,7 @@ public class CombatLock : MonoBehaviour
         myColliderDetector.UnLockFromCombatLock();
 
         Controls.GetTarget = null;
-        Controls.ResetAttack = null; //This is important, this prevents the combat state from reverting to combat when this entity kills another
+        //Controls.ResetAttack = null; //This is important, this prevents the combat state from reverting to combat when this entity kills another
     }
 
     /// <summary>

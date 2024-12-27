@@ -20,4 +20,4 @@ MonoBehaviour:
   speed: 2
   damage: 2
   movementAmount: 0
-  nextAttacksComboDelay: 0.3
+  nextAttacksComboDelay: 0.6

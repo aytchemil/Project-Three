@@ -21,6 +21,7 @@ public class CombatEntityController : MonoBehaviour
     public Action blockStop;
 
     [Header("Observer Events")]
+    public Func<CombatEntityController> GetTarget;
     public Action EnterCombat;
     public Action ExitCombat;
     public Action<CombatEntityController> CombatFollowTarget;
@@ -64,6 +65,7 @@ public class CombatEntityController : MonoBehaviour
         attack = null;
         blockStart = null;
         blockStop = null;
+        GetTarget = null;
     }
 
 

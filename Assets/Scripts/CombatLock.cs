@@ -79,25 +79,25 @@ public class CombatLock : MonoBehaviour
     public virtual void ExitCombatCaller()
     {
         //EXIT COMBAT:
-        Debug.Log(gameObject.name + " | Combat lock : ExitCombatCaller Caller Executed");
+        CombatLockExitCombatInternalMethod();
 
+        //CALLER : EXIT COMBAT (Called after ExitCombatCaller has done its stuff
+        if (Controls.ExitCombat == null)
+            Debug.LogError("ExitCombat subscribers are null, please check subscribers to ensure they are subscribed for : " + gameObject.name);
+        Controls.ExitCombat?.Invoke();
 
-        //if (Controls.ExitCombat != null)
-        //    foreach (var subscriber in Controls.ExitCombat.GetInvocationList())
-        //        Debug.Log($"Subscriber: {subscriber.Target}, Method: {subscriber.Method}");
-        //else
-        //    Debug.LogError("ExitCombat subscribers null");
+    }
 
-
+    void CombatLockExitCombatInternalMethod()
+    {
+        //Debug.Log(gameObject.name + " | Combat lock : ExitCombatCaller Caller Executed");
 
         Controls.isLockedOn = false;
         StartCoroutine(myColliderDetector.ReturnToPreLockedUnlockedState());
         myColliderDetector.UnLockFromCombatLock();
 
-        //CALLER : EXIT COMBAT
-        if (Controls.ExitCombat == null)
-            Debug.LogError("ExitCombat subscribers are null, please check subscribers to ensure they are subscribed for : " + gameObject.name);
-        Controls.ExitCombat?.Invoke();
+        Controls.GetTarget = null;
+        Controls.ResetAttack = null; //This is important, this prevents the combat state from reverting to combat when this entity kills another
     }
 
     /// <summary>
@@ -109,10 +109,10 @@ public class CombatLock : MonoBehaviour
     /// </summary>
     protected virtual void EnterCombatCaller()
     {
-        Debug.Log("Combat Lock: EnterCombatCaller called");
+        //Debug.Log("Combat Lock: EnterCombatCaller called");
         //ENTER COMBAT: 
         Controls.isLockedOn = true;
-        print("is now locked on");
+        //print("is now locked on");
 
         //CALLER : SELECT CERTAIN ABILITY CALLER (DEFAULT INPUT)
         if (Controls.SelectCertainAbility == null)
@@ -124,6 +124,9 @@ public class CombatLock : MonoBehaviour
         if (Controls.EnterCombat == null)
             Debug.LogError("EnterCombat subscribers are null, please check subscribers to ensure they are subscribed for : " + gameObject.name);
         Controls.EnterCombat?.Invoke();
+
+        Controls.GetTarget = () => myColliderDetector.closestCombatEntity.GetComponent<CombatEntityController>();
+        //print("Locked onto target: " + Controls.GetTarget?.Invoke());
     }
 
     /// <summary>
@@ -143,7 +146,7 @@ public class CombatLock : MonoBehaviour
 
         LockUnlockDelay();
 
-         Debug.Log(gameObject.name + " | Attempting a lock");
+        // Debug.Log(gameObject.name + " | Attempting a lock");
         //print("Are we locked on already? " + Controls.isLockedOn);
         if (!Controls.isLockedOn)
         {
@@ -185,7 +188,7 @@ public class CombatLock : MonoBehaviour
     /// <param name="target"></param>
     void TargetDeath(CombatEntityController target)
     {
-       // print("Combat lock: target death: " + target.name);
+        print("Combat lock: TargetDeath Reciever method called for newly dead target: " + target.name + " Now calling OnTriggerExit for killer " + gameObject.name);
         myColliderDetector.OnTriggerExit(target.gameObject.GetComponent<Collider>());
     }
 

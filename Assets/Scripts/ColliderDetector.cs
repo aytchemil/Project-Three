@@ -108,7 +108,7 @@ public class ColliderDetector : MonoBehaviour
         }
         if (combatLock.Controls.isLockedOn && closestCombatEntity == null )
         {
-            Debug.Log("Out of bounds");
+            //Debug.Log("Out of bounds");
             Delock();
         }
 
@@ -120,7 +120,7 @@ public class ColliderDetector : MonoBehaviour
     /// <param name="other"></param>
     public void OnTriggerExit(Collider other)
     {
-        //print(combatLock.gameObject.name + " : Exit");
+        //print(combatLock.gameObject.name + "'s Collider Detection has " + other.gameObject.name + " leaving collision");
         //Checks if any dead enemies are still in the collidedWithCombatentities list, if they are remove them
         GuerenteeRemovalOfDeadEnemy();
 
@@ -163,10 +163,10 @@ public class ColliderDetector : MonoBehaviour
     /// </summary>
     void Delock()
     {
-        print("Delocking");
+        //print(gameObject.name + " attempting a Delock(), is locked on? " + combatLock.Controls.isLockedOn);
         if (combatLock.Controls.isLockedOn)
         {
-            //Debug.Log("Delock from Collider Detector");
+            //Debug.Log(gameObject.name + " Delock successfull, delocking with Collider Detector, routing to ExitCombatCaller with my combatlock");
             combatLock.ExitCombatCaller();
         }
     }

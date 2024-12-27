@@ -57,14 +57,19 @@ public class AttackTriggerCollider : MonoBehaviour
             if (newEnemyHealth < 0)
             {
                 //Debug.Log("Enemy health 0, killed enemy, now calling TargetDeath to signal an enemy death");
-                Debug.Log("Enemy that died was: " + other.gameObject.name + " by " + combatFunctionality.gameObject.name);
+                //Debug.Log("Enemy that died was: " + other.gameObject.name + " by " + combatFunctionality.gameObject.name);
                 combatFunctionality.TargetDeathCaller(other.GetComponent<CombatEntityController>());
+                if(gameObject.GetComponent<CombatLock>() != null)
+                {
+                    gameObject.GetComponent<CombatLock>().ExitCombatCaller();
+                }
+                
 
                 //Enemy exits combat when dieing
                 if(other.gameObject.GetComponent<CombatLock>() != null)
                 {
                     other.gameObject.GetComponent<CombatLock>().ExitCombatCaller();
-                    print("enemy dead, delocking caller called");
+                   // print("enemy dead, delocking caller called");
                 }
             }
 
@@ -106,12 +111,25 @@ public class AttackTriggerCollider : MonoBehaviour
     {
         attacking = false;
         combatFunctionality.FinishAttacking();
-        ResetAttackCaller();
+
+
+        if(combatFunctionality.Controls.GetTarget?.Invoke() != null)
+        {
+            ResetAttackCaller();
+           // print("Disabling trigger from : " + gameObject.name + " Target: " + combatFunctionality.Controls.GetTarget?.Invoke());
+        }
+        else
+        {
+            //print("Target is already null when trying to reset attack caller");
+        }
+
         gameObject.SetActive(false);
     }
 
     void ResetAttackCaller()
     {
+       // print("Attack Trigger: ResetAttackCaller()");
+
         combatFunctionality.Controls.ResetAttack?.Invoke();
     }
 
@@ -136,7 +154,7 @@ public class AttackTriggerCollider : MonoBehaviour
             return;
         }
 
-        print("missed attack");
+       // print("missed attack");
         hitAttack = false;
 
         DisableAttack(Color.grey);
@@ -150,7 +168,7 @@ public class AttackTriggerCollider : MonoBehaviour
 
     void ComboOffOfHit()
     {
-        print("Can now combo attack");
+       // print("Can now combo attack");
         DisableTrigger();
     }
 }

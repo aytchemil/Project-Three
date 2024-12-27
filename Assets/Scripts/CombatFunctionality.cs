@@ -169,9 +169,13 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     public void DisableAttackTriggers()
     {
-        //Debug.Log("Disabling Attack Triggers");
+       // Debug.Log("Disabling Attack Triggers");
         foreach (GameObject attkTrigger in myAttackTriggers)
+        {
+            //print("DISABLING : " + attkTrigger.name);
             attkTrigger.SetActive(false);
+
+        }
     }
 
     /// <summary>
@@ -424,9 +428,13 @@ public class CombatFunctionality : MonoBehaviour
     /// <param name="target"></param>
     public void TargetDeathCaller(CombatEntityController target)
     {
-        Debug.Log("Target Death Caller called for by : " + gameObject.name);
+        //Debug.Log("Target Death Caller called for by : " + gameObject.name);
         if (Controls.TargetDeath == null)
             Debug.LogError("Target death caller null, please check subscribers to ensure theyre are some for : " + gameObject.name);
+        else
+        {
+            //Debug.Log(gameObject.name + "'s target (" + target.name + ") has died, now calling TargetDeathCaller functionality for " + gameObject.name);
+        }
 
         Controls.TargetDeath?.Invoke(target);
     }

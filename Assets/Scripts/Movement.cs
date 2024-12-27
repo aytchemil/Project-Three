@@ -203,8 +203,8 @@ public class Movement : MonoBehaviour
 
 
         moveSpeed = entityStates.UpdateSpeed(state);
-        print(state);
-        print(gameObject.name + " | movement's SpeedHandler() : new movespeed is : " + moveSpeed);
+       // print(state);
+       // print(gameObject.name + " | movement's SpeedHandler() : new movespeed is : " + moveSpeed);
     }
 
     /// <summary>
@@ -266,7 +266,7 @@ public class Movement : MonoBehaviour
     /// <param name="target"></param>
     protected private void ExitCombat()
     {
-        Debug.Log("Player movement exiting combat");
+       // Debug.Log("Player movement exiting combat");
         state = EntityStates.CurrentState.notSprinting;
     }
 
@@ -331,7 +331,7 @@ public class Movement : MonoBehaviour
 
         //Dash cooldown
         Controls.dashing = true;
-        Invoke("StopDash", entityStates.dashTime);
+        Invoke(nameof(StopDash), entityStates.dashTime);
         Invoke("DashCooldown", dashCooldown);
     }
 
@@ -340,7 +340,12 @@ public class Movement : MonoBehaviour
     /// </summary>
     protected void StopDash()
     {
-        state = EntityStates.CurrentState.combat;
+        //print("Stop dash setting current state to combat");
+
+        if (Controls.GetTarget?.Invoke() != null)
+            state = EntityStates.CurrentState.combat;
+        else
+            print(gameObject.name + " | StopDash: Target null, keeping current state");
         Controls.dashing = false;
     }
 
@@ -354,11 +359,13 @@ public class Movement : MonoBehaviour
 
     protected void MissedAttack()
     {
+        //Debug.Log("setting current state to missed attack");
         state = EntityStates.CurrentState.missedAttack;
     }
 
     protected void ResetAttack()
     {
+        //Debug.Log("resseting attack back to combat");
         state = EntityStates.CurrentState.combat;
     }
 

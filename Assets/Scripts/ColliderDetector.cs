@@ -101,7 +101,8 @@ public class ColliderDetector : MonoBehaviour
                 //If not attacking
 
                 //Testing for attacking then missing
-                combatLock.Controls.CombatFollowTarget?.Invoke(other.gameObject.GetComponent<CombatEntityController>());
+                if(!combatLock.Controls.targetIsDodging || !combatLock.Controls.alreadyAttacking)
+                    CombatFollowTargetCaller(other);
 
                 //print("Following locked target caller called : " + other.gameObject.name);
             }
@@ -112,6 +113,11 @@ public class ColliderDetector : MonoBehaviour
             Delock();
         }
 
+    }
+
+    void CombatFollowTargetCaller(Collider other)
+    {
+        combatLock.Controls.CombatFollowTarget?.Invoke(other.gameObject.GetComponent<CombatEntityController>());
     }
 
     /// <summary>

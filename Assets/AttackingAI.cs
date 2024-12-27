@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -51,9 +52,26 @@ public class AttackingAI : MonoBehaviour
         //If not in combat,"Look regularly". else "combat look"
         if (Controls.isLockedOn)
         {
-            Controls.CombatFollowTarget?.Invoke(combatLock.myColliderDetector.closestCombatEntity.GetComponent<CombatEntityController>());
+            if (!Controls.targetIsDodging)
+            {
+                //Controls.CombatFollowTarget?.Invoke(combatLock.myColliderDetector.closestCombatEntity.GetComponent<CombatEntityController>());
+            }
+            else
+            {
+                print("target is dodging, cant hit");
+            }
 
-            if(!thinking && !Controls.alreadyAttacking && !attackingWithPattern)
+            //Analyzing
+            CombatEntityController target = Controls.GetTarget?.Invoke();
+
+
+            //Dashing
+            Controls.targetIsDodging = target.dashing;
+
+
+
+            //Attacking
+            if (!thinking && !Controls.alreadyAttacking && !attackingWithPattern)
             {
                 EntityAttackPattern attackPattern = ChoseRandomAttackPattern();
                 StartCoroutine(Attack(attackPattern));

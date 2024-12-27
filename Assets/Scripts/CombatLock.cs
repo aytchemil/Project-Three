@@ -54,6 +54,7 @@ public class CombatLock : MonoBehaviour
         InstantiateColliderDetector();
     }
 
+
     /// <summary>
     /// Instantiates the collider detector and caches it
     /// </summary>

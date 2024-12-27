@@ -68,7 +68,7 @@ public class Movement : MonoBehaviour
     [Header("Adjustable Variables")]
     //Adjustable Variables
     public EntityStates entityStates;
-    public EntityStates.CurrentState state;
+    public EntityStates.CurrentState state { get; private set; }
     [Space]
 
     public float groundLinearDampeningDrag;

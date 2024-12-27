@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityEditor.Build;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
@@ -12,6 +13,7 @@ public class AttackTriggerCollider : MonoBehaviour
 
     public bool attacking;
     public bool hitAttack;
+    public bool initialAttackDelayOver;
 
     //Cache
     Collider col;
@@ -29,18 +31,6 @@ public class AttackTriggerCollider : MonoBehaviour
         
     }
 
-    private void OnEnable()
-    {
-        hitAttack = false;
-        gameObject.GetComponent<MeshRenderer>().material.color = Color.red;
-        col.enabled = true;
-    }
-
-    private void OnDisable()
-    {
-        DisableTrigger();
-    }
-
     /// <summary>
     /// Where the actual attack takes place
     /// </summary>
@@ -48,7 +38,7 @@ public class AttackTriggerCollider : MonoBehaviour
     private void OnTriggerStay(Collider other)
     {
         float newEnemyHealth;
-        if (attacking)
+        if (attacking && initialAttackDelayOver)
         {
             HitAttack();
             #region Death
@@ -84,20 +74,25 @@ public class AttackTriggerCollider : MonoBehaviour
     /// Tells this script what its attack parameters are
     /// </summary>
     /// <param name="currentAbility"></param>
-    public void AttackTriggerAttack(Ability currentAbility)
+    public void StartAttackFromAttackTrigger(Ability currentAbility)
     {
+        if(attacking) { print("already attacking, cannot re attack"); return; }
         //Debug.Log("Attack Trigger attacking!");
         myAbility = currentAbility;
-        EnableTrigger();
+        InitializeTrigger();
     }
 
 
     /// <summary>
     /// Sets the attacking flag
     /// </summary>
-    void EnableTrigger()
+    void InitializeTrigger()
     {
+        print("initializing attack trigger: " + gameObject.name);
         attacking = true;
+        hitAttack = false;
+        initialAttackDelayOver = false;
+        DisableAttack(Color.grey);
     }
 
 
@@ -109,18 +104,20 @@ public class AttackTriggerCollider : MonoBehaviour
     /// </summary>
     void DisableTrigger()
     {
+        print("Disabling trigger");
         attacking = false;
+        initialAttackDelayOver = false;
         combatFunctionality.FinishAttacking();
 
 
         if(combatFunctionality.Controls.GetTarget?.Invoke() != null)
         {
             ResetAttackCaller();
-           // print("Disabling trigger from : " + gameObject.name + " Target: " + combatFunctionality.Controls.GetTarget?.Invoke());
+            print("Disabling trigger from : " + gameObject.name + " Target: " + combatFunctionality.Controls.GetTarget?.Invoke());
         }
         else
         {
-            //print("Target is already null when trying to reset attack caller");
+            print("Target is already null when trying to reset attack caller");
         }
 
         gameObject.SetActive(false);
@@ -149,12 +146,13 @@ public class AttackTriggerCollider : MonoBehaviour
     {
         if (hitAttack)
         {
+            print("Did not miss, can now combo");
             Invoke(nameof(ComboOffOfHit), myAbility.nextAttacksComboDelay);
-            ComboOffOfHit();
+
             return;
         }
 
-       // print("missed attack");
+        print("missed attack");
         hitAttack = false;
 
         DisableAttack(Color.grey);
@@ -170,5 +168,13 @@ public class AttackTriggerCollider : MonoBehaviour
     {
        // print("Can now combo attack");
         DisableTrigger();
+    }
+
+    public void InitialAttackDelayOverReEnableTrigger()
+    {
+        print("Initial Attack Delay over, reenbling trigger");
+        initialAttackDelayOver = true;
+        gameObject.GetComponent<MeshRenderer>().material.color = Color.red;
+        col.enabled = true;
     }
 }

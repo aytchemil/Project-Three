@@ -27303,6 +27303,9 @@ MonoBehaviour:
   smoothTime: 0.1
   camLerpTime: 0.01
   vel: {x: 0, y: 0, z: 0}
+  sprintFov: 90
+  defaultFov: 80
+  fovLerpSpeed: 0.01
   cameraPosition: {fileID: 635491444}
   myCamera: {fileID: 220207746}
   savedTargetLocation: {x: 0, y: 0, z: 0}
@@ -27327,6 +27330,7 @@ MonoBehaviour:
     dashSpeed: 50
     dashTime: 0.23
     missedAttackSpeed: 5
+  <state>k__BackingField: 0
   groundLinearDampeningDrag: 7
   height: 26
   weightMultiplier: 90

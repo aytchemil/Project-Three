@@ -201,7 +201,7 @@ public class CombatLock : MonoBehaviour
     /// </summary>
     void UnlockWhileNotAttacking()
     {
-        print(Controls.isLockedOn);
+        //print(Controls.isLockedOn);
         if (!GetComponent<CombatFunctionality>().Controls.alreadyAttacking)
         {
           //  print("unlocking while not attacking succeeded");

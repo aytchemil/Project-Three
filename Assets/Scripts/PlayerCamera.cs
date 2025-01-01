@@ -14,6 +14,12 @@ public class PlayerCamera : MonoBehaviour
     public float smoothTime = 0.3f;
     public float camLerpTime = 0.01f;
     public Vector3 vel = Vector3.zero;
+    [Space]
+    public float sprintFov;
+    public float defaultFov;
+    public float fovLerpSpeed = 0.03f;
+    [Space]
+    public float combatFOV;
 
 
     //Adjustable Component References
@@ -50,12 +56,26 @@ public class PlayerCamera : MonoBehaviour
         //Callback Additions
         controls.CombatFollowTarget += InCombatFollowingTarget;
         controls.ExitCombat += ExitCombat;
+
+        //Fov
+        controls.sprintStart += OnSprint;
+        controls.sprintStop += StopSprint;
+
+        controls.EnterCombat += OnCombatFOV;
+        controls.ExitCombat += OnStopCombatFOV;
     }
 
     private void OnDisable()
     {
         controls.CombatFollowTarget -= InCombatFollowingTarget;
         controls.ExitCombat -= ExitCombat;
+
+        //Fov
+        controls.sprintStart -= OnSprint;
+        controls.sprintStop -= StopSprint;
+
+        controls.EnterCombat -= OnCombatFOV;
+        controls.ExitCombat -= OnStopCombatFOV;
     }
 
 
@@ -229,6 +249,102 @@ public class PlayerCamera : MonoBehaviour
     {
         finalUnlockedXYPos = GetCurrentXY();
     }
+
+    void OnSprint()
+    {
+       // print("onsprint");
+        StartCoroutine(SprintFOV());
+    }
+
+    void StopSprint()
+    {
+        //print("on stop sprint");
+        StopCoroutine(SprintFOV());
+        StartCoroutine(StopSprintFOV());
+    }
+
+    void OnCombatFOV()
+    {
+       // print("oncombat fov");
+        StartCoroutine(CombatFOV());
+    }
+
+    void OnStopCombatFOV()
+    {
+        //print("on stop combat fov");
+        StopCoroutine(CombatFOV());
+
+        StartCoroutine(StopCombatFOV());
+    }
+
+    protected IEnumerator SprintFOV()
+    {
+        float val = 0;
+
+        while(gameObject.GetComponent<Movement>().state == EntityStates.CurrentState.sprinting && myCamera.fieldOfView < sprintFov)
+        {
+            val += fovLerpSpeed;
+
+            myCamera.fieldOfView = Mathf.Lerp(myCamera.fieldOfView, sprintFov, val);
+
+
+            yield return new WaitForEndOfFrame();
+            //print("spr");
+        }
+    }
+
+    protected IEnumerator StopSprintFOV()
+    {
+        float val = 0;
+
+        while (gameObject.GetComponent<Movement>().state != EntityStates.CurrentState.sprinting && myCamera.fieldOfView > defaultFov)
+        {
+            val += fovLerpSpeed;
+
+            myCamera.fieldOfView = Mathf.Lerp(myCamera.fieldOfView, defaultFov, val);
+
+
+            yield return new WaitForEndOfFrame();
+            //print("not sptr" + val);
+        }
+
+    }
+
+
+    protected IEnumerator CombatFOV()
+    {
+        float val = 0;
+
+        while (gameObject.GetComponent<Movement>().state == EntityStates.CurrentState.combat && myCamera.fieldOfView > combatFOV)
+        {
+            val += fovLerpSpeed;
+
+            myCamera.fieldOfView = Mathf.Lerp(myCamera.fieldOfView, combatFOV, val);
+
+
+            yield return new WaitForEndOfFrame();
+            //print("cmbat");
+        }
+    }
+
+    protected IEnumerator StopCombatFOV()
+    {
+        //print("starting stop comabt fov");
+        float val = 0;
+
+        while (gameObject.GetComponent<Movement>().state != EntityStates.CurrentState.combat && myCamera.fieldOfView < defaultFov)
+        {
+            val += fovLerpSpeed;
+
+            myCamera.fieldOfView = Mathf.Lerp(myCamera.fieldOfView, defaultFov, val);
+
+
+            yield return new WaitForEndOfFrame();
+            //print("not cmbat" + val);
+        }
+
+    }
+
 
 
 }

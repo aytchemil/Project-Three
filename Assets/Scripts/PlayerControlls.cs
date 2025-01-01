@@ -38,7 +38,7 @@ public class PlayerController : CombatEntityController
     {
         ia_look.Enable();
         look = () => ia_look.ReadValue<Vector2>();
-
+        print("e");
         ia_move.Enable();
         move = () => ia_move.ReadValue<Vector2>();
 
@@ -89,7 +89,6 @@ public class PlayerController : CombatEntityController
         base.OnDisable();
     }
     #endregion 
-
 
 
 }

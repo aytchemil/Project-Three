@@ -137,12 +137,15 @@ public class AttackTriggerCollider : MonoBehaviour
 
     void ResetAttackCaller()
     {
-        print("Attack Trigger: ResetAttackCaller()");
+        //print("Attack Trigger: ResetAttackCaller()");
 
         foreach (var subscriber in combatFunctionality.Controls.ResetAttack.GetInvocationList())
         {
             if (subscriber != null)
-                print(subscriber);
+            {
+                //print(subscriber);
+
+            }
             else
                 Debug.LogError("No subscribers found in reset attack, this needs movement subscribed to it, check for that first");
         }

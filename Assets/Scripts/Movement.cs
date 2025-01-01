@@ -2,6 +2,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 
 [System.Serializable]
@@ -68,7 +70,7 @@ public class Movement : MonoBehaviour
     [Header("Adjustable Variables")]
     //Adjustable Variables
     public EntityStates entityStates;
-    [field:SerializeField] public EntityStates.CurrentState state { get; private set; }
+    [field: SerializeField] public EntityStates.CurrentState state { get; private set; }
     [Space]
 
     public float groundLinearDampeningDrag;
@@ -164,7 +166,15 @@ public class Movement : MonoBehaviour
         OnSlope();
     }
 
+    //Results in Move Input: (0.0  ,   0.0)
+    //                       (+-1.0,   0.0)
+    //                       (0.0  , +-1.0)
+    //                       (+-1.0, +-1.0)
 
+    //Results in Move Input: (1.0  ,   0.0) right
+    //                       (-1.0 ,   0.0) left
+    //                       (0.0  ,  1.0)  up
+    //                       (0.0  , -1.0)  back
 
     //Checks if the player is grounded to apply linear damping on the rigid body
     protected void GroundedCheck()
@@ -204,8 +214,8 @@ public class Movement : MonoBehaviour
 
 
         moveSpeed = entityStates.UpdateSpeed(state);
-       // print(state);
-       // print(gameObject.name + " | movement's SpeedHandler() : new movespeed is : " + moveSpeed);
+        // print(state);
+        // print(gameObject.name + " | movement's SpeedHandler() : new movespeed is : " + moveSpeed);
     }
 
     /// <summary>
@@ -267,7 +277,7 @@ public class Movement : MonoBehaviour
     /// <param name="target"></param>
     protected private void ExitCombat()
     {
-       // Debug.Log("Player movement exiting combat");
+        // Debug.Log("Player movement exiting combat");
         state = EntityStates.CurrentState.notSprinting;
     }
 
@@ -285,47 +295,29 @@ public class Movement : MonoBehaviour
             Controls.dashOnCooldown = true;
         //Debug.Log("Dashing");
 
-        Vector2 moveInput = Controls.move != null ? Controls.move.Invoke() : Vector2.zero;
-        //Results in Move Input: (0.0  ,   0.0)
-        //                       (+-1.0,   0.0)
-        //                       (0.0  , +-1.0)
-        //                       (+-1.0, +-1.0)
-
-        Dash(moveInput, dashSpeedMultiplier);
+        Vector3 localVelocity = rb.transform.InverseTransformDirection(rb.linearVelocity); // Velocity in local space
+        print(localVelocity);
+        Dash(GetMoveDirection(localVelocity), dashSpeedMultiplier);
     }
 
     /// <summary>
     /// Adds force to the player for a dash direction
     /// </summary>
     /// <param name="dir"></param>
-    public void Dash(Vector2 dir, float multiplier)
+    public void Dash(Vector3 dashDirection, float multiplier)
     {
         //Debug.Log("Attempting Dashing In Direction:  " + dir);
-
-
-        //The vector which is left of the orientation
-        Vector3 moveDirection = new Vector3();
-        if (dir.x < 0)
-            moveDirection = -orientation.right;
-        else if (dir.x > 1)
-            moveDirection = orientation.right;
-
-        if (dir.y < 0)
-            moveDirection = -orientation.forward;
-        else if (dir.y > 1)
-            moveDirection = orientation.forward;
 
         if (isGrounded)
         {
             //If the player is not on a slope, dash regularly
             if (!onSlope)
             {
-                //Debug.Log("Dashing Left");
-                rb.AddForce(moveDirection.normalized * multiplier, ForceMode.VelocityChange);
+                rb.AddForce(dashDirection.normalized * multiplier, ForceMode.VelocityChange);
 
             }
             else //if the player is on a slope, dash relative to the slope's move direction
-                rb.AddForce(GetSlopeMoveDirection(moveDirection) * dashSpeedMultiplier, ForceMode.VelocityChange);
+                rb.AddForce(GetSlopeMoveDirection(dashDirection) * dashSpeedMultiplier, ForceMode.VelocityChange);
 
             state = EntityStates.CurrentState.dashing;
         }
@@ -335,6 +327,82 @@ public class Movement : MonoBehaviour
         StartCoroutine(StopDash());
         Invoke("DashCooldown", dashCooldown + afterDashPeriodTimeLength);
     }
+
+    public void Lunge(string dir, float multiplier)
+    {
+        rb.linearVelocity = Vector3.zero;
+        rb.angularVelocity = Vector3.zero;
+
+        Vector3 lungeDir = new Vector3();
+        switch (dir)
+        {
+            case "up":
+                lungeDir = transform.TransformDirection(Vector3.forward);
+                break;
+            case "down":
+                lungeDir = transform.TransformDirection(Vector3.back);
+                break;
+            case "right":
+                lungeDir = transform.TransformDirection(Vector3.right);
+                break;
+            case "left":
+                lungeDir = transform.TransformDirection(Vector3.left);
+                break;
+
+        }
+
+        Dash(lungeDir, multiplier);
+    }
+
+    Vector3 GetMoveDirection(Vector3 givenDirectionImTravellingIn)
+    {
+        Vector3 dir = givenDirectionImTravellingIn;
+
+        //left is -x
+        //right is +x
+        //fwd is +z
+        //back is -z
+        float absZ = Mathf.Abs(dir.z);
+        float absX = Mathf.Abs(dir.x);
+
+
+        if(dir.z > 0 && absZ > absX)
+        {
+            print("z highest, fwd");
+            dir = transform.TransformDirection(Vector3.forward);
+        }
+
+        else if(dir.z < 0 && absZ > absX)
+        {
+            print("-z highest, back");
+            dir = transform.TransformDirection(Vector3.back);
+        }
+
+        else if(dir.x > 0 && absX > absZ)
+        {
+            print(" +x highest, right");
+            dir = transform.TransformDirection(Vector3.right);
+            dir += transform.TransformDirection(Vector3.forward);
+        }
+
+        else if(dir.x < 0 && absX > absZ)
+        {
+            print(" -x highest, left");
+            dir = transform.TransformDirection(Vector3.left);
+            dir += transform.TransformDirection(Vector3.forward);
+        }
+
+        if (dir == givenDirectionImTravellingIn)
+            Debug.LogError("Move direction not updated to a dash");
+
+        return dir;
+    }
+
+
+    //Results in Move Input: (1.0  ,   0.0) right
+    //                       (-1.0 ,   0.0) left
+    //                       (0.0  ,  1.0)  up
+    //                       (0.0  , -1.0)  back
 
     /// <summary>
     /// Method that is invoked with a delay to for dash cooldown
@@ -366,7 +434,7 @@ public class Movement : MonoBehaviour
 
     protected void MissedAttack()
     {
-        Debug.Log("setting current state to missed attack");
+        //Debug.Log("setting current state to missed attack");
         state = EntityStates.CurrentState.missedAttack;
     }
 
@@ -374,6 +442,16 @@ public class Movement : MonoBehaviour
     {
         Debug.Log(gameObject.name + " | Movement : resseting attack back to combat");
         state = EntityStates.CurrentState.combat;
+    }
+
+    public virtual void EnableMovement()
+    {
+
+    }
+
+    public virtual void DisableMovement()
+    {
+        print("disbaling from movement");
     }
 
 }

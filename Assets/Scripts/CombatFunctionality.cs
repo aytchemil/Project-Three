@@ -349,11 +349,20 @@ public class CombatFunctionality : MonoBehaviour
 
         while (!initialAttackDelayOver)
         {
-            print("Waiting for attack to start");
+            //print("Waiting for attack to start");
             yield return new WaitForEndOfFrame();
         }
+        print("Attacking started");
 
-        gameObject.GetComponent<Movement>().Dash(new Vector2(0, 5), currentAbility.movementAmount);
+
+        gameObject.GetComponent<Movement>().Lunge("up", currentAbility.movementAmount);
+        gameObject.GetComponent<Movement>().DisableMovement();
+        Invoke(nameof(ReEnableMovement), gameObject.GetComponent<Movement>().entityStates.dashTime);
+    }
+
+    void ReEnableMovement()
+    {
+        gameObject.GetComponent<Movement>().EnableMovement();
     }
 
     void MovementRightOrLeftAttack()

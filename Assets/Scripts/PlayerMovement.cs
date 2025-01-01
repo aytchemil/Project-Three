@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerController))]
 public class PlayerMovement : Movement
@@ -36,13 +37,12 @@ public class PlayerMovement : Movement
         //Stores input values from the InputSystem Controls
         Vector2 moveInput = Controls.move != null ? Controls.move.Invoke() : Vector2.zero;
 
+
         //Debug.Log(moveInput);
         //Results in Move Input: (0.0  ,   0.0)
         //                       (+-1.0,   0.0)
         //                       (0.0  , +-1.0)
         //                       (+-1.0, +-1.0)
-
-        if (moveInput.x == 0 && moveInput.y == 0) return;
 
         //Stores the move direction of the player, which is always set to where the orientaion's forward and right is 
         //the player facing forward * the move input of y (which is either neg or pos)
@@ -51,11 +51,17 @@ public class PlayerMovement : Movement
 
         SpeedHandler();
 
+
+        if (moveInput.x == 0 && moveInput.y == 0) return;
+
         //Adds a pushing force to the RigidBody based on movement speed
         if (isGrounded)
         {
             if (!onSlope)
+            {
+                //print("moving");
                 rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+            }
             else
                 rb.AddForce(GetSlopeMoveDirection(moveDirection) * moveSpeed * 10f, ForceMode.Force);
 
@@ -67,4 +73,15 @@ public class PlayerMovement : Movement
     }
 
 
+    public override void EnableMovement()
+    {
+        playerControls.ia_move.Enable();
+        print("enabling movement");
+    }
+
+    public override void DisableMovement()
+    {
+        playerControls.ia_move.Disable();
+        print("disabling movement from playercontrols");
+    }
 }

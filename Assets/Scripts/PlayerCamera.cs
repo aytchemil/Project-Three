@@ -1,9 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using UnityEngine.UIElements;
 
 [RequireComponent(typeof(PlayerController))]
 public class PlayerCamera : MonoBehaviour
@@ -11,29 +9,31 @@ public class PlayerCamera : MonoBehaviour
     //Real-Time Adjustable Variables
     public float xSens;
     public float ySens;
+    public float lockOnVerticalOffset = 6f;
     public Vector3 cameraOffset = new Vector3(0, 1.8f, -3);
     public float smoothTime = 0.3f;
     public float camLerpTime = 0.01f;
     public Vector3 vel = Vector3.zero;
+    [Space]
+    public float sprintFov;
+    public float defaultFov;
+    public float fovLerpSpeed = 0.03f;
+    [Space]
+    public float combatFOV;
 
 
     //Adjustable Component References
-    public Transform camOrientation;
     public Transform cameraPosition;
     public Camera myCamera;
 
     //Cached Component References
     PlayerController controls;
     Transform camTransform;
-    CombatEntityController target;
 
     //Privates
     public Vector3 savedTargetLocation;
     Vector2 currentXY;
     Vector2 finalUnlockedXYPos;
-
-    //Flags
-    bool inCombat = false;
 
     public float yRot;
     public float xRot;
@@ -53,26 +53,39 @@ public class PlayerCamera : MonoBehaviour
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         UnityEngine.Cursor.visible = false;
 
-        inCombat = false;
-
         //Callback Additions
-        controls.CombatFollowTarget += EnterCombatAndFollowTarget;
+        controls.CombatFollowTarget += InCombatFollowingTarget;
         controls.ExitCombat += ExitCombat;
+
+        //Fov
+        controls.sprintStart += OnSprint;
+        controls.sprintStop += StopSprint;
+
+        controls.EnterCombat += OnCombatFOV;
+        controls.ExitCombat += OnStopCombatFOV;
     }
 
     private void OnDisable()
     {
-        controls.CombatFollowTarget -= EnterCombatAndFollowTarget;
+        controls.CombatFollowTarget -= InCombatFollowingTarget;
         controls.ExitCombat -= ExitCombat;
+
+        //Fov
+        controls.sprintStart -= OnSprint;
+        controls.sprintStop -= StopSprint;
+
+        controls.EnterCombat -= OnCombatFOV;
+        controls.ExitCombat -= OnStopCombatFOV;
     }
 
 
     private void Update()
     {
         //If not in combat,"Look regularly". else "combat look"
-        if (!inCombat)
+        if (!controls.isLockedOn)
         {
-            MouseLooking(controls.look.ReadValue<Vector2>());
+           // Debug.Log("Mouse looking normally");
+            MouseLooking(controls.look != null ? controls.look.Invoke() : Vector2.zero);
             //set the current xRot yRot
             GetCurrentXY();
 
@@ -81,22 +94,6 @@ public class PlayerCamera : MonoBehaviour
             if (yRot > 180f) yRot -= 360f;
             if (xRot < -180f) xRot += 360f;
             if (yRot < -180f) yRot += 360f;
-        }
-        else
-        {
-            //"combat look"
-            if (target != null)
-            {
-                //Debug.Log("Locked onto target by cam");
-                CameraLookAtLockTarget(target.transform.position);
-                TransformLookAtTarget(target.transform.position);
-                UpdateNewXY();
-            }
-            else
-            {
-                //When enemy dies
-                controls.ExitCombat();
-            }
         }
 
         //Updates the final camera position to the one's specified in the update
@@ -123,8 +120,9 @@ public class PlayerCamera : MonoBehaviour
         Vector2 xyRot = CalculateXYRot(lookInput);
 
         //Sets the rotation to the player inputted rotations
+        //print(xyRot);
         transform.rotation = Quaternion.Euler(0, xyRot.x, 0);
-        camOrientation.rotation = Quaternion.Euler(xyRot.y, xyRot.x, 0);
+        cameraPosition.rotation = Quaternion.Euler(xyRot.y, xyRot.x, 0);
     }
 
     /// <summary>
@@ -155,8 +153,9 @@ public class PlayerCamera : MonoBehaviour
     /// <param name="target"></param>
     void CameraLookAtLockTarget(Vector3 target)
     {
-        camOrientation.LookAt(target);
-        camOrientation.localEulerAngles = new Vector3(camOrientation.localEulerAngles.x, 0, 0);
+        //print("Cam orientation changing");
+        cameraPosition.LookAt(target);
+        cameraPosition.localEulerAngles = new Vector3(cameraPosition.localEulerAngles.x, 0, 0);
 
     }
 
@@ -169,14 +168,13 @@ public class PlayerCamera : MonoBehaviour
         transform.LookAt(target);
         transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, 0);
     }
-    private Vector3 positionVelocity = Vector3.zero; // Velocity for position SmoothDamp
-    private Quaternion rotationVelocity;             // Placeholder for rotation smoothing
 
     /// <summary>
     /// Sets the Cam position to the desired location set by this script
     /// </summary>
     void UpdateCamPosition()
     {
+        //print("updating cam position");
         camTransform.position = cameraPosition.position;
         camTransform.rotation = cameraPosition.rotation;
     }
@@ -185,11 +183,22 @@ public class PlayerCamera : MonoBehaviour
     /// Observer Method for the player camera to enter combat
     /// </summary>
     /// <param name="target"></param>
-    void EnterCombatAndFollowTarget(CombatEntityController target)
+    void InCombatFollowingTarget(CombatEntityController target)
     {
         //Debug.Log("Entering Combat and following target: " + target);
-        inCombat = true;
-        this.target = target;
+
+        ////Testing for dash invunrability before it
+        //if (!controls.alreadyAttacking)
+        //{
+        //    CameraLookAtLockTarget(target.transform.position);
+        //    TransformLookAtTarget(target.transform.position);
+        //}
+
+        Vector3 lookAtPos = new Vector3(target.transform.position.x, target.transform.position.y + lockOnVerticalOffset, target.transform.position.z);
+        
+        CameraLookAtLockTarget(lookAtPos);
+        TransformLookAtTarget(lookAtPos);
+        UpdateNewXY();
     }
 
     /// <summary>
@@ -202,9 +211,6 @@ public class PlayerCamera : MonoBehaviour
 
         UpdateNewXY();
         ApplyNewXYPosition();
-
-        inCombat = false;
-        this.target = null;
     }
 
 
@@ -243,6 +249,102 @@ public class PlayerCamera : MonoBehaviour
     {
         finalUnlockedXYPos = GetCurrentXY();
     }
+
+    void OnSprint()
+    {
+       // print("onsprint");
+        StartCoroutine(SprintFOV());
+    }
+
+    void StopSprint()
+    {
+        //print("on stop sprint");
+        StopCoroutine(SprintFOV());
+        StartCoroutine(StopSprintFOV());
+    }
+
+    void OnCombatFOV()
+    {
+       // print("oncombat fov");
+        StartCoroutine(CombatFOV());
+    }
+
+    void OnStopCombatFOV()
+    {
+        //print("on stop combat fov");
+        StopCoroutine(CombatFOV());
+
+        StartCoroutine(StopCombatFOV());
+    }
+
+    protected IEnumerator SprintFOV()
+    {
+        float val = 0;
+
+        while(gameObject.GetComponent<Movement>().state == EntityStates.CurrentState.sprinting && myCamera.fieldOfView < sprintFov)
+        {
+            val += fovLerpSpeed;
+
+            myCamera.fieldOfView = Mathf.Lerp(myCamera.fieldOfView, sprintFov, val);
+
+
+            yield return new WaitForEndOfFrame();
+            //print("spr");
+        }
+    }
+
+    protected IEnumerator StopSprintFOV()
+    {
+        float val = 0;
+
+        while (gameObject.GetComponent<Movement>().state != EntityStates.CurrentState.sprinting && myCamera.fieldOfView > defaultFov)
+        {
+            val += fovLerpSpeed;
+
+            myCamera.fieldOfView = Mathf.Lerp(myCamera.fieldOfView, defaultFov, val);
+
+
+            yield return new WaitForEndOfFrame();
+            //print("not sptr" + val);
+        }
+
+    }
+
+
+    protected IEnumerator CombatFOV()
+    {
+        float val = 0;
+
+        while (gameObject.GetComponent<Movement>().state == EntityStates.CurrentState.combat && myCamera.fieldOfView > combatFOV)
+        {
+            val += fovLerpSpeed;
+
+            myCamera.fieldOfView = Mathf.Lerp(myCamera.fieldOfView, combatFOV, val);
+
+
+            yield return new WaitForEndOfFrame();
+            //print("cmbat");
+        }
+    }
+
+    protected IEnumerator StopCombatFOV()
+    {
+        //print("starting stop comabt fov");
+        float val = 0;
+
+        while (gameObject.GetComponent<Movement>().state != EntityStates.CurrentState.combat && myCamera.fieldOfView < defaultFov)
+        {
+            val += fovLerpSpeed;
+
+            myCamera.fieldOfView = Mathf.Lerp(myCamera.fieldOfView, defaultFov, val);
+
+
+            yield return new WaitForEndOfFrame();
+            //print("not cmbat" + val);
+        }
+
+    }
+
 
 
 }

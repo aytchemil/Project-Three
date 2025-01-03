@@ -1,9 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
-using static UnityEngine.GraphicsBuffer;
+using TMPro;
 
 [RequireComponent(typeof(PlayerController))]
 public class CombatUI : MonoBehaviour
@@ -41,6 +40,7 @@ public class CombatUI : MonoBehaviour
     [SerializeField] private RawImage downImgRef;
     [SerializeField] private RawImage leftImgRef;
     [SerializeField] private RawImage rightImgRef;
+    [SerializeField] private TextMeshProUGUI text;
 
     #endregion
 
@@ -49,6 +49,7 @@ public class CombatUI : MonoBehaviour
 
         //Cache
         controls = GetComponent<PlayerController>();
+
     }
 
     private void OnEnable()
@@ -56,6 +57,7 @@ public class CombatUI : MonoBehaviour
         //Input Action Observers
         controls.EnterCombat += EnableUI;
         controls.ExitCombat += DisableUI;
+        controls.SelectCertainAbility += UpdateCurrentAbilityText;
     }
 
     private void OnDisable()
@@ -63,10 +65,8 @@ public class CombatUI : MonoBehaviour
         //Input Action Observers
         controls.EnterCombat -= EnableUI;
         controls.ExitCombat -= DisableUI;
-    }
-    private void Start()
-    {
-        DisableUI();
+        controls.SelectCertainAbility -= UpdateCurrentAbilityText;
+
     }
 
 
@@ -74,7 +74,7 @@ public class CombatUI : MonoBehaviour
     {
         //Updates the Attack Indicator rotation
         if (!changeOnCooldown && combatUIParent.activeInHierarchy)
-            UpdateAttackIndicatorRotation(controls.look.ReadValue<Vector2>());
+            UpdateAttackIndicatorRotation(controls.ia_look.ReadValue<Vector2>());
     }
 
     #region UI and Basic Functionality
@@ -189,6 +189,7 @@ public class CombatUI : MonoBehaviour
     /// <param name="targ"></param>
     void EnableUI()
     {
+        //print("enabling ui");
         combatUIParent.SetActive(true);
         ChangeAllImageIcons();
         UpdateAttackIndicatorRotation(new Vector2(0, deadZone + 1));
@@ -200,6 +201,7 @@ public class CombatUI : MonoBehaviour
     /// <param name="targ"></param>
     void DisableUI()
     {
+       // print("disabling ui");
         combatUIParent.SetActive(false);
     }
 
@@ -263,6 +265,22 @@ public class CombatUI : MonoBehaviour
                 up.SetActive(false);
                 down.SetActive(true);
                 break;
+        }
+    }
+
+    void UpdateCurrentAbilityText(string dir)
+    {
+        switch (dir)
+        {
+            case "right":
+                text.text = "Current Attack: " + controls.a_right.attackName;
+                break;
+            case "left":
+                text.text = "Current Attack: " + controls.a_left.attackName; break;
+            case "up":
+                text.text = "Current Attack: " + controls.a_up.attackName; break;
+            case "down":
+                text.text = "Current Attack: " + controls.a_down.attackName; break;
         }
     }
 

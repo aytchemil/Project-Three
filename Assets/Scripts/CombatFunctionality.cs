@@ -1,7 +1,6 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using System.Linq;
-using UnityEngine.UIElements;
+using System.Collections;
 
 
 [RequireComponent(typeof(CombatEntityController))]
@@ -23,6 +22,7 @@ public class CombatFunctionality : MonoBehaviour
 
     bool initializedAttackTriggers;
     bool initializedBlockingTrigger;
+    public bool initialAttackDelayOver;
 
     [Header("Blocking")]
     public BlockingTriggerCollider blockingTrigger;
@@ -63,9 +63,11 @@ public class CombatFunctionality : MonoBehaviour
         Controls.ExitCombat += ExitCombat;
         Controls.CombatFollowTarget += CombatFunctionalityElementsLockOntoTarget;
 
-        //Blocking
-        Controls.Block += Block;
-        Controls.StopBlocking += StopBlock;
+        Controls.attack += UseAttackAbility;
+
+        Controls.blockStart += Block;
+        Controls.blockStop += StopBlock;
+
     }
 
     /// <summary>
@@ -81,9 +83,10 @@ public class CombatFunctionality : MonoBehaviour
         Controls.ExitCombat -= ExitCombat;
         Controls.CombatFollowTarget -= CombatFunctionalityElementsLockOntoTarget;
 
-        //Blocking
-        Controls.Block -= Block;
-        Controls.StopBlocking -= StopBlock;
+        Controls.attack -= UseAttackAbility;
+
+        Controls.blockStart -= Block;
+        Controls.blockStop -= StopBlock;
     }
 
     #endregion
@@ -96,7 +99,7 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     void InCombat()
     {
-        Controls.isLockedOn = true;
+        //print("combatFunctionality: in combat");
         //Auto Set the current ability
         currentAbility = Controls.a_up;
 
@@ -116,8 +119,8 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     void ExitCombat()
     {
+        //print("exiting combat");
         StopBlock(); //Must be first
-        Controls.isLockedOn = false;
         Controls.alreadyAttacking = false;
         DisableAttackTriggers();
     }
@@ -168,9 +171,13 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     public void DisableAttackTriggers()
     {
-        //Debug.Log("Disabling Attack Triggers");
+       // Debug.Log("Disabling Attack Triggers");
         foreach (GameObject attkTrigger in myAttackTriggers)
+        {
+            //print("DISABLING : " + attkTrigger.name);
             attkTrigger.SetActive(false);
+
+        }
     }
 
     /// <summary>
@@ -232,7 +239,7 @@ public class CombatFunctionality : MonoBehaviour
                 currentAbility = Controls.a_up;
                 break;
             case "down":
-                currentAbility = Controls.a_right;
+                currentAbility = Controls.a_down;
                 break;
         }
 
@@ -253,7 +260,7 @@ public class CombatFunctionality : MonoBehaviour
     /// <summary>
     /// Uses the currently selected ability
     /// </summary>
-    protected virtual void UseAttackAbility()
+    public virtual void UseAttackAbility()
     {
         if (!Controls.isLockedOn || Controls.alreadyAttacking || Controls.isBlocking) return;
 
@@ -264,7 +271,7 @@ public class CombatFunctionality : MonoBehaviour
 
         StartAttacking();
         AttackTriggerUse();
-
+        AnimationAttackLookAtBufferPeriod();
 
         ///to do: create a way for it to animate,
         ///create 4 different attack triggers(like box)
@@ -294,12 +301,27 @@ public class CombatFunctionality : MonoBehaviour
 
                 break;
 
+            case Ability.CollisionType.MovementForward:
+
+                StartCoroutine(MovementForwardAttack());
+
+                break;
+            case Ability.CollisionType.MovementRightOrLeft:
+
+                MovementRightOrLeftAttack();
+
+                break;
+
 
         }
 
     }
 
-    
+    void AnimationAttackLookAtBufferPeriod()
+    {
+
+    }
+
     /// <summary>
     /// Attack with the box attack
     /// </summary>
@@ -321,6 +343,44 @@ public class CombatFunctionality : MonoBehaviour
         //Debug.Log("Attempting Side Slash attack");
     }
 
+    IEnumerator MovementForwardAttack()
+    {
+        Debug.Log("Attempting Movement Forward Attack");
+
+        while (!initialAttackDelayOver)
+        {
+            //print("Waiting for attack to start");
+            yield return new WaitForEndOfFrame();
+        }
+        print("Attacking started");
+
+
+        gameObject.GetComponent<Movement>().Lunge("up", currentAbility.movementAmount);
+        gameObject.GetComponent<Movement>().DisableMovement();
+        Invoke(nameof(ReEnableMovement), gameObject.GetComponent<Movement>().entityStates.dashTime);
+    }
+
+    void ReEnableMovement()
+    {
+        gameObject.GetComponent<Movement>().EnableMovement();
+    }
+
+    void MovementRightOrLeftAttack()
+    {
+        Debug.Log("Attempting Movemnt left or right atack");
+    }
+
+    void MovementRightAttack()
+    {
+        Debug.Log("Right attack");
+    }
+
+    void MovementLeftAttack()
+    {
+        Debug.Log("Left attack");
+    }
+
+
     /// <summary>
     /// Enables the selected direction's attack trigger and uses that attack trigger's attacktriggerattack method call with the current ability
     /// </summary>
@@ -333,28 +393,28 @@ public class CombatFunctionality : MonoBehaviour
                 attackTrigger_left.gameObject.SetActive(false);
                 attackTrigger_up.gameObject.SetActive(false);
                 attackTrigger_down.gameObject.SetActive(false);
-                attackTrigger_right.AttackTriggerAttack(currentAbility);
+                attackTrigger_right.StartAttackFromAttackTrigger(currentAbility);
                 break;
             case "left":
                 attackTrigger_right.gameObject.SetActive(false);
                 attackTrigger_left.gameObject.SetActive(true);
                 attackTrigger_up.gameObject.SetActive(false);
                 attackTrigger_down.gameObject.SetActive(false);
-                attackTrigger_left.AttackTriggerAttack(currentAbility);
+                attackTrigger_left.StartAttackFromAttackTrigger(currentAbility);
                 break;
             case "up":
                 attackTrigger_right.gameObject.SetActive(false);
                 attackTrigger_left.gameObject.SetActive(false);
                 attackTrigger_up.gameObject.SetActive(true);
                 attackTrigger_down.gameObject.SetActive(false);
-                attackTrigger_up.AttackTriggerAttack(currentAbility);
+                attackTrigger_up.StartAttackFromAttackTrigger(currentAbility);
                 break;
             case "down":
                 attackTrigger_right.gameObject.SetActive(false);
                 attackTrigger_left.gameObject.SetActive(false);
                 attackTrigger_up.gameObject.SetActive(false);
                 attackTrigger_down.gameObject.SetActive(true);
-                attackTrigger_down.AttackTriggerAttack(currentAbility);
+                attackTrigger_down.StartAttackFromAttackTrigger(currentAbility);
                 break;
         }
     }
@@ -385,9 +445,25 @@ public class CombatFunctionality : MonoBehaviour
     /// <param name="target"></param>
     public void TargetDeathCaller(CombatEntityController target)
     {
-        Controls.TargetDeath(target);
+        Debug.Log("Target Death Caller called for by : " + gameObject.name);
+        if (Controls.TargetDeath == null)
+            Debug.LogError("Target death caller null, please check subscribers to ensure theyre are some for : " + gameObject.name);
+        else
+        {
+            //Debug.Log(gameObject.name + "'s target (" + target.name + ") has died, now calling TargetDeathCaller functionality for " + gameObject.name);
+        }
+
+        ResetAllAttackTriggers();
+        Controls.TargetDeath?.Invoke(target);
     }
 
+    public void ResetAllAttackTriggers()
+    {
+        foreach(GameObject attackTrigger in myAttackTriggers)
+        {
+            attackTrigger.GetComponent<AttackTriggerCollider>().DisableTrigger();
+        }
+    }
 
     #endregion
 

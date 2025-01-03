@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using UnityEngine;
 
 
@@ -6,21 +8,16 @@ public class CombatLock : MonoBehaviour
     public virtual CombatEntityController Controls { get; set; }
 
     //Component References
-    public CombatEntityController lockedTarget;
     public bool combatEntityInLockedZone;
     public bool lockUnlockDelayInEffect = false;
     public float lockUnlockDelay = 0.5f;
+    bool tryingToLock;
 
     //Cache
-    ColliderDetector myColliderDetector;
+    public ColliderDetector myColliderDetector;
 
     //Asset References
     public GameObject colliderDetecterAsset;
-
-
-    //Flags
-    public bool isLockedBy; //Later make this a list so multiple things can lock onto a Combat Entity
-    public bool isLockedOnto;
 
     protected virtual void Awake()
     {
@@ -33,18 +30,18 @@ public class CombatLock : MonoBehaviour
     }
 
     #region EnableDisable
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
-        Controls.ExitCombat += ExitCombat;
         Controls.TargetDeath += TargetDeath;
         Controls.CombatFollowTarget += ColliderLockOntoTarget;
+        Controls.lockOn += AttemptLock;
     }
 
-    private void OnDisable()
+    protected virtual void OnDisable()
     {
-        Controls.ExitCombat -= ExitCombat;
         Controls.TargetDeath -= TargetDeath;
         Controls.CombatFollowTarget -= ColliderLockOntoTarget;
+        Controls.lockOn -= AttemptLock;
     }
     #endregion
 
@@ -56,6 +53,7 @@ public class CombatLock : MonoBehaviour
     {
         InstantiateColliderDetector();
     }
+
 
     /// <summary>
     /// Instantiates the collider detector and caches it
@@ -69,15 +67,7 @@ public class CombatLock : MonoBehaviour
         return myColliderDetector;
     }
 
-    /// <summary>
-    /// Method given to the ExitCombat action delegate 
-    /// - Sets the flag for locked onto something to false
-    /// </summary>
-    void ExitCombat()
-    {
-        //combatEntityInLockedZone = false;
-        isLockedOnto = false;
-    }
+
 
     #region Combat Lock
 
@@ -87,11 +77,28 @@ public class CombatLock : MonoBehaviour
     /// - Caller to exit combat via controls
     /// - Tells the collider detector to unlock
     /// </summary>
-    public virtual void DeLockCaller()
+    public virtual void ExitCombatCaller()
     {
-       // Debug.Log("Combat lock : Delocking Caller Executed");
+        //EXIT COMBAT:
+        CombatLockExitCombatInternalMethod();
+
+        //CALLER : EXIT COMBAT (Called after ExitCombatCaller has done its stuff
+        if (Controls.ExitCombat == null)
+            Debug.LogError("ExitCombat subscribers are null, please check subscribers to ensure they are subscribed for : " + gameObject.name);
         Controls.ExitCombat?.Invoke();
+
+    }
+
+    void CombatLockExitCombatInternalMethod()
+    {
+        //Debug.Log(gameObject.name + " | Combat lock : ExitCombatCaller Caller Executed");
+
+        Controls.isLockedOn = false;
+        StartCoroutine(myColliderDetector.ReturnToPreLockedUnlockedState());
         myColliderDetector.UnLockFromCombatLock();
+
+        Controls.GetTarget = null;
+        //Controls.ResetAttack = null; //This is important, this prevents the combat state from reverting to combat when this entity kills another
     }
 
     /// <summary>
@@ -101,12 +108,26 @@ public class CombatLock : MonoBehaviour
     /// - Caller to Follow the target
     /// - Cllaer to Select the default ability
     /// </summary>
-    protected virtual void LockOnCaller()
+    protected virtual void EnterCombatCaller()
     {
-        //Debug.Log("Combat Lock: Locking on");
-        isLockedOnto = true;
-        Controls.EnterCombat?.Invoke();
+        //Debug.Log("Combat Lock: EnterCombatCaller called");
+        //ENTER COMBAT: 
+        Controls.isLockedOn = true;
+        //print("is now locked on");
+
+        //CALLER : SELECT CERTAIN ABILITY CALLER (DEFAULT INPUT)
+        if (Controls.SelectCertainAbility == null)
+            Debug.LogError("Select Certain Ability subscribers are null, please check subscribers to ensure they are subscribed for : " + gameObject.name);
         Controls.SelectCertainAbility?.Invoke("up");
+
+
+        //CALLER : ENTER COMBAT 
+        if (Controls.EnterCombat == null)
+            Debug.LogError("EnterCombat subscribers are null, please check subscribers to ensure they are subscribed for : " + gameObject.name);
+        Controls.EnterCombat?.Invoke();
+
+        Controls.GetTarget = () => myColliderDetector.closestCombatEntity.GetComponent<CombatEntityController>();
+        //print("Locked onto target: " + Controls.GetTarget?.Invoke());
     }
 
     /// <summary>
@@ -116,29 +137,34 @@ public class CombatLock : MonoBehaviour
     /// 
     /// If there is already something locked onto, then delock on that something
     /// </summary>
-    protected virtual void AttemptLock()
+    public virtual void AttemptLock()
     {
-        if (lockUnlockDelayInEffect) return;
+        //Debug.Log(gameObject.name + " | attemping lock");
 
-        UnlockDelockDelay();
+        if (lockUnlockDelayInEffect || !Controls.isAlive || Controls.dashing) return;
+        
+        //Debug.Log(gameObject.name + " | lock successfull, applying..");
 
-       // Debug.Log("Attempting a lock");
-        if (!isLockedOnto)
+        LockUnlockDelay();
+
+        // Debug.Log(gameObject.name + " | Attempting a lock");
+        //print("Are we locked on already? " + Controls.isLockedOn);
+        if (!Controls.isLockedOn)
         {
-         //  Debug.Log("Is not locked onto something already");
+             // Debug.Log(gameObject.name + " | Is not locked onto something already");
 
             if (combatEntityInLockedZone)
             {
-           //     Debug.Log("Found something to lock onto");
-                //Debug.Log("Locking On");
+               // Debug.Log(gameObject.name + " | Found something to lock onto");
+               // Debug.Log(gameObject.name + " | Locking On");
 
-                LockOnCaller();
+                EnterCombatCaller();
             }
         }
         else
         {
-       //     Debug.Log("Is already locked onto, will delock");
-            CantUnlockWhileAttackingOtherwiseUnlock();
+          //  Debug.Log(gameObject.name + " | Is already locked onto, will delock");
+            UnlockWhileNotAttacking();
         }
     }
 
@@ -148,7 +174,7 @@ public class CombatLock : MonoBehaviour
     public virtual void ColliderLockOntoTarget(CombatEntityController target)
     {
         Transform transform = myColliderDetector.gameObject.transform;
-        transform.LookAt(lockedTarget.transform.position);
+        transform.LookAt(target.transform.position);
         transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, transform.localEulerAngles.z);
     }
 
@@ -163,7 +189,7 @@ public class CombatLock : MonoBehaviour
     /// <param name="target"></param>
     void TargetDeath(CombatEntityController target)
     {
-       // print("Combat lock: target death: " + target.name);
+        print("Combat lock: TargetDeath Reciever method called for newly dead target: " + target.name + " Now calling OnTriggerExit for killer " + gameObject.name);
         myColliderDetector.OnTriggerExit(target.gameObject.GetComponent<Collider>());
     }
 
@@ -173,18 +199,25 @@ public class CombatLock : MonoBehaviour
     /// If the player is already attacking, you cant unlock
     ///- Integration with CombatFunctionality to check if the player is attacking
     /// </summary>
-    void CantUnlockWhileAttackingOtherwiseUnlock()
+    void UnlockWhileNotAttacking()
     {
-        if (GetComponent<CombatFunctionality>() != null)
-            if (!GetComponent<CombatFunctionality>().Controls.alreadyAttacking)
-                DeLockCaller();
+        //print(Controls.isLockedOn);
+        if (!GetComponent<CombatFunctionality>().Controls.alreadyAttacking)
+        {
+          //  print("unlocking while not attacking succeeded");
+            ExitCombatCaller();
+        }
     }
 
     #region LockUnlockDelay
-    void UnlockDelockDelay()
+    void LockUnlockDelay()
     {
+       // Debug.Log("Lock unlock delay");
+      //  print(lockUnlockDelayInEffect);
+
         lockUnlockDelayInEffect = true;
-        Invoke("DisableUnlockDelockDelay", lockUnlockDelay);
+        if (!IsInvoking("DisableUnlockDelockDelay"))
+            Invoke("DisableUnlockDelockDelay", lockUnlockDelay);
         
     }
 

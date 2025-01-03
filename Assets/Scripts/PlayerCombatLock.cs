@@ -26,10 +26,7 @@ public class PlayerCombatLock : CombatLock
         base.Start();
         //Debug.Log("Start : PLayer");
 
-        //Input Action Callback Additions
-        playerController.lockOn.performed += ctx => AttemptLock();
     }
-
 
 
 

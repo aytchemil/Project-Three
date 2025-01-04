@@ -19,5 +19,5 @@ MonoBehaviour:
   icon: {fileID: 2800000, guid: c7f1ce3715d640c46b11327dd7472006, type: 3}
   initialAttackDelay: 0.3
   missDelayUntilAbleToAttackAgain: 0.7
-  damage: 1
+  damage: 4
   movementAmount: 36

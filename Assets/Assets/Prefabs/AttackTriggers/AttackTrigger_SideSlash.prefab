@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.017757814, z: 0, w: 0.99984235}
   m_LocalPosition: {x: 6.78, y: -0.82, z: 3.69}
-  m_LocalScale: {x: 13.04999, y: 0.40963915, z: 3.4681587}
+  m_LocalScale: {x: 21.766077, y: 0.40963915, z: 3.4681587}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -130,7 +130,7 @@ MonoBehaviour:
   attackTriggerAnimator: {fileID: 2820157755071105457}
   attacking: 0
   hitAttack: 0
-  initialAttackDelayOver: 0
+  missedAttack: 0
 --- !u!95 &2820157755071105457
 Animator:
   serializedVersion: 7

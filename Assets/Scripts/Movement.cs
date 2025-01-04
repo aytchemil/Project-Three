@@ -66,40 +66,33 @@ public struct EntityStates
 }
 public class Movement : MonoBehaviour
 {
-
-    [Header("Adjustable Variables")]
-    //Adjustable Variables
+    [Header("Movement")]
+    [Header("Movement : Adjustable Variables")]
     public EntityStates entityStates;
     [field: SerializeField] public EntityStates.CurrentState state { get; private set; }
     [Space]
-
+    [Header("Movement: Drag")]
     public float groundLinearDampeningDrag;
-    public float height;
     public float weightMultiplier;
-    public LayerMask whatIsGroundMask;
     public float airAccelerationMultiplier;
-    public float maxSlopeAngle;
-    [Space]
-    public float dashSpeedMultiplier;
-    public float afterDashPeriodTimeLength = 1.2f;
-    public float dashCooldown;
-
-    [Header("Flags")]
-    //Flags
+    [Header("Movement: Slope Movement")]
     [SerializeField] protected bool isGrounded;
     [SerializeField] protected bool onSlope;
-
-    [Header("Adjustable Component Refernces")]
-    //Adjustable Component Refernces
-    public Transform lookPivot;
+    public float height;
+    public LayerMask whatIsGroundMask;
+    public float maxSlopeAngle;
+    [Header("Movement: Dodging")]
+    public float dashSpeedMultiplier;
+    public float afterDashPeriodTimeLength = 0.5f;
+    public float dashCooldown;
 
     //Private Variables
-    public float moveSpeed;
-    public RaycastHit slopeHit;
+    protected float moveSpeed;
+    protected RaycastHit slopeHit;
 
     //Cached Component Refernces
-    public Transform orientation;
-    public Rigidbody rb;
+    protected Transform orientation;
+    protected Rigidbody rb;
     public virtual CombatEntityController Controls { get; set; }
 
 
@@ -330,6 +323,7 @@ public class Movement : MonoBehaviour
 
     public void Lunge(string dir, float multiplier)
     {
+        print("Lunging");
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
 
@@ -368,26 +362,26 @@ public class Movement : MonoBehaviour
 
         if(dir.z > 0 && absZ > absX)
         {
-            print("z highest, fwd");
+            //print("z highest, fwd");
             dir = transform.TransformDirection(Vector3.forward);
         }
 
         else if(dir.z < 0 && absZ > absX)
         {
-            print("-z highest, back");
+            //print("-z highest, back");
             dir = transform.TransformDirection(Vector3.back);
         }
 
         else if(dir.x > 0 && absX > absZ)
         {
-            print(" +x highest, right");
+            //print(" +x highest, right");
             dir = transform.TransformDirection(Vector3.right);
             dir += transform.TransformDirection(Vector3.forward);
         }
 
         else if(dir.x < 0 && absX > absZ)
         {
-            print(" -x highest, left");
+            //print(" -x highest, left");
             dir = transform.TransformDirection(Vector3.left);
             dir += transform.TransformDirection(Vector3.forward);
         }

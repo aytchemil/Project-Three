@@ -226,6 +226,7 @@ public class CombatFunctionality : MonoBehaviour
     /// <param name="dir"></param>
     void EnableAbility(string dir)
     {
+        print("Enabling ability on dir: " + dir);
         direction = dir;
         switch (dir)
         {
@@ -262,12 +263,13 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     public virtual void UseAttackAbility()
     {
-        if (!Controls.isLockedOn || Controls.alreadyAttacking || Controls.isBlocking) return;
+        print("-> Comabt Functionality: Attempting Attack");
+        if (!Controls.isLockedOn || Controls.alreadyAttacking || Controls.isBlocking) { print("is unable to attack, returning"); return; }
 
         if (currentAbility == null)
             Debug.LogError("There is currently no selected ability (a_current) that this combat functionality script can use.");
 
-        //print("ATTEMPT ATTACK");
+        print("-> Combat Functionality: Successfull ATTACK");
 
         StartAttacking();
         AttackTriggerUse();
@@ -327,32 +329,34 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     void BoxAttack()
     {
-        //Debug.Log("Attempting Box attack");
+        Debug.Log("Attempting Box attack");
     }
     void OverheadAttack()
     {
-        //Debug.Log("Attempting Overhead attack");
+        Debug.Log("Attempting Overhead attack");
     }
     void PierceAttack()
     {
-       // Debug.Log("Attempting Pierce attack");
+        Debug.Log("Attempting Pierce attack");
     }
 
     void SideSlashAttack()
     {
-        //Debug.Log("Attempting Side Slash attack");
+        Debug.Log("Attempting Side Slash attack");
     }
 
     IEnumerator MovementForwardAttack()
     {
-        Debug.Log("Attempting Movement Forward Attack");
+        Debug.Log(" * MoveForwardAttacK Called");
 
+        print("Waiting for attack to start, initialAttackDelayOver not over yet (its false)");
+        print("initial attack delay over?: " + initialAttackDelayOver);
         while (!initialAttackDelayOver)
         {
-            //print("Waiting for attack to start");
+           // print("waiting...");
             yield return new WaitForEndOfFrame();
         }
-        print("Attacking started");
+        print("Attacking started, initialAttackDelayOver is over (true)");
 
 
         gameObject.GetComponent<Movement>().Lunge("up", currentAbility.movementAmount);

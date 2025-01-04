@@ -109,7 +109,7 @@ public class AttackTriggerCollider : MonoBehaviour
     /// </summary>
     public void DisableTrigger()
     {
-        //print("Disabling trigger");
+        print("Disabling trigger");
         CompleteAttackCaller();
         attacking = false;
         missedAttack = false;
@@ -133,12 +133,12 @@ public class AttackTriggerCollider : MonoBehaviour
 
     public void EndOfAnimationDebug()
     {
-       // print("Hit end of attack animation");
+        print("Hit end of attack animation");
     }
 
     void CompleteAttackCaller()
     {
-       // Debug.Log("Compeleted Attack");
+        print("-----------------------Compeleted Attack Caller Called");
         combatFunctionality.Controls.CompletedAttack?.Invoke();
     }
 

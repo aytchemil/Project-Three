@@ -296,7 +296,7 @@ public class Movement : MonoBehaviour
         //Debug.Log("Dashing");
 
         Vector3 localVelocity = rb.transform.InverseTransformDirection(rb.linearVelocity); // Velocity in local space
-        print(localVelocity);
+        //print(localVelocity);
         Dash(GetMoveDirection(localVelocity), dashSpeedMultiplier);
     }
 

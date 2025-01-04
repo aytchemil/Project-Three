@@ -106,7 +106,7 @@ public class AttackingAI : MonoBehaviour
         attackingWithPattern = true;
         int attackPatternLength = attackPattern.attackDir.Count;
 
-        //print("Attacking w/ attack pattern: " + attackPattern);
+       // print("Attacking w/ attack pattern: " + attackPattern);
 
         //Creates the new progress list
         attackPatternProgress = new List<bool>();
@@ -134,9 +134,9 @@ public class AttackingAI : MonoBehaviour
                 }
     
             }
-            // print("Ended: " + i);
+             //print("Ended: " + i);
         }
-       // print("Attacking Period over, Thinking....");
+        //print("Attacking Period over, Thinking....");
         thinking = true;
         ResetAttacking();
         Invoke("AttackThinkingPeriodEnd", UnityEngine.Random.Range(thinkingPeriodBetweenAttackPatternsRange.x, thinkingPeriodBetweenAttackPatternsRange.y));

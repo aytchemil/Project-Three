@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
@@ -12,6 +13,7 @@ public class AttackTriggerCollider : MonoBehaviour
 
     public bool attacking;
     public bool hitAttack;
+    public bool missedAttack;
     //Cache
     Collider col;
 
@@ -88,9 +90,12 @@ public class AttackTriggerCollider : MonoBehaviour
     {
         //print("initializing attack trigger: " + gameObject.name);
         attacking = true;
+        missedAttack = false;
         hitAttack = false;
         combatFunctionality.initialAttackDelayOver = false;
         attackTriggerAnimator.SetBool("windupDone", false);
+        attackTriggerAnimator.SetBool("missed", false);
+
 
         DisableAttack(Color.grey);
     }
@@ -104,17 +109,19 @@ public class AttackTriggerCollider : MonoBehaviour
     /// </summary>
     public void DisableTrigger()
     {
-        //print("Disabling trigger");
+        print("Disabling trigger");
         CompleteAttackCaller();
         attacking = false;
+        missedAttack = false;
+        hitAttack = false;
         combatFunctionality.initialAttackDelayOver = false;
         combatFunctionality.FinishAttacking();
 
 
         if(combatFunctionality.Controls.GetTarget?.Invoke() != null)
         {
+            print("Disabling trigger from : " + gameObject.name + " Target: " + combatFunctionality.Controls.GetTarget?.Invoke());
             ResetAttackCaller();
-            //print("Disabling trigger from : " + gameObject.name + " Target: " + combatFunctionality.Controls.GetTarget?.Invoke());
         }
         else
         {
@@ -126,29 +133,33 @@ public class AttackTriggerCollider : MonoBehaviour
 
     public void EndOfAnimationDebug()
     {
-       // print("Hit end of attack animation");
+        print("Hit end of attack animation");
     }
 
     void CompleteAttackCaller()
     {
-        //Debug.Log("Compeleted Attack");
+        Debug.Log("Compeleted Attack");
         combatFunctionality.Controls.CompletedAttack?.Invoke();
     }
 
     void ResetAttackCaller()
     {
-        //print("Attack Trigger: ResetAttackCaller()");
+        print("Attack Trigger: ResetAttackCaller()");
 
-        foreach (var subscriber in combatFunctionality.Controls.ResetAttack.GetInvocationList())
+        #region debug check for resetattack
+        if (combatFunctionality.Controls.ResetAttack != null)
         {
-            if (subscriber != null)
-            {
-                //print(subscriber);
-
-            }
-            else
-                Debug.LogError("No subscribers found in reset attack, this needs movement subscribed to it, check for that first");
+            foreach (var subscriber in combatFunctionality.Controls.ResetAttack.GetInvocationList())
+                if (subscriber != null)
+                    print(subscriber);
+                else
+                    Debug.LogError("No subscribers found in reset attack, this needs movement subscribed to it, check for that first");
         }
+        else
+        {
+            //print("No subscribers found on reset attack, if this script requres a movement script it needs to be subscribed to it.");
+        }
+        #endregion
 
         combatFunctionality.Controls.ResetAttack?.Invoke();
     }
@@ -168,14 +179,19 @@ public class AttackTriggerCollider : MonoBehaviour
 
     void MissAttackCuttoff()
     { 
-        //print("Miss Attack Cuttoff Reached");
+        print("Miss Attack Cuttoff Reached");
         if (hitAttack) return;
 
-        //print("missed attack");
+        print("missed attack");
+        missedAttack = true;
+        attackTriggerAnimator.SetBool("missed", true);
         hitAttack = false;
 
         DisableAttack(Color.grey);
         MissedAttackCaller();
+
+        print("Missed attack delay over, finally disabling attack trigger");
+        Invoke(nameof(DisableTrigger), myAbility.missDelayUntilAbleToAttackAgain);
     }
 
     void MissedAttackCaller()
@@ -183,11 +199,18 @@ public class AttackTriggerCollider : MonoBehaviour
         combatFunctionality.Controls.MissedAttack?.Invoke();
     }
 
+    void MissedAttackCooldownFinished()
+    {
+        print("Missed attack delay over, finally disabling attack trigger");
+        DisableTrigger();
+    }
+
+
     public void ComboOffOfHitNowAvaliable()
     {
         if (hitAttack)
         {
-            //print("Combo off hit time period reached, can now combo because attack hit");
+            print("Combo off hit time period reached, can now combo because attack hit");
             print("Disabling this attack to allow for combo");
             DisableTrigger();
         }

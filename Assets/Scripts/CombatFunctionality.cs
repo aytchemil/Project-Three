@@ -453,14 +453,19 @@ public class CombatFunctionality : MonoBehaviour
             //Debug.Log(gameObject.name + "'s target (" + target.name + ") has died, now calling TargetDeathCaller functionality for " + gameObject.name);
         }
 
-        ResetAllAttackTriggers();
+        DisableAllAttackTriggers();
         Controls.TargetDeath?.Invoke(target);
     }
 
-    public void ResetAllAttackTriggers()
+    public void DisableAllAttackTriggers()
     {
+        print("Disabling all attack triggers");
         foreach(GameObject attackTrigger in myAttackTriggers)
         {
+            if(attackTrigger == null)
+            {
+                Debug.LogError("Attack trigger null");
+            }
             attackTrigger.GetComponent<AttackTriggerCollider>().DisableTrigger();
         }
     }

@@ -23,8 +23,8 @@ public class Ability : ScriptableObject
     public GameObject attackTriggerCollider;
     public string attackName;
     public Texture icon;
-    public float speed;
     public float initialAttackDelay = 0.3f;
+    public float missDelayUntilAbleToAttackAgain = 0.6f;
 
     public float damage;
     public float movementAmount;

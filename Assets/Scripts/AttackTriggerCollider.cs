@@ -109,7 +109,7 @@ public class AttackTriggerCollider : MonoBehaviour
     /// </summary>
     public void DisableTrigger()
     {
-        print("Disabling trigger");
+        //print("Disabling trigger");
         CompleteAttackCaller();
         attacking = false;
         missedAttack = false;
@@ -120,7 +120,7 @@ public class AttackTriggerCollider : MonoBehaviour
 
         if(combatFunctionality.Controls.GetTarget?.Invoke() != null)
         {
-            print("Disabling trigger from : " + gameObject.name + " Target: " + combatFunctionality.Controls.GetTarget?.Invoke());
+            //print("Disabling trigger from : " + gameObject.name + " Target: " + combatFunctionality.Controls.GetTarget?.Invoke());
             ResetAttackCaller();
         }
         else
@@ -133,25 +133,27 @@ public class AttackTriggerCollider : MonoBehaviour
 
     public void EndOfAnimationDebug()
     {
-        print("Hit end of attack animation");
+       // print("Hit end of attack animation");
     }
 
     void CompleteAttackCaller()
     {
-        Debug.Log("Compeleted Attack");
+       // Debug.Log("Compeleted Attack");
         combatFunctionality.Controls.CompletedAttack?.Invoke();
     }
 
     void ResetAttackCaller()
     {
-        print("Attack Trigger: ResetAttackCaller()");
+        //print("Attack Trigger: ResetAttackCaller()");
 
         #region debug check for resetattack
         if (combatFunctionality.Controls.ResetAttack != null)
         {
             foreach (var subscriber in combatFunctionality.Controls.ResetAttack.GetInvocationList())
                 if (subscriber != null)
-                    print(subscriber);
+                {
+                    //print(subscriber);
+                }
                 else
                     Debug.LogError("No subscribers found in reset attack, this needs movement subscribed to it, check for that first");
         }

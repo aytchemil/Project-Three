@@ -1,60 +1,52 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(PlayerController))]
-public class PlayerCamera : MonoBehaviour
+public class PlayerCamera : Look
 {
-    //Real-Time Adjustable Variables
+    [Header("Player Camera")]
+    [Header("Player Camera: Real-Time Variables")]
     public float xSens;
     public float ySens;
-    public float lockOnVerticalOffset = 6f;
     public Vector3 cameraOffset = new Vector3(0, 1.8f, -3);
-    public float smoothTime = 0.3f;
-    public float camLerpTime = 0.01f;
-    public Vector3 vel = Vector3.zero;
     [Space]
     public float sprintFov;
     public float defaultFov;
+    public float combatFOV;
     public float fovLerpSpeed = 0.03f;
     [Space]
-    public float combatFOV;
-
-
-    //Adjustable Component References
-    public Transform cameraPosition;
+    [Header("Player Camera: Adjustable Component References")]
     public Camera myCamera;
 
-    //Cached Component References
-    PlayerController controls;
-    Transform camTransform;
-
     //Privates
+    Transform camTransform;
     public Vector3 savedTargetLocation;
     Vector2 currentXY;
     Vector2 finalUnlockedXYPos;
+    Vector3 vel = Vector3.zero;
 
-    public float yRot;
-    public float xRot;
+    float yRot;
+    float xRot;
 
 
-    private void Awake()
+    public override void Awake()
     {
-        //Cache
-        controls = GetComponent<PlayerController>();
+        base.Awake();
         camTransform = myCamera.GetComponent<Transform>(); 
         //Debug.Log(camTransform);
     }
 
-    private void OnEnable()
+    public override void OnEnable()
     {
+        base.OnEnable();
         //Mouse lock states
         UnityEngine.Cursor.lockState = CursorLockMode.Locked;
         UnityEngine.Cursor.visible = false;
 
         //Callback Additions
-        controls.CombatFollowTarget += InCombatFollowingTarget;
         controls.ExitCombat += ExitCombat;
 
         //Fov
@@ -65,9 +57,9 @@ public class PlayerCamera : MonoBehaviour
         controls.ExitCombat += OnStopCombatFOV;
     }
 
-    private void OnDisable()
+    public override void OnDisable()
     {
-        controls.CombatFollowTarget -= InCombatFollowingTarget;
+        base.OnDisable();
         controls.ExitCombat -= ExitCombat;
 
         //Fov
@@ -107,6 +99,7 @@ public class PlayerCamera : MonoBehaviour
         UpdateCamPosition();
     }
 
+    #region Player MouseLook Specific
 
     /// <summary>
     /// Sets the horizontal and vertical rotations of the camera alongside the horizontal of the transform
@@ -124,6 +117,23 @@ public class PlayerCamera : MonoBehaviour
         transform.rotation = Quaternion.Euler(0, xyRot.x, 0);
         cameraPosition.rotation = Quaternion.Euler(xyRot.y, xyRot.x, 0);
     }
+
+
+
+
+    /// <summary>
+    /// Sets the Cam position to the desired location set by this script
+    /// </summary>
+    void UpdateCamPosition()
+    {
+        //print("updating cam position");
+        camTransform.position = cameraPosition.position;
+        camTransform.rotation = cameraPosition.rotation;
+    }
+
+    #endregion
+
+    #region XY calc and setting
 
     /// <summary>
     /// Returns the XY rot with the sens from a given raw input XY
@@ -146,73 +156,6 @@ public class PlayerCamera : MonoBehaviour
 
         return new Vector2(xRot, yRot);
     }
-
-    /// <summary>
-    /// Makes the camera look at a given target restricted with X
-    /// </summary>
-    /// <param name="target"></param>
-    void CameraLookAtLockTarget(Vector3 target)
-    {
-        //print("Cam orientation changing");
-        cameraPosition.LookAt(target);
-        cameraPosition.localEulerAngles = new Vector3(cameraPosition.localEulerAngles.x, 0, 0);
-
-    }
-
-    /// <summary>
-    /// Transform looks at a target restricted to Y
-    /// </summary>
-    /// <param name="target"></param>
-    void TransformLookAtTarget(Vector3 target)
-    {
-        transform.LookAt(target);
-        transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, 0);
-    }
-
-    /// <summary>
-    /// Sets the Cam position to the desired location set by this script
-    /// </summary>
-    void UpdateCamPosition()
-    {
-        //print("updating cam position");
-        camTransform.position = cameraPosition.position;
-        camTransform.rotation = cameraPosition.rotation;
-    }
-
-    /// <summary>
-    /// Observer Method for the player camera to enter combat
-    /// </summary>
-    /// <param name="target"></param>
-    void InCombatFollowingTarget(CombatEntityController target)
-    {
-        //Debug.Log("Entering Combat and following target: " + target);
-
-        ////Testing for dash invunrability before it
-        //if (!controls.alreadyAttacking)
-        //{
-        //    CameraLookAtLockTarget(target.transform.position);
-        //    TransformLookAtTarget(target.transform.position);
-        //}
-
-        Vector3 lookAtPos = new Vector3(target.transform.position.x, target.transform.position.y + lockOnVerticalOffset, target.transform.position.z);
-        
-        CameraLookAtLockTarget(lookAtPos);
-        TransformLookAtTarget(lookAtPos);
-        UpdateNewXY();
-    }
-
-    /// <summary>
-    /// Observer method player exiting combat
-    /// </summary>
-    /// <param name="target"></param>
-    void ExitCombat()
-    {
-        //Debug.Log("Exiting Combat");
-
-        UpdateNewXY();
-        ApplyNewXYPosition();
-    }
-
 
     /// <summary>
     /// Gets the current XY from local euler angles, for the CAM and TRANSFORM
@@ -250,9 +193,38 @@ public class PlayerCamera : MonoBehaviour
         finalUnlockedXYPos = GetCurrentXY();
     }
 
+    #endregion
+
+    #region Combat
+
+    /// <summary>
+    /// Observer Method for the player camera to enter combat
+    /// </summary>
+    /// <param name="target"></param>
+    public override void InCombatFollowingTarget(CombatEntityController target)
+    {
+        base.InCombatFollowingTarget(target);
+        UpdateNewXY();
+    }
+
+    /// <summary>
+    /// Observer method player exiting combat
+    /// </summary>
+    /// <param name="target"></param>
+    void ExitCombat()
+    {
+        //Debug.Log("Exiting Combat");
+
+        UpdateNewXY();
+        ApplyNewXYPosition();
+    }
+
+    #endregion
+
+    #region sprinting
     void OnSprint()
     {
-       // print("onsprint");
+        // print("onsprint");
         StartCoroutine(SprintFOV());
     }
 
@@ -262,6 +234,12 @@ public class PlayerCamera : MonoBehaviour
         StopCoroutine(SprintFOV());
         StartCoroutine(StopSprintFOV());
     }
+
+    #endregion
+
+    #region FOV's
+
+
 
     void OnCombatFOV()
     {
@@ -310,7 +288,6 @@ public class PlayerCamera : MonoBehaviour
 
     }
 
-
     protected IEnumerator CombatFOV()
     {
         float val = 0;
@@ -345,6 +322,7 @@ public class PlayerCamera : MonoBehaviour
 
     }
 
+    #endregion
 
 
 }

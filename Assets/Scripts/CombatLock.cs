@@ -174,6 +174,7 @@ public class CombatLock : MonoBehaviour
     public virtual void ColliderLockOntoTarget(CombatEntityController target)
     {
         Transform transform = myColliderDetector.gameObject.transform;
+
         transform.LookAt(target.transform.position);
         transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, transform.localEulerAngles.z);
     }

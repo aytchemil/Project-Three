@@ -36,6 +36,8 @@ public class AttackTriggerCollider : MonoBehaviour
     /// <param name="other"></param>
     private void OnTriggerStay(Collider other)
     {
+        if (other.GetComponent<CombatEntityController>() == combatFunctionality.Controls) return;
+
         float newEnemyHealth;
         if (attacking && combatFunctionality.initialAttackDelayOver)
         {
@@ -43,6 +45,8 @@ public class AttackTriggerCollider : MonoBehaviour
             #region Death
             ///If the Entity being attacked's health reaches less than 0, tell OUR Controller to call the target death delegate action
             newEnemyHealth = other.GetComponent<AttackbleEntity>().Attacked(myAbility);
+
+
             if (newEnemyHealth < 0)
             {
                 //Debug.Log("Enemy health 0, killed enemy, now calling TargetDeath to signal an enemy death");

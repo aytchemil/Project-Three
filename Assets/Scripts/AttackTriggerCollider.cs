@@ -113,7 +113,7 @@ public class AttackTriggerCollider : MonoBehaviour
     /// </summary>
     public void DisableTrigger()
     {
-        print("Disabling trigger");
+        //print("Disabling trigger");
         CompleteAttackCaller();
         attacking = false;
         missedAttack = false;
@@ -137,12 +137,12 @@ public class AttackTriggerCollider : MonoBehaviour
 
     public void EndOfAnimationDebug()
     {
-        print("Hit end of attack animation");
+        //print("Hit end of attack animation");
     }
 
     void CompleteAttackCaller()
     {
-        print("-----------------------Compeleted Attack Caller Called");
+       // print("-----------------------Compeleted Attack Caller Called");
         combatFunctionality.Controls.CompletedAttack?.Invoke();
     }
 
@@ -185,10 +185,10 @@ public class AttackTriggerCollider : MonoBehaviour
 
     void MissAttackCuttoff()
     { 
-        print("Miss Attack Cuttoff Reached");
+        //print("Miss Attack Cuttoff Reached");
         if (hitAttack) return;
 
-        print("missed attack");
+        //print("missed attack");
         missedAttack = true;
         attackTriggerAnimator.SetBool("missed", true);
         hitAttack = false;
@@ -196,7 +196,7 @@ public class AttackTriggerCollider : MonoBehaviour
         DisableAttack(Color.grey);
         MissedAttackCaller();
 
-        print("Missed attack delay over, finally disabling attack trigger");
+        //print("Missed attack delay over, finally disabling attack trigger");
         Invoke(nameof(DisableTrigger), myAbility.missDelayUntilAbleToAttackAgain);
     }
 
@@ -207,7 +207,7 @@ public class AttackTriggerCollider : MonoBehaviour
 
     void MissedAttackCooldownFinished()
     {
-        print("Missed attack delay over, finally disabling attack trigger");
+        //print("Missed attack delay over, finally disabling attack trigger");
         DisableTrigger();
     }
 
@@ -216,8 +216,8 @@ public class AttackTriggerCollider : MonoBehaviour
     {
         if (hitAttack)
         {
-            print("Combo off hit time period reached, can now combo because attack hit");
-            print("Disabling this attack to allow for combo");
+            //print("Combo off hit time period reached, can now combo because attack hit");
+            //print("Disabling this attack to allow for combo");
             DisableTrigger();
         }
     }

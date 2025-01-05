@@ -68,6 +68,8 @@ public class CombatFunctionality : MonoBehaviour
         Controls.blockStart += Block;
         Controls.blockStop += StopBlock;
 
+        Controls.Flinch += Flinch;
+
     }
 
     /// <summary>
@@ -87,6 +89,8 @@ public class CombatFunctionality : MonoBehaviour
 
         Controls.blockStart -= Block;
         Controls.blockStop -= StopBlock;
+
+        Controls.Flinch -= Flinch;
     }
 
     #endregion
@@ -171,9 +175,16 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     public void DisableAttackTriggers()
     {
-       // Debug.Log("Disabling Attack Triggers");
+        //Debug.Log(gameObject.name + " | Disabling Attack Triggers");
+        if (!myAttackTriggers.Any() || attackTriggerParent.childCount == 0) { print("att triggers not setup, not disabling something that isnt there"); return; }
+
         foreach (GameObject attkTrigger in myAttackTriggers)
         {
+            if (attkTrigger.activeSelf)
+            {
+                attkTrigger.GetComponent<AttackTriggerCollider>().DisableTrigger();
+            }
+
             //print("DISABLING : " + attkTrigger.name);
             attkTrigger.SetActive(false);
 
@@ -226,7 +237,7 @@ public class CombatFunctionality : MonoBehaviour
     /// <param name="dir"></param>
     void EnableAbility(string dir)
     {
-        print("Enabling ability on dir: " + dir);
+       // print("Enabling ability on dir: " + dir);
         direction = dir;
         switch (dir)
         {
@@ -263,13 +274,13 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     public virtual void UseAttackAbility()
     {
-        print("-> Comabt Functionality: Attempting Attack");
-        if (!Controls.isLockedOn || Controls.alreadyAttacking || Controls.isBlocking) { print("is unable to attack, returning"); return; }
+        //print("-> Comabt Functionality: Attempting Attack");
+        if (!Controls.isLockedOn || Controls.alreadyAttacking || Controls.isBlocking || Controls.isFlinching) { print("is unable to attack, returning"); return; }
 
         if (currentAbility == null)
             Debug.LogError("There is currently no selected ability (a_current) that this combat functionality script can use.");
 
-        print("-> Combat Functionality: Successfull ATTACK");
+        //print("-> Combat Functionality: Successfull ATTACK");
 
         StartAttacking();
         AttackTriggerUse();
@@ -324,45 +335,49 @@ public class CombatFunctionality : MonoBehaviour
 
     }
 
+    #region attack types
+
     /// <summary>
     /// Attack with the box attack
     /// </summary>
     void BoxAttack()
     {
-        Debug.Log("Attempting Box attack");
+        //Debug.Log("Attempting Box attack");
     }
     void OverheadAttack()
     {
-        Debug.Log("Attempting Overhead attack");
+        //Debug.Log("Attempting Overhead attack");
     }
     void PierceAttack()
     {
-        Debug.Log("Attempting Pierce attack");
+        //Debug.Log("Attempting Pierce attack");
     }
 
     void SideSlashAttack()
     {
-        Debug.Log("Attempting Side Slash attack");
+        //Debug.Log("Attempting Side Slash attack");
     }
 
     IEnumerator MovementForwardAttack()
     {
-        Debug.Log(" * MoveForwardAttacK Called");
+        //Debug.Log(" * MoveForwardAttacK Called");
 
-        print("Waiting for attack to start, initialAttackDelayOver not over yet (its false)");
-        print("initial attack delay over?: " + initialAttackDelayOver);
+        //print("Waiting for attack to start, initialAttackDelayOver not over yet (its false)");
+        //print("initial attack delay over?: " + initialAttackDelayOver);
         while (!initialAttackDelayOver)
         {
            // print("waiting...");
             yield return new WaitForEndOfFrame();
         }
-        print("Attacking started, initialAttackDelayOver is over (true)");
+       // print("Attacking started, initialAttackDelayOver is over (true)");
 
 
         gameObject.GetComponent<Movement>().Lunge("up", currentAbility.movementAmount);
         gameObject.GetComponent<Movement>().DisableMovement();
         Invoke(nameof(ReEnableMovement), gameObject.GetComponent<Movement>().entityStates.dashTime);
     }
+
+    #endregion
 
     void ReEnableMovement()
     {
@@ -476,6 +491,8 @@ public class CombatFunctionality : MonoBehaviour
 
     #endregion
 
+    #region Blocking
+
     void InitializeBlockingTrigger()
     {
         initializedBlockingTrigger = true;
@@ -503,6 +520,12 @@ public class CombatFunctionality : MonoBehaviour
 
     }
 
+    #endregion
 
+    public void Flinch(float flinchTime)
+    {
+        print(this.gameObject.name + " has flinched");
+        DisableAttackTriggers();
+    }
 
 }

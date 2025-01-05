@@ -76,13 +76,13 @@ public class PlayerMovement : Movement
     public override void EnableMovement()
     {
         playerControls.ia_move.Enable();
-        print("enabling movement");
+       // print("enabling movement");
     }
 
     public override void DisableMovement()
     {
         playerControls.ia_move.Disable();
-        print("disabling movement from playercontrols");
+      //  print("disabling movement from playercontrols");
     }
 
 }

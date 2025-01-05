@@ -3397,7 +3397,7 @@ MonoBehaviour:
   preSelectedAttackPatterns:
   - {fileID: 11400000, guid: be289609191c85141ae7c34c2615ab96, type: 2}
   thinking: 0
-  thinkingPeriodBetweenAttackPatternsRange: {x: 3, y: 5}
+  thinkingPeriodBetweenAttackPatternsRange: {x: 1, y: 3}
   attackingWithPattern: 0
   attackPatternProgress: 
   currentAttackInAttackPattern: 0
@@ -6814,7 +6814,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5aa683f936978624baab08b305bdb3df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lookAtSpeed: 26
+  lookAtSpeed: 20
   lockOnVerticalOffset: 1
   cameraPosition: {fileID: 635491444}
   xSens: 3
@@ -6845,6 +6845,7 @@ MonoBehaviour:
     dashSpeed: 55
     dashTime: 0.23
     missedAttackSpeed: 7
+    flinchSpeed: 0
   <state>k__BackingField: 0
   groundLinearDampeningDrag: 7
   weightMultiplier: 90
@@ -6909,6 +6910,7 @@ MonoBehaviour:
   isBlocking: 0
   currentlyRetargetting: 0
   isAlive: 1
+  isFlinching: 0
   targetIsDodging: 0
   ia_look:
     m_Name: Ia_look
@@ -7016,6 +7018,7 @@ MonoBehaviour:
   invincibiliyTime: 0.5
   deathTime: 2
   corpseDeathTime: 0
+  flinchTime: 0.4
 --- !u!114 &1368657303
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14450,13 +14453,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controls: {fileID: 0}
-  _health: 25
+  _health: 30
   attackedEffect: {fileID: 2383292521024057675}
   animator: {fileID: 234864354855674010}
   invincibility: 0
   invincibiliyTime: 0.5
   deathTime: 2
   corpseDeathTime: 0
+  flinchTime: 0.7
 --- !u!198 &2178706275364371871
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -19297,6 +19301,7 @@ MonoBehaviour:
   isBlocking: 0
   currentlyRetargetting: 0
   isAlive: 1
+  isFlinching: 0
   targetIsDodging: 0
 --- !u!1 &2610608316262535823
 GameObject:
@@ -29742,6 +29747,7 @@ MonoBehaviour:
     dashSpeed: 50
     dashTime: 0.23
     missedAttackSpeed: 5
+    flinchSpeed: 0
   <state>k__BackingField: 0
   groundLinearDampeningDrag: 7
   weightMultiplier: 90
@@ -29768,7 +29774,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02d878f6b5b8bb1448129f6df2fcedb2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lookAtSpeed: 26
+  lookAtSpeed: 18
   lockOnVerticalOffset: 1
   cameraPosition: {fileID: 376139233}
 --- !u!4 &9028385946430015608

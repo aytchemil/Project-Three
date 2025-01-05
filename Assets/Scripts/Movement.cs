@@ -16,6 +16,7 @@ public struct EntityStates
         combat = 2,
         dashing = 3,
         missedAttack = 4,
+        flinching = 5,
     }
 
     [Space]
@@ -25,9 +26,10 @@ public struct EntityStates
     public float dashSpeed;
     public float dashTime;
     public float missedAttackSpeed;
+    public float flinchSpeed;
 
     //Constructor
-    public EntityStates(float walkSpeed, float sprintSpeed, float combatSpeed, float dashSpeed, float dashTime, float missedAttackSpeed)
+    public EntityStates(float walkSpeed, float sprintSpeed, float combatSpeed, float dashSpeed, float dashTime, float missedAttackSpeed, float flinchSpeed)
     {
         this.walkSpeed = walkSpeed;
         this.sprintSpeed = sprintSpeed;
@@ -35,6 +37,7 @@ public struct EntityStates
         this.dashSpeed = dashSpeed;
         this.dashTime = dashTime;
         this.missedAttackSpeed = missedAttackSpeed;
+        this.flinchSpeed = flinchSpeed;
     }
 
     public float UpdateSpeed(CurrentState state)
@@ -57,6 +60,9 @@ public struct EntityStates
                 break;
             case CurrentState.missedAttack:
                 playerSpeed = missedAttackSpeed;
+                break;
+            case CurrentState.flinching:
+                playerSpeed = flinchSpeed;
                 break;
         }
 
@@ -131,6 +137,9 @@ public class Movement : MonoBehaviour
         //Missed Attack
         Controls.MissedAttack += MissedAttack;
         Controls.ResetAttack += ResetAttack;
+
+        //Flinch
+        Controls.Flinch += Flinch;
     }
 
     private void OnDisable()
@@ -150,6 +159,9 @@ public class Movement : MonoBehaviour
         //Missed Attack
         Controls.MissedAttack -= MissedAttack;
         Controls.ResetAttack -= ResetAttack;
+
+        //Flinch
+        Controls.Flinch -= Flinch;
     }
 
 
@@ -323,7 +335,7 @@ public class Movement : MonoBehaviour
 
     public void Lunge(string dir, float multiplier)
     {
-        print("Lunging");
+       // print("Lunging");
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
 
@@ -445,7 +457,25 @@ public class Movement : MonoBehaviour
 
     public virtual void DisableMovement()
     {
-        print("disbaling from movement");
+        //print("disbaling from movement");
+    }
+
+    public void Flinch(float flinchTime)
+    {
+        EntityStates.CurrentState prevState = state;
+        if (prevState == EntityStates.CurrentState.dashing || prevState == EntityStates.CurrentState.missedAttack)
+            prevState = EntityStates.CurrentState.combat;
+
+
+        state = EntityStates.CurrentState.flinching;
+
+        StartCoroutine(StopFlinch(flinchTime, prevState));
+    }
+    public IEnumerator StopFlinch(float flinchTime, EntityStates.CurrentState prevState)
+    {
+        yield return new WaitForSeconds(flinchTime);
+
+        state = prevState;
     }
 
 }

@@ -29,6 +29,8 @@ public class AttackbleEntity : MonoBehaviour
     public float invincibiliyTime;
     public float deathTime;
     public float corpseDeathTime;
+    [Space]
+    public float flinchTime = 1f;
 
     public virtual float Attacked(Ability atkedWithAbility)
     {
@@ -36,9 +38,11 @@ public class AttackbleEntity : MonoBehaviour
         if (!invincibility)
         {
             invincibility = true;
+
            // print("I was attacked");
             attackedEffect.GetComponent<ParticleSystem>().Play();
             Invoke("StopAttacked", invincibiliyTime);
+            FlinchCaller();
             newHealth = TakeDamage(atkedWithAbility.damage);
         }
         else
@@ -74,6 +78,19 @@ public class AttackbleEntity : MonoBehaviour
     void Die()
     {
         Destroy(gameObject);
+    }
+
+    void FlinchCaller()
+    {
+        controls.Flinch?.Invoke(flinchTime);
+        controls.isFlinching = true;
+        Invoke(nameof(StopFlinching), flinchTime);
+    }
+
+    void StopFlinching()
+    {
+        print("Stopped flinching");
+        controls.isFlinching = false;
     }
 
     //Tick damage over a certain time?

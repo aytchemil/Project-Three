@@ -30,6 +30,7 @@ public class CombatEntityController : MonoBehaviour
     public Action ResetAttack;
     public Action MissedAttack;
     public Action CompletedAttack;
+    public Action<float> Flinch;
 
     [Header("Pre-Selected Abilities")]
     public Ability a_right;
@@ -45,6 +46,7 @@ public class CombatEntityController : MonoBehaviour
     public bool isBlocking;
     public bool currentlyRetargetting;
     public bool isAlive = true;
+    public bool isFlinching = false;
 
     [Header("Combat Flags")]
     public bool targetIsDodging;

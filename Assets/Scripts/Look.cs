@@ -32,14 +32,7 @@ public class Look : MonoBehaviour
 
     public virtual void InCombatFollowingTarget(CombatEntityController target)
     {
-        //Debug.Log("Entering Combat and following target: " + target);
-
-        ////Testing for dash invunrability before it
-        //if (!controls.alreadyAttacking)
-        //{
-        //    CameraLookAtLockTarget(target.transform.position);
-        //    TransformLookAtTarget(target.transform.position);
-        //}
+        print(gameObject.name + " following target : " + target.name);
 
         Vector3 targetLookAtPosition = new Vector3(target.transform.position.x, target.transform.position.y + lockOnVerticalOffset, target.transform.position.z);
 
@@ -76,5 +69,6 @@ public class Look : MonoBehaviour
 
         transform.localEulerAngles = new Vector3(0, transform.localEulerAngles.y, 0);
     }
+
 
 }

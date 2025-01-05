@@ -33,6 +33,9 @@ public class AttackingAI : MonoBehaviour
         Controls.lockOn += combatLock.AttemptLock;
 
         Controls.CompletedAttack += CompleteAttackInPattern;
+        Controls.Flinch += Flinch;
+
+        Controls.ExitCombat += ExitCombat;
 
     }
 
@@ -42,7 +45,9 @@ public class AttackingAI : MonoBehaviour
         Controls.lockOn -= combatLock.AttemptLock;
 
         Controls.CompletedAttack -= CompleteAttackInPattern;
+        Controls.Flinch -= Flinch;
 
+        Controls.ExitCombat -= ExitCombat;
     }
 
     private void FixedUpdate()
@@ -62,7 +67,7 @@ public class AttackingAI : MonoBehaviour
             }
             else
             {
-                print("target is dodging, cant hit");
+               // print("target is dodging, cant hit");
             }
 
             //Analyzing
@@ -75,7 +80,7 @@ public class AttackingAI : MonoBehaviour
 
 
             //Attacking
-            if (!thinking && !Controls.alreadyAttacking && !attackingWithPattern)
+            if (!thinking && !Controls.alreadyAttacking && !attackingWithPattern && !Controls.isFlinching)
             {
                 EntityAttackPattern attackPattern = ChoseRandomAttackPattern();
                 StartCoroutine(Attack(attackPattern));
@@ -105,7 +110,7 @@ public class AttackingAI : MonoBehaviour
         attackingWithPattern = true;
         int attackPatternLength = attackPattern.attackDir.Count;
 
-        print("Attacking w/ attack pattern: " + attackPattern);
+       // print("Attacking w/ attack pattern: " + attackPattern);
 
         //Creates the new progress list
         attackPatternProgress = new List<bool>();
@@ -114,22 +119,22 @@ public class AttackingAI : MonoBehaviour
 
 
 
-        print("Attack pattern length is : " + attackPatternLength + " indexing until : " + (attackPatternLength));
+       // print("Attack pattern length is : " + attackPatternLength + " indexing until : " + (attackPatternLength));
 
         for(int i = 0; i < attackPatternLength; i++)
         {
-            print("NEW ATTACK IN PATTERN========");
-            Debug.Log("Selected Attack Direction: " + attackPattern.attackDir[i]);
+            //print("NEW ATTACK IN PATTERN========");
+            //Debug.Log("Selected Attack Direction: " + attackPattern.attackDir[i]);
 
             //Select the attack we are using
             Controls.SelectCertainAbility?.Invoke(attackPattern.attackDir[i].ToString());
 
-            print("Attacking...");
+           // print("Attacking...");
             //Actually Start the Attack
             Controls.attack?.Invoke();
 
-            Debug.Log("waiting for attack to finish now...");
-            while (attackPatternProgress[i] == false)
+            //Debug.Log("waiting for attack to finish now...");
+            while (attackPatternProgress[i] == false && attackingWithPattern)
             {
                 //Debug.Log("attack in progress");
                 yield return new WaitForEndOfFrame();
@@ -141,12 +146,11 @@ public class AttackingAI : MonoBehaviour
                 }
     
             }
-             print("attack has finished: " + i);
+             //print("attack has finished: " + i);
         }
-        print("Attacking Period over, Thinking....");
-        thinking = true;
+        //print("Attacking Period over, Thinking....");
         ResetAttacking();
-        Invoke("AttackThinkingPeriodEnd", UnityEngine.Random.Range(thinkingPeriodBetweenAttackPatternsRange.x, thinkingPeriodBetweenAttackPatternsRange.y));
+        StartThinking();
     }
 
     /// <summary>
@@ -156,17 +160,23 @@ public class AttackingAI : MonoBehaviour
     {
         int finalIndexInAttackPattern = attackPatternProgress.Count - 1;
 
-        Debug.Log("Completing attack [" + currentAttackInAttackPattern + "] in pattern of length " + finalIndexInAttackPattern);
+       //Debug.Log("Completing attack [" + currentAttackInAttackPattern + "] in pattern of length " + finalIndexInAttackPattern);
 
         if (finalIndexInAttackPattern == -1) return;
 
         //print("Last attack in attack pattern is : " + attackPatternProgress[lastIndex]);
         if (attackPatternProgress[finalIndexInAttackPattern] == false)
         {
-            print("Completeing: " + currentAttackInAttackPattern);
+            //print("Completeing: " + currentAttackInAttackPattern);
             attackPatternProgress[currentAttackInAttackPattern] = true;
             currentAttackInAttackPattern++;
         }
+    }
+
+    void StartThinking()
+    {
+        thinking = true;
+        Invoke(nameof(AttackThinkingPeriodEnd), UnityEngine.Random.Range(thinkingPeriodBetweenAttackPatternsRange.x, thinkingPeriodBetweenAttackPatternsRange.y));
     }
 
     public void AttackThinkingPeriodEnd()
@@ -180,6 +190,18 @@ public class AttackingAI : MonoBehaviour
         attackPatternProgress.Clear();
         attackingWithPattern = false;
         currentAttackInAttackPattern = 0;
+        StopAllCoroutines();
     }
 
+    void Flinch(float flinchTime)
+    {
+        ResetAttacking();
+        StartThinking();
+    }
+
+    void ExitCombat()
+    {
+        ResetAttacking();
+        StartThinking();
+    }
 }

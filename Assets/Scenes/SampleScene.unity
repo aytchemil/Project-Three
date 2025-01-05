@@ -6847,6 +6847,7 @@ MonoBehaviour:
     missedAttackSpeed: 7
     flinchSpeed: 0
   <state>k__BackingField: 0
+  moveSensitity: 10
   groundLinearDampeningDrag: 7
   weightMultiplier: 90
   airAccelerationMultiplier: 0.2
@@ -6899,7 +6900,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ece7caa883bce2242a96582bc276a39b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  a_right: {fileID: 11400000, guid: f70474e9dbc7cb74e9e11772d7ab18fc, type: 2}
+  a_right: {fileID: 11400000, guid: 4e0065392ff6a65488e26e8c0a147c16, type: 2}
   a_left: {fileID: 11400000, guid: 585cc1ee8817ff74c82c4dcaa2d0609d, type: 2}
   a_up: {fileID: 11400000, guid: cc188b88764ff3c478da26feea8ec6bc, type: 2}
   a_down: {fileID: 11400000, guid: 57c8b27f3b1a8134b8e9c7edb069b681, type: 2}
@@ -14315,7 +14316,7 @@ Transform:
   m_GameObject: {fileID: 8984505697340910850}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: -1, y: 7.5, z: 46.3}
+  m_LocalPosition: {x: 11.1, y: 7.5, z: 57.5}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -29749,6 +29750,7 @@ MonoBehaviour:
     missedAttackSpeed: 5
     flinchSpeed: 0
   <state>k__BackingField: 0
+  moveSensitity: 5
   groundLinearDampeningDrag: 7
   weightMultiplier: 90
   airAccelerationMultiplier: 0.2

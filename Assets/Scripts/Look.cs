@@ -32,7 +32,7 @@ public class Look : MonoBehaviour
 
     public virtual void InCombatFollowingTarget(CombatEntityController target)
     {
-        print(gameObject.name + " following target : " + target.name);
+        //print(gameObject.name + " following target : " + target.name);
 
         Vector3 targetLookAtPosition = new Vector3(target.transform.position.x, target.transform.position.y + lockOnVerticalOffset, target.transform.position.z);
 

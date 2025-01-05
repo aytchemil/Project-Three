@@ -9,10 +9,10 @@ public class CombatFunctionality : MonoBehaviour
     public Transform attackTriggerParent;
 
     public GameObject[] myAttackTriggers = new GameObject[4];
-    public AttackTriggerCollider attackTrigger_right;
-    public AttackTriggerCollider attackTrigger_left;
-    public AttackTriggerCollider attackTrigger_up;
-    public AttackTriggerCollider attackTrigger_down;
+    public AttackTriggerGroup attackTrigger_right;
+    public AttackTriggerGroup attackTrigger_left;
+    public AttackTriggerGroup attackTrigger_up;
+    public AttackTriggerGroup attackTrigger_down;
 
     public Ability currentAbility;
     string direction;
@@ -182,7 +182,7 @@ public class CombatFunctionality : MonoBehaviour
         {
             if (attkTrigger.activeSelf)
             {
-                attkTrigger.GetComponent<AttackTriggerCollider>().DisableTrigger();
+                attkTrigger.GetComponent<AttackTriggerGroup>().DisableTrigger();
             }
 
             //print("DISABLING : " + attkTrigger.name);
@@ -217,13 +217,13 @@ public class CombatFunctionality : MonoBehaviour
 
 
         initializedAttackTriggers = true;
-        attackTrigger_right = Instantiate(right.attackTriggerCollider, attackTriggerParent, false).GetComponent<AttackTriggerCollider>();
-        attackTrigger_left = Instantiate(left.attackTriggerCollider, attackTriggerParent, false).GetComponent<AttackTriggerCollider>();
-        attackTrigger_up = Instantiate(up.attackTriggerCollider, attackTriggerParent, false).GetComponent<AttackTriggerCollider>();
-        attackTrigger_down = Instantiate(down.attackTriggerCollider, attackTriggerParent, false).GetComponent<AttackTriggerCollider>();
+        attackTrigger_right = Instantiate(right.attackTriggerCollider, attackTriggerParent, false).GetComponent<AttackTriggerGroup>();
+        attackTrigger_left = Instantiate(left.attackTriggerCollider, attackTriggerParent, false).GetComponent<AttackTriggerGroup>();
+        attackTrigger_up = Instantiate(up.attackTriggerCollider, attackTriggerParent, false).GetComponent<AttackTriggerGroup>();
+        attackTrigger_down = Instantiate(down.attackTriggerCollider, attackTriggerParent, false).GetComponent<AttackTriggerGroup>();
         CacheAttackTriggers();
         foreach (GameObject attkTrigger in myAttackTriggers)
-            attkTrigger.GetComponent<AttackTriggerCollider>().combatFunctionality = this;
+            attkTrigger.GetComponent<AttackTriggerGroup>().combatFunctionality = this;
         DisableAttackTriggers();
     }
 
@@ -283,8 +283,6 @@ public class CombatFunctionality : MonoBehaviour
         //print("-> Combat Functionality: Successfull ATTACK");
 
         StartAttacking();
-        AttackTriggerUse();
-        AnimationAttackLookAtBufferPeriod();
 
         ///to do: create a way for it to animate,
         ///create 4 different attack triggers(like box)
@@ -321,19 +319,18 @@ public class CombatFunctionality : MonoBehaviour
                 break;
             case Ability.CollisionType.MovementRightOrLeft:
 
-                MovementRightOrLeftAttack();
 
+                StartCoroutine(MovementRightOrLeftAttack());
                 break;
 
 
         }
+        AttackTriggerUse();
 
     }
 
-    void AnimationAttackLookAtBufferPeriod()
-    {
 
-    }
+
 
     #region attack types
 
@@ -384,9 +381,22 @@ public class CombatFunctionality : MonoBehaviour
         gameObject.GetComponent<Movement>().EnableMovement();
     }
 
-    void MovementRightOrLeftAttack()
+    IEnumerator MovementRightOrLeftAttack()
     {
         Debug.Log("Attempting Movemnt left or right atack");
+
+        string dir = gameObject.GetComponent<Movement>().GetMoveDirection();
+
+        if (dir == "foward" || dir == "back") yield break;
+
+        gameObject.GetComponent<Movement>().Lunge(dir, currentAbility.movementAmount);
+
+        while (!initialAttackDelayOver)
+        {
+            // print("waiting...");
+            yield return new WaitForEndOfFrame();
+        }
+        
     }
 
     void MovementRightAttack()
@@ -437,6 +447,7 @@ public class CombatFunctionality : MonoBehaviour
                 break;
         }
     }
+
     
     /// <summary>
     /// Sets the attacking flag
@@ -485,7 +496,7 @@ public class CombatFunctionality : MonoBehaviour
             {
                 Debug.LogError("Attack trigger null");
             }
-            attackTrigger.GetComponent<AttackTriggerCollider>().DisableTrigger();
+            attackTrigger.GetComponent<AttackTriggerGroup>().DisableTrigger();
         }
     }
 
@@ -522,10 +533,14 @@ public class CombatFunctionality : MonoBehaviour
 
     #endregion
 
+    #region Flinching
+
     public void Flinch(float flinchTime)
     {
         print(this.gameObject.name + " has flinched");
         DisableAttackTriggers();
     }
+
+    #endregion
 
 }

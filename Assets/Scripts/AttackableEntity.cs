@@ -80,6 +80,8 @@ public class AttackbleEntity : MonoBehaviour
         Destroy(gameObject);
     }
 
+    #region Flinching
+
     void FlinchCaller()
     {
         controls.Flinch?.Invoke(flinchTime);
@@ -89,11 +91,10 @@ public class AttackbleEntity : MonoBehaviour
 
     void StopFlinching()
     {
-        print("Stopped flinching");
+        //print(gameObject.name +  " | Stopped flinching");
         controls.isFlinching = false;
     }
 
-    //Tick damage over a certain time?
-
+    #endregion
 
 }

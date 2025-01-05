@@ -76,6 +76,7 @@ public class Movement : MonoBehaviour
     [Header("Movement : Adjustable Variables")]
     public EntityStates entityStates;
     [field: SerializeField] public EntityStates.CurrentState state { get; private set; }
+    public float moveSensitity = 5f;
     [Space]
     [Header("Movement: Drag")]
     public float groundLinearDampeningDrag;
@@ -98,7 +99,7 @@ public class Movement : MonoBehaviour
 
     //Cached Component Refernces
     protected Transform orientation;
-    protected Rigidbody rb;
+    public Rigidbody rb { get; protected set; }
     public virtual CombatEntityController Controls { get; set; }
 
 
@@ -300,17 +301,44 @@ public class Movement : MonoBehaviour
             Controls.dashOnCooldown = true;
         //Debug.Log("Dashing");
 
-        Vector3 localVelocity = rb.transform.InverseTransformDirection(rb.linearVelocity); // Velocity in local space
         //print(localVelocity);
-        Dash(GetMoveDirection(localVelocity), dashSpeedMultiplier);
+        Dash(GetMoveDirection(), dashSpeedMultiplier);
     }
 
     /// <summary>
     /// Adds force to the player for a dash direction
     /// </summary>
     /// <param name="dir"></param>
-    public void Dash(Vector3 dashDirection, float multiplier)
+    public void Dash(string dashDirection, float multiplier)
     {
+        Vector3 dir = new Vector3();
+
+        switch(dashDirection)
+        {
+            case "foward":
+                dir = transform.TransformDirection(Vector3.forward);
+                break;
+            case "back":
+                dir = transform.TransformDirection(Vector3.back);
+                break;
+            case "right":
+                dir = transform.TransformDirection(Vector3.right);
+                dir += transform.TransformDirection(Vector3.forward) * 2;
+                break;
+            case "left":
+                dir = transform.TransformDirection(Vector3.left);
+                dir += transform.TransformDirection(Vector3.forward) * 2;
+                break;
+            case "none":
+                dir = transform.TransformDirection(Vector3.forward);
+                break;
+            default:
+                dir = transform.TransformDirection(Vector3.forward);
+                break;
+
+
+        }
+
         //Debug.Log("Attempting Dashing In Direction:  " + dir);
 
         if (isGrounded)
@@ -318,11 +346,11 @@ public class Movement : MonoBehaviour
             //If the player is not on a slope, dash regularly
             if (!onSlope)
             {
-                rb.AddForce(dashDirection.normalized * multiplier, ForceMode.VelocityChange);
+                rb.AddForce(dir.normalized * multiplier, ForceMode.VelocityChange);
 
             }
             else //if the player is on a slope, dash relative to the slope's move direction
-                rb.AddForce(GetSlopeMoveDirection(dashDirection) * dashSpeedMultiplier, ForceMode.VelocityChange);
+                rb.AddForce(GetSlopeMoveDirection(dir) * dashSpeedMultiplier, ForceMode.VelocityChange);
 
             state = EntityStates.CurrentState.dashing;
         }
@@ -339,30 +367,17 @@ public class Movement : MonoBehaviour
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
 
-        Vector3 lungeDir = new Vector3();
-        switch (dir)
-        {
-            case "up":
-                lungeDir = transform.TransformDirection(Vector3.forward);
-                break;
-            case "down":
-                lungeDir = transform.TransformDirection(Vector3.back);
-                break;
-            case "right":
-                lungeDir = transform.TransformDirection(Vector3.right);
-                break;
-            case "left":
-                lungeDir = transform.TransformDirection(Vector3.left);
-                break;
 
-        }
 
-        Dash(lungeDir, multiplier);
+        Dash(dir, multiplier);
     }
 
-    Vector3 GetMoveDirection(Vector3 givenDirectionImTravellingIn)
+    public string GetMoveDirection()
     {
-        Vector3 dir = givenDirectionImTravellingIn;
+        Vector3 dir = rb.transform.InverseTransformDirection(rb.linearVelocity); // Velocity in local space
+
+        string retDir = "";
+
 
         //left is -x
         //right is +x
@@ -372,36 +387,24 @@ public class Movement : MonoBehaviour
         float absX = Mathf.Abs(dir.x);
 
 
-        if(dir.z > 0 && absZ > absX)
-        {
-            //print("z highest, fwd");
-            dir = transform.TransformDirection(Vector3.forward);
-        }
+        if (dir.z > 1 && absZ > absX && absZ > moveSensitity)
+            retDir = "foward";
+        else if (dir.z < 1 && absZ > absX && absZ > moveSensitity)
+            retDir = "back";
 
-        else if(dir.z < 0 && absZ > absX)
-        {
-            //print("-z highest, back");
-            dir = transform.TransformDirection(Vector3.back);
-        }
+        else if (dir.x > 1 && absX > absZ && absX > moveSensitity)
+            retDir = "right";
 
-        else if(dir.x > 0 && absX > absZ)
-        {
-            //print(" +x highest, right");
-            dir = transform.TransformDirection(Vector3.right);
-            dir += transform.TransformDirection(Vector3.forward);
-        }
+        else if (dir.x < 1 && absX > absZ && absX > moveSensitity)
+            retDir = "left";
+        else
+            retDir = "none";
 
-        else if(dir.x < 0 && absX > absZ)
-        {
-            //print(" -x highest, left");
-            dir = transform.TransformDirection(Vector3.left);
-            dir += transform.TransformDirection(Vector3.forward);
-        }
 
-        if (dir == givenDirectionImTravellingIn)
-            Debug.LogError("Move direction not updated to a dash");
+        print("Getting move dir: " + retDir);
 
-        return dir;
+
+        return retDir;
     }
 
 
@@ -460,6 +463,8 @@ public class Movement : MonoBehaviour
         //print("disbaling from movement");
     }
 
+    #region flinch
+
     public void Flinch(float flinchTime)
     {
         EntityStates.CurrentState prevState = state;
@@ -477,5 +482,6 @@ public class Movement : MonoBehaviour
 
         state = prevState;
     }
+    #endregion
 
 }

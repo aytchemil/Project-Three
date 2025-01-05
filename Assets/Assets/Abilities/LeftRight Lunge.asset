@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68d416ff0e8c367469377eb83d6a499f, type: 3}
-  m_Name: Rightward Slash
+  m_Name: LeftRight Lunge
   m_EditorClassIdentifier: 
   archetype: 0
   collisionType: 5
-  attackTriggerCollider: {fileID: 0}
-  attackName: Rightward Slash
-  icon: {fileID: 0}
+  attackTriggerCollider: {fileID: 3607946116655452447, guid: 0b5f45e6afec5224fa98a9bc50f4713e, type: 3}
+  attackName: Leftward Slash
+  icon: {fileID: 2800000, guid: d5327edd352497248806fbae945e5e9f, type: 3}
   initialAttackDelay: 0.4
   missDelayUntilAbleToAttackAgain: 0.6
   damage: 1
-  movementAmount: 0
+  movementAmount: 70

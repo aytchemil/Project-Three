@@ -74,7 +74,7 @@ public class ColliderDetector : MonoBehaviour
         // - Then lock onto it
         if (combatLock.Controls.isLockedOn && other.GetComponent<CombatEntityController>().isAlive)
         {
-            Debug.Log("I am locked on, to a target that is alive");
+            //Debug.Log("I am locked on, to a target that is alive");
             //Tells combatLock that the collisonDectector (this script) is to lock onto it
             //If its the current locked on dude
 
@@ -103,13 +103,13 @@ public class ColliderDetector : MonoBehaviour
                 //If not attacking
 
                 //Testing for attacking then missing
-                print(combatLock.gameObject.name + " | needs to be: false OR false, false");
-                print(combatLock.gameObject.name + " | " + combatLock.Controls.targetIsDodging  + "  " + combatLock.Controls.alreadyAttacking + " " + combatLock.Controls.isFlinching);
+                //print(combatLock.gameObject.name + " | needs to be: false OR false, false");
+                //print(combatLock.gameObject.name + " | " + combatLock.Controls.targetIsDodging  + "  " + combatLock.Controls.alreadyAttacking + " " + combatLock.Controls.isFlinching);
                 if (!combatLock.Controls.targetIsDodging || !combatLock.Controls.alreadyAttacking)
                 {
                     if (!combatLock.Controls.isFlinching)
                     {
-                        print(combatLock.gameObject.name + " | " + "Following locked target caller called : " + other.gameObject.name);
+                        //print(combatLock.gameObject.name + " | " + "Following locked target caller called : " + other.gameObject.name);
                         CombatFollowTargetCaller(other);
                     }
                 }
@@ -125,7 +125,7 @@ public class ColliderDetector : MonoBehaviour
 
     void CombatFollowTargetCaller(Collider other)
     {
-        print("combat follow target()");
+        //print("combat follow target()");
         combatLock.Controls.CombatFollowTarget?.Invoke(other.gameObject.GetComponent<CombatEntityController>());
     }
 

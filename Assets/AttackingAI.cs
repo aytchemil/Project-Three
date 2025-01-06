@@ -13,6 +13,14 @@ public class AttackingAI : MonoBehaviour
 
     public List<EntityAttackPattern> preSelectedAttackPatterns;
 
+    public enum AttackingSpeed
+    {
+        Slow = 0,
+        Medium = 1,
+        Fast = 2,
+    }
+    public AttackingSpeed attackingSpeed;
+    public float[] attackingSpeedDelays;
     public bool thinking;
     public Vector2 thinkingPeriodBetweenAttackPatternsRange;
     public bool attackingWithPattern;
@@ -158,11 +166,18 @@ public class AttackingAI : MonoBehaviour
     /// </summary>
     public void CompleteAttackInPattern()
     {
+        StartCoroutine(CompleteAttackInPatternContinued());
+    }
+
+    IEnumerator CompleteAttackInPatternContinued()
+    {
+        yield return new WaitForSeconds(attackingSpeedDelays[(int)attackingSpeed]);
+
         int finalIndexInAttackPattern = attackPatternProgress.Count - 1;
 
-       //Debug.Log("Completing attack [" + currentAttackInAttackPattern + "] in pattern of length " + finalIndexInAttackPattern);
+        //Debug.Log("Completing attack [" + currentAttackInAttackPattern + "] in pattern of length " + finalIndexInAttackPattern);
 
-        if (finalIndexInAttackPattern == -1) return;
+        if (finalIndexInAttackPattern == -1) yield break;
 
         //print("Last attack in attack pattern is : " + attackPatternProgress[lastIndex]);
         if (attackPatternProgress[finalIndexInAttackPattern] == false)

@@ -61,6 +61,11 @@ public class PlayerMovement : Movement
             {
                 //print("moving");
                 rb.AddForce(moveDirection.normalized * moveSpeed * 10f, ForceMode.Force);
+
+                if(Controls.getMoveDirection?.Invoke() == "left" || Controls.getMoveDirection?.Invoke() == "right")
+                {
+                    rb.AddForce(orientation.forward * 15f, ForceMode.Force);
+                }
             }
             else
                 rb.AddForce(GetSlopeMoveDirection(moveDirection) * moveSpeed * 10f, ForceMode.Force);

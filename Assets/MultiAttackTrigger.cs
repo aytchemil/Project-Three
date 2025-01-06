@@ -37,28 +37,31 @@ public class MultiAttackTrigger : AttackTriggerGroup
         hasTriggers = true;
     }
 
-    public override void StartAttackFromAttackTrigger(Ability currentAbility)
+    public virtual void MultiChoiceAttack(Ability currentAbility , string choice)
     {
-        base.StartAttackFromAttackTrigger(currentAbility);
+        print("Attacking with multi attack choice trigger");
 
         usingAttackTrigger = null;
 
-        if (!initializedChildTriggers)
-            InitializeChildTriggers();
-
-
-
-        string choice = combatFunctionality.Controls.getMoveDirection?.Invoke();
-
-        combatFunctionality.gameObject.GetComponent<Movement>().Lunge(choice, currentAbility.movementAmount);
-
-        print("multi attack trigger, movementatttackrightorleft : lunging in dir " + choice);
-
-
-
-        for(int i = 0; i < triggers.Count; i++)
+        for (int i = 0; i < triggers.Count; i++)
             if (triggers[i].name == choice)
                 usingAttackTrigger = triggers[i];
+
+        print("Chosen attack trigger is : " + usingAttackTrigger.name);
+
+        StartAttackFromAttackTrigger(currentAbility);
+
+
+    }
+
+    public override void StartAttackFromAttackTrigger(Ability currentAbility)
+    {
+        print("Following through with attack");
+
+        base.StartAttackFromAttackTrigger(currentAbility);
+
+        if (!initializedChildTriggers)
+            InitializeChildTriggers();
 
         usingAttackTrigger.gameObject.SetActive(true);
         usingAttackTrigger.StartAttackFromAttackTrigger(currentAbility);

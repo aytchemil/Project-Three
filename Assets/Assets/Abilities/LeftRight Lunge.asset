@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68d416ff0e8c367469377eb83d6a499f, type: 3}
   m_Name: LeftRight Lunge
   m_EditorClassIdentifier: 
-  archetype: 0
+  archetype: 1
   collisionType: 5
   attackTriggerCollider: {fileID: 3607946116655452447, guid: 0b5f45e6afec5224fa98a9bc50f4713e, type: 3}
   attackName: Leftward Slash

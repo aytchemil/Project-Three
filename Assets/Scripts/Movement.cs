@@ -126,7 +126,7 @@ public class Movement : MonoBehaviour
         //Func Callback Additions
         Controls.sprintStart += OnSprintPressed;
         Controls.sprintStop += OnSprintReleased;
-        Controls.dash += DashDirection;
+        Controls.dash += DashInput;
 
         //Action Callback additions
 
@@ -150,7 +150,7 @@ public class Movement : MonoBehaviour
         //Func Callback Additions
         Controls.sprintStart -= OnSprintPressed;
         Controls.sprintStop -= OnSprintReleased;
-        Controls.dash -= DashDirection;
+        Controls.dash -= DashInput;
 
         //Action Callback additions
 
@@ -293,14 +293,12 @@ public class Movement : MonoBehaviour
     /// <summary>
     /// Attempts a dash in a direction relative to the given player inputs
     /// </summary>
-    protected void DashDirection()
+    protected void DashInput()
     {
         //Debug.Log("Attempted a dash");
         if (state != EntityStates.CurrentState.combat) return;
-        if (Controls.dashOnCooldown)
-            return;
-        else
-            Controls.dashOnCooldown = true;
+        if (Controls.dashOnCooldown) return;
+
         //Debug.Log("Dashing");
 
         //print(localVelocity);
@@ -359,6 +357,7 @@ public class Movement : MonoBehaviour
 
         //Dash cooldown
         Controls.dashing = true;
+        Controls.dashOnCooldown = true;
         StartCoroutine(StopDash());
         Invoke("DashCooldown", dashCooldown + afterDashPeriodTimeLength);
     }

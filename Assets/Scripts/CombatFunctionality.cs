@@ -296,82 +296,44 @@ public class CombatFunctionality : MonoBehaviour
         ///create 4 different attack triggers(like box)
         /// animate all 4, integrate that
 
+        print("finding archyetype: " + currentAbility.archetype);
 
-        switch(currentAbility.collisionType)
+        switch (currentAbility.archetype)
         {
-            case Ability.CollisionType.Box:
 
-                BoxAttack();
+            case Ability.AttackArchetype.Singular:
 
-                goto default;
-            case Ability.CollisionType.Overhead:
+                print("archyetype: singular chosen");
 
-                OverheadAttack();
-
-                goto default;
-            case Ability.CollisionType.Pierce:
-
-                PierceAttack();
-
-                goto default;
-            case Ability.CollisionType.SideSlash:
-
-                SideSlashAttack();
-
-                goto default;
-
-            case Ability.CollisionType.MovementForward:
-
-                StartCoroutine(MovementForwardAttack());
-
-                goto default;
-            case Ability.CollisionType.MovementRightOrLeft:
-
-                string dir = Controls.getMoveDirection?.Invoke();
-                //print("MovementRightOrLeft direction : " + dir);
-
-                if (dir == "foward" || dir == "back" || dir == "none")
-                {
-                    print("Not able to use ability, critiera not met");
-                    FinishAttacking();
-                    break;
-                }
-
-                StartCoroutine(MovementRightOrLeftAttack());
-
-                goto default;
-            default:
-                AttackTriggerUse();
+                AttackTriggersEnableToUse().StartAttackFromAttackTrigger(currentAbility);
+                SingularAttacksUse();
 
                 break;
+
+            case Ability.AttackArchetype.MultiChoice:
+
+                print("archyetype: multichoice chosen");
+
+                string choice = GetMultiChoiceAttackChoiceAndUse();
+
+                print("choice is : " + choice);
+
+                if (choice == "none") break;
+
+                AttackTriggersEnableToUse().GetComponent<MultiAttackTrigger>().MultiChoiceAttack(currentAbility, choice);
+
+                break;
+
+
         }
+
+
     }
 
 
 
 
     #region attack types
-
-    /// <summary>
-    /// Attack with the box attack
-    /// </summary>
-    void BoxAttack()
-    {
-        //Debug.Log("Attempting Box attack");
-    }
-    void OverheadAttack()
-    {
-        //Debug.Log("Attempting Overhead attack");
-    }
-    void PierceAttack()
-    {
-        //Debug.Log("Attempting Pierce attack");
-    }
-
-    void SideSlashAttack()
-    {
-        //Debug.Log("Attempting Side Slash attack");
-    }
 
     IEnumerator MovementForwardAttack()
     {
@@ -399,9 +361,14 @@ public class CombatFunctionality : MonoBehaviour
         gameObject.GetComponent<Movement>().EnableMovement();
     }
 
-    IEnumerator MovementRightOrLeftAttack()
+    IEnumerator MovementRightOrLeftAttack(string choice)
     {
         Debug.Log("Attempting Movemnt left or right atack");
+
+
+        gameObject.GetComponent<Movement>().Lunge(choice, currentAbility.movementAmount);
+
+        print("multi attack trigger, movementatttackrightorleft : lunging in dir " + choice);
 
         while (!initialAttackDelayOver)
         {
@@ -425,8 +392,11 @@ public class CombatFunctionality : MonoBehaviour
     /// <summary>
     /// Enables the selected direction's attack trigger and uses that attack trigger's attacktriggerattack method call with the current ability
     /// </summary>
-    void AttackTriggerUse()
+    /// 
+
+    AttackTriggerGroup AttackTriggersEnableToUse()
     {
+        AttackTriggerGroup usingThisAttackTriggerGroup;
         switch (direction)
         {
             case "right":
@@ -434,33 +404,77 @@ public class CombatFunctionality : MonoBehaviour
                 attackTrigger_left.gameObject.SetActive(false);
                 attackTrigger_up.gameObject.SetActive(false);
                 attackTrigger_down.gameObject.SetActive(false);
-                attackTrigger_right.StartAttackFromAttackTrigger(currentAbility);
+                usingThisAttackTriggerGroup = attackTrigger_right;
                 break;
             case "left":
                 attackTrigger_right.gameObject.SetActive(false);
                 attackTrigger_left.gameObject.SetActive(true);
                 attackTrigger_up.gameObject.SetActive(false);
                 attackTrigger_down.gameObject.SetActive(false);
-                attackTrigger_left.StartAttackFromAttackTrigger(currentAbility);
+                usingThisAttackTriggerGroup = attackTrigger_left;
                 break;
             case "up":
                 attackTrigger_right.gameObject.SetActive(false);
                 attackTrigger_left.gameObject.SetActive(false);
                 attackTrigger_up.gameObject.SetActive(true);
                 attackTrigger_down.gameObject.SetActive(false);
-                attackTrigger_up.StartAttackFromAttackTrigger(currentAbility);
+                usingThisAttackTriggerGroup = attackTrigger_up;
                 break;
             case "down":
                 attackTrigger_right.gameObject.SetActive(false);
                 attackTrigger_left.gameObject.SetActive(false);
                 attackTrigger_up.gameObject.SetActive(false);
                 attackTrigger_down.gameObject.SetActive(true);
-                attackTrigger_down.StartAttackFromAttackTrigger(currentAbility);
+                usingThisAttackTriggerGroup = attackTrigger_down;
+                break;
+            default:
+                usingThisAttackTriggerGroup = null;
+                Debug.LogError("Havn't chosen an attack trigger group to use out of: right, left, up, down");
+                break;
+        }
+        return usingThisAttackTriggerGroup;
+    }
+
+
+    void SingularAttacksUse()
+    {
+        switch (currentAbility.collisionType)
+        {
+            case Ability.CollisionType.MovementForward:
+
+                StartCoroutine(MovementForwardAttack());
+
                 break;
         }
     }
 
-    
+    string GetMultiChoiceAttackChoiceAndUse()
+    {
+        string choice = "";
+
+        switch (currentAbility.collisionType)
+        {
+            case Ability.CollisionType.MovementLeftOrRight:
+
+                choice = Controls.getMoveDirection?.Invoke();
+
+                if (choice == "foward" || choice == "back" || choice == "none")
+                {
+                    print("Not able to use ability, critiera not met");
+                    FinishAttacking();
+                    break;
+                }
+
+                StartCoroutine(MovementRightOrLeftAttack(choice));
+
+                break;
+        }
+
+        return choice;
+    }
+
+
+
     /// <summary>
     /// Sets the attacking flag
     /// </summary>

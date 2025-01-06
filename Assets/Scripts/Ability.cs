@@ -5,11 +5,12 @@ using UnityEngine.UI;
 [CreateAssetMenu(fileName = "Ability", menuName = "ScriptableObjects/Ability")]
 public class Ability : ScriptableObject
 {
-    public enum Archetype
+    public enum AttackArchetype
     {
-        Swordsman = 0,
+        Singular = 0,
+        MultiChoice = 1,
     }
-    public Archetype archetype;
+    public AttackArchetype archetype;
     public enum CollisionType
     {
         Box = 0,
@@ -17,7 +18,7 @@ public class Ability : ScriptableObject
         Pierce = 2,
         SideSlash = 3,
         MovementForward = 4,
-        MovementRightOrLeft = 5,
+        MovementLeftOrRight = 5,
     }
     public CollisionType collisionType;
     public GameObject attackTriggerCollider;

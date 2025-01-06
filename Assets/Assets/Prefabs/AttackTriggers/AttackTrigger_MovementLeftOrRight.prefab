@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 5860475609783969096}
   - component: {fileID: 6255243823355567909}
   m_Layer: 9
-  m_Name: AttackTrigger_MovementRight
+  m_Name: right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -125,13 +125,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   combatFunctionality: {fileID: 0}
   myAbility: {fileID: 0}
+  attacking: 0
+  hitAttack: 0
+  missedAttack: 0
   collideWith:
     serializedVersion: 2
     m_Bits: 256
   attackTriggerAnimator: {fileID: 0}
-  attacking: 0
-  hitAttack: 0
-  missedAttack: 0
 --- !u!54 &5860475609783969096
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -229,18 +229,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   combatFunctionality: {fileID: 0}
   myAbility: {fileID: 0}
-  collideWith:
-    serializedVersion: 2
-    m_Bits: 256
-  attackTriggerAnimator: {fileID: 0}
   attacking: 0
   hitAttack: 0
   missedAttack: 0
-  myAttackTriggerIndex: 0
-  attackTriggerColliders:
-  - {fileID: 211144987522057006}
-  - {fileID: 8304157862376606696}
-  choiceList: []
+  triggers: []
+  usingAttackTrigger: {fileID: 0}
 --- !u!1 &6184004676570718797
 GameObject:
   m_ObjectHideFlags: 0
@@ -257,7 +250,7 @@ GameObject:
   - component: {fileID: 2343278283885473166}
   - component: {fileID: 994823362073266484}
   m_Layer: 9
-  m_Name: AttackTrigger_MovementLeft
+  m_Name: left
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -366,13 +359,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   combatFunctionality: {fileID: 0}
   myAbility: {fileID: 0}
+  attacking: 0
+  hitAttack: 0
+  missedAttack: 0
   collideWith:
     serializedVersion: 2
     m_Bits: 256
   attackTriggerAnimator: {fileID: 0}
-  attacking: 0
-  hitAttack: 0
-  missedAttack: 0
 --- !u!54 &2343278283885473166
 Rigidbody:
   m_ObjectHideFlags: 0

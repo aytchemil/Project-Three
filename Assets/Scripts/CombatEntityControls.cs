@@ -31,6 +31,8 @@ public class CombatEntityController : MonoBehaviour
     public Action MissedAttack;
     public Action CompletedAttack;
     public Action<float> Flinch;
+    public Func<string> getMoveDirection;
+
 
     [Header("Pre-Selected Abilities")]
     public Ability a_right;

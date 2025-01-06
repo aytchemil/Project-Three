@@ -215,6 +215,7 @@ public class CombatFunctionality : MonoBehaviour
             Debug.LogError("down : " + down);
         }
 
+        print(gameObject.name + " | combat functionality : initializing all attack triggers");
 
         initializedAttackTriggers = true;
         attackTrigger_right = Instantiate(right.attackTriggerCollider, attackTriggerParent, false).GetComponent<AttackTriggerGroup>();
@@ -223,8 +224,15 @@ public class CombatFunctionality : MonoBehaviour
         attackTrigger_down = Instantiate(down.attackTriggerCollider, attackTriggerParent, false).GetComponent<AttackTriggerGroup>();
         CacheAttackTriggers();
         foreach (GameObject attkTrigger in myAttackTriggers)
-            attkTrigger.GetComponent<AttackTriggerGroup>().combatFunctionality = this;
+            attkTrigger.GetComponent<AttackTriggerGroup>().InitSelf(this);
+
+        print(gameObject.name + " | combat functionality : initialization complete");
+        print(gameObject.name + " | combat functionality : disabling all attack triggers");
+
         DisableAttackTriggers();
+
+        print(gameObject.name + " | combat functionality : attack triggers disabled");
+
     }
 
     #endregion
@@ -295,38 +303,48 @@ public class CombatFunctionality : MonoBehaviour
 
                 BoxAttack();
 
-                break;
+                goto default;
             case Ability.CollisionType.Overhead:
 
                 OverheadAttack();
 
-                break;
+                goto default;
             case Ability.CollisionType.Pierce:
 
                 PierceAttack();
 
-                break;
+                goto default;
             case Ability.CollisionType.SideSlash:
 
                 SideSlashAttack();
 
-                break;
+                goto default;
 
             case Ability.CollisionType.MovementForward:
 
                 StartCoroutine(MovementForwardAttack());
 
-                break;
+                goto default;
             case Ability.CollisionType.MovementRightOrLeft:
 
+                string dir = Controls.getMoveDirection?.Invoke();
+                //print("MovementRightOrLeft direction : " + dir);
+
+                if (dir == "foward" || dir == "back" || dir == "none")
+                {
+                    print("Not able to use ability, critiera not met");
+                    FinishAttacking();
+                    break;
+                }
 
                 StartCoroutine(MovementRightOrLeftAttack());
+
+                goto default;
+            default:
+                AttackTriggerUse();
+
                 break;
-
-
         }
-        AttackTriggerUse();
-
     }
 
 
@@ -384,12 +402,6 @@ public class CombatFunctionality : MonoBehaviour
     IEnumerator MovementRightOrLeftAttack()
     {
         Debug.Log("Attempting Movemnt left or right atack");
-
-        string dir = gameObject.GetComponent<Movement>().GetMoveDirection();
-
-        if (dir == "foward" || dir == "back") yield break;
-
-        gameObject.GetComponent<Movement>().Lunge(dir, currentAbility.movementAmount);
 
         while (!initialAttackDelayOver)
         {

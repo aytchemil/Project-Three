@@ -17,6 +17,13 @@ public class AttackTriggerGroup : MonoBehaviour
 
     }
 
+    public virtual void InitSelf(CombatFunctionality combatFunctionality)
+    {
+        this.combatFunctionality = combatFunctionality;
+        print("initializing self: " + gameObject.name);
+
+    }
+
     /// <summary>
     /// Tells this script what its attack parameters are
     /// </summary>
@@ -24,7 +31,7 @@ public class AttackTriggerGroup : MonoBehaviour
     public virtual void StartAttackFromAttackTrigger(Ability currentAbility)
     {
         if (attacking) { print("already attacking, cannot re attack"); return; }
-        //Debug.Log("Starting an Attack: " + currentAbility.name);
+        Debug.Log("Starting an Attack: " + currentAbility.name);
         myAbility = currentAbility;
         InitializeTrigger();
         Invoke(nameof(InitialAttackDelayOverReEnableTrigger), currentAbility.initialAttackDelay);
@@ -32,7 +39,7 @@ public class AttackTriggerGroup : MonoBehaviour
 
     public virtual void InitializeTrigger()
     {
-        //print("initializing attack trigger: " + gameObject.name);
+        print("initializing attack trigger: " + gameObject.name);
         attacking = true;
         missedAttack = false;
         hitAttack = false;
@@ -71,7 +78,7 @@ public class AttackTriggerGroup : MonoBehaviour
 
     public void CompleteAttackCaller()
     {
-        // print("-----------------------Compeleted Attack Caller Called");
+         print(gameObject.name + " | Compeleted Attack Caller Called");
         combatFunctionality.Controls.CompletedAttack?.Invoke();
     }
 

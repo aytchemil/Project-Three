@@ -141,6 +141,8 @@ public class Movement : MonoBehaviour
 
         //Flinch
         Controls.Flinch += Flinch;
+
+        Controls.getMoveDirection = () => GetMoveDirection();
     }
 
     private void OnDisable()

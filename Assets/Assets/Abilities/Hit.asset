@@ -17,7 +17,8 @@ MonoBehaviour:
   attackTriggerCollider: {fileID: 8475917669229452261, guid: 54eaad126c9bcaa498c827fb9317d41d, type: 3}
   attackName: Hit
   icon: {fileID: 2800000, guid: 757ccb73711d39f479d6d08030bc684f, type: 3}
-  initialAttackDelay: 0.4
+  initialAttackDelay:
+  - 0.35
   missDelayUntilAbleToAttackAgain: 0.6
   damage: 1
   movementAmount: 0

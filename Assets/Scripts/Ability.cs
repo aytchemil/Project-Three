@@ -9,6 +9,7 @@ public class Ability : ScriptableObject
     {
         Singular = 0,
         MultiChoice = 1,
+        FollowUp = 2,
     }
     public AttackArchetype archetype;
     public enum CollisionType
@@ -19,12 +20,14 @@ public class Ability : ScriptableObject
         SideSlash = 3,
         MovementForward = 4,
         MovementLeftOrRight = 5,
+        DoubleFrontSlash = 6,
     }
     public CollisionType collisionType;
     public GameObject attackTriggerCollider;
     public string attackName;
     public Texture icon;
-    public float initialAttackDelay = 0.3f;
+
+    public float[] initialAttackDelay = { 0.3f };
     public float missDelayUntilAbleToAttackAgain = 0.6f;
 
     public float damage;

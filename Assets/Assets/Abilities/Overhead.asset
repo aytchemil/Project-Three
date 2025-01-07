@@ -17,7 +17,8 @@ MonoBehaviour:
   attackTriggerCollider: {fileID: 8475917669229452261, guid: c53d5c0878e9175428ea4a958d9e3162, type: 3}
   attackName: Shield Breaker
   icon: {fileID: 2800000, guid: b99069f7d624ae3439f9671ef2397dde, type: 3}
-  initialAttackDelay: 0.65
+  initialAttackDelay:
+  - 0.6
   missDelayUntilAbleToAttackAgain: 0.9
   damage: 0.5
   movementAmount: 0

@@ -20,7 +20,7 @@ public class AttackTriggerGroup : MonoBehaviour
     public virtual void InitSelf(CombatFunctionality combatFunctionality)
     {
         this.combatFunctionality = combatFunctionality;
-        print("initializing self: " + gameObject.name);
+        //print("initializing self: " + gameObject.name);
 
     }
 
@@ -28,18 +28,22 @@ public class AttackTriggerGroup : MonoBehaviour
     /// Tells this script what its attack parameters are
     /// </summary>
     /// <param name="currentAbility"></param>
-    public virtual void StartAttackFromAttackTrigger(Ability currentAbility)
+    public virtual void StartAttackFromAttackTrigger(Ability currentAbility, float delay)
     {
-        if (attacking) { print("already attacking, cannot re attack"); return; }
-        Debug.Log("Starting an Attack: " + currentAbility.name);
+        if (attacking)
+        { 
+            //print("already attacking, cannot re attack"); 
+            return; 
+        }
+        //Debug.Log("Starting an Attack: " + currentAbility.name);
         myAbility = currentAbility;
         InitializeTrigger();
-        Invoke(nameof(InitialAttackDelayOverReEnableTrigger), currentAbility.initialAttackDelay);
+        Invoke(nameof(InitialAttackDelayOverReEnableTrigger), delay);
     }
 
     public virtual void InitializeTrigger()
     {
-        print("initializing attack trigger: " + gameObject.name);
+        //print("initializing attack trigger: " + gameObject.name);
         attacking = true;
         missedAttack = false;
         hitAttack = false;
@@ -54,31 +58,31 @@ public class AttackTriggerGroup : MonoBehaviour
 
     public virtual void DisableTrigger()
     {
-        //print("Disabling trigger");
+        print(gameObject.name + " | Disabling trigger");
+
         CompleteAttackCaller();
-        attacking = false;
-        missedAttack = false;
-        hitAttack = false;
         combatFunctionality.initialAttackDelayOver = false;
         combatFunctionality.FinishAttacking();
 
-
         if (combatFunctionality.Controls.GetTarget?.Invoke() != null)
-        {
-            //print("Disabling trigger from : " + gameObject.name + " Target: " + combatFunctionality.Controls.GetTarget?.Invoke());
             ResetAttackCaller();
-        }
-        else
-        {
-            //print("Target is already null when trying to reset attack caller");
-        }
+
+        DisableThisTriggerOnlyLocally();
+    }
+
+    public void DisableThisTriggerOnlyLocally()
+    {
+        attacking = false;
+        missedAttack = false;
+        hitAttack = false;
+        //print(gameObject.name + " | Disabled trigger");
 
         gameObject.SetActive(false);
     }
 
     public void CompleteAttackCaller()
     {
-         print(gameObject.name + " | Compeleted Attack Caller Called");
+        print(gameObject.name + " | Compeleted Attack Caller Called");
         combatFunctionality.Controls.CompletedAttack?.Invoke();
     }
 
@@ -117,15 +121,21 @@ public class AttackTriggerGroup : MonoBehaviour
         //print("Miss Attack Cuttoff Reached");
         if (hitAttack) return;
 
-        //print("missed attack");
-        missedAttack = true;
-        hitAttack = false;
+        MissAttackCuttoffLocal();
 
         MissedAttackCaller();
 
-        //print("Missed attack delay over, finally disabling attack trigger");
+        print(gameObject.name +  " | Missed attack delay over, DisableTrigger() (on delay)");
         Invoke(nameof(DisableTrigger), myAbility.missDelayUntilAbleToAttackAgain);
     }
+
+    public virtual void MissAttackCuttoffLocal()
+    {
+        //print("missed attack");
+        missedAttack = true;
+        hitAttack = false;
+    }
+
     public void MissedAttackCaller()
     {
         combatFunctionality.Controls.MissedAttack?.Invoke();
@@ -136,7 +146,7 @@ public class AttackTriggerGroup : MonoBehaviour
         if (hitAttack)
         {
             //print("Combo off hit time period reached, can now combo because attack hit");
-            //print("Disabling this attack to allow for combo");
+            print(gameObject.name + " | Combo hit avaliable, DisableTrigger()");
             DisableTrigger();
         }
     }

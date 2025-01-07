@@ -42,9 +42,9 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
     /// Tells this script what its attack parameters are
     /// </summary>
     /// <param name="currentAbility"></param>
-    public override void StartAttackFromAttackTrigger(Ability currentAbility)
+    public override void StartAttackFromAttackTrigger(Ability currentAbility, float delay)
     {
-        base.StartAttackFromAttackTrigger(currentAbility);
+        base.StartAttackFromAttackTrigger(currentAbility, delay);
     }
 
     public override void InitialAttackDelayOverReEnableTrigger()
@@ -108,6 +108,7 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
         base.HitAttack();
 
         DisableIndiviualCollider(Color.green);
+
     }
 
     public void DisableIndiviualCollider(Color color)
@@ -116,14 +117,14 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
         col.enabled = false;
     }
 
-    public override void MissAttackCuttoff()
+    public override void MissAttackCuttoffLocal()
     {
-        base.MissAttackCuttoff();
+        print(gameObject.name + " | MissAttackCuttoffLocal()");
+        base.MissAttackCuttoffLocal();
 
         DisableIndiviualCollider(Color.grey);
 
         attackTriggerAnimator.SetBool("missed", true);
-
     }
 
 }

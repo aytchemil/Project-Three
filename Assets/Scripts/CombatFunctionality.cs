@@ -95,6 +95,8 @@ public class CombatFunctionality : MonoBehaviour
 
     #endregion
 
+    #region Delegates: InCombat(), ExitCombat(), CombatFunctionalityElementsLockOntoTarget() ,CombatFunctionalityElementLockOntoTarget()
+
     /// <summary>
     /// Action Delegate Method for Being "In Combat" 
     /// - Sets Locked on flag
@@ -126,7 +128,18 @@ public class CombatFunctionality : MonoBehaviour
         //print("exiting combat");
         StopBlock(); //Must be first
         Controls.alreadyAttacking = false;
-        DisableAttackTriggers();
+        DisableAttackTriggers(false);
+    }
+
+    /// <summary>
+    /// Makes the attack triggers lock on to the target, restricted to X and Z (no Y)
+    /// </summary>
+    /// <param name="target"></param>
+    public virtual void CombatFunctionalityElementsLockOntoTarget(CombatEntityController target)
+    {
+        // Debug.Log("locking onto target");
+        CombatFunctionalityElementLockOntoTarget(target, attackTriggerParent);
+        CombatFunctionalityElementLockOntoTarget(target, blockingTriggerParent);
     }
 
     public void CombatFunctionalityElementLockOntoTarget(CombatEntityController target, Transform elementTransform)
@@ -140,7 +153,9 @@ public class CombatFunctionality : MonoBehaviour
         }
     }
 
-    #region Trigger Generation
+    #endregion
+
+    #region Trigger Generation: CacheAttackTriggers(), EnableAttackTriggers() DisableAttackTriggers() InstantiateAttackTriggers()
 
     /// <summary>
     /// Cache the attack triggers to a List for easy referenceing
@@ -173,22 +188,35 @@ public class CombatFunctionality : MonoBehaviour
     /// <summary>
     /// Disables all the attack triggers
     /// </summary>
-    public void DisableAttackTriggers()
+    public void DisableAttackTriggers(bool local)
     {
-        //Debug.Log(gameObject.name + " | Disabling Attack Triggers");
+        Debug.Log(gameObject.name + " | Disabling Attack All Triggers");
         if (!myAttackTriggers.Any() || attackTriggerParent.childCount == 0) { print("att triggers not setup, not disabling something that isnt there"); return; }
 
-        foreach (GameObject attkTrigger in myAttackTriggers)
+        if (local)
         {
-            if (attkTrigger.activeSelf)
+            foreach (GameObject attkTrigger in myAttackTriggers)
             {
-                attkTrigger.GetComponent<AttackTriggerGroup>().DisableTrigger();
+                if (attkTrigger.activeSelf)
+                    attkTrigger.GetComponent<AttackTriggerGroup>().DisableThisTriggerOnlyLocally();
+
+                attkTrigger.SetActive(false);
+
             }
-
-            //print("DISABLING : " + attkTrigger.name);
-            attkTrigger.SetActive(false);
-
         }
+        else
+        {
+            foreach (GameObject attkTrigger in myAttackTriggers)
+            {
+                if (attkTrigger.activeSelf)
+                    attkTrigger.GetComponent<AttackTriggerGroup>().DisableTrigger();
+
+                attkTrigger.SetActive(false);
+
+            }
+        }
+
+
     }
 
     /// <summary>
@@ -215,7 +243,7 @@ public class CombatFunctionality : MonoBehaviour
             Debug.LogError("down : " + down);
         }
 
-        print(gameObject.name + " | combat functionality : initializing all attack triggers");
+        //print(gameObject.name + " | combat functionality : initializing all attack triggers");
 
         initializedAttackTriggers = true;
         attackTrigger_right = Instantiate(right.attackTriggerCollider, attackTriggerParent, false).GetComponent<AttackTriggerGroup>();
@@ -226,18 +254,18 @@ public class CombatFunctionality : MonoBehaviour
         foreach (GameObject attkTrigger in myAttackTriggers)
             attkTrigger.GetComponent<AttackTriggerGroup>().InitSelf(this);
 
-        print(gameObject.name + " | combat functionality : initialization complete");
-        print(gameObject.name + " | combat functionality : disabling all attack triggers");
+        //print(gameObject.name + " | combat functionality : initialization complete");
+        //print(gameObject.name + " | combat functionality : disabling all attack triggers");
 
-        DisableAttackTriggers();
+        DisableAttackTriggers(true);
 
-        print(gameObject.name + " | combat functionality : attack triggers disabled");
+        //print(gameObject.name + " | combat functionality : attack triggers disabled");
 
     }
 
     #endregion
 
-    #region Combat Functionality
+    #region Combat Functionality: EnableAbility(), UseAttackAbility()
 
     /// <summary>
     /// Enables the currently selected ability
@@ -265,17 +293,6 @@ public class CombatFunctionality : MonoBehaviour
 
     }
 
-    /// <summary>
-    /// Makes the attack triggers lock on to the target, restricted to X and Z (no Y)
-    /// </summary>
-    /// <param name="target"></param>
-    public virtual void CombatFunctionalityElementsLockOntoTarget(CombatEntityController target)
-    {
-       // Debug.Log("locking onto target");
-        CombatFunctionalityElementLockOntoTarget(target, attackTriggerParent);
-        CombatFunctionalityElementLockOntoTarget(target, blockingTriggerParent);
-    }
-
 
     /// <summary>
     /// Uses the currently selected ability
@@ -283,7 +300,11 @@ public class CombatFunctionality : MonoBehaviour
     public virtual void UseAttackAbility()
     {
         //print("-> Comabt Functionality: Attempting Attack");
-        if (!Controls.isLockedOn || Controls.alreadyAttacking || Controls.isBlocking || Controls.isFlinching) { print("is unable to attack, returning"); return; }
+        if (!Controls.isLockedOn || Controls.alreadyAttacking || Controls.isBlocking || Controls.isFlinching) 
+        { 
+            //print("is unable to attack, returning"); 
+            return; 
+        }
 
         if (currentAbility == null)
             Debug.LogError("There is currently no selected ability (a_current) that this combat functionality script can use.");
@@ -296,31 +317,48 @@ public class CombatFunctionality : MonoBehaviour
         ///create 4 different attack triggers(like box)
         /// animate all 4, integrate that
 
-        print("finding archyetype: " + currentAbility.archetype);
+        //print("finding archetype: " + currentAbility.archetype);
 
         switch (currentAbility.archetype)
         {
 
             case Ability.AttackArchetype.Singular:
 
-                print("archyetype: singular chosen");
+                //print("archetype: singular chosen");
 
-                AttackTriggersEnableToUse().StartAttackFromAttackTrigger(currentAbility);
+                //Archetype's Functionality
+                AttackTriggersEnableToUse().StartAttackFromAttackTrigger(currentAbility, currentAbility.initialAttackDelay[0]);
+
+                //Specific Attack's Functionality
                 SingularAttacksUse();
 
                 break;
 
             case Ability.AttackArchetype.MultiChoice:
 
-                print("archyetype: multichoice chosen");
+                //print("archetype: multichoice chosen");
 
+                //Specific Attack's Functionality
                 string choice = GetMultiChoiceAttackChoiceAndUse();
 
-                print("choice is : " + choice);
+                //print("choice is : " + choice);
 
                 if (choice == "none") break;
 
-                AttackTriggersEnableToUse().GetComponent<MultiAttackTrigger>().MultiChoiceAttack(currentAbility, choice);
+                //Archetype's Functionality
+                AttackTriggersEnableToUse().GetComponent<AttackTriggerMultiChoice>().MultiChoiceAttack(currentAbility, currentAbility.initialAttackDelay[0], choice);
+
+                break;
+
+            case Ability.AttackArchetype.FollowUp:
+
+                //print("archetype: followup chosen");
+
+                //Archetype's Functionality
+                StartCoroutine(AttackTriggersEnableToUse().GetComponent<AttackTriggerFollowUp>().FollowUpAttack(currentAbility));
+
+                //Specific Attack's Functionality
+                FollowUpAttacksUse();
 
                 break;
 
@@ -333,7 +371,7 @@ public class CombatFunctionality : MonoBehaviour
 
 
 
-    #region attack types
+    #region Attack Collision Types
 
     IEnumerator MovementForwardAttack()
     {
@@ -363,7 +401,7 @@ public class CombatFunctionality : MonoBehaviour
 
     IEnumerator MovementRightOrLeftAttack(string choice)
     {
-        Debug.Log("Attempting Movemnt left or right atack");
+        Debug.Log(gameObject.name + " | Combat Functionality: attacking w/ MovementLeftOrRight attack");
 
 
         gameObject.GetComponent<Movement>().Lunge(choice, currentAbility.movementAmount);
@@ -378,15 +416,17 @@ public class CombatFunctionality : MonoBehaviour
         
     }
 
-    void MovementRightAttack()
+    IEnumerator DoubleFrontSlash()
     {
-        Debug.Log("Right attack");
+        //Debug.Log(gameObject.name + " | Combat Functionality: attacking w/ Double Front Slash");
+
+        while (!initialAttackDelayOver)
+        {
+            // print("waiting...");
+            yield return new WaitForEndOfFrame();
+        }
     }
 
-    void MovementLeftAttack()
-    {
-        Debug.Log("Left attack");
-    }
 
 
     /// <summary>
@@ -471,6 +511,18 @@ public class CombatFunctionality : MonoBehaviour
         }
 
         return choice;
+    }
+
+    void FollowUpAttacksUse()
+    {
+        switch (currentAbility.collisionType)
+        {
+            case Ability.CollisionType.DoubleFrontSlash:
+
+                StartCoroutine(DoubleFrontSlash());
+
+                break;
+        }
     }
 
 
@@ -564,7 +616,7 @@ public class CombatFunctionality : MonoBehaviour
     public void Flinch(float flinchTime)
     {
         print(this.gameObject.name + " has flinched");
-        DisableAttackTriggers();
+        DisableAttackTriggers(false);
     }
 
     #endregion

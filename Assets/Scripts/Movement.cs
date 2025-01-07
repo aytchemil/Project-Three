@@ -402,7 +402,7 @@ public class Movement : MonoBehaviour
             retDir = "none";
 
 
-        print("Getting move dir: " + retDir);
+            //print("Getting move dir: " + retDir);
 
 
         return retDir;

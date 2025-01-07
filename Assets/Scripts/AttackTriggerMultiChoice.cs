@@ -11,12 +11,19 @@ public class AttackTriggerMultiChoice : AttackTriggerMulti
 
         usingAttackTrigger = null;
 
+        print(gameObject.name +  " | given choice: " + choice);
+
         for (int i = 0; i < triggers.Count; i++)
             if (triggers[i].name == choice)
                 usingAttackTrigger = triggers[i];
 
+        if (usingAttackTrigger == null)
+        {
+            print("Chosen attack trigger choice unavaliable, returning");
+            return;
+        }
 
-        print("Chosen attack trigger is : " + usingAttackTrigger.name);
+            print("Chosen attack trigger is : " + usingAttackTrigger.name);
 
         StartAttackFromAttackTrigger(currentAbility, currentAbility.initialAttackDelay[0]);
 

@@ -5027,10 +5027,10 @@ GameObject:
   m_Component:
   - component: {fileID: 2889774473243116572}
   - component: {fileID: 7282870854733792326}
-  - component: {fileID: 4451325410993761888}
   - component: {fileID: 7470092985747404665}
   - component: {fileID: 653793812182782382}
-  - component: {fileID: 2655821725397795732}
+  - component: {fileID: 9149265836832429575}
+  - component: {fileID: 4875063981922296138}
   m_Layer: 8
   m_Name: Killable Dummy v2
   m_TagString: Untagged
@@ -5082,28 +5082,6 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 112
   m_CollisionDetection: 3
---- !u!95 &4451325410993761888
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3758795745443730861}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: cbbca28ce2e565d4f8a1c0d647bc0385, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
 --- !u!65 &7470092985747404665
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -5148,8 +5126,31 @@ MonoBehaviour:
   isBlocking: 0
   currentlyRetargetting: 0
   isAlive: 1
+  isFlinching: 0
   targetIsDodging: 0
---- !u!114 &2655821725397795732
+--- !u!95 &9149265836832429575
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3758795745443730861}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 5d933cfe6694fad4990b98670cc74d30, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
+--- !u!114 &4875063981922296138
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -5164,11 +5165,12 @@ MonoBehaviour:
   controls: {fileID: 0}
   _health: 7
   attackedEffect: {fileID: 4073467456397086772}
-  animator: {fileID: 4451325410993761888}
+  animator: {fileID: 9149265836832429575}
   invincibility: 0
   invincibiliyTime: 0.5
   deathTime: 2
   corpseDeathTime: 0
+  flinchTime: 1
 --- !u!1 &4073467456397086772
 GameObject:
   m_ObjectHideFlags: 0

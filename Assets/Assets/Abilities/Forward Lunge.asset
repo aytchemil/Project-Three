@@ -21,4 +21,4 @@ MonoBehaviour:
   - 0.6
   missDelayUntilAbleToAttackAgain: 0.7
   damage: 4
-  movementAmount: 100
+  movementAmount: 75

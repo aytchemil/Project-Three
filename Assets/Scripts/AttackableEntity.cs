@@ -18,10 +18,13 @@ public class AttackbleEntity : MonoBehaviour
 
     private void Awake()
     {
+        health = maxHealth;
         controls = GetComponent<CombatEntityController>();
         if(animator == null)
             animator = GetComponent<Animator>();
     }
+
+    public float maxHealth;
 
     public GameObject attackedEffect;
     public Animator animator;
@@ -96,5 +99,12 @@ public class AttackbleEntity : MonoBehaviour
     }
 
     #endregion
+
+    public void Heal(float amount)
+    {
+        health += amount;
+        if(health > maxHealth)
+            health = maxHealth;
+    }
 
 }

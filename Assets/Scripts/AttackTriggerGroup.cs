@@ -70,7 +70,7 @@ public class AttackTriggerGroup : MonoBehaviour
         DisableThisTriggerOnlyLocally();
     }
 
-    public void DisableThisTriggerOnlyLocally()
+    public virtual void DisableThisTriggerOnlyLocally()
     {
         attacking = false;
         missedAttack = false;

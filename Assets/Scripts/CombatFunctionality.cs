@@ -500,6 +500,7 @@ public class CombatFunctionality : MonoBehaviour
 
                 if (choice == "foward" || choice == "back" || choice == "none")
                 {
+                    choice = "none";
                     print("Not able to use ability, critiera not met");
                     FinishAttacking();
                     break;

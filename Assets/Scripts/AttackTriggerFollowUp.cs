@@ -15,7 +15,7 @@ public class AttackTriggerFollowUp : AttackTriggerMulti
             triggerProgress.Add(new bool());
     }
 
-    public virtual IEnumerator FollowUpAttack(Ability currentAbility)
+    public virtual IEnumerator FollowUpAttack(AttackAbility currentAbility)
     {
         StartAttackFromAttackTrigger(currentAbility, currentAbility.initialAttackDelay[0]);
 

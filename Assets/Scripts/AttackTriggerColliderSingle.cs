@@ -42,7 +42,7 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
     /// Tells this script what its attack parameters are
     /// </summary>
     /// <param name="currentAbility"></param>
-    public override void StartAttackFromAttackTrigger(Ability currentAbility, float delay)
+    public override void StartAttackFromAttackTrigger(AttackAbility currentAbility, float delay)
     {
         base.StartAttackFromAttackTrigger(currentAbility, delay);
     }
@@ -71,7 +71,7 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
             HitAttack();
             #region Death
             ///If the Entity being attacked's health reaches less than 0, tell OUR Controller to call the target death delegate action
-            newEnemyHealth = other.GetComponent<AttackbleEntity>().Attacked(myAbility);
+            newEnemyHealth = other.GetComponent<AttackbleEntity>().Attacked(myAttackAbility);
 
 
             if (newEnemyHealth < 0)

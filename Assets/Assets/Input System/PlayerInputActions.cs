@@ -134,6 +134,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""SwitchAttackMode"",
+                    ""type"": ""Button"",
+                    ""id"": ""93853bf3-e330-4ff6-8477-eeee90a46b19"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -563,6 +572,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": "";Keyboard&Mouse"",
                     ""action"": ""Block"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""7445378f-0361-4d96-9856-aff04b1e5d43"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchAttackMode"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1162,6 +1182,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_LockOn = m_Player.FindAction("LockOn", throwIfNotFound: true);
         m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
         m_Player_Block = m_Player.FindAction("Block", throwIfNotFound: true);
+        m_Player_SwitchAttackMode = m_Player.FindAction("SwitchAttackMode", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1253,6 +1274,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_LockOn;
     private readonly InputAction m_Player_Dash;
     private readonly InputAction m_Player_Block;
+    private readonly InputAction m_Player_SwitchAttackMode;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -1269,6 +1291,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @LockOn => m_Wrapper.m_Player_LockOn;
         public InputAction @Dash => m_Wrapper.m_Player_Dash;
         public InputAction @Block => m_Wrapper.m_Player_Block;
+        public InputAction @SwitchAttackMode => m_Wrapper.m_Player_SwitchAttackMode;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1314,6 +1337,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Block.started += instance.OnBlock;
             @Block.performed += instance.OnBlock;
             @Block.canceled += instance.OnBlock;
+            @SwitchAttackMode.started += instance.OnSwitchAttackMode;
+            @SwitchAttackMode.performed += instance.OnSwitchAttackMode;
+            @SwitchAttackMode.canceled += instance.OnSwitchAttackMode;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1354,6 +1380,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Block.started -= instance.OnBlock;
             @Block.performed -= instance.OnBlock;
             @Block.canceled -= instance.OnBlock;
+            @SwitchAttackMode.started -= instance.OnSwitchAttackMode;
+            @SwitchAttackMode.performed -= instance.OnSwitchAttackMode;
+            @SwitchAttackMode.canceled -= instance.OnSwitchAttackMode;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1548,6 +1577,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnLockOn(InputAction.CallbackContext context);
         void OnDash(InputAction.CallbackContext context);
         void OnBlock(InputAction.CallbackContext context);
+        void OnSwitchAttackMode(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

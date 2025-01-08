@@ -16,6 +16,7 @@ public class PlayerController : CombatEntityController
     public InputAction ia_dash;
     public InputAction ia_attack;
     public InputAction ia_block;
+    public InputAction ia_switchAttackMode;
 
     private void Awake()
     {
@@ -29,6 +30,7 @@ public class PlayerController : CombatEntityController
         ia_dash = controls.Player.Dash;
         ia_attack = controls.Player.Attack;
         ia_block = controls.Player.Block;
+        ia_switchAttackMode = controls.Player.SwitchAttackMode;
     }
 
 
@@ -53,11 +55,20 @@ public class PlayerController : CombatEntityController
         ia_dash.performed += ctx => dash?.Invoke();
 
         ia_attack.Enable();
-        ia_attack.performed += ctx => attack?.Invoke();
+        ia_attack.performed += ctx => useAbility?.Invoke(mode);
 
         ia_block.Enable();
         ia_block.started += ctx => blockStart?.Invoke();
         ia_block.canceled += ctx => blockStop?.Invoke();
+
+        ia_switchAttackMode.Enable();
+        ia_switchAttackMode.performed += ctx =>
+        {
+            if (!cantUseAbility.Invoke())
+                switchAttackMode?.Invoke();
+
+        };
+        
 
         base.OnEnable();
     }
@@ -80,11 +91,14 @@ public class PlayerController : CombatEntityController
         ia_dash.performed -= ctx => dash?.Invoke();
 
         ia_attack.Disable();
-        ia_attack.performed -= ctx => attack?.Invoke();
+        ia_attack.performed -= ctx => useAbility?.Invoke(mode);
 
         ia_block.Disable();
         ia_block.performed -= ctx => blockStart?.Invoke();
         ia_block.canceled -= ctx => blockStop?.Invoke();
+
+        ia_switchAttackMode.Disable();
+        ia_switchAttackMode.performed -= ctx => switchAttackMode?.Invoke();
 
         base.OnDisable();
     }

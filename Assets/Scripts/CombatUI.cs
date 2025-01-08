@@ -42,6 +42,13 @@ public class CombatUI : MonoBehaviour
     [SerializeField] private RawImage rightImgRef;
     [SerializeField] private TextMeshProUGUI text;
 
+    [SerializeField] private RawImage modeIndicator;
+    [SerializeField] private Texture attackingIndicator;
+    [SerializeField] private Texture counterIndicator;
+    [SerializeField] private TextMeshProUGUI modeText;
+
+
+
     #endregion
 
     private void Awake()
@@ -58,6 +65,8 @@ public class CombatUI : MonoBehaviour
         controls.EnterCombat += EnableUI;
         controls.ExitCombat += DisableUI;
         controls.SelectCertainAbility += UpdateCurrentAbilityText;
+
+        controls.switchAttackMode += SwitchAttackMode;
     }
 
     private void OnDisable()
@@ -67,6 +76,7 @@ public class CombatUI : MonoBehaviour
         controls.ExitCombat -= DisableUI;
         controls.SelectCertainAbility -= UpdateCurrentAbilityText;
 
+        controls.switchAttackMode -= SwitchAttackMode;
     }
 
 
@@ -191,7 +201,8 @@ public class CombatUI : MonoBehaviour
     {
         //print("enabling ui");
         combatUIParent.SetActive(true);
-        ChangeAllImageIcons();
+        ChangeAllImageIcons("attack");
+        UpdateModeUIObjects("attack");
         UpdateAttackIndicatorRotation(new Vector2(0, deadZone + 1));
     }
 
@@ -273,30 +284,68 @@ public class CombatUI : MonoBehaviour
         switch (dir)
         {
             case "right":
-                text.text = "Current Attack: " + controls.a_right.attackName;
+                text.text = "Current Ability: " + controls.a_right.abilityName;
                 break;
             case "left":
-                text.text = "Current Attack: " + controls.a_left.attackName; break;
+                text.text = "Current Ability: " + controls.a_left.abilityName; break;
             case "up":
-                text.text = "Current Attack: " + controls.a_up.attackName; break;
+                text.text = "Current Ability: " + controls.a_up.abilityName; break;
             case "down":
-                text.text = "Current Attack: " + controls.a_down.attackName; break;
+                text.text = "Current Ability: " + controls.a_down.abilityName; break;
         }
     }
 
-    void ChangeAllImageIcons()
+    void ChangeAllImageIcons(string mode)
     {
-        rightImgRef.texture = controls.a_right.icon;
-        leftImgRef.texture = controls.a_left.icon;
-        upImgRef.texture = controls.a_up.icon;
-        downImgRef.texture = controls.a_down.icon;
+        if(mode == "attack")
+        {
+            rightImgRef.texture = controls.a_right.icon;
+            leftImgRef.texture = controls.a_left.icon;
+            upImgRef.texture = controls.a_up.icon;
+            downImgRef.texture = controls.a_down.icon;
+        }
+        else if (mode == "counter")
+        {
+            rightImgRef.texture = controls.c_right.icon;
+            leftImgRef.texture = controls.c_left.icon;
+            upImgRef.texture = controls.c_up.icon;
+            downImgRef.texture = controls.c_down.icon;
+        }
     }
 
-
+    void UpdateModeUIObjects(string mode)
+    {
+        if (mode == "attack")
+        {
+            modeIndicator.texture = attackingIndicator;
+            modeText.text = "You are attacking";
+        }
+        else if (mode == "counter")
+        {
+            modeIndicator.texture = counterIndicator;
+            modeText.text = "You are countering";
+        }
+    }
 
 
     #endregion
 
-
+    void SwitchAttackMode()
+    {
+        if (controls.mode == "attack") //SETTING TO COUNTER
+        {
+            print("switching attack mode to counter");
+            controls.mode = "counter";
+            ChangeAllImageIcons("counter");
+            UpdateModeUIObjects("counter");
+        }
+        else if (controls.mode == "counter")  //SETTING TO ATTACK
+        {
+            print("switching attack mode to attack");
+            controls.mode = "attack";
+            ChangeAllImageIcons("attack");
+            UpdateModeUIObjects("attack");
+        }
+    }
 
 }

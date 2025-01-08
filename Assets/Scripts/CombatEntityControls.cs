@@ -1,6 +1,7 @@
 using UnityEngine;
 using System;
 using UnityEngine.InputSystem;
+using UnityEditor.ShaderGraph;
 
 /// <summary>
 /// Centralized Controller and controls for every combat entity.
@@ -16,9 +17,11 @@ public class CombatEntityController : MonoBehaviour
     public Action sprintStop;
     public Action lockOn;
     public Action dash;
-    public Action attack;
+    public Action<string> useAbility;
     public Action blockStart;
     public Action blockStop;
+    public Action switchAttackMode;
+    public string mode = "attack";
 
     [Header("Observer Events")]
     public Func<CombatEntityController> GetTarget;
@@ -35,12 +38,20 @@ public class CombatEntityController : MonoBehaviour
 
 
     [Header("Pre-Selected Abilities")]
-    public Ability a_right;
-    public Ability a_left;
-    public Ability a_up;
-    public Ability a_down;
+    [Header("Attack Abilities")]
+    public AttackAbility a_right;
+    public AttackAbility a_left;
+    public AttackAbility a_up;
+    public AttackAbility a_down;
+
+    [Header("Counter Abilities")]
+    public CounterAbility c_right;
+    public CounterAbility c_left;
+    public CounterAbility c_up;
+    public CounterAbility c_down;
 
     [Header("Central Flags")]
+    public Func<bool> cantUseAbility;
     public bool dashing;
     public bool dashOnCooldown;
     public bool isLockedOn;
@@ -55,10 +66,8 @@ public class CombatEntityController : MonoBehaviour
 
     protected virtual void OnEnable()
     {
-
+        cantUseAbility = () => (!isLockedOn || alreadyAttacking || isBlocking || isFlinching);
     }
-
-
     protected virtual void OnDisable()
     {
         look = null;
@@ -67,10 +76,11 @@ public class CombatEntityController : MonoBehaviour
         sprintStop = null;
         lockOn = null;
         dash = null;
-        attack = null;
+        useAbility = null;
         blockStart = null;
         blockStop = null;
         GetTarget = null;
+        cantUseAbility = null;
     }
 
 

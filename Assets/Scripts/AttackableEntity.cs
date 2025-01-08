@@ -35,7 +35,7 @@ public class AttackbleEntity : MonoBehaviour
     [Space]
     public float flinchTime = 1f;
 
-    public virtual float Attacked(Ability atkedWithAbility)
+    public virtual float Attacked(AttackAbility atkedWithAbility)
     {
         float newHealth;
         if (!invincibility)

@@ -5,7 +5,7 @@ public class AttackTriggerGroup : MonoBehaviour
 
     [Header("Attack Trigger Group: Real-Time Variables")]
     public CombatFunctionality combatFunctionality;
-    public Ability myAbility;
+    public AttackAbility myAttackAbility;
 
     public bool attacking;
     public bool hitAttack;
@@ -27,8 +27,8 @@ public class AttackTriggerGroup : MonoBehaviour
     /// <summary>
     /// Tells this script what its attack parameters are
     /// </summary>
-    /// <param name="currentAbility"></param>
-    public virtual void StartAttackFromAttackTrigger(Ability currentAbility, float delay)
+    /// <param name="currentAttackAbility"></param>
+    public virtual void StartAttackFromAttackTrigger(AttackAbility currentAttackAbility, float delay)
     {
         if (attacking)
         { 
@@ -36,7 +36,7 @@ public class AttackTriggerGroup : MonoBehaviour
             return; 
         }
         //Debug.Log("Starting an Attack: " + currentAbility.name);
-        myAbility = currentAbility;
+        myAttackAbility = currentAttackAbility;
         InitializeTrigger();
         Invoke(nameof(InitialAttackDelayOverReEnableTrigger), delay);
     }
@@ -126,7 +126,7 @@ public class AttackTriggerGroup : MonoBehaviour
         MissedAttackCaller();
 
         print(gameObject.name +  " | Missed attack delay over, DisableTrigger() (on delay)");
-        Invoke(nameof(DisableTrigger), myAbility.missDelayUntilAbleToAttackAgain);
+        Invoke(nameof(DisableTrigger), myAttackAbility.missDelayUntilAbleToAttackAgain);
     }
 
     public virtual void MissAttackCuttoffLocal()

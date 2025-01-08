@@ -37,7 +37,7 @@ public class AttackingAI : MonoBehaviour
 
     protected void OnEnable()
     {
-        Controls.attack += combatFunctionality.UseAttackAbility;
+        Controls.useAbility += combatFunctionality.UseAttackAbility;
         Controls.lockOn += combatLock.AttemptLock;
 
         Controls.CompletedAttack += CompleteAttackInPattern;
@@ -49,7 +49,7 @@ public class AttackingAI : MonoBehaviour
 
     protected void OnDisable()
     {
-        Controls.attack -= combatFunctionality.UseAttackAbility;
+        Controls.useAbility -= combatFunctionality.UseAttackAbility;
         Controls.lockOn -= combatLock.AttemptLock;
 
         Controls.CompletedAttack -= CompleteAttackInPattern;
@@ -139,7 +139,7 @@ public class AttackingAI : MonoBehaviour
 
            // print("Attacking...");
             //Actually Start the Attack
-            Controls.attack?.Invoke();
+            Controls.useAbility?.Invoke(Controls.mode);
 
             //Debug.Log("waiting for attack to finish now...");
             while (attackPatternProgress[i] == false && attackingWithPattern)

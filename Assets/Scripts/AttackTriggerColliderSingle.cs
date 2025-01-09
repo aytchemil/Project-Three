@@ -5,21 +5,30 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class AttackTriggerColliderSingle : AttackTriggerGroup
 {
-    [Header("Collider Single: Real-Time Variables")]
-    public LayerMask collideWith;
-    Collider col;
-    public Animator attackTriggerAnimator;
+    private AttackAbility myAttackAbility;
 
-    public void Awake()
+    //Overriding base class Ability reference
+    public override Ability myAbility
+    {
+        get => myAttackAbility;
+        set => myAttackAbility = value as AttackAbility;
+    }
+
+    [Header("Collider Single: Real-Time Variables")]
+    public LayerMask attackColisionWith;
+    public Collider col;
+    public Animator animator;
+
+    public virtual void Awake()
     {
         //Cache
         col = GetComponent<Collider>();
-        if (attackTriggerAnimator == null)
-            attackTriggerAnimator = GetComponent<Animator>();
+        if (animator == null)
+            animator = GetComponent<Animator>();
 
         //Sets the collision's layers
-        col.includeLayers = collideWith;
-        col.excludeLayers = ~collideWith;
+        col.includeLayers = attackColisionWith;
+        col.excludeLayers = ~attackColisionWith;
 
     }
 
@@ -27,14 +36,14 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
     //Template Pattern Overrides
     ///=======================================================================================================================================
 
-    protected override void InitializeTriggerImplementation()
+    protected override void EnableTriggerImplementation()
     {
-        base.InitializeTriggerImplementation();
+        base.EnableTriggerImplementation();
 
         DisableIndiviualCollider(Color.grey);
 
-        attackTriggerAnimator.SetBool("windupDone", false);
-        attackTriggerAnimator.SetBool("missed", false);
+        animator.SetBool("windupDone", false);
+        animator.SetBool("missed", false);
     }
 
     protected override void InitialDelayOver_ReEnableTriggerImplementation()
@@ -44,7 +53,7 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
         gameObject.GetComponent<MeshRenderer>().material.color = Color.red;
         col.enabled = true;
 
-        attackTriggerAnimator.SetBool("windupDone", true);
+        animator.SetBool("windupDone", true);
     }
 
 
@@ -115,7 +124,7 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
 
         DisableIndiviualCollider(Color.grey);
 
-        attackTriggerAnimator.SetBool("missed", true);
+        animator.SetBool("missed", true);
     }
 
     #endregion

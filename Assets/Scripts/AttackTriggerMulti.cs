@@ -36,12 +36,12 @@ public class AttackTriggerMulti : AttackTriggerGroup
         base.DisableThisTriggerImplementation();
     }
 
-    public override void InitSelf(CombatFunctionality combatFunctionality)
+    protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality)
     {
-        base.InitSelf(combatFunctionality);
+        base.InitializeSelfImplementation(combatFunctionality);
 
         foreach (var trigger in triggers)
-            trigger.InitSelf(combatFunctionality);
+            trigger.InitializeSelf(combatFunctionality);
     }
 
     #endregion

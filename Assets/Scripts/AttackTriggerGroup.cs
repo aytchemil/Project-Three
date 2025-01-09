@@ -2,13 +2,13 @@ using UnityEngine;
 
 public class AttackTriggerGroup : ModeTriggerGroup
 {
-    private AttackAbility myAttackAbility;
+    private AttackingAbility myAttackingAbility;
 
     //Overriding base class Ability reference
     public override Ability myAbility
     {
-        get => myAttackAbility;
-        set => myAttackAbility = value as AttackAbility;
+        get => myAttackingAbility;
+        set => myAttackingAbility = value as AttackingAbility;
     }
 
     //Wrapper for usingTrigger
@@ -21,14 +21,13 @@ public class AttackTriggerGroup : ModeTriggerGroup
     public bool hitAttack;
     public bool missedAttack;
 
-    
 
 
 
     #region  Template Pattern Overrides
     //Template Pattern Overrides
 
-    protected override void InitializeTriggerImplementation()
+    protected override void EnableTriggerImplementation()
     {
         missedAttack = false;
         hitAttack = false;
@@ -58,6 +57,10 @@ public class AttackTriggerGroup : ModeTriggerGroup
 
     #endregion
 
+    protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality)
+    {
+        //print(combatFunctionality.gameObject.name + " | ability trigger [" + gameObject.name + "] self initializing...");
+    }
 
 
 
@@ -84,7 +87,7 @@ public class AttackTriggerGroup : ModeTriggerGroup
         MissedAttackCaller();
 
         print(gameObject.name + " | Missed attack delay over, DisableTrigger() (on delay)");
-        Invoke(nameof(DisableThisTrigger), myAttackAbility.missDelayUntilAbleToAttackAgain);
+        Invoke(nameof(DisableThisTrigger), myAttackingAbility.missDelay);
     }
 
     public virtual void MissAttackCuttoffLocal()
@@ -92,12 +95,6 @@ public class AttackTriggerGroup : ModeTriggerGroup
         //print("missed attack");
         missedAttack = true;
         hitAttack = false;
-    }
-    public virtual void InitSelf(CombatFunctionality combatFunctionality)
-    {
-        this.combatFunctionality = combatFunctionality;
-        //print("initializing self: " + gameObject.name);
-
     }
 
     #endregion

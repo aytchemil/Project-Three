@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68d416ff0e8c367469377eb83d6a499f, type: 3}
   m_Name: Hit
   m_EditorClassIdentifier: 
-  archetype: 0
-  collisionType: 0
-  attackTriggerCollider: {fileID: 8475917669229452261, guid: 54eaad126c9bcaa498c827fb9317d41d, type: 3}
-  attackName: Hit
+  abilityName: Hit
   icon: {fileID: 2800000, guid: 757ccb73711d39f479d6d08030bc684f, type: 3}
+  archetype: 0
+  collision: 0
+  attackTriggerCollider: {fileID: 8475917669229452261, guid: 54eaad126c9bcaa498c827fb9317d41d, type: 3}
   initialAttackDelay:
   - 0.35
   missDelayUntilAbleToAttackAgain: 0.6

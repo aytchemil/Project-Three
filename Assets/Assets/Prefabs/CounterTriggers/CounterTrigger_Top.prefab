@@ -30,13 +30,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2410970770333841755}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.015516781, y: 0.015434462, z: 0.7050534, w: 0.70881647}
-  m_LocalPosition: {x: 0, y: 6.1, z: 5.19}
-  m_LocalScale: {x: 2.0061278, y: 9.93675, z: 3.0279481}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.40000153, z: 5.189999}
+  m_LocalScale: {x: 1.0247502, y: 9.93675, z: 2.0868618}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: -2.508, y: 0, z: 89.695}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!33 &802861249761633747
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -148,7 +148,7 @@ Animator:
   m_GameObject: {fileID: 2410970770333841755}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 8ac12f0f80e023747b623ad688452979, type: 2}
+  m_Controller: {fileID: 9100000, guid: a4d94e1b0d173c44cbd1be80ef9fa178, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -172,3 +172,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e738497b2eaa8e54b8de4c69538c2c5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  combatFunctionality: {fileID: 0}
+  usingTrigger: 0
+  hitAttack: 0
+  missedAttack: 0
+  attackColisionWith:
+    serializedVersion: 2
+    m_Bits: 256
+  col: {fileID: 3692927934815946925}
+  animator: {fileID: 3920288864532764850}
+  countering: 0
+  counterUp: 0
+  counterolisionWith:
+    serializedVersion: 2
+    m_Bits: 512

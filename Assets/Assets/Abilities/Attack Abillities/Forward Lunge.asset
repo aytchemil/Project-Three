@@ -12,11 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 68d416ff0e8c367469377eb83d6a499f, type: 3}
   m_Name: Forward Lunge
   m_EditorClassIdentifier: 
-  archetype: 0
-  collisionType: 4
-  attackTriggerCollider: {fileID: 9152381543741592740, guid: 876364ef1f1b2f94ebb3893dea57a553, type: 3}
-  attackName: Forward Lunge
+  abilityName: Forward Lunge
   icon: {fileID: 2800000, guid: c7f1ce3715d640c46b11327dd7472006, type: 3}
+  archetype: 0
+  collision: 0
+  attackTriggerCollider: {fileID: 9152381543741592740, guid: 876364ef1f1b2f94ebb3893dea57a553, type: 3}
   initialAttackDelay:
   - 0.6
   missDelayUntilAbleToAttackAgain: 0.7

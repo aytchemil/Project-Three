@@ -7,7 +7,7 @@ public class PlayerController : CombatEntityController
     //Rule of thumb : Keep these such that they are always set on the outside, never during gameplay
     public PlayerInputActions controls;
 
-
+    [Header("Input Actions")]
     //Input Actions
     public InputAction ia_look;
     public InputAction ia_move;

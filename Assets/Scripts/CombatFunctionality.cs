@@ -1,28 +1,14 @@
 using UnityEngine;
 using System.Linq;
 using System.Collections;
+using UnityEditor.ShaderGraph;
+using System.Collections.Generic;
 
 
 [RequireComponent(typeof(CombatEntityController))]
 public class CombatFunctionality : MonoBehaviour
 {
-    public Transform attackTriggerParent;
-
-    public GameObject[] myAttackTriggers = new GameObject[4];
-    public AttackTriggerGroup attackTrigger_right;
-    public AttackTriggerGroup attackTrigger_left;
-    public AttackTriggerGroup attackTrigger_up;
-    public AttackTriggerGroup attackTrigger_down;
-
-    public CounterTriggerGroup counterTrigger_right;
-    public CounterTriggerGroup counterTrigger_left;
-    public CounterTriggerGroup counterTrigger_up;
-    public CounterTriggerGroup counterTrigger_down;
-
-    public AttackAbility currentAttackAbility;
-    public CounterAbility currentCounterAbility;
-
-    string direction;
+    string dir = "";
 
     // Virtual property for 'Controls'
     public virtual CombatEntityController Controls { get; set; }
@@ -31,11 +17,6 @@ public class CombatFunctionality : MonoBehaviour
     bool initializedBlockingTrigger;
 
     public bool initialAbilityUseDelayOver;
-
-    [Header("Blocking")]
-    public BlockingTriggerCollider blockingTrigger;
-    public GameObject blockingTriggerPrefab;
-    public Transform blockingTriggerParent;
 
     protected virtual void Awake()
     {
@@ -46,21 +27,6 @@ public class CombatFunctionality : MonoBehaviour
 
     protected virtual void OnEnable()
     {
-        //If the attack trigger parent DNE, then create it
-        if (attackTriggerParent == null)
-        {
-            attackTriggerParent = Instantiate(new GameObject(), transform, false).transform;
-            attackTriggerParent.rotation = Quaternion.identity;
-            attackTriggerParent.name = "Attack Triggers Parent";
-        }
-
-        if(blockingTriggerParent == null)
-        {
-            blockingTriggerParent = Instantiate(new GameObject(), transform, false).transform;
-            blockingTriggerParent.rotation = Quaternion.identity;
-            blockingTriggerParent.name = "Blocking Trigger Parent";
-        }
-
         //Adding methods to Action Delegates
         //Debug.Log("Combat functionaly enable");
         //UI
@@ -73,12 +39,13 @@ public class CombatFunctionality : MonoBehaviour
 
         Controls.useAbility += UseAbility;
 
-        Controls.blockStart += Block;
-        Controls.blockStop += StopBlock;
+        //Controls.blockStart += Block;
+        //Controls.blockStop += StopBlock;
 
         Controls.Flinch += Flinch;
 
     }
+
 
     /// <summary>
     /// Remove the Action Delegates on Disable
@@ -95,10 +62,11 @@ public class CombatFunctionality : MonoBehaviour
 
         Controls.useAbility -= UseAbility;
 
-        Controls.blockStart -= Block;
-        Controls.blockStop -= StopBlock;
+       // Controls.blockStart -= Block;
+        //Controls.blockStop -= StopBlock;
 
         Controls.Flinch -= Flinch;
+
     }
 
     #endregion
@@ -116,13 +84,24 @@ public class CombatFunctionality : MonoBehaviour
     {
         //print("combatFunctionality: in combat");
         //Auto Set the current ability
-        currentAttackAbility = Controls.a_up;
+        Controls.Mode("Attack").data.currentAbility = Controls.AbilitySet("Attack").up;
 
-        if (!initializedAttackTriggers)
-            InstantiateAttackTriggers(Controls.a_right, Controls.a_left, Controls.a_up, Controls.a_down);
+        foreach(ModeRuntimeData mode in Controls.modes)
+            if (!mode.data.initializedTriggers)
+            {
+                InstantiateTriggersForMode(mode.data.abilitySet, mode.parent);
+                CacheParentTriggers(mode.triggers, mode.parent);
+                mode.data.initializedTriggers = true;
+                DisableTriggers(true, mode);
+            }
 
-        if (!initializedBlockingTrigger)
-            InitializeBlockingTrigger();
+
+
+
+
+
+        //if (!initializedBlockingTrigger)
+        //    InitializeBlockingTrigger();
 
     }
 
@@ -135,9 +114,9 @@ public class CombatFunctionality : MonoBehaviour
     void ExitCombat()
     {
         //print("exiting combat");
-        StopBlock(); //Must be first
+        //StopBlock(); //Must be first
         Controls.alreadyAttacking = false;
-        DisableAttackTriggers(false);
+        DisableTriggers(false, Controls.Mode(Controls.mode));
     }
 
     /// <summary>
@@ -147,8 +126,8 @@ public class CombatFunctionality : MonoBehaviour
     public virtual void CombatFunctionalityElementsLockOntoTarget(CombatEntityController target)
     {
         // Debug.Log("locking onto target");
-        CombatFunctionalityElementLockOntoTarget(target, attackTriggerParent);
-        CombatFunctionalityElementLockOntoTarget(target, blockingTriggerParent);
+        CombatFunctionalityElementLockOntoTarget(target, Controls.Mode(Controls.mode).parent);
+        CombatFunctionalityElementLockOntoTarget(target, Controls.Mode(Controls.mode).parent);
     }
 
     public void CombatFunctionalityElementLockOntoTarget(CombatEntityController target, Transform elementTransform)
@@ -171,62 +150,65 @@ public class CombatFunctionality : MonoBehaviour
     /// <summary>
     /// Cache the attack triggers to a List for easy referenceing
     /// </summary>
-    void CacheAttackTriggers()
-    {
-        //Debug.Log("Caching attack triggers of childcount: " + attackTriggerParent.childCount);
-        for (int i = 0; i < attackTriggerParent.childCount; i++)
-        {
-            myAttackTriggers[i] = attackTriggerParent.GetChild(i).gameObject;
-        }
 
-        if (myAttackTriggers.Any(item => item == null))
+    void CacheParentTriggers(GameObject[] triggers, Transform parent)
+    {
+        //print("Caching triggers for " + parent.name);
+
+        //Debug.Log("Caching attack triggers of childcount: " + attackTriggerParent.childCount);
+        for (int i = 0; i < parent.childCount; i++)
+            triggers[i] = parent.GetChild(i).gameObject;
+
+
+        if (triggers.Any(item => item == null)) //Checks if any item just put into that list are null, if one is, then error
             Debug.LogError("Items in attack trigger not properly cached, please look");
+        else
+            print("Successfully Cached triggers for mode " + parent.name);
+
     }
+
+
 
     /// <summary>
     /// Enables all the attack triggers
     /// </summary>
     public void EnableAttackTriggers()
     {
-        if (myAttackTriggers.Any(item => item == null))
+        if (Controls.Mode("Attack").triggers.Any(item => item == null))
             Debug.LogError("Trying to enable Attack Triggers that are not initialized, or not avaliable");
 
 
-        foreach (GameObject attkTrigger in myAttackTriggers)
+        foreach (GameObject attkTrigger in Controls.Mode("Attack").triggers)
             attkTrigger.SetActive(true);
     }
 
     /// <summary>
     /// Disables all the attack triggers
     /// </summary>
-    public void DisableAttackTriggers(bool local)
+    public void DisableTriggers(bool local, ModeRuntimeData mode)
     {
         //Debug.Log(gameObject.name + " | Disabling Attack All Triggers");
-        if (!myAttackTriggers.Any() || attackTriggerParent.childCount == 0) { print("att triggers not setup, not disabling something that isnt there"); return; }
+        if (!Controls.Mode(mode.data.modeName).triggers.Any() || Controls.Mode(mode.data.modeName).parent.childCount == 0) 
+        { 
+            print("triggers not setup, not disabling something that isnt there"); 
+            return;
+        }
+
 
         if (local)
         {
-            foreach (GameObject attkTrigger in myAttackTriggers)
-            {
-                if (attkTrigger.activeSelf)
-                    attkTrigger.GetComponent<AttackTriggerGroup>().DisableThisTriggerOnlyLocally();
+            foreach (GameObject trigger in mode.triggers)
+                if (trigger.activeSelf)
+                    trigger.GetComponent<ModeTriggerGroup>().DisableThisTriggerOnlyLocally();
 
-                attkTrigger.SetActive(false);
-
-            }
         }
         else
-        {
-            foreach (GameObject attkTrigger in myAttackTriggers)
-            {
-                if (attkTrigger.activeSelf)
-                    attkTrigger.GetComponent<AttackTriggerGroup>().DisableThisTrigger();
+            foreach (GameObject trigger in mode.triggers)
+                if (trigger.activeSelf)
+                    trigger.GetComponent<ModeTriggerGroup>().DisableThisTrigger();
 
-                attkTrigger.SetActive(false);
 
-            }
-        }
-
+        print("Successfully Disabled triggers for mode: " + mode.data.modeName);
 
     }
 
@@ -243,36 +225,66 @@ public class CombatFunctionality : MonoBehaviour
     /// <param name="left"></param>
     /// <param name="up"></param>
     /// <param name="down"></param>
-    public void InstantiateAttackTriggers(AttackAbility right, AttackAbility left, AttackAbility up, AttackAbility down)
+    public void InstantiateTriggersForMode(ModeAbilitiesSO modeAbilities, Transform parent)
     {
-        if(right == null ||  left == null || up == null || down == null)
+        //print("Instantiating triggers");
+
+        if (modeAbilities == null)
+            Debug.LogError("Mode AbilitiesSO null");
+
+        if(modeAbilities.right == null || modeAbilities.left == null || modeAbilities.up == null || modeAbilities.down == null)
         {
             Debug.LogError("Abilities Given to Instantiate attack triggers are null:");
-            Debug.LogError("right : " + right);
-            Debug.LogError("left : " + left);
-            Debug.LogError("up : " + up);
-            Debug.LogError("down : " + down);
+            Debug.LogError("right : " + modeAbilities.right);
+            Debug.LogError("left : " + modeAbilities.left);
+            Debug.LogError("up : " + modeAbilities.up);
+            Debug.LogError("down : " + modeAbilities.down);
         }
 
-        //print(gameObject.name + " | combat functionality : initializing all attack triggers");
+        Controls.t_right = InitializeTrigger(modeAbilities.right, parent, "right trigger");
+        Controls.t_left = InitializeTrigger(modeAbilities.left, parent, "left trigger");
+        Controls.t_up = InitializeTrigger(modeAbilities.up, parent, "up trigger");
+        Controls.t_down = InitializeTrigger(modeAbilities.down, parent, "down trigger");
 
-        initializedAttackTriggers = true;
-        attackTrigger_right = Instantiate(right.attackTriggerCollider, attackTriggerParent, false).GetComponent<AttackTriggerGroup>();
-        attackTrigger_left = Instantiate(left.attackTriggerCollider, attackTriggerParent, false).GetComponent<AttackTriggerGroup>();
-        attackTrigger_up = Instantiate(up.attackTriggerCollider, attackTriggerParent, false).GetComponent<AttackTriggerGroup>();
-        attackTrigger_down = Instantiate(down.attackTriggerCollider, attackTriggerParent, false).GetComponent<AttackTriggerGroup>();
-        CacheAttackTriggers();
-        foreach (GameObject attkTrigger in myAttackTriggers)
-            attkTrigger.GetComponent<AttackTriggerGroup>().InitSelf(this);
+        if(Controls.t_right == null || Controls.t_left == null || Controls.t_up  == null || Controls.t_down == null)
+            Debug.LogError("Trigger group triggers not iniailized corectly, check");
 
-        //print(gameObject.name + " | combat functionality : initialization complete");
-        //print(gameObject.name + " | combat functionality : disabling all attack triggers");
-
-        DisableAttackTriggers(true);
-
-        //print(gameObject.name + " | combat functionality : attack triggers disabled");
+        print("Successfully Instantiating triggers for mode " + parent.name);
 
     }
+
+
+    private ModeTriggerGroup InitializeTrigger(Ability ability, Transform parent, string direction)
+    {
+        //print($"Initializing trigger {ability}...");
+
+        ModeTriggerGroup trigger = null;
+
+        if (ability == null)
+        {
+            Debug.LogError($"Ability for {direction} is null in ModeAbilitySO");
+            return trigger;
+        }
+
+        if (ability is AttackAbility attackAbility)
+            trigger = Instantiate(attackAbility.attackTriggerCollider, parent, false).GetComponent<AttackTriggerGroup>();
+
+        else if (ability is CounterAbility counterAbility)
+            trigger = Instantiate(counterAbility.counterTriggerCollider, parent, false).GetComponent<CounterTriggerGroup>();
+
+        else if (ability is BlockAbility blockAbility)
+            trigger = Instantiate(blockAbility.blockTriggerCollider, parent, false).GetComponent<BlockTriggerGroup>();
+        else
+            Debug.LogError($"Unsupported Ability type for {direction}: {ability}");
+
+        trigger.InitializeSelf(this);
+
+        //print($"Compeleted initialization ! ");
+
+        return trigger;
+    }
+
+
     #endregion
 
     #endregion
@@ -280,55 +292,43 @@ public class CombatFunctionality : MonoBehaviour
     #region Combat Functionality: EnableAbility(), UseAttackAbility()
     ///====================================================================================================================================================================================================
 
+
     /// <summary>
     /// Enables the currently selected ability
     /// </summary>
     /// <param name="dir"></param>
     void EnableAbility(string dir)
     {
-       // print("Enabling ability on dir: " + dir);
-        direction = dir;
+        this.dir = dir;
+        string m = Controls.mode;
+        //print("enabling ability in dir: " + dir);
 
-        if(Controls.mode == "attack")
-        {
-            currentCounterAbility = null;
-            switch (dir)
-            {
-                case "right":
-                    currentAttackAbility = Controls.a_right;
-                    break;
-                case "left":
-                    currentAttackAbility = Controls.a_left;
-                    break;
-                case "up":
-                    currentAttackAbility = Controls.a_up;
-                    break;
-                case "down":
-                    currentAttackAbility = Controls.a_down;
-                    break;
-            }
-        }
-        else if (Controls.mode == "counter")
-        {
-            currentAttackAbility = null;
-            switch (dir)
-            {
-                case "right":
-                    currentCounterAbility = Controls.c_right;
-                    break;
-                case "left":
-                    currentCounterAbility = Controls.c_left;
-                    break;
-                case "up":
-                    currentCounterAbility = Controls.c_up;
-                    break;
-                case "down":
-                    currentCounterAbility = Controls.c_down;
-                    break;
-            }
-        }
+        //Reset the current ability for all the modes
+        foreach (ModeRuntimeData mode in Controls.modes)
+            mode.data.currentAbility = null;
 
+
+        switch (dir)
+        {
+            case "right":
+                Controls.Mode(m).data.currentAbility = Controls.AbilitySet(m).right;
+               // print($"Mode: {Controls.Mode(m)}, Ability set: {Controls.AbilitySet(m).right} ");
+                break;
+            case "left":
+                Controls.Mode(m).data.currentAbility = Controls.AbilitySet(m).left;
+               // print($"Mode: {Controls.Mode(m)}, Ability set: {Controls.AbilitySet(m).left} ");
+                break;
+            case "up":
+                Controls.Mode(m).data.currentAbility = Controls.AbilitySet(m).up;
+               // print($"Mode: {Controls.Mode(m)}, Ability set: {Controls.AbilitySet(m).up} ");
+                break;
+            case "down":
+                Controls.Mode(m).data.currentAbility = Controls.AbilitySet(m).down;
+               // print($"Mode: {Controls.Mode(m)}, Ability set: {Controls.AbilitySet(m).down} ");
+                break;
+        }
     }
+
 
 
     /// <summary>
@@ -337,29 +337,20 @@ public class CombatFunctionality : MonoBehaviour
     public virtual void UseAbility(string mode)
     {
         //print("-> Comabt Functionality: Attempting Attack");
-        if(Controls.cantUseAbility.Invoke()) 
-        { 
-            //print("is unable to attack, returning"); 
-            return; 
-        }
+        if(Controls.cantUseAbility.Invoke())
+            return;
 
 
-        //print("-> Combat Functionality: Successfull ATTACK");
+        if (Controls.Mode(mode) == null)
+            Debug.LogError("There is currently no selected ability (currentAttackAbility) that this combat functionality script can use.");
 
-        if(mode == "attack")
-        {
-            if (currentAttackAbility == null)
-                Debug.LogError("There is currently no selected ability (currentAttackAbility) that this combat functionality script can use.");
 
+        if (mode == "Attack")
             Attack();
-        }
-        else if(mode == "counter")
-        {
-            if (currentCounterAbility == null)
-                Debug.LogError("There is currently no selected ability (currentCounterAbility) that this combat functionality script can use.");
-
+        else if (mode == "Counter")
             Counter();
-        }
+        else
+            Debug.LogError(gameObject.name + " | Error: No mode found to use in UseAbility(mode)");
 
 
     }
@@ -373,48 +364,49 @@ public class CombatFunctionality : MonoBehaviour
         ///create 4 different attack triggers(like box)
         /// animate all 4, integrate that
 
-        //print("finding archetype: " + currentAttackAbility.archetype);
+        AttackAbility attack = Controls.Mode("Attack").data.currentAbility as AttackAbility;
 
-        switch (currentAttackAbility.archetype)
+
+        switch (attack.archetype)
         {
 
-            case AttackAbility.AttackArchetype.Singular:
+            case AttackAbility.Archetype.Singular:
 
                 //print("archetype: singular chosen");
 
                 //Archetype's Functionality
-                AttackTriggersEnableToUse().StartUsingAbilityTrigger(currentAttackAbility, currentAttackAbility.initialAttackDelay[0]);
+                TriggerEnableToUse().StartUsingAbilityTrigger(attack, attack.initialAttackDelay[0]);
 
                 //Find the Specific Attack this ability is using, and use this attack abilities's Functionality
-                SingularAttacksUse();
+                SingularAttacksUse(attack);
 
                 break;
 
-            case AttackAbility.AttackArchetype.MultiChoice:
+            case AttackAbility.Archetype.MultiChoice:
 
                 //print("archetype: multichoice chosen");
 
                 //Find the Specific Attack this ability is using, and use this attack abilities's Functionality
-                string choice = GetMultiChoiceAttackChoiceAndUse();
+                string choice = GetMultiChoiceAttackChoiceAndUse(attack);
 
                 //print("choice is : " + choice);
 
                 if (choice == "none") break;
 
                 //Archetype's Functionality
-                AttackTriggersEnableToUse().GetComponent<AttackTriggerMultiChoice>().MultiChoiceAttack(currentAttackAbility, currentAttackAbility.initialAttackDelay[0], choice);
+                TriggerEnableToUse().GetComponent<AttackTriggerMultiChoice>().MultiChoiceAttack(attack, attack.initialAttackDelay[0], choice);
 
                 break;
 
-            case AttackAbility.AttackArchetype.FollowUp:
+            case AttackAbility.Archetype.FollowUp:
 
                 //print("archetype: followup chosen");
 
                 //Archetype's Functionality
-                StartCoroutine(AttackTriggersEnableToUse().GetComponent<AttackTriggerFollowUp>().FollowUpAttack(currentAttackAbility));
+                StartCoroutine(TriggerEnableToUse().GetComponent<AttackTriggerFollowUp>().FollowUpAttack(attack));
 
                 //Find the Specific Attack this ability is using, and use this attack abilities's Functionality
-                FollowUpAttacksUse();
+                FollowUpAttacksUse(attack);
 
                 break;
 
@@ -428,11 +420,14 @@ public class CombatFunctionality : MonoBehaviour
 
         StartCountering();
 
-        switch (currentCounterAbility.counterArchetype)
+        CounterAbility counterAbility = Controls.Mode("Counter").data.currentAbility as CounterAbility;
+
+
+        switch (counterAbility.counterArchetype)
         {
             case CounterAbility.CounterArchetype.StandingRiposte:
 
-                CounterTriggersEnableToUse().StartUsingAbilityTrigger(currentCounterAbility, currentCounterAbility.startDelay);
+                TriggerEnableToUse().StartUsingAbilityTrigger(counterAbility, counterAbility.initialAttackDelay[0]);
 
                 StandingRiposte();
 
@@ -449,7 +444,7 @@ public class CombatFunctionality : MonoBehaviour
 
     #region Attack Collision Types
 
-    IEnumerator MovementForwardAttack()
+    IEnumerator MovementForwardAttack(AttackAbility attack)
     {
         //Debug.Log(" * MoveForwardAttacK Called");
 
@@ -463,7 +458,7 @@ public class CombatFunctionality : MonoBehaviour
        // print("Attacking started, initialAttackDelayOver is over (true)");
 
 
-        gameObject.GetComponent<Movement>().Lunge("up", currentAttackAbility.movementAmount);
+        gameObject.GetComponent<Movement>().Lunge("up", attack.movementAmount);
         gameObject.GetComponent<Movement>().DisableMovement();
         Invoke(nameof(ReEnableMovement), gameObject.GetComponent<Movement>().entityStates.dashTime);
     }
@@ -475,12 +470,12 @@ public class CombatFunctionality : MonoBehaviour
         gameObject.GetComponent<Movement>().EnableMovement();
     }
 
-    IEnumerator MovementRightOrLeftAttack(string choice)
+    IEnumerator MovementRightOrLeftAttack(string choice, AttackAbility attack)
     {
         Debug.Log(gameObject.name + " | Combat Functionality: attacking w/ MovementLeftOrRight attack");
 
 
-        gameObject.GetComponent<Movement>().Lunge(choice, currentAttackAbility.movementAmount);
+        gameObject.GetComponent<Movement>().Lunge(choice, attack.movementAmount);
 
         print("multi attack trigger, movementatttackrightorleft : lunging in dir " + choice);
 
@@ -510,107 +505,68 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     /// 
 
-    AttackTriggerGroup AttackTriggersEnableToUse()
+    ModeTriggerGroup TriggerEnableToUse()
     {
-        AttackTriggerGroup usingThisAttackTriggerGroup;
-        switch (direction)
+        ModeTriggerGroup usingThisTriggerGroup = null;
+
+        switch (dir)
         {
             case "right":
-                attackTrigger_right.gameObject.SetActive(true);
-                attackTrigger_left.gameObject.SetActive(false);
-                attackTrigger_up.gameObject.SetActive(false);
-                attackTrigger_down.gameObject.SetActive(false);
-                usingThisAttackTriggerGroup = attackTrigger_right;
+                Controls.t_right.gameObject.SetActive(true);
+                Controls.t_left.gameObject.SetActive(false);
+                Controls.t_up.gameObject.SetActive(false);
+                Controls.t_down.gameObject.SetActive(false);
+                usingThisTriggerGroup = Controls.t_right;
                 break;
             case "left":
-                attackTrigger_right.gameObject.SetActive(false);
-                attackTrigger_left.gameObject.SetActive(true);
-                attackTrigger_up.gameObject.SetActive(false);
-                attackTrigger_down.gameObject.SetActive(false);
-                usingThisAttackTriggerGroup = attackTrigger_left;
+                Controls.t_right.gameObject.SetActive(false);
+                Controls.t_left.gameObject.SetActive(true);
+                Controls.t_up.gameObject.SetActive(false);
+                Controls.t_down.gameObject.SetActive(false);
+                usingThisTriggerGroup = Controls.t_left;
                 break;
             case "up":
-                attackTrigger_right.gameObject.SetActive(false);
-                attackTrigger_left.gameObject.SetActive(false);
-                attackTrigger_up.gameObject.SetActive(true);
-                attackTrigger_down.gameObject.SetActive(false);
-                usingThisAttackTriggerGroup = attackTrigger_up;
+                Controls.t_right.gameObject.SetActive(false);
+                Controls.t_left.gameObject.SetActive(false);
+                Controls.t_up.gameObject.SetActive(true);
+                Controls.t_down.gameObject.SetActive(false);
+                usingThisTriggerGroup = Controls.t_up;
                 break;
             case "down":
-                attackTrigger_right.gameObject.SetActive(false);
-                attackTrigger_left.gameObject.SetActive(false);
-                attackTrigger_up.gameObject.SetActive(false);
-                attackTrigger_down.gameObject.SetActive(true);
-                usingThisAttackTriggerGroup = attackTrigger_down;
+                Controls.t_right.gameObject.SetActive(false);
+                Controls.t_left.gameObject.SetActive(false);
+                Controls.t_up.gameObject.SetActive(false);
+                Controls.t_down.gameObject.SetActive(true);
+                usingThisTriggerGroup = Controls.t_down;
                 break;
             default:
-                usingThisAttackTriggerGroup = null;
+                usingThisTriggerGroup = null;
                 Debug.LogError("Havn't chosen an attack trigger group to use out of: right, left, up, down");
                 break;
         }
-        return usingThisAttackTriggerGroup;
+        return usingThisTriggerGroup;
     }
 
-    CounterTriggerGroup CounterTriggersEnableToUse()
-    {
-        CounterTriggerGroup usingThisCounterTriggerGroup;
-        switch (direction)
-        {
-            case "right":
-                attackTrigger_right.gameObject.SetActive(true);
-                attackTrigger_left.gameObject.SetActive(false);
-                attackTrigger_up.gameObject.SetActive(false);
-                attackTrigger_down.gameObject.SetActive(false);
-                usingThisCounterTriggerGroup = counterTrigger_right;
-                break;
-            case "left":
-                attackTrigger_right.gameObject.SetActive(false);
-                attackTrigger_left.gameObject.SetActive(true);
-                attackTrigger_up.gameObject.SetActive(false);
-                attackTrigger_down.gameObject.SetActive(false);
-                usingThisCounterTriggerGroup = counterTrigger_left;
-                break;
-            case "up":
-                attackTrigger_right.gameObject.SetActive(false);
-                attackTrigger_left.gameObject.SetActive(false);
-                attackTrigger_up.gameObject.SetActive(true);
-                attackTrigger_down.gameObject.SetActive(false);
-                usingThisCounterTriggerGroup = counterTrigger_up;
-                break;
-            case "down":
-                attackTrigger_right.gameObject.SetActive(false);
-                attackTrigger_left.gameObject.SetActive(false);
-                attackTrigger_up.gameObject.SetActive(false);
-                attackTrigger_down.gameObject.SetActive(true);
-                usingThisCounterTriggerGroup = counterTrigger_down;
-                break;
-            default:
-                usingThisCounterTriggerGroup = null;
-                Debug.LogError("Havn't chosen an attack trigger group to use out of: right, left, up, down");
-                break;
-        }
-        return usingThisCounterTriggerGroup;
-    }
 
-    void SingularAttacksUse()
+    void SingularAttacksUse(AttackAbility attack)
     {
-        switch (currentAttackAbility.collisionType)
+        switch (attack.collision)
         {
-            case AttackAbility.CollisionType.MovementForward:
+            case AttackAbility.Collision.MovementForward:
 
-                StartCoroutine(MovementForwardAttack());
+                StartCoroutine(MovementForwardAttack(attack));
 
                 break;
         }
     }
 
-    string GetMultiChoiceAttackChoiceAndUse()
+    string GetMultiChoiceAttackChoiceAndUse(AttackAbility attack)
     {
         string choice = "";
 
-        switch (currentAttackAbility.collisionType)
+        switch (attack.collision)
         {
-            case AttackAbility.CollisionType.MovementLeftOrRight:
+            case AttackAbility.Collision.MovementLeftOrRight:
 
                 choice = Controls.getMoveDirection?.Invoke();
 
@@ -622,7 +578,7 @@ public class CombatFunctionality : MonoBehaviour
                     break;
                 }
 
-                StartCoroutine(MovementRightOrLeftAttack(choice));
+                StartCoroutine(MovementRightOrLeftAttack(choice, attack));
 
                 break;
         }
@@ -630,11 +586,11 @@ public class CombatFunctionality : MonoBehaviour
         return choice;
     }
 
-    void FollowUpAttacksUse()
+    void FollowUpAttacksUse(AttackAbility attack)
     {
-        switch (currentAttackAbility.collisionType)
+        switch (attack.collision)
         {
-            case AttackAbility.CollisionType.DoubleFrontSlash:
+            case AttackAbility.Collision.DoubleFrontSlash:
 
                 StartCoroutine(DoubleFrontSlash());
 
@@ -702,55 +658,20 @@ public class CombatFunctionality : MonoBehaviour
     public void DisableAllAttackTriggers()
     {
         print("Disabling all attack triggers");
-        foreach(GameObject attackTrigger in myAttackTriggers)
-        {
-            if(attackTrigger == null)
-            {
-                Debug.LogError("Attack trigger null");
-            }
-            attackTrigger.GetComponent<AttackTriggerGroup>().DisableThisTrigger();
-        }
-    }
-
-    #endregion
-
-    #region Blocking
-
-    void InitializeBlockingTrigger()
-    {
-        initializedBlockingTrigger = true;
-        blockingTrigger = Instantiate(blockingTriggerPrefab, blockingTriggerParent, false).GetComponent<BlockingTriggerCollider>();
-        blockingTrigger.myCombatFunctionality = this;
-        blockingTrigger.gameObject.SetActive(false);
-    }
-
-
-    void Block()
-    {
-        if (!Controls.isLockedOn || Controls.alreadyAttacking) return;
-
-        Controls.isBlocking = true;
-        blockingTrigger.gameObject.SetActive(true);
-
-    }
-
-    void StopBlock()
-    {
-        if (!Controls.isLockedOn || Controls.alreadyAttacking || !Controls.isBlocking) return;
-
-        Controls.isBlocking = false;
-        blockingTrigger.gameObject.SetActive(false);
+        foreach(ModeRuntimeData mode in Controls.modes)
+            DisableTriggers(false, Controls.Mode(mode.data.modeName));
 
     }
 
     #endregion
+
 
     #region Flinching
 
     public void Flinch(float flinchTime)
     {
         print(this.gameObject.name + " has flinched");
-        DisableAttackTriggers(false);
+        DisableTriggers(false, Controls.Mode(Controls.mode));
     }
 
     #endregion

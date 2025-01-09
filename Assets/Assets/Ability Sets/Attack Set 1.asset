@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 59d33f9bf2fb38e45aabf5ebbffeb4ad, type: 3}
+  m_Name: Attack Set 1
+  m_EditorClassIdentifier: 
+  modeName: Attack
+  right: {fileID: 11400000, guid: f70474e9dbc7cb74e9e11772d7ab18fc, type: 2}
+  left: {fileID: 11400000, guid: 585cc1ee8817ff74c82c4dcaa2d0609d, type: 2}
+  up: {fileID: 11400000, guid: cc188b88764ff3c478da26feea8ec6bc, type: 2}
+  down: {fileID: 11400000, guid: 8abcef4200876484fac9aaecea2d5016, type: 2}

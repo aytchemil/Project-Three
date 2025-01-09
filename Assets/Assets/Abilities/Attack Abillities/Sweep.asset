@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 68d416ff0e8c367469377eb83d6a499f, type: 3}
-  m_Name: Side Slash
+  m_Name: Sweep
   m_EditorClassIdentifier: 
-  archetype: 0
-  collisionType: 3
-  attackTriggerCollider: {fileID: 8475917669229452261, guid: 98be2273dca22774fa9b053b0e3b6f42, type: 3}
-  attackName: Side Slash
+  abilityName: Sweep
   icon: {fileID: 2800000, guid: 716455f41f856fa4aa69d5d332444551, type: 3}
+  archetype: 0
+  collision: 0
+  attackTriggerCollider: {fileID: 8475917669229452261, guid: 98be2273dca22774fa9b053b0e3b6f42, type: 3}
   initialAttackDelay:
   - 0.35
   missDelayUntilAbleToAttackAgain: 0.6

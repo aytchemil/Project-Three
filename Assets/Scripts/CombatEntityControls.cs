@@ -2,6 +2,9 @@ using UnityEngine;
 using System;
 using UnityEngine.InputSystem;
 using UnityEditor.ShaderGraph;
+using NUnit.Framework;
+using System.Collections.Generic;
+using Unity.VisualScripting;
 
 /// <summary>
 /// Centralized Controller and controls for every combat entity.
@@ -21,7 +24,7 @@ public class CombatEntityController : MonoBehaviour
     public Action blockStart;
     public Action blockStop;
     public Action switchAttackMode;
-    public string mode = "attack";
+    public string mode = "Attack";
 
     [Header("Observer Events")]
     public Func<CombatEntityController> GetTarget;
@@ -36,19 +39,18 @@ public class CombatEntityController : MonoBehaviour
     public Action<float> Flinch;
     public Func<string> getMoveDirection;
 
+    [Header("Modes")]
+    public List<ModeRuntimeData> modes = new List<ModeRuntimeData>();
 
-    [Header("Pre-Selected Abilities")]
-    [Header("Attack Abilities")]
-    public AttackAbility a_right;
-    public AttackAbility a_left;
-    public AttackAbility a_up;
-    public AttackAbility a_down;
+    [Header("Mode Inputted Ability Sets")]
+    public List<ModeAbilitiesSO> abilitySetInputs;
 
-    [Header("Counter Abilities")]
-    public CounterAbility c_right;
-    public CounterAbility c_left;
-    public CounterAbility c_up;
-    public CounterAbility c_down;
+    [Header("Main Current Ability Sets")]
+    public ModeTriggerGroup t_right;
+    public ModeTriggerGroup t_left;
+    public ModeTriggerGroup t_up;
+    public ModeTriggerGroup t_down;
+    [Space]
 
     [Header("Central Flags")]
     public Func<bool> cantUseAbility;
@@ -65,9 +67,13 @@ public class CombatEntityController : MonoBehaviour
     [Header("Combat Flags")]
     public bool targetIsDodging;
 
+    Transform modeParent;
+    bool modesInitialized = false;
+
     protected virtual void OnEnable()
     {
         cantUseAbility = () => (!isLockedOn || alreadyAttacking || isBlocking || isFlinching || isCountering);
+        CreateMyOwnModeInstances();
     }
     protected virtual void OnDisable()
     {
@@ -84,5 +90,99 @@ public class CombatEntityController : MonoBehaviour
         cantUseAbility = null;
     }
 
+    void CreateMyOwnModeInstances()
+    {
+        if (modesInitialized) return;
+
+        modes.Clear();
+
+        if (modeParent == null)
+            modeParent = Instantiate(new GameObject(), transform, false).transform;
+        modeParent.name = "Mode Parent";
+
+        int i = 0;
+        //Take in all the modes
+        foreach (ModeData template in ModeManager.instance.modes)
+        {
+            //print("Copying template " + template.modeName + " on iteration " + i);
+            //Create new tempalte data
+            ModeData newModeData = ScriptableObject.CreateInstance<ModeData>();
+            newModeData.modeName = template.modeName;
+            newModeData.UIIndicator = template.UIIndicator;
+            newModeData.modeTextDesc = template.modeTextDesc;
+
+            //Create NEW MODE runtime wrapper, put the data in the wrapper
+            GameObject modeWrapper = Instantiate(new GameObject(), modeParent, false);
+
+
+            ModeRuntimeData newMode = modeWrapper.AddComponent<ModeRuntimeData>();
+            modeWrapper.transform.parent = modeParent;
+            newMode.data = newModeData;
+            newMode.name = "Mode: " + newMode.data.modeName;
+
+            // print($"newmode modeName is {newMode.data.name}");
+
+            modes.Add(newMode);
+            i++;
+        }
+
+
+        AssignAbilitySetsToModeData();
+        InstantiateModeParents();
+
+        modesInitialized = true;
+    }
+
+    void AssignAbilitySetsToModeData()
+    {
+        foreach (ModeRuntimeData myMode in modes)
+            myMode.data.abilitySet = AbilitySet(myMode.data.modeName);
+
+    }
+
+    void InstantiateModeParents()
+    {
+        foreach (ModeRuntimeData mode in modes)
+            if (mode.parent == null)
+            {
+               // print($"Assigning parent for {mode.data.modeName} ");
+                mode.parent = Instantiate(new GameObject(), transform, false).transform;
+                mode.parent.rotation = Quaternion.identity;
+                mode.parent.name = mode.data.modeName + " Triggers Parent";
+            }
+    }
+
+    public ModeRuntimeData Mode(string name)
+    {
+        ModeRuntimeData retMode = null;
+
+        foreach(ModeRuntimeData mode in modes)
+        {
+            //print($"Mode check comparing {mode.modeName} against {name}");
+
+            if (mode.data.modeName == name)
+                retMode = mode;
+        }
+
+        if (retMode == null)
+            Debug.LogError($"Could not find a mode of name [{name}] please change it");
+
+        return retMode;
+    }
+
+    public ModeAbilitiesSO AbilitySet(string modeName)
+    {
+        ModeAbilitiesSO retAbilitySet = null;
+
+        foreach (ModeAbilitiesSO abilitySet in abilitySetInputs)
+            if (abilitySet.modeName == modeName)
+                retAbilitySet = abilitySet;
+
+        if (retAbilitySet == null)
+            Debug.LogError("Did not find an ability set with that modename");
+
+
+        return retAbilitySet;
+    }
 
 }

@@ -3,16 +3,16 @@ using UnityEngine.UI;
 
 
 [CreateAssetMenu(fileName = "AttackAbility", menuName = "ScriptableObjects/Abilities/Attack Ability")]
-public class AttackAbility : Ability
+public class AttackAbility : AttackingAbility
 {
-    public enum AttackArchetype
+    public enum Archetype
     {
         Singular = 0,
         MultiChoice = 1,
         FollowUp = 2,
     }
-    public AttackArchetype archetype;
-    public enum CollisionType
+    public Archetype archetype;
+    public enum Collision
     {
         Box = 0,
         Overhead = 1,
@@ -22,13 +22,9 @@ public class AttackAbility : Ability
         MovementLeftOrRight = 5,
         DoubleFrontSlash = 6,
     }
-    public CollisionType collisionType;
+    public Collision collision;
     public GameObject attackTriggerCollider;
 
-    public float[] initialAttackDelay = { 0.3f };
-    public float missDelayUntilAbleToAttackAgain = 0.6f;
-
-    public float damage;
     public float movementAmount;
 
 }

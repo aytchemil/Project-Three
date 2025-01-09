@@ -16,3 +16,4 @@ MonoBehaviour:
   icon: {fileID: 2800000, guid: ea28f23349b00cc4f84c20b5aaeb2561, type: 3}
   counterArchetype: 0
   counterTriggerCollider: {fileID: 2410970770333841755, guid: 254fd74d1e4229c45a0c0e5852139d06, type: 3}
+  startDelay: 0

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7445960309081131824}
   - component: {fileID: 8678877782007549811}
   - component: {fileID: 6945801283386056576}
-  - component: {fileID: 8368257347073302744}
+  - component: {fileID: 3749655159874676159}
   m_Layer: 0
   m_Name: BlockingTrigger
   m_TagString: Untagged
@@ -109,7 +109,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &8368257347073302744
+--- !u!114 &3749655159874676159
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -118,10 +118,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1036016201369694723}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68584e33cfc6e0948acd88ac07256fc5, type: 3}
+  m_Script: {fileID: 11500000, guid: 0da8d73eac8d32e48ac819c9cdd95b06, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  myCombatFunctionality: {fileID: 0}
-  collideWith:
-    serializedVersion: 2
-    m_Bits: 512
+  combatFunctionality: {fileID: 0}

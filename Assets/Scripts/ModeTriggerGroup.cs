@@ -7,7 +7,7 @@ public abstract class ModeTriggerGroup : MonoBehaviour
 {
     public CombatFunctionality combatFunctionality;
     public virtual Ability myAbility { get; set; }
-    protected bool usingTrigger;
+    [SerializeField] protected bool usingTrigger;
 
     public void StartUsingAbilityTrigger(Ability currentAbility, float delay)
     {
@@ -17,7 +17,7 @@ public abstract class ModeTriggerGroup : MonoBehaviour
         usingTrigger = true;
 
         myAbility = currentAbility;
-        InitializeTrigger();
+        EnableTrigger();
 
         Invoke(nameof(InitialDelayOver_ReEnableTrigger), delay);
     }
@@ -26,14 +26,14 @@ public abstract class ModeTriggerGroup : MonoBehaviour
     /// <summary>
     /// Initializes the Trigger
     /// </summary>
-    public void InitializeTrigger()
+    public void EnableTrigger()
     {
-        InitializeTriggerImplementation();
+        EnableTriggerImplementation();
 
         combatFunctionality.initialAbilityUseDelayOver = false;
     }
 
-    protected abstract void InitializeTriggerImplementation();
+    protected abstract void EnableTriggerImplementation();
 
     
     /// <summary>
@@ -84,6 +84,14 @@ public abstract class ModeTriggerGroup : MonoBehaviour
 
 
 
+    public void InitializeSelf(CombatFunctionality combatFunctionality)
+    {
+        this.combatFunctionality = combatFunctionality;
+
+        InitializeSelfImplementation(combatFunctionality);
+    }
+
+    protected abstract void InitializeSelfImplementation(CombatFunctionality combatFunctionality);
 
 
 }

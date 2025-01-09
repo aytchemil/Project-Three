@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEditor.ShaderGraph;
 
 [RequireComponent(typeof(PlayerController))]
 public class CombatUI : MonoBehaviour
@@ -43,8 +44,6 @@ public class CombatUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI text;
 
     [SerializeField] private RawImage modeIndicator;
-    [SerializeField] private Texture attackingIndicator;
-    [SerializeField] private Texture counterIndicator;
     [SerializeField] private TextMeshProUGUI modeText;
 
 
@@ -180,9 +179,6 @@ public class CombatUI : MonoBehaviour
 
         //Pushes the direction to the functionality (and any other listeners)
         controls.SelectCertainAbility?.Invoke(lookDir);
-        //Debug.Log(lookDir);
-
-
 
     }
 
@@ -201,9 +197,10 @@ public class CombatUI : MonoBehaviour
     {
         //print("enabling ui");
         combatUIParent.SetActive(true);
-        ChangeAllImageIcons("attack");
-        UpdateModeUIObjects("attack");
+        ChangeAllImageIcons();
+        UpdateModeUIObjects();
         UpdateAttackIndicatorRotation(new Vector2(0, deadZone + 1));
+        UpdateMainTriggers();
     }
 
     /// <summary>
@@ -281,50 +278,24 @@ public class CombatUI : MonoBehaviour
 
     void UpdateCurrentAbilityText(string dir)
     {
-        switch (dir)
-        {
-            case "right":
-                text.text = "Current Ability: " + controls.a_right.abilityName;
-                break;
-            case "left":
-                text.text = "Current Ability: " + controls.a_left.abilityName; break;
-            case "up":
-                text.text = "Current Ability: " + controls.a_up.abilityName; break;
-            case "down":
-                text.text = "Current Ability: " + controls.a_down.abilityName; break;
-        }
+        Ability currentAbility = controls.Mode(controls.mode).data.currentAbility;
+        text.text = "Current Ability: " + currentAbility.abilityName;
     }
 
-    void ChangeAllImageIcons(string mode)
+    void ChangeAllImageIcons()
     {
-        if(mode == "attack")
-        {
-            rightImgRef.texture = controls.a_right.icon;
-            leftImgRef.texture = controls.a_left.icon;
-            upImgRef.texture = controls.a_up.icon;
-            downImgRef.texture = controls.a_down.icon;
-        }
-        else if (mode == "counter")
-        {
-            rightImgRef.texture = controls.c_right.icon;
-            leftImgRef.texture = controls.c_left.icon;
-            upImgRef.texture = controls.c_up.icon;
-            downImgRef.texture = controls.c_down.icon;
-        }
+        rightImgRef.texture = controls.Mode(controls.mode).data.abilitySet.right.icon;
+        leftImgRef.texture = controls.Mode(controls.mode).data.abilitySet.left.icon;
+        upImgRef.texture = controls.Mode(controls.mode).data.abilitySet.up.icon;
+        downImgRef.texture = controls.Mode(controls.mode).data.abilitySet.down.icon;
     }
 
-    void UpdateModeUIObjects(string mode)
+    void UpdateModeUIObjects()
     {
-        if (mode == "attack")
-        {
-            modeIndicator.texture = attackingIndicator;
-            modeText.text = "You are attacking";
-        }
-        else if (mode == "counter")
-        {
-            modeIndicator.texture = counterIndicator;
-            modeText.text = "You are countering";
-        }
+        modeIndicator.texture = controls.Mode(controls.mode).data.UIIndicator;
+        modeText.text = "You are " + controls.Mode(controls.mode).data.modeTextDesc;
+        //print("updated mode ui");
+
     }
 
 
@@ -332,20 +303,35 @@ public class CombatUI : MonoBehaviour
 
     void SwitchAttackMode()
     {
-        if (controls.mode == "attack") //SETTING TO COUNTER
-        {
-            print("switching attack mode to counter");
-            controls.mode = "counter";
-            ChangeAllImageIcons("counter");
-            UpdateModeUIObjects("counter");
-        }
-        else if (controls.mode == "counter")  //SETTING TO ATTACK
-        {
-            print("switching attack mode to attack");
-            controls.mode = "attack";
-            ChangeAllImageIcons("attack");
-            UpdateModeUIObjects("attack");
-        }
+        int currIndex = controls.modes.IndexOf(controls.Mode(controls.mode));
+
+        if (currIndex >= controls.modes.Count-1)
+            currIndex = 0;
+        else
+            currIndex++;
+
+
+        controls.mode = controls.modes[currIndex].data.modeName;
+
+        print($"Switching Mode to {controls.Mode(controls.mode)}");
+        ChangeAllImageIcons();
+        UpdateModeUIObjects();
+
+        UpdateMainTriggers();
+
+        controls.SelectCertainAbility?.Invoke(lookDir);
+        print(lookDir);
+
+
+    }
+
+    void UpdateMainTriggers()
+    {
+        //print("going to " + controls.mode);
+        controls.t_right = controls.Mode(controls.mode).triggers[0].GetComponent<ModeTriggerGroup>();
+        controls.t_left = controls.Mode(controls.mode).triggers[1].GetComponent<ModeTriggerGroup>();
+        controls.t_up = controls.Mode(controls.mode).triggers[2].GetComponent<ModeTriggerGroup>();
+        controls.t_down = controls.Mode(controls.mode).triggers[3].GetComponent<ModeTriggerGroup>();
     }
 
 }

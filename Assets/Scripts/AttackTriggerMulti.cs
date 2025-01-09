@@ -10,10 +10,30 @@ public class AttackTriggerMulti : AttackTriggerGroup
     protected bool hasTriggers = false;
     protected bool initializedChildTriggers = false;
 
-    protected virtual void OnEnable()
+    protected void OnEnable()
     {
         if (!hasTriggers)
             TakeOnChildrenAttackTriggers();
+    }
+
+
+
+
+
+
+
+    #region Method Overrides
+    //Method Overrides
+    //============================================================================================================================================================================
+
+    protected override void DisableThisTriggerImplementation()
+    {
+        //This is here because we want to Rest this MultiAttackTrigger.
+        //Resseting it causes all of its OWN members it uses to be reset
+        //AND since it has children AttackTriggerColliderSingles that it handles, it must Disable Their Triggers (locally) to
+        Reset();
+
+        base.DisableThisTriggerImplementation();
     }
 
     public override void InitSelf(CombatFunctionality combatFunctionality)
@@ -22,9 +42,18 @@ public class AttackTriggerMulti : AttackTriggerGroup
 
         foreach (var trigger in triggers)
             trigger.InitSelf(combatFunctionality);
-
     }
 
+    #endregion
+
+
+
+
+
+
+    #region Virtual Methods
+    //Virtual Methods
+    //==========================================================================================================================================================================
 
     protected virtual void TakeOnChildrenAttackTriggers()
     {
@@ -54,6 +83,27 @@ public class AttackTriggerMulti : AttackTriggerGroup
         initializedChildTriggers = true;
     }
 
+    protected virtual void Reset()
+    {
+        DisableAllChildTriggers();
+
+        usingAttackTrigger = null;
+    }
+
+    #endregion
+
+
+
+
+
+
+
+
+
+    #region Methods
+    // Methods
+    //==========================================================================================================================================================================
+
     protected void DisableAllChildTriggers()
     {
         print("Disabling all child triggers");
@@ -65,18 +115,6 @@ public class AttackTriggerMulti : AttackTriggerGroup
 
     }
 
-    public override void DisableTrigger()
-    {
-        //print("disabling trigger");
-        Reset();
+    #endregion
 
-        base.DisableTrigger();
-    }
-
-    protected virtual void Reset()
-    {
-        DisableAllChildTriggers();
-
-        usingAttackTrigger = null;
-    }
 }

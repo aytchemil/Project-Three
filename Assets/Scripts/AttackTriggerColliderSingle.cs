@@ -5,15 +5,13 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class AttackTriggerColliderSingle : AttackTriggerGroup
 {
-    [Header("Collider: Real-Time Variables")]
+    [Header("Collider Single: Real-Time Variables")]
     public LayerMask collideWith;
     Collider col;
     public Animator attackTriggerAnimator;
 
-    public override void Awake()
+    public void Awake()
     {
-        base.Awake();
-
         //Cache
         col = GetComponent<Collider>();
         if (attackTriggerAnimator == null)
@@ -22,15 +20,16 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
         //Sets the collision's layers
         col.includeLayers = collideWith;
         col.excludeLayers = ~collideWith;
-        
+
     }
 
-    /// <summary>
-    /// Sets the attacking flag
-    /// </summary>
-    public override void InitializeTrigger()
+    #region  Template Pattern Overrides
+    //Template Pattern Overrides
+    ///=======================================================================================================================================
+
+    protected override void InitializeTriggerImplementation()
     {
-        base.InitializeTrigger();
+        base.InitializeTriggerImplementation();
 
         DisableIndiviualCollider(Color.grey);
 
@@ -38,24 +37,20 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
         attackTriggerAnimator.SetBool("missed", false);
     }
 
-    /// <summary>
-    /// Tells this script what its attack parameters are
-    /// </summary>
-    /// <param name="currentAbility"></param>
-    public override void StartAttackFromAttackTrigger(AttackAbility currentAbility, float delay)
+    protected override void InitialDelayOver_ReEnableTriggerImplementation()
     {
-        base.StartAttackFromAttackTrigger(currentAbility, delay);
-    }
-
-    public override void InitialAttackDelayOverReEnableTrigger()
-    {
-        base.InitialAttackDelayOverReEnableTrigger();
+        base.InitialDelayOver_ReEnableTriggerImplementation();
 
         gameObject.GetComponent<MeshRenderer>().material.color = Color.red;
         col.enabled = true;
 
         attackTriggerAnimator.SetBool("windupDone", true);
     }
+
+
+
+    #endregion
+
 
     /// <summary>
     /// Where the actual attack takes place
@@ -66,12 +61,12 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
         if (other.GetComponent<CombatEntityController>() == combatFunctionality.Controls) return;
 
         float newEnemyHealth;
-        if (attacking && combatFunctionality.initialAttackDelayOver)
+        if (attacking && combatFunctionality.initialAbilityUseDelayOver)
         {
             HitAttack();
             #region Death
             ///If the Entity being attacked's health reaches less than 0, tell OUR Controller to call the target death delegate action
-            newEnemyHealth = other.GetComponent<AttackbleEntity>().Attacked(myAttackAbility);
+            newEnemyHealth = other.GetComponent<AttackbleEntity>().Attacked(myAbility as AttackAbility);
 
 
             if (newEnemyHealth < 0)
@@ -79,17 +74,17 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
                 //Debug.Log("Enemy health 0, killed enemy, now calling TargetDeath to signal an enemy death");
                 //Debug.Log("Enemy that died was: " + other.gameObject.name + " by " + combatFunctionality.gameObject.name);
                 combatFunctionality.TargetDeathCaller(other.GetComponent<CombatEntityController>());
-                if(gameObject.GetComponent<CombatLock>() != null)
+                if (gameObject.GetComponent<CombatLock>() != null)
                 {
                     gameObject.GetComponent<CombatLock>().ExitCombatCaller();
                 }
-                
+
 
                 //Enemy exits combat when dieing
-                if(other.gameObject.GetComponent<CombatLock>() != null)
+                if (other.gameObject.GetComponent<CombatLock>() != null)
                 {
                     other.gameObject.GetComponent<CombatLock>().ExitCombatCaller();
-                   // print("enemy dead, delocking caller called");
+                    // print("enemy dead, delocking caller called");
                 }
             }
 
@@ -101,7 +96,9 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
     }
 
 
-
+    #region Overrides
+    //Overides
+    ///==============================================================================================================================================================================================
 
     public override void HitAttack()
     {
@@ -109,12 +106,6 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
 
         DisableIndiviualCollider(Color.green);
 
-    }
-
-    public void DisableIndiviualCollider(Color color)
-    {
-        gameObject.GetComponent<MeshRenderer>().material.color = color;
-        col.enabled = false;
     }
 
     public override void MissAttackCuttoffLocal()
@@ -126,5 +117,22 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
 
         attackTriggerAnimator.SetBool("missed", true);
     }
+
+    #endregion
+
+
+
+    #region  Methods
+    // Methods
+    ///=============================================================================================================================================================
+
+    public void DisableIndiviualCollider(Color color)
+    {
+        gameObject.GetComponent<MeshRenderer>().material.color = color;
+        col.enabled = false;
+    }
+
+
+    #endregion
 
 }

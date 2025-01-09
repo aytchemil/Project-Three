@@ -19,6 +19,6 @@ public class CounterAbility : Ability
     }
 
     public GameObject counterTriggerCollider;
+    public float startDelay;
 
-    AttackAbility attackAbility;
 }

@@ -1,22 +1,98 @@
 using UnityEngine;
 
-public class AttackTriggerGroup : MonoBehaviour
+public class AttackTriggerGroup : ModeTriggerGroup
 {
+    private AttackAbility myAttackAbility;
 
-    [Header("Attack Trigger Group: Real-Time Variables")]
-    public CombatFunctionality combatFunctionality;
-    public AttackAbility myAttackAbility;
+    //Overriding base class Ability reference
+    public override Ability myAbility
+    {
+        get => myAttackAbility;
+        set => myAttackAbility = value as AttackAbility;
+    }
 
-    public bool attacking;
+    //Wrapper for usingTrigger
+    public bool attacking
+    {
+        get => usingTrigger;
+        set => usingTrigger = value;
+    }
+
     public bool hitAttack;
     public bool missedAttack;
 
+    
 
-    public virtual void Awake()
+
+
+    #region  Template Pattern Overrides
+    //Template Pattern Overrides
+
+    protected override void InitializeTriggerImplementation()
     {
-
+        missedAttack = false;
+        hitAttack = false;
     }
 
+    protected override void InitialDelayOver_ReEnableTriggerImplementation()
+    {
+        print("ability use delay over, attacking...");
+    }
+
+    protected override void DisableThisTriggerImplementation()
+    {
+        print(gameObject.name + " | Disabling trigger implementation");
+
+        CompleteAttackCaller();
+        combatFunctionality.FinishAttacking();
+
+        if (combatFunctionality.Controls.GetTarget?.Invoke() != null)
+            ResetAttackCaller();
+    }
+
+    protected override void DisableThisTriggerLocallyImplementation()
+    {
+        missedAttack = false;
+        hitAttack = false;
+    }
+
+    #endregion
+
+
+
+
+
+
+
+    #region  Virtual Methods
+    //Virtual Methods
+    ///===============================================================================================================
+
+    public virtual void HitAttack()
+    {
+        //Debug.Log("Attack hit registered");
+        hitAttack = true;
+    }
+
+    public virtual void MissAttackCuttoff()
+    {
+        //print("Miss Attack Cuttoff Reached");
+        if (hitAttack) return;
+
+        MissAttackCuttoffLocal();
+
+        MissedAttackCaller();
+
+        print(gameObject.name + " | Missed attack delay over, DisableTrigger() (on delay)");
+        Invoke(nameof(DisableThisTrigger), myAttackAbility.missDelayUntilAbleToAttackAgain);
+    }
+
+    public virtual void MissAttackCuttoffLocal()
+    {
+        //print("missed attack");
+        missedAttack = true;
+        hitAttack = false;
+    }
     public virtual void InitSelf(CombatFunctionality combatFunctionality)
     {
         this.combatFunctionality = combatFunctionality;
@@ -24,61 +100,19 @@ public class AttackTriggerGroup : MonoBehaviour
 
     }
 
-    /// <summary>
-    /// Tells this script what its attack parameters are
-    /// </summary>
-    /// <param name="currentAttackAbility"></param>
-    public virtual void StartAttackFromAttackTrigger(AttackAbility currentAttackAbility, float delay)
-    {
-        if (attacking)
-        { 
-            //print("already attacking, cannot re attack"); 
-            return; 
-        }
-        //Debug.Log("Starting an Attack: " + currentAbility.name);
-        myAttackAbility = currentAttackAbility;
-        InitializeTrigger();
-        Invoke(nameof(InitialAttackDelayOverReEnableTrigger), delay);
-    }
+    #endregion
 
-    public virtual void InitializeTrigger()
-    {
-        //print("initializing attack trigger: " + gameObject.name);
-        attacking = true;
-        missedAttack = false;
-        hitAttack = false;
-        combatFunctionality.initialAttackDelayOver = false;
-    }
 
-    public virtual void InitialAttackDelayOverReEnableTrigger()
-    {
-        // print("Initial Attack Delay over, reenbling trigger");
-        combatFunctionality.initialAttackDelayOver = true;
-    }
 
-    public virtual void DisableTrigger()
-    {
-        print(gameObject.name + " | Disabling trigger");
 
-        CompleteAttackCaller();
-        combatFunctionality.initialAttackDelayOver = false;
-        combatFunctionality.FinishAttacking();
 
-        if (combatFunctionality.Controls.GetTarget?.Invoke() != null)
-            ResetAttackCaller();
 
-        DisableThisTriggerOnlyLocally();
-    }
 
-    public virtual void DisableThisTriggerOnlyLocally()
-    {
-        attacking = false;
-        missedAttack = false;
-        hitAttack = false;
-        //print(gameObject.name + " | Disabled trigger");
 
-        gameObject.SetActive(false);
-    }
+
+    #region Methods
+    // Methods
+    ///===================================================================================================================
 
     public void CompleteAttackCaller()
     {
@@ -110,31 +144,6 @@ public class AttackTriggerGroup : MonoBehaviour
         combatFunctionality.Controls.ResetAttack?.Invoke();
     }
 
-    public virtual void HitAttack()
-    {
-        //Debug.Log("Attack hit registered");
-        hitAttack = true;
-    }
-
-    public virtual void MissAttackCuttoff()
-    {
-        //print("Miss Attack Cuttoff Reached");
-        if (hitAttack) return;
-
-        MissAttackCuttoffLocal();
-
-        MissedAttackCaller();
-
-        print(gameObject.name +  " | Missed attack delay over, DisableTrigger() (on delay)");
-        Invoke(nameof(DisableTrigger), myAttackAbility.missDelayUntilAbleToAttackAgain);
-    }
-
-    public virtual void MissAttackCuttoffLocal()
-    {
-        //print("missed attack");
-        missedAttack = true;
-        hitAttack = false;
-    }
 
     public void MissedAttackCaller()
     {
@@ -147,9 +156,10 @@ public class AttackTriggerGroup : MonoBehaviour
         {
             //print("Combo off hit time period reached, can now combo because attack hit");
             print(gameObject.name + " | Combo hit avaliable, DisableTrigger()");
-            DisableTrigger();
+            DisableThisTrigger();
         }
     }
 
+    #endregion
 
 }

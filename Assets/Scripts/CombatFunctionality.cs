@@ -14,7 +14,14 @@ public class CombatFunctionality : MonoBehaviour
     public AttackTriggerGroup attackTrigger_up;
     public AttackTriggerGroup attackTrigger_down;
 
+    public CounterTriggerGroup counterTrigger_right;
+    public CounterTriggerGroup counterTrigger_left;
+    public CounterTriggerGroup counterTrigger_up;
+    public CounterTriggerGroup counterTrigger_down;
+
     public AttackAbility currentAttackAbility;
+    public CounterAbility currentCounterAbility;
+
     string direction;
 
     // Virtual property for 'Controls'
@@ -22,7 +29,8 @@ public class CombatFunctionality : MonoBehaviour
 
     bool initializedAttackTriggers;
     bool initializedBlockingTrigger;
-    public bool initialAttackDelayOver;
+
+    public bool initialAbilityUseDelayOver;
 
     [Header("Blocking")]
     public BlockingTriggerCollider blockingTrigger;
@@ -63,7 +71,7 @@ public class CombatFunctionality : MonoBehaviour
         Controls.ExitCombat += ExitCombat;
         Controls.CombatFollowTarget += CombatFunctionalityElementsLockOntoTarget;
 
-        Controls.useAbility += UseAttackAbility;
+        Controls.useAbility += UseAbility;
 
         Controls.blockStart += Block;
         Controls.blockStop += StopBlock;
@@ -85,7 +93,7 @@ public class CombatFunctionality : MonoBehaviour
         Controls.ExitCombat -= ExitCombat;
         Controls.CombatFollowTarget -= CombatFunctionalityElementsLockOntoTarget;
 
-        Controls.useAbility -= UseAttackAbility;
+        Controls.useAbility -= UseAbility;
 
         Controls.blockStart -= Block;
         Controls.blockStop -= StopBlock;
@@ -96,6 +104,7 @@ public class CombatFunctionality : MonoBehaviour
     #endregion
 
     #region Delegates: InCombat(), ExitCombat(), CombatFunctionalityElementsLockOntoTarget() ,CombatFunctionalityElementLockOntoTarget()
+    ///===========================================================================================================================================================================================================================================================================================
 
     /// <summary>
     /// Action Delegate Method for Being "In Combat" 
@@ -156,7 +165,9 @@ public class CombatFunctionality : MonoBehaviour
     #endregion
 
     #region Trigger Generation: CacheAttackTriggers(), EnableAttackTriggers() DisableAttackTriggers() InstantiateAttackTriggers()
+    ///======================================================================================================================================================================================================================================================================================================
 
+    #region Attack Triggers
     /// <summary>
     /// Cache the attack triggers to a List for easy referenceing
     /// </summary>
@@ -209,7 +220,7 @@ public class CombatFunctionality : MonoBehaviour
             foreach (GameObject attkTrigger in myAttackTriggers)
             {
                 if (attkTrigger.activeSelf)
-                    attkTrigger.GetComponent<AttackTriggerGroup>().DisableTrigger();
+                    attkTrigger.GetComponent<AttackTriggerGroup>().DisableThisTrigger();
 
                 attkTrigger.SetActive(false);
 
@@ -262,10 +273,12 @@ public class CombatFunctionality : MonoBehaviour
         //print(gameObject.name + " | combat functionality : attack triggers disabled");
 
     }
+    #endregion
 
     #endregion
 
     #region Combat Functionality: EnableAbility(), UseAttackAbility()
+    ///====================================================================================================================================================================================================
 
     /// <summary>
     /// Enables the currently selected ability
@@ -275,20 +288,44 @@ public class CombatFunctionality : MonoBehaviour
     {
        // print("Enabling ability on dir: " + dir);
         direction = dir;
-        switch (dir)
+
+        if(Controls.mode == "attack")
         {
-            case "right":
-                currentAttackAbility = Controls.a_right;
-                 break;
-            case "left":
-                currentAttackAbility = Controls.a_left;
-                break;
-            case "up":
-                currentAttackAbility = Controls.a_up;
-                break;
-            case "down":
-                currentAttackAbility = Controls.a_down;
-                break;
+            currentCounterAbility = null;
+            switch (dir)
+            {
+                case "right":
+                    currentAttackAbility = Controls.a_right;
+                    break;
+                case "left":
+                    currentAttackAbility = Controls.a_left;
+                    break;
+                case "up":
+                    currentAttackAbility = Controls.a_up;
+                    break;
+                case "down":
+                    currentAttackAbility = Controls.a_down;
+                    break;
+            }
+        }
+        else if (Controls.mode == "counter")
+        {
+            currentAttackAbility = null;
+            switch (dir)
+            {
+                case "right":
+                    currentCounterAbility = Controls.c_right;
+                    break;
+                case "left":
+                    currentCounterAbility = Controls.c_left;
+                    break;
+                case "up":
+                    currentCounterAbility = Controls.c_up;
+                    break;
+                case "down":
+                    currentCounterAbility = Controls.c_down;
+                    break;
+            }
         }
 
     }
@@ -297,7 +334,7 @@ public class CombatFunctionality : MonoBehaviour
     /// <summary>
     /// Uses the currently selected ability
     /// </summary>
-    public virtual void UseAttackAbility(string mode)
+    public virtual void UseAbility(string mode)
     {
         //print("-> Comabt Functionality: Attempting Attack");
         if(Controls.cantUseAbility.Invoke()) 
@@ -306,17 +343,21 @@ public class CombatFunctionality : MonoBehaviour
             return; 
         }
 
-        if (currentAttackAbility == null)
-            Debug.LogError("There is currently no selected ability (a_current) that this combat functionality script can use.");
 
         //print("-> Combat Functionality: Successfull ATTACK");
 
         if(mode == "attack")
         {
+            if (currentAttackAbility == null)
+                Debug.LogError("There is currently no selected ability (currentAttackAbility) that this combat functionality script can use.");
+
             Attack();
         }
         else if(mode == "counter")
         {
+            if (currentCounterAbility == null)
+                Debug.LogError("There is currently no selected ability (currentCounterAbility) that this combat functionality script can use.");
+
             Counter();
         }
 
@@ -342,9 +383,9 @@ public class CombatFunctionality : MonoBehaviour
                 //print("archetype: singular chosen");
 
                 //Archetype's Functionality
-                AttackTriggersEnableToUse().StartAttackFromAttackTrigger(currentAttackAbility, currentAttackAbility.initialAttackDelay[0]);
+                AttackTriggersEnableToUse().StartUsingAbilityTrigger(currentAttackAbility, currentAttackAbility.initialAttackDelay[0]);
 
-                //Specific Attack's Functionality
+                //Find the Specific Attack this ability is using, and use this attack abilities's Functionality
                 SingularAttacksUse();
 
                 break;
@@ -353,7 +394,7 @@ public class CombatFunctionality : MonoBehaviour
 
                 //print("archetype: multichoice chosen");
 
-                //Specific Attack's Functionality
+                //Find the Specific Attack this ability is using, and use this attack abilities's Functionality
                 string choice = GetMultiChoiceAttackChoiceAndUse();
 
                 //print("choice is : " + choice);
@@ -372,7 +413,7 @@ public class CombatFunctionality : MonoBehaviour
                 //Archetype's Functionality
                 StartCoroutine(AttackTriggersEnableToUse().GetComponent<AttackTriggerFollowUp>().FollowUpAttack(currentAttackAbility));
 
-                //Specific Attack's Functionality
+                //Find the Specific Attack this ability is using, and use this attack abilities's Functionality
                 FollowUpAttacksUse();
 
                 break;
@@ -384,6 +425,25 @@ public class CombatFunctionality : MonoBehaviour
     void Counter()
     {
         print("countering");
+
+        StartCountering();
+
+        switch (currentCounterAbility.counterArchetype)
+        {
+            case CounterAbility.CounterArchetype.StandingRiposte:
+
+                CounterTriggersEnableToUse().StartUsingAbilityTrigger(currentCounterAbility, currentCounterAbility.startDelay);
+
+                StandingRiposte();
+
+                break;
+        }
+    }
+
+    void StandingRiposte()
+    {
+        print("Counter attack: Standing riposte");
+
     }
 
 
@@ -395,7 +455,7 @@ public class CombatFunctionality : MonoBehaviour
 
         //print("Waiting for attack to start, initialAttackDelayOver not over yet (its false)");
         //print("initial attack delay over?: " + initialAttackDelayOver);
-        while (!initialAttackDelayOver)
+        while (!initialAbilityUseDelayOver)
         {
            // print("waiting...");
             yield return new WaitForEndOfFrame();
@@ -424,7 +484,7 @@ public class CombatFunctionality : MonoBehaviour
 
         print("multi attack trigger, movementatttackrightorleft : lunging in dir " + choice);
 
-        while (!initialAttackDelayOver)
+        while (!initialAbilityUseDelayOver)
         {
             // print("waiting...");
             yield return new WaitForEndOfFrame();
@@ -436,7 +496,7 @@ public class CombatFunctionality : MonoBehaviour
     {
         //Debug.Log(gameObject.name + " | Combat Functionality: attacking w/ Double Front Slash");
 
-        while (!initialAttackDelayOver)
+        while (!initialAbilityUseDelayOver)
         {
             // print("waiting...");
             yield return new WaitForEndOfFrame();
@@ -491,6 +551,46 @@ public class CombatFunctionality : MonoBehaviour
         return usingThisAttackTriggerGroup;
     }
 
+    CounterTriggerGroup CounterTriggersEnableToUse()
+    {
+        CounterTriggerGroup usingThisCounterTriggerGroup;
+        switch (direction)
+        {
+            case "right":
+                attackTrigger_right.gameObject.SetActive(true);
+                attackTrigger_left.gameObject.SetActive(false);
+                attackTrigger_up.gameObject.SetActive(false);
+                attackTrigger_down.gameObject.SetActive(false);
+                usingThisCounterTriggerGroup = counterTrigger_right;
+                break;
+            case "left":
+                attackTrigger_right.gameObject.SetActive(false);
+                attackTrigger_left.gameObject.SetActive(true);
+                attackTrigger_up.gameObject.SetActive(false);
+                attackTrigger_down.gameObject.SetActive(false);
+                usingThisCounterTriggerGroup = counterTrigger_left;
+                break;
+            case "up":
+                attackTrigger_right.gameObject.SetActive(false);
+                attackTrigger_left.gameObject.SetActive(false);
+                attackTrigger_up.gameObject.SetActive(true);
+                attackTrigger_down.gameObject.SetActive(false);
+                usingThisCounterTriggerGroup = counterTrigger_up;
+                break;
+            case "down":
+                attackTrigger_right.gameObject.SetActive(false);
+                attackTrigger_left.gameObject.SetActive(false);
+                attackTrigger_up.gameObject.SetActive(false);
+                attackTrigger_down.gameObject.SetActive(true);
+                usingThisCounterTriggerGroup = counterTrigger_down;
+                break;
+            default:
+                usingThisCounterTriggerGroup = null;
+                Debug.LogError("Havn't chosen an attack trigger group to use out of: right, left, up, down");
+                break;
+        }
+        return usingThisCounterTriggerGroup;
+    }
 
     void SingularAttacksUse()
     {
@@ -545,7 +645,7 @@ public class CombatFunctionality : MonoBehaviour
 
 
     /// <summary>
-    /// Sets the attacking flag
+    /// Sets Control's alreadyAttacking flag to TRUE
     /// </summary>
     void StartAttacking()
     {
@@ -553,16 +653,33 @@ public class CombatFunctionality : MonoBehaviour
     }
 
     /// <summary>
-    /// sets the attacking flag
+    /// Sets Control's alreadyAttacking flag to FALSE
     /// </summary>
     public void FinishAttacking()
     {
         Controls.alreadyAttacking = false;
     }
 
+    /// <summary>
+    /// Sets Control's isCountering flag to TRUE
+    /// </summary>
+    void StartCountering()
+    {
+        Controls.isCountering = true;
+    }
+
+    /// <summary>
+    /// Sets Control's isCountering flag to FALSE
+    /// </summary>
+    public void FinishCountering()
+    {
+        Controls.isCountering = false;
+    }
+
     #endregion
 
     #region Target Death
+    ///====================================================================================================================================================================================================
 
     /// <summary>
     /// Caller for the Target's death Action Delegate on the controls
@@ -591,7 +708,7 @@ public class CombatFunctionality : MonoBehaviour
             {
                 Debug.LogError("Attack trigger null");
             }
-            attackTrigger.GetComponent<AttackTriggerGroup>().DisableTrigger();
+            attackTrigger.GetComponent<AttackTriggerGroup>().DisableThisTrigger();
         }
     }
 

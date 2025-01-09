@@ -7,6 +7,10 @@ public class AttackTriggerFollowUp : AttackTriggerMulti
 {
     public List<bool> triggerProgress;
 
+    #region Override Methods
+    //Overide Methods
+    //=================================================================================================================================================
+
     protected override void TakeOnChildrenAttackTriggers()
     {
         base.TakeOnChildrenAttackTriggers();
@@ -15,9 +19,30 @@ public class AttackTriggerFollowUp : AttackTriggerMulti
             triggerProgress.Add(new bool());
     }
 
+    protected override void Reset()
+    {
+        base.Reset();
+
+        for (int i = 0; i <= triggers.Count - 1; i++)
+            triggerProgress[i] = false;
+
+    }
+
+    #endregion
+
+
+
+
+
+
+
+    #region Methods
+    //Methods
+    //=================================================================================================================================================
+
     public virtual IEnumerator FollowUpAttack(AttackAbility currentAbility)
     {
-        StartAttackFromAttackTrigger(currentAbility, currentAbility.initialAttackDelay[0]);
+        StartUsingAbilityTrigger(currentAbility, currentAbility.initialAttackDelay[0]);
 
         //Set them all to false
         for (int i = 0; i < triggers.Count-1; i++)
@@ -32,7 +57,7 @@ public class AttackTriggerFollowUp : AttackTriggerMulti
             usingAttackTrigger = triggers[i];
             print("attacking with : " + usingAttackTrigger.name);
             usingAttackTrigger.gameObject.SetActive(true);
-            usingAttackTrigger.StartAttackFromAttackTrigger(currentAbility, currentAbility.initialAttackDelay[i]);
+            usingAttackTrigger.StartUsingAbilityTrigger(currentAbility, currentAbility.initialAttackDelay[i]);
 
 
 
@@ -47,7 +72,7 @@ public class AttackTriggerFollowUp : AttackTriggerMulti
                 if (i == triggerProgress.Count - 1) //last
                 {
                     print("LAST");
-                    if (usingAttackTrigger.hitAttack) { HitAttack(); ComboOffOfHitNowAvaliable(); DisableTrigger(); yield break; }
+                    if (usingAttackTrigger.hitAttack) { HitAttack(); ComboOffOfHitNowAvaliable(); DisableThisTrigger(); yield break; }
                     if (usingAttackTrigger.missedAttack) { MissAttackCuttoff(); yield break; }
                 }
 
@@ -62,12 +87,6 @@ public class AttackTriggerFollowUp : AttackTriggerMulti
 
     }
 
-    protected override void Reset()
-    {
-        base.Reset();
+    #endregion
 
-        for (int i = 0; i <= triggers.Count-1; i++)
-            triggerProgress[i] = false;
-
-    }
 }

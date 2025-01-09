@@ -60,13 +60,14 @@ public class CombatEntityController : MonoBehaviour
     public bool currentlyRetargetting;
     public bool isAlive = true;
     public bool isFlinching = false;
+    public bool isCountering;
 
     [Header("Combat Flags")]
     public bool targetIsDodging;
 
     protected virtual void OnEnable()
     {
-        cantUseAbility = () => (!isLockedOn || alreadyAttacking || isBlocking || isFlinching);
+        cantUseAbility = () => (!isLockedOn || alreadyAttacking || isBlocking || isFlinching || isCountering);
     }
     protected virtual void OnDisable()
     {

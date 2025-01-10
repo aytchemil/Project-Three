@@ -12,17 +12,13 @@ public class AttackAbility : AttackingAbility
         FollowUp = 2,
     }
     public Archetype archetype;
-    public enum Collision
+    public enum Trait
     {
-        Box = 0,
-        Overhead = 1,
-        Pierce = 2,
-        SideSlash = 3,
         MovementForward = 4,
         MovementLeftOrRight = 5,
         DoubleFrontSlash = 6,
     }
-    public Collision collision;
+    public Trait trait;
     public GameObject attackTriggerCollider;
 
     public float movementAmount;

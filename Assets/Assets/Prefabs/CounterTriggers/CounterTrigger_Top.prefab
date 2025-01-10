@@ -32,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.40000153, z: 5.189999}
-  m_LocalScale: {x: 1.0247502, y: 9.93675, z: 2.0868618}
+  m_LocalScale: {x: 2.3229403, y: 9.93675, z: 2.8604615}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -137,7 +137,7 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 3
+  m_CollisionDetection: 2
 --- !u!95 &3920288864532764850
 Animator:
   serializedVersion: 7
@@ -176,6 +176,7 @@ MonoBehaviour:
   usingTrigger: 0
   hitAttack: 0
   missedAttack: 0
+  countered: 0
   attackColisionWith:
     serializedVersion: 2
     m_Bits: 256
@@ -183,6 +184,7 @@ MonoBehaviour:
   animator: {fileID: 3920288864532764850}
   countering: 0
   counterUp: 0
+  counterMissed: 0
   counterolisionWith:
     serializedVersion: 2
     m_Bits: 512

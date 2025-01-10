@@ -42,13 +42,17 @@ public class AttackTriggerGroup : ModeTriggerGroup
 
     protected override void DisableThisTriggerImplementation()
     {
-       // print(gameObject.name + " | Disabling trigger implementation");
+        print(gameObject.name + " | Disabling trigger implementation");
 
         CompleteAttackCaller();
         combatFunctionality.FinishAttacking();
 
         if (combatFunctionality.Controls.GetTarget?.Invoke() != null)
+        {
+            print("going to reset attack caller");
             ResetAttackCaller();
+
+        }
     }
 
     protected override void DisableThisTriggerLocallyImplementation()
@@ -131,7 +135,7 @@ public class AttackTriggerGroup : ModeTriggerGroup
 
     public void ResetAttackCaller()
     {
-        //print("Attack Trigger: ResetAttackCaller()");
+        print(gameObject.name + ": ResetAttackCaller()");
 
         #region debug check for resetattack
         if (combatFunctionality.Controls.ResetAttack != null)
@@ -139,7 +143,7 @@ public class AttackTriggerGroup : ModeTriggerGroup
             foreach (var subscriber in combatFunctionality.Controls.ResetAttack.GetInvocationList())
                 if (subscriber != null)
                 {
-                    //print(subscriber);
+                    print(subscriber);
                 }
                 else
                     Debug.LogError("No subscribers found in reset attack, this needs movement subscribed to it, check for that first");
@@ -168,6 +172,7 @@ public class AttackTriggerGroup : ModeTriggerGroup
 
     public void GetCountered(Vector3 effectPos)
     {
+        print(gameObject.name + " I am getting countered");
         countered = true;
         combatFunctionality.GetCountered(effectPos);
     }

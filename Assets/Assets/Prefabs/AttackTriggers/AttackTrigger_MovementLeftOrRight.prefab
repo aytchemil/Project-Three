@@ -127,9 +127,10 @@ MonoBehaviour:
   usingTrigger: 0
   hitAttack: 0
   missedAttack: 0
+  countered: 0
   attackColisionWith:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 768
   col: {fileID: 0}
   animator: {fileID: 0}
 --- !u!54 &5860475609783969096
@@ -231,6 +232,7 @@ MonoBehaviour:
   usingTrigger: 0
   hitAttack: 0
   missedAttack: 0
+  countered: 0
   triggers: []
   usingAttackTrigger: {fileID: 0}
 --- !u!1 &6184004676570718797
@@ -360,9 +362,10 @@ MonoBehaviour:
   usingTrigger: 0
   hitAttack: 0
   missedAttack: 0
+  countered: 0
   attackColisionWith:
     serializedVersion: 2
-    m_Bits: 256
+    m_Bits: 768
   col: {fileID: 0}
   animator: {fileID: 0}
 --- !u!54 &2343278283885473166

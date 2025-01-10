@@ -450,6 +450,7 @@ public class Movement : MonoBehaviour
 
     protected void ResetAttack()
     {
+        print("Resseting attack");
         //Debug.Log(gameObject.name + " | Movement : resseting attack back to combat");
         state = EntityStates.CurrentState.combat;
     }

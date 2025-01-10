@@ -350,6 +350,8 @@ public class CombatFunctionality : MonoBehaviour
     void Attack()
     {
 
+        //print("attacking");
+
         StartAttacking();
 
         ///to do: create a way for it to animate,
@@ -370,7 +372,7 @@ public class CombatFunctionality : MonoBehaviour
                 TriggerEnableToUse().StartUsingAbilityTrigger(attack, attack.initialAttackDelay[0]);
 
                 //Find the Specific Attack this ability is using, and use this attack abilities's Functionality
-                SingularAttacksUse(attack);
+                ArchetypeUse_SingularAttack(attack);
 
                 break;
 
@@ -379,7 +381,7 @@ public class CombatFunctionality : MonoBehaviour
                 //print("archetype: multichoice chosen");
 
                 //Find the Specific Attack this ability is using, and use this attack abilities's Functionality
-                string choice = GetMultiChoiceAttackChoiceAndUse(attack);
+                string choice = ArchetypeUse_MultiChoiceAttack(attack);
 
                 //print("choice is : " + choice);
 
@@ -398,7 +400,7 @@ public class CombatFunctionality : MonoBehaviour
                 StartCoroutine(TriggerEnableToUse().GetComponent<AttackTriggerFollowUp>().FollowUpAttack(attack));
 
                 //Find the Specific Attack this ability is using, and use this attack abilities's Functionality
-                FollowUpAttacksUse(attack);
+                ArchetypeUse_FollowUpAttack(attack);
 
                 break;
 
@@ -438,7 +440,7 @@ public class CombatFunctionality : MonoBehaviour
 
     IEnumerator MovementForwardAttack(AttackAbility attack)
     {
-        //Debug.Log(" * MoveForwardAttacK Called");
+        Debug.Log(" * MoveForwardAttacK Called");
 
         //print("Waiting for attack to start, initialAttackDelayOver not over yet (its false)");
         //print("initial attack delay over?: " + initialAttackDelayOver);
@@ -540,11 +542,11 @@ public class CombatFunctionality : MonoBehaviour
     }
 
 
-    void SingularAttacksUse(AttackAbility attack)
+    void ArchetypeUse_SingularAttack(AttackAbility attack)
     {
-        switch (attack.collision)
+        switch (attack.trait)
         {
-            case AttackAbility.Collision.MovementForward:
+            case AttackAbility.Trait.MovementForward:
 
                 StartCoroutine(MovementForwardAttack(attack));
 
@@ -552,13 +554,13 @@ public class CombatFunctionality : MonoBehaviour
         }
     }
 
-    string GetMultiChoiceAttackChoiceAndUse(AttackAbility attack)
+    string ArchetypeUse_MultiChoiceAttack(AttackAbility attack)
     {
         string choice = "";
 
-        switch (attack.collision)
+        switch (attack.trait)
         {
-            case AttackAbility.Collision.MovementLeftOrRight:
+            case AttackAbility.Trait.MovementLeftOrRight:
 
                 choice = Controls.getMoveDirection?.Invoke();
 
@@ -578,11 +580,11 @@ public class CombatFunctionality : MonoBehaviour
         return choice;
     }
 
-    void FollowUpAttacksUse(AttackAbility attack)
+    void ArchetypeUse_FollowUpAttack(AttackAbility attack)
     {
-        switch (attack.collision)
+        switch (attack.trait)
         {
-            case AttackAbility.Collision.DoubleFrontSlash:
+            case AttackAbility.Trait.DoubleFrontSlash:
 
                 StartCoroutine(DoubleFrontSlash());
 

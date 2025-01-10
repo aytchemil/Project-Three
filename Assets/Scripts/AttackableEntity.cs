@@ -1,3 +1,5 @@
+using System.Collections;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
@@ -32,10 +34,9 @@ public class AttackbleEntity : MonoBehaviour
     public float invincibiliyTime;
     public float deathTime;
     public float corpseDeathTime;
-    [Space]
-    public float flinchTime = 1f;
 
-    public virtual float Attacked(AttackAbility atkedWithAbility)
+
+    public virtual float Attacked(AttackingAbility atkedWithAbility)
     {
         float newHealth;
         if (!invincibility)
@@ -45,7 +46,11 @@ public class AttackbleEntity : MonoBehaviour
            // print("I was attacked");
             attackedEffect.GetComponent<ParticleSystem>().Play();
             Invoke("StopAttacked", invincibiliyTime);
-            FlinchCaller();
+            FlinchCaller(atkedWithAbility.flinchAmount);
+
+            print(atkedWithAbility);
+            print(atkedWithAbility.damage);
+
             newHealth = TakeDamage(atkedWithAbility.damage);
         }
         else
@@ -85,13 +90,12 @@ public class AttackbleEntity : MonoBehaviour
 
     #region Flinching
 
-    void FlinchCaller()
+    void FlinchCaller(float flinchTime)
     {
         controls.Flinch?.Invoke(flinchTime);
         controls.isFlinching = true;
         Invoke(nameof(StopFlinching), flinchTime);
     }
-
     void StopFlinching()
     {
         //print(gameObject.name +  " | Stopped flinching");

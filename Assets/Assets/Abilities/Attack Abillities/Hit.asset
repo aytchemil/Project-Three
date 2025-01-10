@@ -19,6 +19,7 @@ MonoBehaviour:
   missDelay: 1
   comnboDelayOnHit: 0.2
   damage: 1
+  flinchAmount: 1
   archetype: 0
   collision: 0
   attackTriggerCollider: {fileID: 8475917669229452261, guid: 54eaad126c9bcaa498c827fb9317d41d, type: 3}

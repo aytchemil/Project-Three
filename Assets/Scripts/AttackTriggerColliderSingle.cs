@@ -67,6 +67,7 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
     /// <param name="other"></param>
     public virtual void OnTriggerStay(Collider other)
     {
+        if (other.GetComponent<ModeTriggerGroup>()) return;
         if (other.GetComponent<CombatEntityController>() == combatFunctionality.Controls) return;
 
         float newEnemyHealth;
@@ -75,7 +76,7 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
             HitAttack();
             #region Death
             ///If the Entity being attacked's health reaches less than 0, tell OUR Controller to call the target death delegate action
-            newEnemyHealth = other.GetComponent<AttackbleEntity>().Attacked(myAbility as AttackAbility);
+            newEnemyHealth = other.GetComponent<AttackbleEntity>().Attacked(myAttackingAbility);
 
 
             if (newEnemyHealth < 0)

@@ -36,6 +36,7 @@ public class CombatEntityController : MonoBehaviour
     public Action ResetAttack;
     public Action MissedAttack;
     public Action CompletedAttack;
+    public Action Countered;
     public Action<float> Flinch;
     public Func<string> getMoveDirection;
 
@@ -183,6 +184,15 @@ public class CombatEntityController : MonoBehaviour
 
 
         return retAbilitySet;
+    }
+
+    public void UpdateMainTriggers()
+    {
+        //print("going to " + controls.mode);
+        t_right = Mode(mode).triggers[0].GetComponent<ModeTriggerGroup>();
+        t_left = Mode(mode).triggers[1].GetComponent<ModeTriggerGroup>();
+        t_up = Mode(mode).triggers[2].GetComponent<ModeTriggerGroup>();
+        t_down = Mode(mode).triggers[3].GetComponent<ModeTriggerGroup>();
     }
 
 }

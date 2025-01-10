@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class AttackTriggerGroup : ModeTriggerGroup
 {
-    private AttackingAbility myAttackingAbility;
+     public virtual AttackingAbility myAttackingAbility {  get; set; }
 
     //Overriding base class Ability reference
     public override Ability myAbility
@@ -20,6 +20,7 @@ public class AttackTriggerGroup : ModeTriggerGroup
 
     public bool hitAttack;
     public bool missedAttack;
+    public bool countered;
 
 
 
@@ -31,16 +32,17 @@ public class AttackTriggerGroup : ModeTriggerGroup
     {
         missedAttack = false;
         hitAttack = false;
+        countered = false;
     }
 
     protected override void InitialDelayOver_ReEnableTriggerImplementation()
     {
-        print("ability use delay over, attacking...");
+        //print("ability use delay over, attacking...");
     }
 
     protected override void DisableThisTriggerImplementation()
     {
-        print(gameObject.name + " | Disabling trigger implementation");
+       // print(gameObject.name + " | Disabling trigger implementation");
 
         CompleteAttackCaller();
         combatFunctionality.FinishAttacking();
@@ -53,6 +55,7 @@ public class AttackTriggerGroup : ModeTriggerGroup
     {
         missedAttack = false;
         hitAttack = false;
+        countered = false;
     }
 
     #endregion
@@ -73,26 +76,35 @@ public class AttackTriggerGroup : ModeTriggerGroup
 
     public virtual void HitAttack()
     {
-        //Debug.Log("Attack hit registered");
+        Debug.Log(gameObject.name + " | Attack hit registered");
         hitAttack = true;
+        countered = false;
     }
 
     public virtual void MissAttackCuttoff()
     {
-        //print("Miss Attack Cuttoff Reached");
-        if (hitAttack) return;
+        print(combatFunctionality.gameObject.name + "'s Miss Attack Cuttoff Reached" + ": " + myAttackingAbility);
+        if (hitAttack)
+        {
+            print("hit atack succesffull, calling combo");
+            Invoke(nameof(ComboOffOfHitNowAvaliable), myAttackingAbility.comnboDelayOnHit);
+            return;
+        }
 
         MissAttackCuttoffLocal();
 
         MissedAttackCaller();
 
-        print(gameObject.name + " | Missed attack delay over, DisableTrigger() (on delay)");
         Invoke(nameof(DisableThisTrigger), myAttackingAbility.missDelay);
+
+        print("Succesfully missed attack");
     }
 
     public virtual void MissAttackCuttoffLocal()
     {
-        //print("missed attack");
+        if (hitAttack) return;
+
+        print("missed attack");
         missedAttack = true;
         hitAttack = false;
     }
@@ -113,7 +125,7 @@ public class AttackTriggerGroup : ModeTriggerGroup
 
     public void CompleteAttackCaller()
     {
-        print(gameObject.name + " | Compeleted Attack Caller Called");
+       // print(gameObject.name + " | Compeleted Attack Caller Called");
         combatFunctionality.Controls.CompletedAttack?.Invoke();
     }
 
@@ -149,14 +161,19 @@ public class AttackTriggerGroup : ModeTriggerGroup
 
     public void ComboOffOfHitNowAvaliable()
     {
-        if (hitAttack)
-        {
-            //print("Combo off hit time period reached, can now combo because attack hit");
-            print(gameObject.name + " | Combo hit avaliable, DisableTrigger()");
-            DisableThisTrigger();
-        }
+        print("Combo off hit time period reached, can now combo because attack hit");
+        print(gameObject.name + " | Combo hit avaliable, DisableTrigger()");
+        DisableThisTrigger();
+    }
+
+    public void GetCountered(Vector3 effectPos)
+    {
+        countered = true;
+        combatFunctionality.GetCountered(effectPos);
     }
 
     #endregion
+
+
 
 }

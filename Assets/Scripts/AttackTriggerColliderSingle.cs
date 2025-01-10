@@ -5,10 +5,10 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class AttackTriggerColliderSingle : AttackTriggerGroup
 {
-    private AttackAbility myAttackAbility;
+    public virtual AttackAbility myAttackAbility { get; protected set; }
 
     //Overriding base class Ability reference
-    public override Ability myAbility
+    public override AttackingAbility myAttackingAbility
     {
         get => myAttackAbility;
         set => myAttackAbility = value as AttackAbility;
@@ -114,12 +114,12 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
         base.HitAttack();
 
         DisableIndiviualCollider(Color.green);
-
     }
 
     public override void MissAttackCuttoffLocal()
     {
-        print(gameObject.name + " | MissAttackCuttoffLocal()");
+        //print(gameObject.name + " | MissAttackCuttoffLocal() " + " " + myAttackAbility);
+
         base.MissAttackCuttoffLocal();
 
         DisableIndiviualCollider(Color.grey);

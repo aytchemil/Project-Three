@@ -14,12 +14,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilityName: Double Front Slash
   icon: {fileID: 2800000, guid: 2ab6f80254bfbef4dba567efd9b63ad1, type: 3}
-  archetype: 2
-  collision: 0
-  attackTriggerCollider: {fileID: 4834910296176868713, guid: 3fc8f2e54397062409d80547499993ea, type: 3}
   initialAttackDelay:
   - 0.4
   - 0.05
-  missDelayUntilAbleToAttackAgain: 0.6
+  missDelay: 1
+  comnboDelayOnHit: 0.35
   damage: 1
+  archetype: 2
+  collision: 0
+  attackTriggerCollider: {fileID: 4834910296176868713, guid: 3fc8f2e54397062409d80547499993ea, type: 3}
   movementAmount: 0

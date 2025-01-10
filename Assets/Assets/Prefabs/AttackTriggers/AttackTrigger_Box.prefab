@@ -124,14 +124,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   combatFunctionality: {fileID: 0}
-  myAbility: {fileID: 0}
-  attacking: 0
+  usingTrigger: 0
   hitAttack: 0
   missedAttack: 0
-  collideWith:
+  attackColisionWith:
     serializedVersion: 2
     m_Bits: 256
-  attackTriggerAnimator: {fileID: 5631300544593607017}
+  col: {fileID: 0}
+  animator: {fileID: 0}
 --- !u!95 &5631300544593607017
 Animator:
   serializedVersion: 7

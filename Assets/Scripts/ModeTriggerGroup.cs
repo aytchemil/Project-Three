@@ -17,6 +17,7 @@ public abstract class ModeTriggerGroup : MonoBehaviour
         usingTrigger = true;
 
         myAbility = currentAbility;
+        //print("my ability : " + myAbility);
         EnableTrigger();
 
         Invoke(nameof(InitialDelayOver_ReEnableTrigger), delay);

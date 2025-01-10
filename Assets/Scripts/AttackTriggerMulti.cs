@@ -106,10 +106,10 @@ public class AttackTriggerMulti : AttackTriggerGroup
 
     protected void DisableAllChildTriggers()
     {
-        print("Disabling all child triggers");
+        //print("Disabling all child triggers");
         foreach (AttackTriggerGroup trigger in triggers)
         {
-            print("locally disabling trigger: " + trigger.gameObject.name);
+           // print("locally disabling trigger: " + trigger.gameObject.name);
             trigger.DisableThisTriggerOnlyLocally();
         }
 

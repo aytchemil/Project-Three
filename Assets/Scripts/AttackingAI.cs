@@ -154,7 +154,7 @@ public class AttackingAI : MonoBehaviour
                 }
     
             }
-            print(gameObject.name + "attack has finished: " + i + " | now moving to start next attack in pattern");
+            //print(gameObject.name + "attack has finished: " + i + " | now moving to start next attack in pattern");
         }
         //print("Attacking Period over, Thinking....");
         ResetAttacking();
@@ -171,12 +171,11 @@ public class AttackingAI : MonoBehaviour
 
     IEnumerator CompleteAttackInPatternContinued()
     {
-        print("attacking ai completed an attack");
         yield return new WaitForSeconds(attackingSpeedDelays[(int)attackingSpeed]);
 
         int finalIndexInAttackPattern = attackPatternProgress.Count - 1;
 
-        Debug.Log("Completed attack [" + currentAttackInAttackPattern + "] in pattern of length " + finalIndexInAttackPattern);
+        //Debug.Log("Completed attack [" + currentAttackInAttackPattern + "] in pattern of length " + finalIndexInAttackPattern);
 
         if (finalIndexInAttackPattern == -1) yield break;
 

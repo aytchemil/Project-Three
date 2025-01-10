@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 2820157755071105457}
   - component: {fileID: -6494930247469252101}
   m_Layer: 9
-  m_Name: AttackTrigger_SideSlash
+  m_Name: AttackTrigger_Sweep
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -124,14 +124,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   combatFunctionality: {fileID: 0}
-  myAbility: {fileID: 0}
-  collideWith:
-    serializedVersion: 2
-    m_Bits: 256
-  attackTriggerAnimator: {fileID: 2820157755071105457}
-  attacking: 0
+  usingTrigger: 0
   hitAttack: 0
   missedAttack: 0
+  attackColisionWith:
+    serializedVersion: 2
+    m_Bits: 256
+  col: {fileID: 0}
+  animator: {fileID: 0}
 --- !u!95 &2820157755071105457
 Animator:
   serializedVersion: 7

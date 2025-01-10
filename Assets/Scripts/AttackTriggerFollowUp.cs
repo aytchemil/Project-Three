@@ -53,9 +53,8 @@ public class AttackTriggerFollowUp : AttackTriggerMulti
 
         for (int i = 0; i < triggerProgress.Count; i++)
         {
-            print(i + " :");
             usingAttackTrigger = triggers[i];
-            print("attacking with : " + usingAttackTrigger.name);
+           // print("attacking with : " + usingAttackTrigger.name);
             usingAttackTrigger.gameObject.SetActive(true);
             usingAttackTrigger.StartUsingAbilityTrigger(currentAbility, currentAbility.initialAttackDelay[i]);
 
@@ -71,8 +70,8 @@ public class AttackTriggerFollowUp : AttackTriggerMulti
 
                 if (i == triggerProgress.Count - 1) //last
                 {
-                    print("LAST");
-                    if (usingAttackTrigger.hitAttack) { HitAttack(); ComboOffOfHitNowAvaliable(); DisableThisTrigger(); yield break; }
+                    //print("LAST");
+                    if (usingAttackTrigger.hitAttack) { HitAttack(); MissAttackCuttoff(); yield break; }
                     if (usingAttackTrigger.missedAttack) { MissAttackCuttoff(); yield break; }
                 }
 

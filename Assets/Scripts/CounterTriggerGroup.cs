@@ -14,10 +14,11 @@ public class CounterTriggerGroup : AttackTriggerColliderSingle
     //Wrapper for usingTrigger
     public bool countering;
     public bool counterUp;
+    public bool counterMissed;
 
     public LayerMask counterolisionWith;
 
-    public virtual void Awake()
+    public override void Awake()
     {
         //Cache
         col = GetComponent<Collider>();
@@ -42,6 +43,7 @@ public class CounterTriggerGroup : AttackTriggerColliderSingle
     protected override void InitialDelayOver_ReEnableTriggerImplementation()
     {
         counterUp = true;
+        print("counter is up");
 
         base.InitialDelayOver_ReEnableTriggerImplementation();
 
@@ -72,8 +74,11 @@ public class CounterTriggerGroup : AttackTriggerColliderSingle
         if (counterUp)
         {
             if (other.GetComponent<AttackTriggerGroup>().attacking)
+            {
+                print("COUNTER STARTED");
                 CounterAttack();
-
+                other.gameObject.GetComponent<AttackTriggerGroup>().GetCountered(other.ClosestPoint(transform.position));
+            }
         }
 
         if (countering)
@@ -82,6 +87,14 @@ public class CounterTriggerGroup : AttackTriggerColliderSingle
             base.OnTriggerStay(other);
 
         }
+    }
+
+
+    public void MissCounter()
+    {
+        print("Counter missed");
+        counterMissed = true;
+        DisableThisTrigger();
     }
 
 

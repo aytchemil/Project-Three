@@ -17,16 +17,20 @@ public class CombatFunctionality : MonoBehaviour
     bool initializedBlockingTrigger;
 
     public bool initialAbilityUseDelayOver;
+    public ParticleSystem counteredEffect;
 
     protected virtual void Awake()
     {
-        Controls = GetComponent<CombatEntityController>();     
+        Controls = GetComponent<CombatEntityController>();
     }
 
     #region Enable/Disable
 
     protected virtual void OnEnable()
     {
+        counteredEffect.gameObject.SetActive(false);
+
+
         //Adding methods to Action Delegates
         //Debug.Log("Combat functionaly enable");
         //UI
@@ -43,7 +47,6 @@ public class CombatFunctionality : MonoBehaviour
         //Controls.blockStop += StopBlock;
 
         Controls.Flinch += Flinch;
-
     }
 
 
@@ -83,10 +86,11 @@ public class CombatFunctionality : MonoBehaviour
     void InCombat()
     {
         //print("combatFunctionality: in combat");
+
         //Auto Set the current ability
         Controls.Mode("Attack").data.currentAbility = Controls.AbilitySet("Attack").up;
 
-        foreach(ModeRuntimeData mode in Controls.modes)
+        foreach (ModeRuntimeData mode in Controls.modes)
             if (!mode.data.initializedTriggers)
             {
                 InstantiateTriggersForMode(mode.data.abilitySet, mode.parent);
@@ -95,6 +99,7 @@ public class CombatFunctionality : MonoBehaviour
                 DisableTriggers(true, mode);
             }
 
+        Controls.UpdateMainTriggers();
 
 
 
@@ -162,25 +167,12 @@ public class CombatFunctionality : MonoBehaviour
 
         if (triggers.Any(item => item == null)) //Checks if any item just put into that list are null, if one is, then error
             Debug.LogError("Items in attack trigger not properly cached, please look");
-        else
-            print("Successfully Cached triggers for mode " + parent.name);
+        //else
+            //print("Successfully Cached triggers for mode " + parent.name);
 
     }
 
 
-
-    /// <summary>
-    /// Enables all the attack triggers
-    /// </summary>
-    public void EnableAttackTriggers()
-    {
-        if (Controls.Mode("Attack").triggers.Any(item => item == null))
-            Debug.LogError("Trying to enable Attack Triggers that are not initialized, or not avaliable");
-
-
-        foreach (GameObject attkTrigger in Controls.Mode("Attack").triggers)
-            attkTrigger.SetActive(true);
-    }
 
     /// <summary>
     /// Disables all the attack triggers
@@ -190,7 +182,7 @@ public class CombatFunctionality : MonoBehaviour
         //Debug.Log(gameObject.name + " | Disabling Attack All Triggers");
         if (!Controls.Mode(mode.data.modeName).triggers.Any() || Controls.Mode(mode.data.modeName).parent.childCount == 0) 
         { 
-            print("triggers not setup, not disabling something that isnt there"); 
+            //print("triggers not setup, not disabling something that isnt there"); 
             return;
         }
 
@@ -208,7 +200,7 @@ public class CombatFunctionality : MonoBehaviour
                     trigger.GetComponent<ModeTriggerGroup>().DisableThisTrigger();
 
 
-        print("Successfully Disabled triggers for mode: " + mode.data.modeName);
+       // print("Successfully Disabled triggers for mode: " + mode.data.modeName);
 
     }
 
@@ -249,7 +241,7 @@ public class CombatFunctionality : MonoBehaviour
         if(Controls.t_right == null || Controls.t_left == null || Controls.t_up  == null || Controls.t_down == null)
             Debug.LogError("Trigger group triggers not iniailized corectly, check");
 
-        print("Successfully Instantiating triggers for mode " + parent.name);
+        //print("Successfully Instantiating triggers for mode " + parent.name);
 
     }
 
@@ -670,9 +662,34 @@ public class CombatFunctionality : MonoBehaviour
 
     public void Flinch(float flinchTime)
     {
-        print(this.gameObject.name + " has flinched");
+       // print(this.gameObject.name + " has flinched");
         DisableTriggers(false, Controls.Mode(Controls.mode));
     }
+
+    #endregion
+
+    #region Countering
+
+    public void GetCountered(Vector3 effectPos)
+    {
+        FinishAttacking();
+        FinishCountering();
+        DisableTriggers(false, Controls.Mode(Controls.mode));
+        Controls.Countered?.Invoke();
+        StartCoroutine(CounteredEffect(effectPos));
+    }
+
+    IEnumerator CounteredEffect(Vector3 effectPos)
+    {
+        counteredEffect.gameObject.transform.position = effectPos;
+        counteredEffect.gameObject.SetActive(true);
+        yield return new WaitForSeconds(1);
+        counteredEffect.gameObject.SetActive(false);
+
+    }
+
+
+
 
     #endregion
 

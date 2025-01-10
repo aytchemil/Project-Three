@@ -200,7 +200,7 @@ public class CombatUI : MonoBehaviour
         ChangeAllImageIcons();
         UpdateModeUIObjects();
         UpdateAttackIndicatorRotation(new Vector2(0, deadZone + 1));
-        UpdateMainTriggers();
+        controls.UpdateMainTriggers();
     }
 
     /// <summary>
@@ -317,7 +317,7 @@ public class CombatUI : MonoBehaviour
         ChangeAllImageIcons();
         UpdateModeUIObjects();
 
-        UpdateMainTriggers();
+        controls.UpdateMainTriggers();
 
         controls.SelectCertainAbility?.Invoke(lookDir);
         print(lookDir);
@@ -325,13 +325,5 @@ public class CombatUI : MonoBehaviour
 
     }
 
-    void UpdateMainTriggers()
-    {
-        //print("going to " + controls.mode);
-        controls.t_right = controls.Mode(controls.mode).triggers[0].GetComponent<ModeTriggerGroup>();
-        controls.t_left = controls.Mode(controls.mode).triggers[1].GetComponent<ModeTriggerGroup>();
-        controls.t_up = controls.Mode(controls.mode).triggers[2].GetComponent<ModeTriggerGroup>();
-        controls.t_down = controls.Mode(controls.mode).triggers[3].GetComponent<ModeTriggerGroup>();
-    }
 
 }

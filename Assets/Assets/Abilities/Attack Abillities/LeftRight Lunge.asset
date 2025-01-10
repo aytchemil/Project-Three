@@ -14,11 +14,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilityName: Side Dash Slash
   icon: {fileID: 2800000, guid: 425525ddd64d86f4dbf7660d76b88019, type: 3}
+  initialAttackDelay:
+  - 0.5
+  missDelay: 1
+  comnboDelayOnHit: 0.2
+  damage: 1
   archetype: 1
   collision: 0
   attackTriggerCollider: {fileID: 3607946116655452447, guid: 0b5f45e6afec5224fa98a9bc50f4713e, type: 3}
-  initialAttackDelay:
-  - 0.5
-  missDelayUntilAbleToAttackAgain: 0.6
-  damage: 1
   movementAmount: 50

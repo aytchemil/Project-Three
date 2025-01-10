@@ -21,7 +21,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &7080119722670768553
 Transform:
   m_ObjectHideFlags: 0
@@ -124,14 +124,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   combatFunctionality: {fileID: 0}
-  myAbility: {fileID: 0}
-  attacking: 0
+  usingTrigger: 0
   hitAttack: 0
   missedAttack: 0
-  collideWith:
+  countered: 0
+  attackColisionWith:
     serializedVersion: 2
     m_Bits: 256
-  attackTriggerAnimator: {fileID: 6469238137336086408}
+  col: {fileID: 0}
+  animator: {fileID: 0}
 --- !u!54 &4375237297075779864
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -228,10 +229,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   combatFunctionality: {fileID: 0}
-  myAbility: {fileID: 0}
-  attacking: 0
+  usingTrigger: 0
   hitAttack: 0
   missedAttack: 0
+  countered: 0
   triggers: []
   usingAttackTrigger: {fileID: 0}
   triggerProgress: 
@@ -256,7 +257,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &8947123301280374479
 Transform:
   m_ObjectHideFlags: 0
@@ -359,14 +360,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   combatFunctionality: {fileID: 0}
-  myAbility: {fileID: 0}
-  attacking: 0
+  usingTrigger: 0
   hitAttack: 0
   missedAttack: 0
-  collideWith:
+  countered: 0
+  attackColisionWith:
     serializedVersion: 2
     m_Bits: 256
-  attackTriggerAnimator: {fileID: 0}
+  col: {fileID: 0}
+  animator: {fileID: 0}
 --- !u!54 &1350350858570102448
 Rigidbody:
   m_ObjectHideFlags: 0

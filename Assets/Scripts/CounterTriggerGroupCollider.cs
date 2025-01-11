@@ -75,7 +75,7 @@ public class CounterTriggerGroupCollider : ModeTriggerGroup
         animator.SetBool("counter", false);
     }
 
-    protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality)
+    protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality, Ability abilty)
     {
         //print(combatFunctionality.gameObject.name + " | ability initializing...");
     }
@@ -116,7 +116,7 @@ public class CounterTriggerGroupCollider : ModeTriggerGroup
     {
         yield return new WaitForSeconds(myCounterAbility.counterUpTime);
         print("counter is down");
-        DisableThisTrigger();
+        DisableThisTriggerOnlyLocally();
     }
 
 }

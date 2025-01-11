@@ -179,7 +179,7 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     public void DisableTriggers(bool local, ModeRuntimeData mode)
     {
-        Debug.Log(gameObject.name + " | Disabling Attack All Triggers");
+        //Debug.Log(gameObject.name + " | Disabling Attack All Triggers");
         if (!Controls.Mode(mode.data.modeName).triggers.Any() || Controls.Mode(mode.data.modeName).parent.childCount == 0) 
         { 
             print("triggers not setup, not disabling something that isnt there"); 
@@ -258,20 +258,23 @@ public class CombatFunctionality : MonoBehaviour
             return trigger;
         }
 
-        if (ability is AttackAbility attackAbility)
-            trigger = Instantiate(attackAbility.attackTriggerCollider, parent, false).GetComponent<AttackTriggerGroup>();
+        if (ability is AttackAbility attackAbility && ability is not CounterAbility)
+        {
+            print("creating trigger for attack");
+            trigger = Instantiate(attackAbility.triggerCollider, parent, false).GetComponent<AttackTriggerGroup>();
 
+        }
         else if (ability is CounterAbility counterAbility)
-            trigger = Instantiate(counterAbility.counterTriggerCollider, parent, false).GetComponent<CounterTriggerGroup>();
+            trigger = Instantiate(counterAbility.counterTriggerGroup, parent, false).GetComponent<CounterTriggerGroup>();
 
         else if (ability is BlockAbility blockAbility)
             trigger = Instantiate(blockAbility.blockTriggerCollider, parent, false).GetComponent<BlockTriggerGroup>();
         else
             Debug.LogError($"Unsupported Ability type for {direction}: {ability}");
 
-        trigger.InitializeSelf(this);
+        trigger.InitializeSelf(this, ability);
 
-        //print($"Compeleted initialization for {ability} ! ");
+        print($"Compeleted initialization for {ability} ! ");
 
         return trigger;
     }
@@ -376,7 +379,7 @@ public class CombatFunctionality : MonoBehaviour
 
                 break;
 
-            case AttackAbility.Archetype.MultiChoice:
+            case AttackAbility.Archetype.Multi_Choice:
 
                 //print("archetype: multichoice chosen");
 
@@ -392,7 +395,7 @@ public class CombatFunctionality : MonoBehaviour
 
                 break;
 
-            case AttackAbility.Archetype.FollowUp:
+            case AttackAbility.Archetype.Multi_FollowUp:
 
                 //print("archetype: followup chosen");
 

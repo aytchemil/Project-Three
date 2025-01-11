@@ -21,7 +21,14 @@ MonoBehaviour:
   comnboDelayOnHit: 0.1
   damage: 5
   flinchAmount: 1
+  archetype: 0
+  trait: 0
+  triggerCollider: {fileID: 5678498679238792639, guid: d4d28247890999742a7f5ba7335c78b6, type: 3}
+  movementAmount: 0
+  presetChildTriggers: 0
+  abilitiesInOrder:
+  - {fileID: 11400000}
+  - {fileID: 11400000, guid: 99169ba6d6fb38a4f8ff536f275928aa, type: 2}
   counterArchetype: 0
-  counterTriggerCollider: {fileID: 5273357752252842493, guid: f9a92ea576f47ac469a2017020ee6fc6, type: 3}
-  counterAttack_attackAbility: {fileID: 11400000, guid: 99169ba6d6fb38a4f8ff536f275928aa, type: 2}
+  counterTriggerGroup: {fileID: 5273357752252842493, guid: f9a92ea576f47ac469a2017020ee6fc6, type: 3}
   counterUpTime: 3

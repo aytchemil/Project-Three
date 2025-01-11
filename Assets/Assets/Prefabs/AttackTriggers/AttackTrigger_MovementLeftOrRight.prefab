@@ -124,8 +124,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   combatFunctionality: {fileID: 0}
-  usingTrigger: 0
-  hitAttack: 0
+  isLocal: 1
   missedAttack: 0
   countered: 0
   attackColisionWith:
@@ -229,12 +228,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   combatFunctionality: {fileID: 0}
-  usingTrigger: 0
-  hitAttack: 0
+  isLocal: 0
   missedAttack: 0
   countered: 0
   triggers: []
-  usingAttackTrigger: {fileID: 0}
+  triggerBeingUsed: {fileID: 0}
 --- !u!1 &6184004676570718797
 GameObject:
   m_ObjectHideFlags: 0
@@ -359,8 +357,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   combatFunctionality: {fileID: 0}
-  usingTrigger: 0
-  hitAttack: 0
+  isLocal: 1
   missedAttack: 0
   countered: 0
   attackColisionWith:

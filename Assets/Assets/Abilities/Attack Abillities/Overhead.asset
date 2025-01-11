@@ -21,6 +21,6 @@ MonoBehaviour:
   damage: 0.5
   flinchAmount: 1
   archetype: 0
-  collision: 0
-  attackTriggerCollider: {fileID: 8475917669229452261, guid: c53d5c0878e9175428ea4a958d9e3162, type: 3}
+  trait: 0
+  triggerCollider: {fileID: 8475917669229452261, guid: c53d5c0878e9175428ea4a958d9e3162, type: 3}
   movementAmount: 0

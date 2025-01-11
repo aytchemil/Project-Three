@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "CounterAbility", menuName = "ScriptableObjects/Abilities/Counter Ability")]
-public class CounterAbility : AttackingAbility
+public class CounterAbility : AttackingMultiAbility
 {
     public enum CounterArchetype
     {
@@ -18,8 +18,7 @@ public class CounterAbility : AttackingAbility
         Top = 0,
     }
 
-    public GameObject counterTriggerCollider;
-    public AttackingAbility counterAttack_attackAbility;
+    public GameObject counterTriggerGroup;
     public float counterUpTime = 1f;
 
 }

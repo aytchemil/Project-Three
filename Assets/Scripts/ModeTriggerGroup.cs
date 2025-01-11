@@ -9,6 +9,7 @@ public abstract class ModeTriggerGroup : MonoBehaviour
     public virtual Ability myAbility { get; set; }
     public virtual bool usingTrigger { get; set; }
     public virtual bool used { get; set; }
+    public bool isLocal;
 
 
     public virtual void StartUsingAbilityTrigger(Ability currentAbility, float delay)
@@ -19,7 +20,7 @@ public abstract class ModeTriggerGroup : MonoBehaviour
         usingTrigger = true;
 
         myAbility = currentAbility;
-        //print("my ability : " + myAbility);
+        print("starting to use ability from " + gameObject.name + " setting my ability : " + myAbility);
         EnableTrigger();
 
         Invoke(nameof(InitialDelayOver_ReEnableTrigger), delay);
@@ -60,11 +61,18 @@ public abstract class ModeTriggerGroup : MonoBehaviour
     /// </summary>
     public void DisableThisTrigger()
     {
-        DisableThisTriggerImplementation();
+        if (isLocal)
+        {
+            DisableThisTriggerOnlyLocally();
+        }
+        else
+        {
+            DisableThisTriggerImplementation();
 
-        combatFunctionality.initialAbilityUseDelayOver = true;
+            combatFunctionality.initialAbilityUseDelayOver = true;
 
-        DisableThisTriggerOnlyLocally();
+            DisableThisTriggerOnlyLocally();
+        }
     }
 
     protected abstract void DisableThisTriggerImplementation();
@@ -88,15 +96,16 @@ public abstract class ModeTriggerGroup : MonoBehaviour
 
 
 
-    public void InitializeSelf(CombatFunctionality combatFunctionality)
+    public void InitializeSelf(CombatFunctionality combatFunctionality, Ability ability)
     {
         //print(gameObject.name + " init self");
         this.combatFunctionality = combatFunctionality;
+        myAbility = ability;
 
-        InitializeSelfImplementation(combatFunctionality);
+        InitializeSelfImplementation(combatFunctionality, ability);
     }
 
-    protected abstract void InitializeSelfImplementation(CombatFunctionality combatFunctionality);
+    protected abstract void InitializeSelfImplementation(CombatFunctionality combatFunctionality, Ability abilty);
 
 
 }

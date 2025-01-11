@@ -29,7 +29,14 @@ public class CounterTriggerGroup : AttackTriggerFollowUp
     }
 
     public bool counterUp;
+    public override void StartUsingAbilityTrigger(Ability currentAbility, float delay)
+    {
 
+
+        base.StartUsingAbilityTrigger(currentAbility, delay);
+
+        StartCoroutine(FollowUpUse(currentAbility as AttackingAbility));
+    }
 
     protected override void EnableTriggerImplementation()
     {
@@ -70,19 +77,12 @@ public class CounterTriggerGroup : AttackTriggerFollowUp
         base.DisableThisTriggerImplementation();
     }
 
-    protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality)
+    protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality, Ability abilty)
     {
-        base.InitializeSelfImplementation(combatFunctionality);
+        base.InitializeSelfImplementation(combatFunctionality, abilty);
+
+
         //print(combatFunctionality.gameObject.name + " | ability initializing...");
-    }
-
-    void CounterAttack()
-    {
-        countering = true;
-        gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
-
-        triggerBeingUsed.gameObject.SetActive(true);
-        triggerBeingUsed.StartUsingAbilityTrigger(myCounterAbility.counterAttack_attackAbility, myCounterAbility.counterAttack_attackAbility.initialAttackDelay[0]);
     }
 
     IEnumerator CounterDown()

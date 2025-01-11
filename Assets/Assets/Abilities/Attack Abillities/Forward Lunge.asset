@@ -22,5 +22,5 @@ MonoBehaviour:
   flinchAmount: 1
   archetype: 0
   trait: 4
-  attackTriggerCollider: {fileID: 9152381543741592740, guid: 876364ef1f1b2f94ebb3893dea57a553, type: 3}
+  triggerCollider: {fileID: 9152381543741592740, guid: 876364ef1f1b2f94ebb3893dea57a553, type: 3}
   movementAmount: 75

@@ -76,7 +76,7 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
             HitAttack();
             #region Death
 
-            print("attacking with ability: " + myAttackAbility);
+            //print("attacking with ability: " + myAttackAbility);
 
             ///If the Entity being attacked's health reaches less than 0, tell OUR Controller to call the target death delegate action
             newEnemyHealth = other.GetComponent<AttackbleEntity>().Attacked(myAttackAbility);

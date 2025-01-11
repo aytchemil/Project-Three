@@ -10,11 +10,6 @@ public class AttackTriggerMulti : AttackTriggerGroup
     protected bool hasTriggers = false;
     protected bool initializedChildTriggers = false;
 
-    protected void OnEnable()
-    {
-        if (!hasTriggers)
-            TakeOnChildrenAttackTriggers();
-    }
 
 
 
@@ -36,12 +31,17 @@ public class AttackTriggerMulti : AttackTriggerGroup
         base.DisableThisTriggerImplementation();
     }
 
-    protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality)
+    protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality, Ability abilty)
     {
-        base.InitializeSelfImplementation(combatFunctionality);
+        base.InitializeSelfImplementation(combatFunctionality, abilty);
+
+        if(!(abilty as AttackingMultiAbility).presetChildTriggers)
+            CreateChildrenTriggers((abilty as AttackingMultiAbility).abilities);
+
+        TakeOnChildrenAttackTriggers();
 
         foreach (var trigger in triggers)
-            trigger.InitializeSelf(combatFunctionality);
+            trigger.InitializeSelf(combatFunctionality, abilty);
     }
 
     #endregion
@@ -55,9 +55,23 @@ public class AttackTriggerMulti : AttackTriggerGroup
     //Virtual Methods
     //==========================================================================================================================================================================
 
+    public virtual void CreateChildrenTriggers(Ability[] abilities)
+    {
+        foreach (Ability ability in abilities)
+        {
+             
+            print("ability: " + (ability));
+            print("Creating child trigger for ability: " + (ability as AttackAbility));
+            print("Creating child trigger: " + (ability as AttackAbility).triggerCollider);
+            GameObject newChildTrigger = Instantiate((ability as AttackAbility).triggerCollider, transform, false);
+            newChildTrigger.GetComponent<ModeTriggerGroup>().isLocal = true;
+        }
+    }
+
+
     protected virtual void TakeOnChildrenAttackTriggers()
     {
-        //print("taking on children");
+        print(gameObject.name + " taking on children");
 
         for (int i = 0; i < transform.childCount; i++)
             triggers.Add(transform.GetChild(i).GetComponent<ModeTriggerGroup>());

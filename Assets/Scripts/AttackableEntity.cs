@@ -48,8 +48,8 @@ public class AttackbleEntity : MonoBehaviour
             Invoke("StopAttacked", invincibiliyTime);
             FlinchCaller(atkedWithAbility.flinchAmount);
 
-            print(atkedWithAbility);
-            print(atkedWithAbility.damage);
+            //print(atkedWithAbility);
+           // print(atkedWithAbility.damage);
 
             newHealth = TakeDamage(atkedWithAbility.damage);
         }

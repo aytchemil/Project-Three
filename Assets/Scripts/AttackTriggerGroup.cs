@@ -20,7 +20,7 @@ public class AttackTriggerGroup : ModeTriggerGroup
     }
 
 
-    public virtual bool hitAttack { get; set; }
+    [SerializeField] public virtual bool hitAttack { get; set; }
     public override bool used
     {
         get => hitAttack;
@@ -57,7 +57,7 @@ public class AttackTriggerGroup : ModeTriggerGroup
 
         if (combatFunctionality.Controls.GetTarget?.Invoke() != null)
         {
-            print("going to reset attack caller");
+            //print("going to reset attack caller");
             ResetAttackCaller();
 
         }
@@ -72,7 +72,7 @@ public class AttackTriggerGroup : ModeTriggerGroup
 
     #endregion
 
-    protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality)
+    protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality, Ability abilty)
     {
         //print(combatFunctionality.gameObject.name + " | ability trigger [" + gameObject.name + "] self initializing...");
     }
@@ -88,17 +88,23 @@ public class AttackTriggerGroup : ModeTriggerGroup
 
     public virtual void HitAttack()
     {
-        Debug.Log(gameObject.name + " | Attack hit registered");
+        //Debug.Log(gameObject.name + " | Attack hit registered");
         hitAttack = true;
         countered = false;
     }
 
     public virtual void MissAttackCuttoff()
     {
-        print(combatFunctionality.gameObject.name + "'s Miss Attack Cuttoff Reached" + ": " + myAttackingAbility);
+        if (isLocal)
+        {
+            MissAttackCuttoffLocal();
+            return;
+        }
+
+        //print(combatFunctionality.gameObject.name + "'s Miss Attack Cuttoff Reached" + ": " + myAttackingAbility);
         if (hitAttack)
         {
-            print("hit atack succesffull, calling combo");
+            //print("hit atack succesffull, calling combo");
             Invoke(nameof(ComboOffOfHitNowAvaliable), myAttackingAbility.comnboDelayOnHit);
             return;
         }
@@ -109,14 +115,14 @@ public class AttackTriggerGroup : ModeTriggerGroup
 
         Invoke(nameof(DisableThisTrigger), myAttackingAbility.missDelay);
 
-        print("Succesfully missed attack");
+        //print("Succesfully missed attack");
     }
 
     public virtual void MissAttackCuttoffLocal()
     {
         if (hitAttack) return;
 
-        print("missed attack");
+        //print("missed attack");
         missedAttack = true;
         hitAttack = false;
     }
@@ -143,7 +149,7 @@ public class AttackTriggerGroup : ModeTriggerGroup
 
     public void ResetAttackCaller()
     {
-        print(gameObject.name + ": ResetAttackCaller()");
+        //print(gameObject.name + ": ResetAttackCaller()");
 
         #region debug check for resetattack
         if (combatFunctionality.Controls.ResetAttack != null)
@@ -151,7 +157,7 @@ public class AttackTriggerGroup : ModeTriggerGroup
             foreach (var subscriber in combatFunctionality.Controls.ResetAttack.GetInvocationList())
                 if (subscriber != null)
                 {
-                    print(subscriber);
+                    //print(subscriber);
                 }
                 else
                     Debug.LogError("No subscribers found in reset attack, this needs movement subscribed to it, check for that first");
@@ -173,14 +179,14 @@ public class AttackTriggerGroup : ModeTriggerGroup
 
     public void ComboOffOfHitNowAvaliable()
     {
-        print("Combo off hit time period reached, can now combo because attack hit");
-        print(gameObject.name + " | Combo hit avaliable, DisableTrigger()");
+       // print("Combo off hit time period reached, can now combo because attack hit");
+       // print(gameObject.name + " | Combo hit avaliable, DisableTrigger()");
         DisableThisTrigger();
     }
 
     public void GetCountered(Vector3 effectPos)
     {
-        print(gameObject.name + " I am getting countered");
+        //print(gameObject.name + " I am getting countered");
         countered = true;
         combatFunctionality.GetCountered(effectPos);
     }

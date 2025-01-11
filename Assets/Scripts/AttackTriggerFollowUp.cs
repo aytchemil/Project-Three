@@ -58,7 +58,7 @@ public class AttackTriggerFollowUp : AttackTriggerMulti
 
         for (int i = 0; i < triggerProgress.Count; i++)
         {
-            print("current index on follow up: " + i);
+            print($"current index on follow up: {i} giving this index ability {currentAbility} ");
             triggerBeingUsed = triggers[i];
             triggerBeingUsed.gameObject.SetActive(true);
             triggerBeingUsed.StartUsingAbilityTrigger(currentAbility, currentAbility.initialAttackDelay[i]);
@@ -70,9 +70,23 @@ public class AttackTriggerFollowUp : AttackTriggerMulti
 
                 if (!gameObject.activeSelf) yield break;
 
-                //Once the indexed trigger disables itself
-                if (!triggerBeingUsed.gameObject.activeSelf)
-                { triggerProgress[i] = true; }
+                //Hit
+                if (triggerBeingUsed.used)
+                {
+                    yield return new WaitForSeconds((triggerBeingUsed.myAbility as AttackingMultiAbility).initialAttackDelay[i]);
+                    triggerProgress[i] = true;
+                }
+
+                //miss
+                if((triggerBeingUsed as AttackTriggerGroup).missedAttack)
+                {
+                    yield return new WaitForSeconds((triggerBeingUsed.myAbility as AttackingMultiAbility).initialAttackDelay[i]);
+                    triggerProgress[i] = true;
+                }
+                
+                ////Once the indexed trigger disables itself
+                //if (!triggerBeingUsed.gameObject.activeSelf)
+                //{ triggerProgress[i] = true; }
 
 
                 if (i == triggerProgress.Count - 1) //last

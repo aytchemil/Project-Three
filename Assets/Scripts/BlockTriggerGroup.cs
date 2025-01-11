@@ -41,7 +41,7 @@ public class BlockTriggerGroup : ModeTriggerGroup
         
     }
 
-    protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality)
+    protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality, Ability abilty)
     {
         
     }

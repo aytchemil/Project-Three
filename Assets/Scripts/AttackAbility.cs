@@ -8,8 +8,8 @@ public class AttackAbility : AttackingAbility
     public enum Archetype
     {
         Singular = 0,
-        MultiChoice = 1,
-        FollowUp = 2,
+        Multi_Choice = 1,
+        Multi_FollowUp = 2,
     }
     public Archetype archetype;
     public enum Trait
@@ -19,7 +19,7 @@ public class AttackAbility : AttackingAbility
         DoubleFrontSlash = 6,
     }
     public Trait trait;
-    public GameObject attackTriggerCollider;
+    public GameObject triggerCollider;
 
     public float movementAmount;
 

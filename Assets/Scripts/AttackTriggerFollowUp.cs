@@ -32,7 +32,12 @@ public class AttackTriggerFollowUp : AttackTriggerMulti
 
 
 
+    public override void StartUsingAbilityTrigger(Ability currentAbility, float delay)
+    {
+        base.StartUsingAbilityTrigger(currentAbility, delay);
 
+        StartCoroutine(FollowUpUse(currentAbility as AttackingAbility));
+    }
 
 
 
@@ -40,9 +45,9 @@ public class AttackTriggerFollowUp : AttackTriggerMulti
     //Methods
     //=================================================================================================================================================
 
-    public virtual IEnumerator FollowUpAttack(AttackAbility currentAbility)
+    public virtual IEnumerator FollowUpUse(AttackingAbility currentAbility)
     {
-        StartUsingAbilityTrigger(currentAbility, currentAbility.initialAttackDelay[0]);
+        print("FollowUpAttack()");
 
         //Set them all to false
         for (int i = 0; i < triggers.Count-1; i++)
@@ -53,26 +58,29 @@ public class AttackTriggerFollowUp : AttackTriggerMulti
 
         for (int i = 0; i < triggerProgress.Count; i++)
         {
-            usingAttackTrigger = triggers[i];
-           // print("attacking with : " + usingAttackTrigger.name);
-            usingAttackTrigger.gameObject.SetActive(true);
-            usingAttackTrigger.StartUsingAbilityTrigger(currentAbility, currentAbility.initialAttackDelay[i]);
+            print("current index on follow up: " + i);
+            triggerBeingUsed = triggers[i];
+            triggerBeingUsed.gameObject.SetActive(true);
+            triggerBeingUsed.StartUsingAbilityTrigger(currentAbility, currentAbility.initialAttackDelay[i]);
 
-
+            print("using : " + triggerBeingUsed.name);
 
             while (triggerProgress[i] == false)
             {
 
                 if (!gameObject.activeSelf) yield break;
 
-                if (!usingAttackTrigger.gameObject.activeSelf)
+                //Once the indexed trigger disables itself
+                if (!triggerBeingUsed.gameObject.activeSelf)
                 { triggerProgress[i] = true; }
+
 
                 if (i == triggerProgress.Count - 1) //last
                 {
                     //print("LAST");
-                    if (usingAttackTrigger.hitAttack) { HitAttack(); MissAttackCuttoff(); yield break; }
-                    if (usingAttackTrigger.missedAttack) { MissAttackCuttoff(); yield break; }
+
+                    if (triggerBeingUsed.used) { HitAttack(); MissAttackCuttoff(); yield break; }
+                    if ((triggerBeingUsed as AttackTriggerGroup).missedAttack) { MissAttackCuttoff(); yield break; }
                 }
 
 

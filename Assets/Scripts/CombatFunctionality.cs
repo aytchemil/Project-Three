@@ -179,10 +179,10 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     public void DisableTriggers(bool local, ModeRuntimeData mode)
     {
-        //Debug.Log(gameObject.name + " | Disabling Attack All Triggers");
+        Debug.Log(gameObject.name + " | Disabling Attack All Triggers");
         if (!Controls.Mode(mode.data.modeName).triggers.Any() || Controls.Mode(mode.data.modeName).parent.childCount == 0) 
         { 
-            //print("triggers not setup, not disabling something that isnt there"); 
+            print("triggers not setup, not disabling something that isnt there"); 
             return;
         }
 
@@ -200,7 +200,7 @@ public class CombatFunctionality : MonoBehaviour
                     trigger.GetComponent<ModeTriggerGroup>().DisableThisTrigger();
 
 
-       // print("Successfully Disabled triggers for mode: " + mode.data.modeName);
+        //print("Successfully Disabled triggers for mode: " + mode.data.modeName);
 
     }
 
@@ -241,7 +241,7 @@ public class CombatFunctionality : MonoBehaviour
         if(Controls.t_right == null || Controls.t_left == null || Controls.t_up  == null || Controls.t_down == null)
             Debug.LogError("Trigger group triggers not iniailized corectly, check");
 
-        //print("Successfully Instantiating triggers for mode " + parent.name);
+        print("Successfully Instantiating triggers for mode " + parent.name);
 
     }
 
@@ -271,7 +271,7 @@ public class CombatFunctionality : MonoBehaviour
 
         trigger.InitializeSelf(this);
 
-        //print($"Compeleted initialization ! ");
+        //print($"Compeleted initialization for {ability} ! ");
 
         return trigger;
     }
@@ -397,7 +397,7 @@ public class CombatFunctionality : MonoBehaviour
                 //print("archetype: followup chosen");
 
                 //Archetype's Functionality
-                StartCoroutine(TriggerEnableToUse().GetComponent<AttackTriggerFollowUp>().FollowUpAttack(attack));
+                TriggerEnableToUse().GetComponent<AttackTriggerFollowUp>().StartUsingAbilityTrigger(attack, attack.initialAttackDelay[0]);
 
                 //Find the Specific Attack this ability is using, and use this attack abilities's Functionality
                 ArchetypeUse_FollowUpAttack(attack);
@@ -410,7 +410,7 @@ public class CombatFunctionality : MonoBehaviour
 
     void Counter()
     {
-        print("countering");
+        //print("countering");
 
         StartCountering();
 

@@ -5,7 +5,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class AttackTriggerColliderSingle : AttackTriggerGroup
 {
-    public virtual AttackAbility myAttackAbility { get; protected set; }
+    public virtual AttackAbility myAttackAbility { get; set; }
 
     //Overriding base class Ability reference
     public override AttackingAbility myAttackingAbility
@@ -75,8 +75,11 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
         {
             HitAttack();
             #region Death
+
+            print("attacking with ability: " + myAttackAbility);
+
             ///If the Entity being attacked's health reaches less than 0, tell OUR Controller to call the target death delegate action
-            newEnemyHealth = other.GetComponent<AttackbleEntity>().Attacked(myAttackingAbility);
+            newEnemyHealth = other.GetComponent<AttackbleEntity>().Attacked(myAttackAbility);
 
 
             if (newEnemyHealth < 0)

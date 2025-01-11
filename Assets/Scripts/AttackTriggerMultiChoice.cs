@@ -15,21 +15,21 @@ public class AttackTriggerMultiChoice : AttackTriggerMulti
     {
         print("Attacking with multi attack choice trigger");
 
-        usingAttackTrigger = null;
+        triggerBeingUsed = null;
 
         print(gameObject.name +  " | given choice: " + choice);
 
         for (int i = 0; i < triggers.Count; i++)
             if (triggers[i].name == choice)
-                usingAttackTrigger = triggers[i];
+                triggerBeingUsed = triggers[i];
 
-        if (usingAttackTrigger == null)
+        if (triggerBeingUsed == null)
         {
             print("Chosen attack trigger choice unavaliable, returning");
             return;
         }
 
-            print("Chosen attack trigger is : " + usingAttackTrigger.name);
+            print("Chosen attack trigger is : " + triggerBeingUsed.name);
 
         //MultiChoice's Ability Trigger
         StartUsingAbilityTrigger(currentAttackAbility, currentAttackAbility.initialAttackDelay[0]);
@@ -38,8 +38,8 @@ public class AttackTriggerMultiChoice : AttackTriggerMulti
             InitializeChildTriggers();
 
         //The chosen Ability Trigger's Ability
-        usingAttackTrigger.gameObject.SetActive(true);
-        usingAttackTrigger.StartUsingAbilityTrigger(currentAttackAbility, currentAttackAbility.initialAttackDelay[0]);
+        triggerBeingUsed.gameObject.SetActive(true);
+        triggerBeingUsed.StartUsingAbilityTrigger(currentAttackAbility, currentAttackAbility.initialAttackDelay[0]);
 
     }
 

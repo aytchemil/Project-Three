@@ -19,6 +19,7 @@ public class CounterAbility : AttackingAbility
     }
 
     public GameObject counterTriggerCollider;
+    public AttackingAbility counterAttack_attackAbility;
     public float counterUpTime = 1f;
 
 }

@@ -12,13 +12,21 @@ public class AttackTriggerGroup : ModeTriggerGroup
     }
 
     //Wrapper for usingTrigger
-    public bool attacking
+    public virtual bool attacking { get; set; }
+    public override bool usingTrigger
     {
-        get => usingTrigger;
-        set => usingTrigger = value;
+        get => attacking;
+        set => attacking = value;
     }
 
-    public bool hitAttack;
+
+    public virtual bool hitAttack { get; set; }
+    public override bool used
+    {
+        get => hitAttack;
+        set => hitAttack = value;
+    }
+
     public bool missedAttack;
     public bool countered;
 
@@ -42,7 +50,7 @@ public class AttackTriggerGroup : ModeTriggerGroup
 
     protected override void DisableThisTriggerImplementation()
     {
-        print(gameObject.name + " | Disabling trigger implementation");
+        //print(gameObject.name + " | Disabling trigger implementation");
 
         CompleteAttackCaller();
         combatFunctionality.FinishAttacking();

@@ -5,8 +5,8 @@ using UnityEngine;
 
 public class AttackTriggerMulti : AttackTriggerGroup
 {
-    public List<AttackTriggerGroup> triggers;
-    public AttackTriggerGroup usingAttackTrigger;
+    public List<ModeTriggerGroup> triggers;
+    public ModeTriggerGroup triggerBeingUsed;
     protected bool hasTriggers = false;
     protected bool initializedChildTriggers = false;
 
@@ -60,7 +60,7 @@ public class AttackTriggerMulti : AttackTriggerGroup
         //print("taking on children");
 
         for (int i = 0; i < transform.childCount; i++)
-            triggers.Add(transform.GetChild(i).GetComponent<AttackTriggerGroup>());
+            triggers.Add(transform.GetChild(i).GetComponent<ModeTriggerGroup>());
 
 
         hasTriggers = true;
@@ -87,7 +87,7 @@ public class AttackTriggerMulti : AttackTriggerGroup
     {
         DisableAllChildTriggers();
 
-        usingAttackTrigger = null;
+        triggerBeingUsed = null;
     }
 
     #endregion
@@ -107,7 +107,7 @@ public class AttackTriggerMulti : AttackTriggerGroup
     protected void DisableAllChildTriggers()
     {
         //print("Disabling all child triggers");
-        foreach (AttackTriggerGroup trigger in triggers)
+        foreach (ModeTriggerGroup trigger in triggers)
         {
            // print("locally disabling trigger: " + trigger.gameObject.name);
             trigger.DisableThisTriggerOnlyLocally();

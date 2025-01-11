@@ -1,7 +1,8 @@
 using System.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
-public class CounterTriggerGroup : AttackTriggerColliderSingle
+public class CounterTriggerGroup : AttackTriggerFollowUp
 {
     public virtual CounterAbility myCounterAbility { get; set; }
 
@@ -13,31 +14,28 @@ public class CounterTriggerGroup : AttackTriggerColliderSingle
     }
 
     //Wrapper for usingTrigger
-    public bool countering;
-    public bool counterUp;
-    public bool counterMissed;
-
-    public LayerMask counterolisionWith;
-
-    public override void Awake()
+    public virtual bool countering { get; set; }
+    public override bool attacking
     {
-        //Cache
-        col = GetComponent<Collider>();
-        if (animator == null)
-            animator = GetComponent<Animator>();
+        get => countering;
+        set => countering = value;
     }
+
+    public virtual bool countered { get; set; }
+    public override bool hitAttack
+    {
+        get => countered;
+        set => countered = value;
+    }
+
+    public bool counterUp;
+
 
     protected override void EnableTriggerImplementation()
     {
         counterUp = false;
+        countered = false;
         countering = false;
-        counterMissed = false;
-        animator.SetBool("counter", false);
-
-
-        //Sets the collision's layers
-        col.includeLayers = counterolisionWith;
-        col.excludeLayers = ~counterolisionWith;
 
         base.EnableTriggerImplementation();
     }
@@ -50,7 +48,6 @@ public class CounterTriggerGroup : AttackTriggerColliderSingle
 
         base.InitialDelayOver_ReEnableTriggerImplementation();
 
-        gameObject.GetComponent<MeshRenderer>().material.color = Color.blue;
         StartCoroutine(CounterDown());
 
     }
@@ -69,11 +66,6 @@ public class CounterTriggerGroup : AttackTriggerColliderSingle
     {
         counterUp = false;
         countering = false;
-        counterMissed = false;
-
-        animator.SetBool("counter", false);
-        col.includeLayers = counterolisionWith;
-        col.excludeLayers = ~counterolisionWith;
 
         base.DisableThisTriggerImplementation();
     }
@@ -84,56 +76,13 @@ public class CounterTriggerGroup : AttackTriggerColliderSingle
         //print(combatFunctionality.gameObject.name + " | ability initializing...");
     }
 
-    public override void OnTriggerStay(Collider other)
-    {
-        if (counterUp && !countering)
-        {
-            if (other.GetComponent<AttackTriggerGroup>().attacking)
-            {
-                print("COUNTER STARTED");
-                CounterAttack();
-
-                print("Countered against: " + other.gameObject.GetComponent<AttackTriggerGroup>().name);
-                other.gameObject.GetComponent<AttackTriggerGroup>().GetCountered(other.ClosestPoint(transform.position));
-            }
-        }
-
-        if (countering)
-        {
-            print("Countering attack hit");
-            base.OnTriggerStay(other);
-
-        }
-    }
-
-
-    public void MissCounter()
-    {
-        print("Counter missed");
-        counterMissed = true;
-    }
-
-    public override void MissAttackCuttoff()
-    {
-        if (!hitAttack)
-        {
-            MissCounter();
-        }
-
-        base.MissAttackCuttoff();
-    }
-
-
-
     void CounterAttack()
     {
         countering = true;
-        gameObject.GetComponent<MeshRenderer>().material.color = Color.red;
-        animator.SetBool("counter", true);
+        gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
 
-        col.includeLayers = attackColisionWith;
-        col.excludeLayers = ~attackColisionWith;
-        print("Layer change complete");
+        triggerBeingUsed.gameObject.SetActive(true);
+        triggerBeingUsed.StartUsingAbilityTrigger(myCounterAbility.counterAttack_attackAbility, myCounterAbility.counterAttack_attackAbility.initialAttackDelay[0]);
     }
 
     IEnumerator CounterDown()

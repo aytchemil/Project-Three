@@ -43,7 +43,7 @@ public class AttackbleEntity : MonoBehaviour
         {
             invincibility = true;
 
-           // print("I was attacked");
+            print("I was attacked by : " + atkedWithAbility);
             attackedEffect.GetComponent<ParticleSystem>().Play();
             Invoke("StopAttacked", invincibiliyTime);
             FlinchCaller(atkedWithAbility.flinchAmount);

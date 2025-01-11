@@ -11,7 +11,7 @@ public class AttackTriggerMultiChoice : AttackTriggerMulti
     //=========================================================================================================================
 
 
-    public virtual void MultiChoiceAttack(AttackAbility currentAttackAbility, float delay, string choice)
+    public virtual IEnumerator MultiChoiceAttack(AttackAbility currentAttackAbility, float delay, string choice)
     {
         print("Attacking with multi attack choice trigger");
 
@@ -26,7 +26,7 @@ public class AttackTriggerMultiChoice : AttackTriggerMulti
         if (triggerBeingUsed == null)
         {
             print("Chosen attack trigger choice unavaliable, returning");
-            return;
+            yield break;
         }
 
             print("Chosen attack trigger is : " + triggerBeingUsed.name);
@@ -40,6 +40,24 @@ public class AttackTriggerMultiChoice : AttackTriggerMulti
         //The chosen Ability Trigger's Ability
         triggerBeingUsed.gameObject.SetActive(true);
         triggerBeingUsed.StartUsingAbilityTrigger(currentAttackAbility, currentAttackAbility.initialAttackDelay[0]);
+
+        while (gameObject.activeInHierarchy)
+        {
+            if ((triggerBeingUsed as AttackTriggerGroup).hitAttack)
+            {
+                ComboOffOfHitNowAvaliable();
+                yield break;
+            }
+
+
+            //miss
+            if ((triggerBeingUsed as AttackTriggerGroup).missedAttack)
+            {
+                MissAttackCuttoff();
+                yield break;
+            }
+            yield return new WaitForEndOfFrame();
+        }
 
     }
 

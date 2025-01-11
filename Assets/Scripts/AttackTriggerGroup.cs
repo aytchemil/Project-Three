@@ -179,7 +179,7 @@ public class AttackTriggerGroup : ModeTriggerGroup
 
     public void ComboOffOfHitNowAvaliable()
     {
-       // print("Combo off hit time period reached, can now combo because attack hit");
+        print("Comboing");
        // print(gameObject.name + " | Combo hit avaliable, DisableTrigger()");
         DisableThisTrigger();
     }

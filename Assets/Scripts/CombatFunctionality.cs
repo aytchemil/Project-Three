@@ -391,7 +391,9 @@ public class CombatFunctionality : MonoBehaviour
                 if (choice == "none") break;
 
                 //Archetype's Functionality
-                TriggerEnableToUse().GetComponent<AttackTriggerMultiChoice>().MultiChoiceAttack(attack, attack.initialAttackDelay[0], choice);
+
+                StartCoroutine(TriggerEnableToUse().GetComponent<AttackTriggerMultiChoice>().MultiChoiceAttack(attack, attack.initialAttackDelay[0], choice));
+
 
                 break;
 

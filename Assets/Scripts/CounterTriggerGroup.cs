@@ -29,14 +29,6 @@ public class CounterTriggerGroup : AttackTriggerFollowUp
     }
 
     public bool counterUp;
-    public override void StartUsingAbilityTrigger(Ability currentAbility, float delay)
-    {
-
-
-        base.StartUsingAbilityTrigger(currentAbility, delay);
-
-        StartCoroutine(FollowUpUse(currentAbility as AttackingAbility));
-    }
 
     protected override void EnableTriggerImplementation()
     {
@@ -100,11 +92,13 @@ public class CounterTriggerGroup : AttackTriggerFollowUp
     {
         float delay = base.CheckForTriggerUpdates_ReturnDelay(i);
 
-        if (triggerBeingUsed.myAbility as CounterAbility)
-        {
-            
-        }
-
+        if (triggerBeingUsed is CounterTriggerGroupCollider counter)
+            if (counter.countering)
+            {
+                print("following up... Countering... counter");
+                countering = true;
+                triggerProgress[i] = true;
+            }
 
         return delay;
     }

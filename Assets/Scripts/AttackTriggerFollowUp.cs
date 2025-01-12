@@ -54,7 +54,7 @@ public class AttackTriggerFollowUp : AttackTriggerMulti
 
     void TakeOnTriggerBeingUsed(AttackingAbility currentAbility, int i)
     {
-        print($"current index on follow up: {i} giving this index ability {currentAbility} ");
+        print($"current follow up index: {i} given ability {currentAbility} ");
         triggerBeingUsed = triggers[i];
         triggerBeingUsed.gameObject.SetActive(true);
         triggerBeingUsed.StartUsingAbilityTrigger(currentAbility, currentAbility.initialAttackDelay[i]);
@@ -94,9 +94,18 @@ public class AttackTriggerFollowUp : AttackTriggerMulti
 
         for (int i = 0; i < triggerProgress.Count; i++)
         {
-            print($"FOLLOW UP TRIGGER LOOP {i} : " + triggerBeingUsed.name);
+            //Applies the trigger on whatever current index its on
+
+
+            foreach(var trigger in triggers)
+                trigger.gameObject.SetActive(false);
+
 
             TakeOnTriggerBeingUsed(currentAbility, i);
+
+      
+            print($"FOLLOW UP TRIGGER LOOP {i} : " + triggerBeingUsed.name);
+
 
             while (triggerProgress[i] == false)
             {

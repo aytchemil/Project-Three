@@ -31,4 +31,4 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 99169ba6d6fb38a4f8ff536f275928aa, type: 2}
   counterArchetype: 0
   counterTriggerGroup: {fileID: 5273357752252842493, guid: f9a92ea576f47ac469a2017020ee6fc6, type: 3}
-  counterUpTime: 3
+  counterUpTime: 1

@@ -177,6 +177,6 @@ MonoBehaviour:
   counterUp: 0
   counterolisionWith:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   col: {fileID: 2212116773870806174}
   animator: {fileID: 2147940882175237756}

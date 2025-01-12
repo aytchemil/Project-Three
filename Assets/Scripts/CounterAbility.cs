@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "CounterAbility", menuName = "ScriptableObjects/Abilities/Counter Ability")]
-public class CounterAbility : AttackingMultiAbility
+public class CounterAbility : AttackMultiAbility
 {
     public enum CounterArchetype
     {

@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 7571868750791908547}
   - component: {fileID: 4172418506098455790}
   m_Layer: 9
-  m_Name: AttackTrigger_Overhead
+  m_Name: AT_Overhead
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

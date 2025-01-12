@@ -7,7 +7,7 @@ public class CounterTriggerGroup : AttackTriggerFollowUp
     public virtual CounterAbility myCounterAbility { get; set; }
 
     //Overriding base class Ability reference
-    public override AttackingAbility myAttackingAbility
+    public override AttackMultiAbility myAttackMultiAbility 
     {
         get => myCounterAbility;
         set => myCounterAbility = value as CounterAbility;
@@ -81,6 +81,7 @@ public class CounterTriggerGroup : AttackTriggerFollowUp
     {
         base.InitializeSelfImplementation(combatFunctionality, abilty);
 
+        myAbility = abilty as CounterAbility;
 
         //print(combatFunctionality.gameObject.name + " | ability initializing...");
     }
@@ -88,8 +89,24 @@ public class CounterTriggerGroup : AttackTriggerFollowUp
     IEnumerator CounterDown()
     {
         yield return new WaitForSeconds(myCounterAbility.counterUpTime);
+
+        if (countering) yield break;
+
         print("counter is down");
         DisableThisTrigger();
+    }
+
+    public override float CheckForTriggerUpdates_ReturnDelay(int i)
+    {
+        float delay = base.CheckForTriggerUpdates_ReturnDelay(i);
+
+        if (triggerBeingUsed.myAbility as CounterAbility)
+        {
+            
+        }
+
+
+        return delay;
     }
 
 }

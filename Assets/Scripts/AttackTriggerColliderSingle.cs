@@ -19,19 +19,6 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
     public Collider col;
     public Animator animator;
 
-    public virtual void Awake()
-    {
-        //Cache
-        col = GetComponent<Collider>();
-        if (animator == null)
-            animator = GetComponent<Animator>();
-
-        //Sets the collision's layers
-        col.includeLayers = attackColisionWith;
-        col.excludeLayers = ~attackColisionWith;
-
-    }
-
     #region  Template Pattern Overrides
     //Template Pattern Overrides
     ///=======================================================================================================================================
@@ -54,6 +41,19 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
         col.enabled = true;
 
         animator.SetBool("windupDone", true);
+    }
+
+    protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality, Ability abilty)
+    {
+        base.InitializeSelfImplementation(combatFunctionality, abilty);
+
+        col = GetComponent<Collider>();
+        if (animator == null)
+            animator = GetComponent<Animator>();
+
+        //Sets the collision's layers
+        col.includeLayers = attackColisionWith;
+        col.excludeLayers = ~attackColisionWith;
     }
 
 

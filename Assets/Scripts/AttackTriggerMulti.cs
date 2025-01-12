@@ -5,6 +5,14 @@ using UnityEngine;
 
 public class AttackTriggerMulti : AttackTriggerGroup
 {
+    public virtual AttackMultiAbility myAttackMultiAbility { get; set; }
+    public override AttackingAbility myAttackingAbility
+    {
+        get => myAttackMultiAbility;
+        set => myAttackMultiAbility = value as AttackMultiAbility;
+
+    }
+
     public List<ModeTriggerGroup> triggers;
     public ModeTriggerGroup triggerBeingUsed;
     protected bool hasTriggers = false;
@@ -35,13 +43,12 @@ public class AttackTriggerMulti : AttackTriggerGroup
     {
         base.InitializeSelfImplementation(combatFunctionality, abilty);
 
-        if(!(abilty as AttackingMultiAbility).presetChildTriggers)
-            CreateChildrenTriggers((abilty as AttackingMultiAbility).abilities);
+        if (!myAttackMultiAbility.presetChildTriggers)
+            CreateChildrenTriggers(myAttackMultiAbility.abilities);
 
         TakeOnChildrenAttackTriggers();
 
-        foreach (var trigger in triggers)
-            trigger.InitializeSelf(combatFunctionality, abilty);
+        InitializeChildTriggers(abilty as AttackMultiAbility);
     }
 
     #endregion
@@ -59,10 +66,9 @@ public class AttackTriggerMulti : AttackTriggerGroup
     {
         foreach (Ability ability in abilities)
         {
-             
-            print("ability: " + (ability));
-            print("Creating child trigger for ability: " + (ability as AttackAbility));
-            print("Creating child trigger: " + (ability as AttackAbility).triggerCollider);
+            if ((ability as AttackAbility).triggerCollider == null) Debug.LogError("trigger collider not set on ability : " + ability.abilityName);
+
+            print("multi: Creating child trigger: " + (ability as AttackAbility).triggerCollider);
             GameObject newChildTrigger = Instantiate((ability as AttackAbility).triggerCollider, transform, false);
             newChildTrigger.GetComponent<ModeTriggerGroup>().isLocal = true;
         }
@@ -71,7 +77,7 @@ public class AttackTriggerMulti : AttackTriggerGroup
 
     protected virtual void TakeOnChildrenAttackTriggers()
     {
-        print(gameObject.name + " taking on children");
+        print("multi: " + gameObject.name + " taking on children");
 
         for (int i = 0; i < transform.childCount; i++)
             triggers.Add(transform.GetChild(i).GetComponent<ModeTriggerGroup>());
@@ -81,19 +87,14 @@ public class AttackTriggerMulti : AttackTriggerGroup
     }
 
 
-    protected virtual void InitializeChildTriggers()
+    protected virtual void InitializeChildTriggers(AttackMultiAbility attackMultiAbility)
     {
-        foreach (AttackTriggerGroup trigger in triggers)
+        for (int i = 0; i < triggers.Count; i++)
         {
-            print("initialiing trigger: " + trigger.name);
-
-            print(gameObject.name + " my combat functionality is : " + combatFunctionality);
-
-            trigger.combatFunctionality = combatFunctionality;
-            trigger.attacking = false;
-            trigger.gameObject.SetActive(false);
-
+            print("multi: initialiing trigger: " + triggers[i].name);
+            triggers[i].InitializeSelf(combatFunctionality, attackMultiAbility.abilities[i]);
         }
+
         initializedChildTriggers = true;
     }
 

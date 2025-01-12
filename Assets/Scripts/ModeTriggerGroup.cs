@@ -9,6 +9,8 @@ public abstract class ModeTriggerGroup : MonoBehaviour
     public virtual Ability myAbility { get; set; }
     public virtual bool usingTrigger { get; set; }
     public virtual bool used { get; set; }
+    public virtual bool unused { get; set; }
+
     public bool isLocal;
 
 
@@ -18,9 +20,10 @@ public abstract class ModeTriggerGroup : MonoBehaviour
             return;
 
         usingTrigger = true;
+        unused = false;
 
         myAbility = currentAbility;
-        print("starting to use ability from " + gameObject.name + " setting my ability : " + myAbility);
+        //print("starting to use ability from " + gameObject.name + " setting my ability : " + myAbility);
         EnableTrigger();
 
         Invoke(nameof(InitialDelayOver_ReEnableTrigger), delay);
@@ -88,6 +91,7 @@ public abstract class ModeTriggerGroup : MonoBehaviour
         DisableThisTriggerLocallyImplementation();
 
         usingTrigger = false;
+        unused = false;
 
         gameObject.SetActive(false);
     }
@@ -100,9 +104,10 @@ public abstract class ModeTriggerGroup : MonoBehaviour
     {
         //print(gameObject.name + " init self");
         this.combatFunctionality = combatFunctionality;
-        myAbility = ability;
 
         InitializeSelfImplementation(combatFunctionality, ability);
+
+        print($"initializing self: " + gameObject.name + $" myAbility value is now {myAbility.name}");
     }
 
     protected abstract void InitializeSelfImplementation(CombatFunctionality combatFunctionality, Ability abilty);

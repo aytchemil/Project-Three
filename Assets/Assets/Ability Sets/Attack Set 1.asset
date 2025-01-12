@@ -14,6 +14,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   modeName: Attack
   right: {fileID: 11400000, guid: f70474e9dbc7cb74e9e11772d7ab18fc, type: 2}
-  left: {fileID: 11400000, guid: 338c9d17465917948910ba04c989170b, type: 2}
+  left: {fileID: 11400000, guid: 0e12207f444c15244822b55e9823b061, type: 2}
   up: {fileID: 11400000, guid: 6df32e096622839438a45810cf14019e, type: 2}
   down: {fileID: 11400000, guid: db1dbceafc38df14a8a00cce0da55387, type: 2}

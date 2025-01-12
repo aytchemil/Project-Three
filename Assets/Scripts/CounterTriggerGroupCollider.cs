@@ -54,7 +54,7 @@ public class CounterTriggerGroupCollider : ModeTriggerGroup
         gameObject.GetComponent<MeshRenderer>().material.color = Color.blue;
         StartCoroutine(CounterDown());
 
-        print("counter collider trigger past intial delay");
+        print("intial delay done. counter is up...");
 
     }
 
@@ -77,7 +77,7 @@ public class CounterTriggerGroupCollider : ModeTriggerGroup
 
     protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality, Ability abilty)
     {
-        //print(combatFunctionality.gameObject.name + " | ability initializing...");
+        myAbility = abilty as CounterAbility;
     }
 
 
@@ -88,7 +88,7 @@ public class CounterTriggerGroupCollider : ModeTriggerGroup
         {
             if(other.GetComponent<AttackTriggerGroup>() == null)
             {
-                print("no attack trigger found. returning");
+                //print("no attack trigger found. returning");
                 return;
             }
 
@@ -115,7 +115,8 @@ public class CounterTriggerGroupCollider : ModeTriggerGroup
     IEnumerator CounterDown()
     {
         yield return new WaitForSeconds(myCounterAbility.counterUpTime);
-        print("counter is down");
+        print("counter collider is down");
+        unused = true;
         DisableThisTriggerOnlyLocally();
     }
 

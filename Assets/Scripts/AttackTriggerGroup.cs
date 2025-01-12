@@ -27,7 +27,14 @@ public class AttackTriggerGroup : ModeTriggerGroup
         set => hitAttack = value;
     }
 
-    public bool missedAttack;
+    public virtual bool missedAttack { get; set; }
+
+    public override bool unused 
+    { 
+        get => missedAttack; 
+        set => missedAttack = value;
+    }
+
     public bool countered;
 
 
@@ -75,6 +82,10 @@ public class AttackTriggerGroup : ModeTriggerGroup
     protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality, Ability abilty)
     {
         //print(combatFunctionality.gameObject.name + " | ability trigger [" + gameObject.name + "] self initializing...");
+
+        myAbility = abilty as AttackingAbility;
+        attacking = false;
+        gameObject.SetActive(false);
     }
 
 
@@ -115,14 +126,13 @@ public class AttackTriggerGroup : ModeTriggerGroup
 
         Invoke(nameof(DisableThisTrigger), myAttackingAbility.missDelay);
 
-        //print("Succesfully missed attack");
     }
 
     public virtual void MissAttackCuttoffLocal()
     {
         if (hitAttack) return;
 
-        //print("missed attack");
+        print("missed attack local");
         missedAttack = true;
         hitAttack = false;
     }

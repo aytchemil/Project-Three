@@ -50538,7 +50538,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   preSelectedAttackPatterns:
   - {fileID: 11400000, guid: be289609191c85141ae7c34c2615ab96, type: 2}
-  attackingSpeed: 2
+  attackingSpeed: 0
   attackingSpeedDelays:
   - 2
   - 1

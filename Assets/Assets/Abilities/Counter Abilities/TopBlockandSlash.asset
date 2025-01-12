@@ -26,7 +26,7 @@ MonoBehaviour:
   triggerCollider: {fileID: 5678498679238792639, guid: d4d28247890999742a7f5ba7335c78b6, type: 3}
   movementAmount: 0
   presetChildTriggers: 0
-  abilitiesInOrder:
+  abilities:
   - {fileID: 11400000}
   - {fileID: 11400000, guid: 99169ba6d6fb38a4f8ff536f275928aa, type: 2}
   counterArchetype: 0

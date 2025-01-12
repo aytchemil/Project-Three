@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
@@ -34,12 +35,51 @@ public class AttackTriggerFollowUp : AttackTriggerMulti
 
     public override void StartUsingAbilityTrigger(Ability currentAbility, float delay)
     {
+        print("started using follow up atack");
         base.StartUsingAbilityTrigger(currentAbility, delay);
 
         StartCoroutine(FollowUpUse(currentAbility as AttackingAbility));
     }
 
 
+
+    void SetAllTriggersToFalse()
+    {
+        for (int i = 0; i < triggers.Count - 1; i++)
+        {
+            triggerProgress[i] = false;
+            triggers[i].gameObject.SetActive(false);
+        }
+    }
+
+    void TakeOnTriggerBeingUsed(AttackingAbility currentAbility, int i)
+    {
+        print($"current index on follow up: {i} giving this index ability {currentAbility} ");
+        triggerBeingUsed = triggers[i];
+        triggerBeingUsed.gameObject.SetActive(true);
+        triggerBeingUsed.StartUsingAbilityTrigger(currentAbility, currentAbility.initialAttackDelay[i]);
+    }
+
+
+    public virtual float CheckForTriggerUpdates_ReturnDelay(int i)
+    {
+        float delay = (triggerBeingUsed.myAbility as AttackingAbility).initialAttackDelay[i];
+
+        if (triggerBeingUsed.used)
+        { 
+            print("following up... hit");
+            triggerProgress[i] = true;
+        }
+
+        //miss
+        if (triggerBeingUsed.unused)
+        {
+            print("following up... miss");
+            triggerProgress[i] = true;
+        }
+
+        return delay;
+    }
 
     #region Methods
     //Methods
@@ -50,63 +90,45 @@ public class AttackTriggerFollowUp : AttackTriggerMulti
         print("FollowUpAttack()");
 
         //Set them all to false
-        for (int i = 0; i < triggers.Count-1; i++)
-        {
-            triggerProgress[i] = false;
-            triggers[i].gameObject.SetActive(false);
-        }
+        SetAllTriggersToFalse();
 
         for (int i = 0; i < triggerProgress.Count; i++)
         {
-            print($"current index on follow up: {i} giving this index ability {currentAbility} ");
-            triggerBeingUsed = triggers[i];
-            triggerBeingUsed.gameObject.SetActive(true);
-            triggerBeingUsed.StartUsingAbilityTrigger(currentAbility, currentAbility.initialAttackDelay[i]);
+            print($"FOLLOW UP TRIGGER LOOP {i} : " + triggerBeingUsed.name);
 
-            print("using : " + triggerBeingUsed.name);
+            TakeOnTriggerBeingUsed(currentAbility, i);
 
             while (triggerProgress[i] == false)
             {
+                print($"Waiting for index: {i}");
 
-                if (!gameObject.activeSelf) yield break;
+                if (!gameObject.activeSelf) {  print("This trigger has been disabled, breaking out of loop");   yield break;  }
 
-                //Hit
-                if (triggerBeingUsed.used)
-                {
-                    yield return new WaitForSeconds((triggerBeingUsed.myAbility as AttackingMultiAbility).initialAttackDelay[i]);
-                    triggerProgress[i] = true;
-                }
 
-                //miss
-                if((triggerBeingUsed as AttackTriggerGroup).missedAttack)
-                {
-                    yield return new WaitForSeconds((triggerBeingUsed.myAbility as AttackingMultiAbility).initialAttackDelay[i]);
-                    triggerProgress[i] = true;
-                }
-                
-                ////Once the indexed trigger disables itself
-                //if (!triggerBeingUsed.gameObject.activeSelf)
-                //{ triggerProgress[i] = true; }
+                yield return new WaitForSeconds(CheckForTriggerUpdates_ReturnDelay(i));
+
 
 
                 if (i == triggerProgress.Count - 1) //last
                 {
-                    //print("LAST");
+                    print("LAST");
 
                     if (triggerBeingUsed.used) { HitAttack(); MissAttackCuttoff(); yield break; }
                     if ((triggerBeingUsed as AttackTriggerGroup).missedAttack) { MissAttackCuttoff(); yield break; }
                 }
 
-
-
-                //print("Waiting for attack : " + usingAttackTrigger.name + " to finish");
-
-
                 yield return new WaitForEndOfFrame();
             }
+
+            print("after while loop");
+
         }
 
+        print("finished follow up attack");
+
     }
+
+
 
     #endregion
 

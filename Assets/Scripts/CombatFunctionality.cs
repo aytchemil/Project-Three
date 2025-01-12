@@ -182,7 +182,7 @@ public class CombatFunctionality : MonoBehaviour
         //Debug.Log(gameObject.name + " | Disabling Attack All Triggers");
         if (!Controls.Mode(mode.data.modeName).triggers.Any() || Controls.Mode(mode.data.modeName).parent.childCount == 0) 
         { 
-            print("triggers not setup, not disabling something that isnt there"); 
+            print("triggers not setup or already disabled, not disabling something that isnt there"); 
             return;
         }
 

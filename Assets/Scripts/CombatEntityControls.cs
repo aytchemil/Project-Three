@@ -1,7 +1,6 @@
 using UnityEngine;
 using System;
 using UnityEngine.InputSystem;
-using UnityEditor.ShaderGraph;
 using NUnit.Framework;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -70,12 +69,13 @@ public class CombatEntityController : MonoBehaviour
 
     Transform modeParent;
     bool modesInitialized = false;
-
-    protected virtual void OnEnable()
+    protected virtual void Start()
     {
+        print($"{gameObject.name} onEnable()");
         cantUseAbility = () => (!isLockedOn || alreadyAttacking || isBlocking || isFlinching || isCountering);
         CreateMyOwnModeInstances();
     }
+
     protected virtual void OnDisable()
     {
         look = null;
@@ -102,10 +102,14 @@ public class CombatEntityController : MonoBehaviour
         modeParent.name = "Mode Parent";
 
         int i = 0;
+
+        print(ModeManager.instance);
+        print(ModeManager.instance.modes);
+
         //Take in all the modes
         foreach (ModeData template in ModeManager.instance.modes)
         {
-            //print("Copying template " + template.modeName + " on iteration " + i);
+            print("Copying template " + template.modeName + " on iteration " + i);
             //Create new tempalte data
             ModeData newModeData = ScriptableObject.CreateInstance<ModeData>();
             newModeData.modeName = template.modeName;
@@ -121,7 +125,7 @@ public class CombatEntityController : MonoBehaviour
             newMode.data = newModeData;
             newMode.name = "Mode: " + newMode.data.modeName;
 
-            // print($"newmode modeName is {newMode.data.name}");
+            print($"newmode modeName is {newMode.data.name}");
 
             modes.Add(newMode);
             i++;
@@ -132,6 +136,7 @@ public class CombatEntityController : MonoBehaviour
         InstantiateModeParents();
 
         modesInitialized = true;
+        print($"{gameObject.name} Modes initialized");
     }
 
     void AssignAbilitySetsToModeData()

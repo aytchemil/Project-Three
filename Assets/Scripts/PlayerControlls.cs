@@ -36,7 +36,7 @@ public class PlayerController : CombatEntityController
 
     #region enable/disable
 
-    protected override void OnEnable()
+    protected void OnEnable()
     {
         ia_look.Enable();
         look = () => ia_look.ReadValue<Vector2>();
@@ -64,13 +64,8 @@ public class PlayerController : CombatEntityController
         ia_switchAttackMode.Enable();
         ia_switchAttackMode.performed += ctx =>
         {
-            if (!cantUseAbility.Invoke())
-                switchAttackMode?.Invoke();
-
+            switchAttackMode?.Invoke();
         };
-        
-
-        base.OnEnable();
     }
 
 

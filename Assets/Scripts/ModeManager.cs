@@ -8,6 +8,7 @@ public class ModeManager : MonoBehaviour
     public List<ModeData> modes = new List<ModeData>();
     private void Awake()
     {
+        print("initializing mode manager");
         instance = this;
     }
 }

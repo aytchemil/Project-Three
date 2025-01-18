@@ -107,7 +107,7 @@ public abstract class ModeTriggerGroup : MonoBehaviour
 
         InitializeSelfImplementation(combatFunctionality, ability);
 
-        print($"initializing self: " + gameObject.name + $" myAbility value is now {myAbility.name}");
+        //print($"initializing self: " + gameObject.name + $" myAbility value is now {myAbility.name}");
     }
 
     protected abstract void InitializeSelfImplementation(CombatFunctionality combatFunctionality, Ability abilty);

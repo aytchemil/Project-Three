@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.Playables;
 
 
 [RequireComponent(typeof(CombatEntityController))]
@@ -258,18 +259,19 @@ public class CombatFunctionality : MonoBehaviour
         }
 
         if (ability is AttackAbility attackAbility && ability is not CounterAbility)
-        {
-            print("creating trigger for attack");
-            trigger = Instantiate(attackAbility.triggerCollider, parent, false).GetComponent<AttackTriggerGroup>();
-        }
-        else if (ability is CounterAbility counterAbility)
-            trigger = Instantiate(counterAbility.counterTriggerGroup, parent, false).GetComponent<CounterTriggerGroup>();
+            trigger = Instantiate(attackAbility.prefab, parent, false).GetComponent<AttackTriggerGroup>();
 
-        else if (ability is BlockAbility blockAbility)
-            trigger = Instantiate(blockAbility.blockTriggerCollider, parent, false).GetComponent<BlockTriggerGroup>();
+        else if (ability is AttackMultiAbility multiAbility && ability is not CounterAbility)
+            trigger = Instantiate(multiAbility.prefab, parent, false).GetComponent<AttackTriggerMulti>();
+
+        else if (ability is CounterAbility counterAbility)
+            trigger = Instantiate(counterAbility.prefab, parent, false).GetComponent<CounterTriggerGroup>();
+
+        //else if (ability is BlockAbility blockAbility)
+        //    trigger = Instantiate(blockAbility.prefab, parent, false).GetComponent<BlockTriggerGroup>();
 
         else if (ability is ComboAbility comboAbility)
-            trigger = Instantiate(comboAbility.triggerCollider, parent, false).GetComponent<AttackTriggerGroup>();
+            trigger = Instantiate(comboAbility.comboChain.prefab, parent, false).GetComponent<ComboTrigger>();
 
         else
             Debug.LogError($"Unsupported Ability type for {direction}: {ability}");
@@ -363,10 +365,12 @@ public class CombatFunctionality : MonoBehaviour
         ///create 4 different attack triggers(like box)
         /// animate all 4, integrate that
 
-        AttackAbility attack = Controls.Mode("Attack").data.currentAbility as AttackAbility;
 
+        Ability ability = Controls.Mode("Attack").data.currentAbility;
 
-        switch (attack.archetype)
+        print(ability);
+
+        switch (ability.archetype)
         {
 
             case AttackAbility.Archetype.Singular:
@@ -374,10 +378,10 @@ public class CombatFunctionality : MonoBehaviour
                 //print("archetype: singular chosen");
 
                 //Archetype's Functionality
-                TriggerEnableToUse().StartUsingAbilityTrigger(attack, attack.initialAttackDelay[0]);
+                TriggerEnableToUse().StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
 
                 //Find the Specific Attack this ability is using, and use this attack abilities's Functionality
-                ArchetypeUse_SingularAttack(attack);
+                ArchetypeUse_SingularAttack((AttackAbility)ability);
 
                 break;
 
@@ -386,15 +390,13 @@ public class CombatFunctionality : MonoBehaviour
                 //print("archetype: multichoice chosen");
 
                 //Find the Specific Attack this ability is using, and use this attack abilities's Functionality
-                string choice = ArchetypeUse_MultiChoiceAttack(attack);
-
-                //print("choice is : " + choice);
+                string choice = GetMultiChoiceAttack(ability);
 
                 if (choice == "none") break;
 
                 //Archetype's Functionality
 
-                StartCoroutine(TriggerEnableToUse().GetComponent<AttackTriggerMultiChoice>().MultiChoiceAttack(attack, attack.initialAttackDelay[0], choice));
+                StartCoroutine(TriggerEnableToUse().GetComponent<AttackTriggerMultiChoice>().MultiChoiceAttack(ability, ability.initialUseDelay[0], choice));
 
 
                 break;
@@ -404,10 +406,10 @@ public class CombatFunctionality : MonoBehaviour
                 //print("archetype: followup chosen");
 
                 //Archetype's Functionality
-                TriggerEnableToUse().GetComponent<AttackTriggerFollowUp>().StartUsingAbilityTrigger(attack, attack.initialAttackDelay[0]);
+                TriggerEnableToUse().GetComponent<AttackTriggerFollowUp>().StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
 
                 //Find the Specific Attack this ability is using, and use this attack abilities's Functionality
-                ArchetypeUse_FollowUpAttack(attack);
+                ArchetypeUse_FollowUpAttack(ability);
 
                 break;
 
@@ -428,7 +430,7 @@ public class CombatFunctionality : MonoBehaviour
         {
             case CounterAbility.CounterArchetype.StandingRiposte:
 
-                TriggerEnableToUse().StartUsingAbilityTrigger(counterAbility, counterAbility.initialAttackDelay[0]);
+                TriggerEnableToUse().StartUsingAbilityTrigger(counterAbility, counterAbility.initialUseDelay[0]);
 
                 StandingRiposte();
 
@@ -471,12 +473,14 @@ public class CombatFunctionality : MonoBehaviour
         gameObject.GetComponent<Movement>().EnableMovement();
     }
 
-    IEnumerator MovementRightOrLeftAttack(string choice, AttackAbility attack)
+    IEnumerator MovementRightOrLeftAttack(string choice, AttackAbility chosenAbility)
     {
         Debug.Log(gameObject.name + " | Combat Functionality: attacking w/ MovementLeftOrRight attack");
 
 
-        gameObject.GetComponent<Movement>().Lunge(choice, attack.movementAmount);
+
+
+        gameObject.GetComponent<Movement>().Lunge(choice, chosenAbility.movementAmount);
 
         print("multi attack trigger, movementatttackrightorleft : lunging in dir " + choice);
 
@@ -487,18 +491,6 @@ public class CombatFunctionality : MonoBehaviour
         }
         
     }
-
-    IEnumerator DoubleFrontSlash()
-    {
-        //Debug.Log(gameObject.name + " | Combat Functionality: attacking w/ Double Front Slash");
-
-        while (!initialAbilityUseDelayOver)
-        {
-            // print("waiting...");
-            yield return new WaitForEndOfFrame();
-        }
-    }
-
 
 
     /// <summary>
@@ -561,11 +553,11 @@ public class CombatFunctionality : MonoBehaviour
         }
     }
 
-    string ArchetypeUse_MultiChoiceAttack(AttackAbility attack)
+    string GetMultiChoiceAttack(Ability ability)
     {
         string choice = "";
 
-        switch (attack.trait)
+        switch (ability.trait)
         {
             case AttackAbility.Trait.MovementLeftOrRight:
 
@@ -579,24 +571,28 @@ public class CombatFunctionality : MonoBehaviour
                     break;
                 }
 
-                StartCoroutine(MovementRightOrLeftAttack(choice, attack));
-
                 break;
         }
 
         return choice;
     }
 
-    void ArchetypeUse_FollowUpAttack(AttackAbility attack)
-    {
-        switch (attack.trait)
-        {
-            case AttackAbility.Trait.DoubleFrontSlash:
 
-                StartCoroutine(DoubleFrontSlash());
+    void ArchetypeUse_MultiChoiceAttack(Ability ability, string choice, AttackAbility chosenAbility)
+    {
+        switch (ability.trait)
+        {
+            case AttackAbility.Trait.MovementLeftOrRight:
+
+                StartCoroutine(MovementRightOrLeftAttack(choice, chosenAbility));
 
                 break;
         }
+    }
+
+    void ArchetypeUse_FollowUpAttack(AttackAbility attack)
+    {
+
     }
 
 

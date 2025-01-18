@@ -8,7 +8,7 @@ public class AttackTriggerColliderSingle : AttackTriggerGroup
     public virtual AttackAbility myAttackAbility { get; set; }
 
     //Overriding base class Ability reference
-    public override AttackingAbility myAttackingAbility
+    public override Ability myAbility
     {
         get => myAttackAbility;
         set => myAttackAbility = value as AttackAbility;

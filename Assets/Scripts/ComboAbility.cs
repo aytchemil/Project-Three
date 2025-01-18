@@ -4,7 +4,7 @@ using UnityEngine;
 
 
 [CreateAssetMenu(fileName = "ComboAbility", menuName = "ScriptableObjects/Abilities/Combo Ability")]
-public class ComboAbility : AttackMultiAbility
+public class ComboAbility : Ability
 {
     public AttackMultiAbility comboChain;
 }

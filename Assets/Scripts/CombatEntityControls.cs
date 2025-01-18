@@ -71,7 +71,7 @@ public class CombatEntityController : MonoBehaviour
     bool modesInitialized = false;
     protected virtual void Start()
     {
-        print($"{gameObject.name} onEnable()");
+        //print($"{gameObject.name} onEnable()");
         cantUseAbility = () => (!isLockedOn || alreadyAttacking || isBlocking || isFlinching || isCountering);
         CreateMyOwnModeInstances();
     }

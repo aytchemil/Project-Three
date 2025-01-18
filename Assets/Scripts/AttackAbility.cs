@@ -3,24 +3,18 @@ using UnityEngine.UI;
 
 
 [CreateAssetMenu(fileName = "AttackAbility", menuName = "ScriptableObjects/Abilities/Attack Ability")]
-public class AttackAbility : AttackingAbility
+public class AttackAbility : Ability
 {
-    public enum Archetype
-    {
-        Singular = 0,
-        Multi_Choice = 1,
-        Multi_FollowUp = 2,
-        Multi_InputFollowThrough = 3,
-    }
-    public Archetype archetype;
-    public enum Trait
-    {
-        MovementForward = 4,
-        MovementLeftOrRight = 5,
-        DoubleFrontSlash = 6,
-    }
-    public Trait trait;
+    public float damage;
+    public float flinchAmount = 1f;
+
     public GameObject triggerCollider;
+    public override GameObject prefab
+    {
+        get => triggerCollider;
+        set => triggerCollider = value;
+    }
+
 
     public float movementAmount;
 

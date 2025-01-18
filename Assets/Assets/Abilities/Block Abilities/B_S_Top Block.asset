@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 316368a6a30190149a3e1844875a050c, type: 3}
+  m_Name: B_S_Top Block
+  m_EditorClassIdentifier: 
+  abilityName: Top Block
+  icon: {fileID: 2800000, guid: b64fae9976beb4f4399a955bcb6b6d3e, type: 3}
+  initialUseDelay:
+  - 0.3
+  successDelay: 0.3
+  unsuccessDelay: 0
+  archetype: 0
+  trait: 0
+  collision: 0
+  blockTriggerCollider: {fileID: 5678498679238792639, guid: d4d28247890999742a7f5ba7335c78b6, type: 3}
+  blockUpTime: 1
+  damagePercentageBlocked: 100
+  slowdownMovementPercentage: 0

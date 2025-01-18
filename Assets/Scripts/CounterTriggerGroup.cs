@@ -20,8 +20,6 @@ public class CounterTriggerGroup : AttackTriggerFollowUp
         get => countering;
         set => countering = value;
     }
-
-    public virtual bool countered { get; set; }
     public override bool hitAttack
     {
         get => countered;
@@ -92,8 +90,8 @@ public class CounterTriggerGroup : AttackTriggerFollowUp
     {
         float delay = base.CheckForTriggerUpdates_ReturnDelay(i);
 
-        if (triggerBeingUsed is CounterTriggerGroupCollider counter)
-            if (counter.countering)
+        if (triggerBeingUsed is BlockTriggerGroupCollider block)
+            if (block.blocking)
             {
                 print("following up... Countering... counter");
                 countering = true;

@@ -60,7 +60,7 @@ public class AttackTriggerMultiChoice : AttackTriggerMulti
     }
 
 
-    public virtual IEnumerator MultiChoiceAttack(AttackAbility currentAttackAbility, float delay, string choice)
+    public virtual IEnumerator MultiChoiceAttack(AttackMultiAbility mltiAbility, float delay, string choice)
     {
         print("Attacking with multi attack choice trigger");
 
@@ -74,14 +74,14 @@ public class AttackTriggerMultiChoice : AttackTriggerMulti
         print("Chosen attack trigger is : " + triggerBeingUsed.name);
 
         //MultiChoice's Ability Trigger
-        StartUsingAbilityTrigger(currentAttackAbility, currentAttackAbility.initialAttackDelay[0]);
+        StartUsingAbilityTrigger(mltiAbility, mltiAbility.initialUseDelay[0]);
 
         if (!initializedChildTriggers)
             InitializeChildTriggers(myAttackMultiAbility);
 
         //The chosen Ability Trigger's Ability
         triggerBeingUsed.gameObject.SetActive(true);
-        triggerBeingUsed.StartUsingAbilityTrigger(currentAttackAbility, currentAttackAbility.initialAttackDelay[0]);
+        triggerBeingUsed.StartUsingAbilityTrigger(mltiAbility, mltiAbility.initialUseDelay[0]);
 
         while (gameObject.activeInHierarchy)
         {

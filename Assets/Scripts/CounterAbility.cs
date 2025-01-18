@@ -17,8 +17,6 @@ public class CounterAbility : AttackMultiAbility
     {
         Top = 0,
     }
-
-    public GameObject counterTriggerGroup;
     public float counterUpTime = 1f;
 
 }

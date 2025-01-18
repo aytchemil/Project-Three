@@ -2,12 +2,14 @@ using UnityEngine;
 
 [CreateAssetMenu(fileName = "AttackMultiAbility", menuName = "ScriptableObjects/Abilities/Multi/Attack Multi Ability")]
 
-public class AttackMultiAbility : AttackAbility
+public class AttackMultiAbility : Ability
 {
-    protected Ability[] abilities;
-
-    public Ability[] GetAbilities()
+    public GameObject MultiAbilityGroupingPrefab;
+    public override GameObject prefab
     {
-        return abilities;
+        get => MultiAbilityGroupingPrefab;
+        set => MultiAbilityGroupingPrefab = value;
     }
+
+    public Ability[] abilities;
 }

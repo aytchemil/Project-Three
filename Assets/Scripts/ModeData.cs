@@ -8,7 +8,6 @@ public class ModeData : ScriptableObject
     public AbilitySet abilitySet;
     public Ability currentAbility;
     public bool initializedTriggers;
-    public bool cachedTriggers;
     public Texture UIIndicator;
     public string modeTextDesc;
 }

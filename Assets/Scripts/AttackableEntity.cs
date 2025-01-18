@@ -35,7 +35,7 @@ public class AttackbleEntity : MonoBehaviour
     public float corpseDeathTime;
 
 
-    public virtual float Attacked(AttackingAbility atkedWithAbility)
+    public virtual float Attacked(AttackAbility atkedWithAbility)
     {
         float newHealth;
         if (!invincibility)
@@ -50,7 +50,7 @@ public class AttackbleEntity : MonoBehaviour
             //print(atkedWithAbility);
            // print(atkedWithAbility.damage);
 
-            newHealth = TakeDamage(atkedWithAbility.GetDamage());
+            newHealth = TakeDamage(atkedWithAbility.damage);
         }
         else
         {

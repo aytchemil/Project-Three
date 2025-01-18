@@ -2,15 +2,6 @@ using UnityEngine;
 
 public class AttackTriggerGroup : ModeTriggerGroup
 {
-     public virtual AttackingAbility myAttackingAbility {  get; set; }
-
-    //Overriding base class Ability reference
-    public override Ability myAbility
-    {
-        get => myAttackingAbility;
-        set => myAttackingAbility = value as AttackingAbility;
-    }
-
     //Wrapper for usingTrigger
     public virtual bool attacking { get; set; }
     public override bool usingTrigger
@@ -83,7 +74,7 @@ public class AttackTriggerGroup : ModeTriggerGroup
     {
         //print(combatFunctionality.gameObject.name + " | ability trigger [" + gameObject.name + "] self initializing...");
 
-        myAbility = abilty as AttackingAbility;
+        myAbility = abilty;
         attacking = false;
         gameObject.SetActive(false);
     }
@@ -116,7 +107,7 @@ public class AttackTriggerGroup : ModeTriggerGroup
         if (hitAttack)
         {
             //print("hit atack succesffull, calling combo");
-            Invoke(nameof(ComboOffOfHitNowAvaliable), myAttackingAbility.comnboDelayOnHit);
+            Invoke(nameof(ComboOffOfHitNowAvaliable), myAbility.successDelay);
             return;
         }
 
@@ -124,7 +115,7 @@ public class AttackTriggerGroup : ModeTriggerGroup
 
         MissedAttackCaller();
 
-        Invoke(nameof(DisableThisTrigger), myAttackingAbility.missDelay);
+        Invoke(nameof(DisableThisTrigger), myAbility.unsuccessDelay);
 
     }
 

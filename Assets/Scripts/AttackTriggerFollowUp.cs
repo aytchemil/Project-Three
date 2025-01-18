@@ -38,7 +38,7 @@ public class AttackTriggerFollowUp : AttackTriggerMulti
         print("started using follow up atack");
         base.StartUsingAbilityTrigger(currentAbility, delay);
 
-        StartCoroutine(FollowUpUse(currentAbility as AttackingAbility));
+        StartCoroutine(FollowUpUse(currentAbility));
     }
 
 
@@ -52,18 +52,18 @@ public class AttackTriggerFollowUp : AttackTriggerMulti
         }
     }
 
-    void TakeOnTriggerBeingUsed(AttackingAbility currentAbility, int i)
+    void TakeOnTriggerBeingUsed(Ability currentAbility, int i)
     {
         print($"current follow up index: {i} given ability {currentAbility} ");
         triggerBeingUsed = triggers[i];
         triggerBeingUsed.gameObject.SetActive(true);
-        triggerBeingUsed.StartUsingAbilityTrigger(currentAbility, currentAbility.initialAttackDelay[i]);
+        triggerBeingUsed.StartUsingAbilityTrigger(currentAbility, currentAbility.initialUseDelay[i]);
     }
 
 
     public virtual float CheckForTriggerUpdates_ReturnDelay(int i)
     {
-        float delay = (triggerBeingUsed.myAbility as AttackingAbility).initialAttackDelay[i];
+        float delay = triggerBeingUsed.myAbility.initialUseDelay[i];
 
         if (triggerBeingUsed.used)
         { 
@@ -85,7 +85,7 @@ public class AttackTriggerFollowUp : AttackTriggerMulti
     //Methods
     //=================================================================================================================================================
 
-    public virtual IEnumerator FollowUpUse(AttackingAbility currentAbility)
+    public virtual IEnumerator FollowUpUse(Ability currentAbility)
     {
         print("FollowUpAttack()");
 

@@ -6,7 +6,7 @@ using UnityEngine;
 public class AttackTriggerMulti : AttackTriggerGroup
 {
     public virtual AttackMultiAbility myAttackMultiAbility { get; set; }
-    public override AttackingAbility myAttackingAbility
+    public override Ability myAbility
     {
         get => myAttackMultiAbility;
         set => myAttackMultiAbility = value as AttackMultiAbility;
@@ -43,7 +43,7 @@ public class AttackTriggerMulti : AttackTriggerGroup
     {
         base.InitializeSelfImplementation(combatFunctionality, abilty);
 
-        CreateChildrenTriggers(myAttackMultiAbility.GetAbilities());
+        CreateChildrenTriggers(myAttackMultiAbility.abilities);
 
         TakeOnChildrenAttackTriggers();
 
@@ -65,11 +65,11 @@ public class AttackTriggerMulti : AttackTriggerGroup
     {
         foreach (Ability ability in abilities)
         {
-            if ((ability as AttackAbility).triggerCollider == null) Debug.LogError("trigger collider not set on ability : " + ability.abilityName);
+            if (ability.prefab == null) Debug.LogError("prefab not set on ability : " + ability.abilityName);
 
-            print("multi: Creating child trigger: " + (ability as AttackAbility).triggerCollider);
-            GameObject newChildTrigger = Instantiate((ability as AttackAbility).triggerCollider, transform, false);
-            newChildTrigger.GetComponent<ModeTriggerGroup>().isLocal = true;
+            print($"MLTI Ability: {ability} -> Creating CHILD prefab: " + ability.prefab);
+            GameObject newChildPrefab = Instantiate(ability.prefab, transform, false);
+            newChildPrefab.GetComponent<ModeTriggerGroup>().isLocal = true;
         }
     }
 
@@ -90,8 +90,8 @@ public class AttackTriggerMulti : AttackTriggerGroup
     {
         for (int i = 0; i < triggers.Count; i++)
         {
-            print("multi: initialiing trigger: " + triggers[i].name);
-            triggers[i].InitializeSelf(combatFunctionality, attackMultiAbility.GetAbilities()[i]);
+            //print("multi: initialiing trigger: " + triggers[i].name);
+            triggers[i].InitializeSelf(combatFunctionality, attackMultiAbility.abilities[i]);
         }
 
         initializedChildTriggers = true;

@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class AttackMultiAbility : AttackAbility
 {
-    public bool presetChildTriggers;
-    public Ability[] abilities;
+    protected Ability[] abilities;
+
+    public Ability[] GetAbilities()
+    {
+        return abilities;
+    }
 }

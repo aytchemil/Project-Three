@@ -1,0 +1,31 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8a1396fa0d4296148a1476557a48088e, type: 3}
+  m_Name: InputFollowThrough
+  m_EditorClassIdentifier: 
+  abilityName: Cleave Combo
+  icon: {fileID: 2800000, guid: 5af24bdb234c3cb45b319a86737330c6, type: 3}
+  initialAttackDelay:
+  - 0.3
+  missDelay: 1
+  comnboDelayOnHit: 0.3
+  damage: 0
+  flinchAmount: 1
+  archetype: 2
+  trait: 0
+  triggerCollider: {fileID: 2493093358967026615, guid: cddb9c81b987429488023054be6e13a8, type: 3}
+  movementAmount: 0
+  presetChildTriggers: 0
+  abilities:
+  - {fileID: 11400000, guid: 99169ba6d6fb38a4f8ff536f275928aa, type: 2}
+  - {fileID: 11400000, guid: 6df32e096622839438a45810cf14019e, type: 2}
+  - {fileID: 11400000, guid: 57c8b27f3b1a8134b8e9c7edb069b681, type: 2}

@@ -216,26 +216,26 @@ public class CombatFunctionality : MonoBehaviour
     /// <param name="left"></param>
     /// <param name="up"></param>
     /// <param name="down"></param>
-    public void InstantiateTriggersForMode(ModeAbilitiesSO modeAbilities, Transform parent)
+    public void InstantiateTriggersForMode(AbilitySet abilitySet, Transform parent)
     {
         //print("Instantiating triggers");
 
-        if (modeAbilities == null)
+        if (abilitySet == null)
             Debug.LogError("Mode AbilitiesSO null");
 
-        if(modeAbilities.right == null || modeAbilities.left == null || modeAbilities.up == null || modeAbilities.down == null)
+        if(abilitySet.right == null || abilitySet.left == null || abilitySet.up == null || abilitySet.down == null)
         {
             Debug.LogError("Abilities Given to Instantiate attack triggers are null:");
-            Debug.LogError("right : " + modeAbilities.right);
-            Debug.LogError("left : " + modeAbilities.left);
-            Debug.LogError("up : " + modeAbilities.up);
-            Debug.LogError("down : " + modeAbilities.down);
+            Debug.LogError("right : " + abilitySet.right);
+            Debug.LogError("left : " + abilitySet.left);
+            Debug.LogError("up : " + abilitySet.up);
+            Debug.LogError("down : " + abilitySet.down);
         }
 
-        Controls.t_right = InitializeTrigger(modeAbilities.right, parent, "right trigger");
-        Controls.t_left = InitializeTrigger(modeAbilities.left, parent, "left trigger");
-        Controls.t_up = InitializeTrigger(modeAbilities.up, parent, "up trigger");
-        Controls.t_down = InitializeTrigger(modeAbilities.down, parent, "down trigger");
+        Controls.t_right = InitializeTrigger(abilitySet.right, parent, "right trigger");
+        Controls.t_left = InitializeTrigger(abilitySet.left, parent, "left trigger");
+        Controls.t_up = InitializeTrigger(abilitySet.up, parent, "up trigger");
+        Controls.t_down = InitializeTrigger(abilitySet.down, parent, "down trigger");
 
         if(Controls.t_right == null || Controls.t_left == null || Controls.t_up  == null || Controls.t_down == null)
             Debug.LogError("Trigger group triggers not iniailized corectly, check");
@@ -261,13 +261,16 @@ public class CombatFunctionality : MonoBehaviour
         {
             print("creating trigger for attack");
             trigger = Instantiate(attackAbility.triggerCollider, parent, false).GetComponent<AttackTriggerGroup>();
-
         }
         else if (ability is CounterAbility counterAbility)
             trigger = Instantiate(counterAbility.counterTriggerGroup, parent, false).GetComponent<CounterTriggerGroup>();
 
         else if (ability is BlockAbility blockAbility)
             trigger = Instantiate(blockAbility.blockTriggerCollider, parent, false).GetComponent<BlockTriggerGroup>();
+
+        else if (ability is ComboAbility comboAbility)
+            trigger = Instantiate(comboAbility.triggerCollider, parent, false).GetComponent<AttackTriggerGroup>();
+
         else
             Debug.LogError($"Unsupported Ability type for {direction}: {ability}");
 

@@ -50,7 +50,7 @@ public class AttackbleEntity : MonoBehaviour
             //print(atkedWithAbility);
            // print(atkedWithAbility.damage);
 
-            newHealth = TakeDamage(atkedWithAbility.damage);
+            newHealth = TakeDamage(atkedWithAbility.GetDamage());
         }
         else
         {

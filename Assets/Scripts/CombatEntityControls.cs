@@ -43,7 +43,7 @@ public class CombatEntityController : MonoBehaviour
     public List<ModeRuntimeData> modes = new List<ModeRuntimeData>();
 
     [Header("Mode Inputted Ability Sets")]
-    public List<ModeAbilitiesSO> abilitySetInputs;
+    public List<AbilitySet> abilitySetInputs;
 
     [Header("Main Current Ability Sets")]
     public ModeTriggerGroup t_right;
@@ -103,13 +103,13 @@ public class CombatEntityController : MonoBehaviour
 
         int i = 0;
 
-        print(ModeManager.instance);
-        print(ModeManager.instance.modes);
+        //print(ModeManager.instance);
+        //print(ModeManager.instance.modes);
 
         //Take in all the modes
         foreach (ModeData template in ModeManager.instance.modes)
         {
-            print("Copying template " + template.modeName + " on iteration " + i);
+            //print("Copying template " + template.modeName + " on iteration " + i);
             //Create new tempalte data
             ModeData newModeData = ScriptableObject.CreateInstance<ModeData>();
             newModeData.modeName = template.modeName;
@@ -125,7 +125,7 @@ public class CombatEntityController : MonoBehaviour
             newMode.data = newModeData;
             newMode.name = "Mode: " + newMode.data.modeName;
 
-            print($"newmode modeName is {newMode.data.name}");
+            //print($"newmode modeName is {newMode.data.name}");
 
             modes.Add(newMode);
             i++;
@@ -176,16 +176,21 @@ public class CombatEntityController : MonoBehaviour
         return retMode;
     }
 
-    public ModeAbilitiesSO AbilitySet(string modeName)
+    public AbilitySet AbilitySet(string modeName)
     {
-        ModeAbilitiesSO retAbilitySet = null;
+        AbilitySet retAbilitySet = null;
 
-        foreach (ModeAbilitiesSO abilitySet in abilitySetInputs)
-            if (abilitySet.modeName == modeName)
+        foreach (AbilitySet abilitySet in abilitySetInputs)
+        {
+            //print(gameObject.name + "Ability Set Search: " + abilitySet.mode.ToString());
+            //print(gameObject.name + "Ability Set Search Against: " + modeName);
+            if (abilitySet.mode.ToString() == modeName)
                 retAbilitySet = abilitySet;
+        }
+
 
         if (retAbilitySet == null)
-            Debug.LogError("Did not find an ability set with that modename");
+            Debug.LogError(gameObject.name + $"Ability Set Search: Did not find an ability set with the modename {modeName}");
 
 
         return retAbilitySet;

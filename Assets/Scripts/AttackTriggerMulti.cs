@@ -43,8 +43,7 @@ public class AttackTriggerMulti : AttackTriggerGroup
     {
         base.InitializeSelfImplementation(combatFunctionality, abilty);
 
-        if (!myAttackMultiAbility.presetChildTriggers)
-            CreateChildrenTriggers(myAttackMultiAbility.abilities);
+        CreateChildrenTriggers(myAttackMultiAbility.GetAbilities());
 
         TakeOnChildrenAttackTriggers();
 
@@ -92,7 +91,7 @@ public class AttackTriggerMulti : AttackTriggerGroup
         for (int i = 0; i < triggers.Count; i++)
         {
             print("multi: initialiing trigger: " + triggers[i].name);
-            triggers[i].InitializeSelf(combatFunctionality, attackMultiAbility.abilities[i]);
+            triggers[i].InitializeSelf(combatFunctionality, attackMultiAbility.GetAbilities()[i]);
         }
 
         initializedChildTriggers = true;

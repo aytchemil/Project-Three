@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59d33f9bf2fb38e45aabf5ebbffeb4ad, type: 3}
   m_Name: Counter Set 1
   m_EditorClassIdentifier: 
-  modeName: Counter
+  mode: 1
   right: {fileID: 11400000, guid: e13753d1fc987874284bf4840f0eccea, type: 2}
   left: {fileID: 11400000, guid: e13753d1fc987874284bf4840f0eccea, type: 2}
   up: {fileID: 11400000, guid: e13753d1fc987874284bf4840f0eccea, type: 2}

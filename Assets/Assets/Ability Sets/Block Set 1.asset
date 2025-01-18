@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59d33f9bf2fb38e45aabf5ebbffeb4ad, type: 3}
   m_Name: Block Set 1
   m_EditorClassIdentifier: 
-  modeName: Block
+  mode: 2
   right: {fileID: 11400000, guid: fe9ba579a1204a5418a1df6fef16a24c, type: 2}
   left: {fileID: 11400000, guid: fe9ba579a1204a5418a1df6fef16a24c, type: 2}
   up: {fileID: 11400000, guid: fe9ba579a1204a5418a1df6fef16a24c, type: 2}

@@ -10,6 +10,7 @@ public class AttackAbility : AttackingAbility
         Singular = 0,
         Multi_Choice = 1,
         Multi_FollowUp = 2,
+        Multi_InputFollowThrough = 3,
     }
     public Archetype archetype;
     public enum Trait

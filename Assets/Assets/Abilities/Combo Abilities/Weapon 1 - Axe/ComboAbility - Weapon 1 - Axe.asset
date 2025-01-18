@@ -1,0 +1,26 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8b4cf875cf1b1eb40b591eaf57e42349, type: 3}
+  m_Name: ComboAbility - Weapon 1 - Axe
+  m_EditorClassIdentifier: 
+  abilityName: Axe Combo 1
+  icon: {fileID: 2800000, guid: 35ae5c6a67f092d41894e7c2624e0fda, type: 3}
+  initialAttackDelay:
+  - 0.3
+  missDelay: 0
+  comnboDelayOnHit: 0.3
+  flinchAmount: 1
+  archetype: 2
+  trait: 0
+  triggerCollider: {fileID: 2493093358967026615, guid: cddb9c81b987429488023054be6e13a8, type: 3}
+  movementAmount: 0
+  comboChain: {fileID: 11400000, guid: 434b940acefe5d04b8cdab6ffe8b2a69, type: 2}

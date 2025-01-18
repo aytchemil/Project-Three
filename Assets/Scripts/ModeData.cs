@@ -5,7 +5,7 @@ using UnityEngine;
 public class ModeData : ScriptableObject
 {
     public string modeName;
-    public ModeAbilitiesSO abilitySet;
+    public AbilitySet abilitySet;
     public Ability currentAbility;
     public bool initializedTriggers;
     public bool cachedTriggers;

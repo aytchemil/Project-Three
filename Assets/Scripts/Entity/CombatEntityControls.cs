@@ -21,6 +21,7 @@ public class CombatEntityController : MonoBehaviour
     public Action lockOn;
     public Action dash;
     public Action<string> useAbility;
+    public Action<string> useCombo;
     public Action blockStart;
     public Action blockStop;
     public Action switchAttackMode;
@@ -51,6 +52,12 @@ public class CombatEntityController : MonoBehaviour
 
     [Header("Mode Inputted Ability Sets")]
     public List<AbilitySet> abilitySetInputs;
+
+    [Header("Combo Current Ability Sets")]
+    public CombotTriggerGroup c_right;
+    public CombotTriggerGroup c_left;
+    public CombotTriggerGroup c_up;
+    public CombotTriggerGroup c_down;
 
     [Header("Main Current Ability Sets")]
     public ModeTriggerGroup t_right;
@@ -85,7 +92,7 @@ public class CombatEntityController : MonoBehaviour
 
     protected virtual void OnEnable()
     {
-        useAbility += ReAttackCheck;
+        useCombo += ReAttackCheck;
     }
 
     protected virtual void OnDisable()
@@ -97,6 +104,7 @@ public class CombatEntityController : MonoBehaviour
         lockOn = null;
         dash = null;
         useAbility = null;
+        useCombo = null;
         blockStart = null;
         blockStop = null;
         GetTarget = null;
@@ -216,6 +224,7 @@ public class CombatEntityController : MonoBehaviour
         t_up = Mode(mode).triggers[2].GetComponent<ModeTriggerGroup>();
         t_down = Mode(mode).triggers[3].GetComponent<ModeTriggerGroup>();
     }
+
 
     public void ReAttackCheck(string dir)
     {

@@ -1,10 +1,13 @@
-using NUnit.Framework;
-using System.Collections.Generic;
 using UnityEngine;
 
-
-[CreateAssetMenu(fileName = "ComboAbility", menuName = "ScriptableObjects/Abilities/Combo Ability")]
-public class AbilityCombo : Ability
+[CreateAssetMenu(fileName = "ComboAbility", menuName = "ScriptableObjects/Abilities/Multi/Combo Ability")]
+public class AbilityCombo : AbilityMulti
 {
-    public AbilityMulti comboChain;
+    public float reattackTimeUntilReset;
+
+    public enum ComboType
+    {
+        Linear = 0,
+    }
+    public ComboType comboType;
 }

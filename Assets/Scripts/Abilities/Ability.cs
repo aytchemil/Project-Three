@@ -15,7 +15,6 @@ public class Ability : ScriptableObject
         Singular = 0,
         Multi_Choice = 1,
         Multi_Followup = 2,
-        Multi_FollowupInput = 3,
     }
     public Archetype archetype;
     public enum Trait

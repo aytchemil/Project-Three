@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Combo Set 1
   m_EditorClassIdentifier: 
   mode: 3
-  right: {fileID: 11400000, guid: fc2a343e9594670438ba7ac36f4cd8ab, type: 2}
-  left: {fileID: 11400000, guid: fc2a343e9594670438ba7ac36f4cd8ab, type: 2}
-  up: {fileID: 11400000, guid: fc2a343e9594670438ba7ac36f4cd8ab, type: 2}
-  down: {fileID: 11400000, guid: fc2a343e9594670438ba7ac36f4cd8ab, type: 2}
+  right: {fileID: 11400000, guid: 8ccb369b61a954e47872de4a6ce6a797, type: 2}
+  left: {fileID: 11400000, guid: 09992a660f3ad1e4baddac6616490d8e, type: 2}
+  up: {fileID: 11400000, guid: 79a834a3c4b1de04b9b43e6d8bec88b9, type: 2}
+  down: {fileID: 11400000, guid: 62e4aa8dd03855c4a90c2fe9e2b9a3ea, type: 2}

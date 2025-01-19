@@ -14,7 +14,8 @@ public class PlayerController : CombatEntityController
     public InputAction ia_sprint;
     public InputAction ia_lockOn;
     public InputAction ia_dash;
-    public InputAction ia_attack;
+    public InputAction ia_useAbility;
+    public InputAction ia_useCombo;
     public InputAction ia_block;
     public InputAction ia_switchAttackMode;
 
@@ -28,7 +29,8 @@ public class PlayerController : CombatEntityController
         ia_sprint = controls.Player.Sprint;
         ia_lockOn = controls.Player.LockOn;
         ia_dash = controls.Player.Dash;
-        ia_attack = controls.Player.Attack;
+        ia_useAbility = controls.Player.UseAbility;
+        ia_useCombo = controls.Player.UseCombo;
         ia_block = controls.Player.Block;
         ia_switchAttackMode = controls.Player.SwitchAttackMode;
     }
@@ -56,11 +58,14 @@ public class PlayerController : CombatEntityController
         ia_dash.Enable();
         ia_dash.performed += ctx => dash?.Invoke();
 
-        ia_attack.Enable();
-        ia_attack.performed += ctx =>
+        ia_useAbility.Enable();
+        ia_useAbility.performed += ctx =>
         {
             useAbility?.Invoke(mode);
         };
+
+        ia_useCombo.Enable();
+        ia_useCombo.performed += ctx => useCombo?.Invoke("Combo");
 
          ia_block.Enable();
         ia_block.started += ctx => blockStart?.Invoke();
@@ -90,8 +95,11 @@ public class PlayerController : CombatEntityController
         ia_dash.Disable();
         ia_dash.performed -= ctx => dash?.Invoke();
 
-        ia_attack.Disable();
-        ia_attack.performed -= ctx => useAbility?.Invoke(mode);
+        ia_useAbility.Disable();
+        ia_useAbility.performed -= ctx => useAbility?.Invoke(mode);
+
+        ia_useCombo.Disable();
+        ia_useCombo.performed -= ctx => useCombo?.Invoke("Combo");
 
         ia_block.Disable();
         ia_block.performed -= ctx => blockStart?.Invoke();

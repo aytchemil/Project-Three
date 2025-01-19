@@ -43,10 +43,14 @@ public class CombatFunctionality : MonoBehaviour
 
         Controls.useAbility += UseAbility;
 
+        Controls.useCombo += UseCombo;
+
         //Controls.blockStart += Block;
         //Controls.blockStop += StopBlock;
 
         Controls.Flinch += Flinch;
+
+
     }
 
 
@@ -65,7 +69,10 @@ public class CombatFunctionality : MonoBehaviour
 
         Controls.useAbility -= UseAbility;
 
-       // Controls.blockStart -= Block;
+        Controls.useCombo -= UseCombo;
+
+
+        // Controls.blockStart -= Block;
         //Controls.blockStop -= StopBlock;
 
         Controls.Flinch -= Flinch;
@@ -271,10 +278,7 @@ public class CombatFunctionality : MonoBehaviour
         //    trigger = Instantiate(blockAbility.prefab, parent, false).GetComponent<BlockTriggerGroup>();
 
         else if (ability is AbilityCombo comboAbility)
-        {
-            trigger = Instantiate(comboAbility.comboChain.prefab, parent, false).GetComponent<MultiAttackTriggerGroup>();
-            ability = comboAbility.comboChain;
-        }
+            trigger = Instantiate(comboAbility.prefab, parent, false).GetComponent<CombotTriggerGroup>();
 
         else
             Debug.LogError($"Unsupported Ability type for {direction}: {ability}");
@@ -307,7 +311,8 @@ public class CombatFunctionality : MonoBehaviour
 
         //Reset the current ability for all the modes
         foreach (ModeRuntimeData mode in Controls.modes)
-            mode.data.currentAbility = null;
+            if(mode.data.modeName != "Combo")
+                mode.data.currentAbility = null;
 
 
         switch (dir)
@@ -348,10 +353,7 @@ public class CombatFunctionality : MonoBehaviour
 
 
         if (mode == "Attack")
-            Attack("Attack");
-
-        else if(mode == "Combo")
-            Attack("Combo");
+            Attack();
 
         else if (mode == "Counter")
             Counter();
@@ -362,7 +364,18 @@ public class CombatFunctionality : MonoBehaviour
 
     }
 
-    void Attack(string mode)
+
+    public virtual void UseCombo(string mode)
+    {
+        if (Controls.cantUseAbility.Invoke())
+            return;
+
+        if (mode != "Combo") { Debug.LogError("Calling combo with a mode thats node combo"); return; }
+
+        Combo();
+    }
+
+    void Attack()
     {
 
         //print("attacking");
@@ -374,9 +387,7 @@ public class CombatFunctionality : MonoBehaviour
         /// animate all 4, integrate that
 
 
-        Ability ability = Controls.Mode(mode).data.currentAbility;
-
-        print(ability);
+        Ability ability = Controls.Mode("Attack").data.currentAbility;
 
         switch (ability.archetype)
         {
@@ -384,7 +395,7 @@ public class CombatFunctionality : MonoBehaviour
             case AbilityAttack.Archetype.Singular:
 
                 //Actuall Attack
-                TriggerEnableToUse().StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
+                TriggerEnableToUse("Attack").StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
 
                 //Special Functionality
                 ArchetypeUse_SingularAttack((AbilityAttack)ability);
@@ -400,7 +411,7 @@ public class CombatFunctionality : MonoBehaviour
                 if (choice == "none") break;
 
                 //Actuall Attack
-                StartCoroutine(TriggerEnableToUse().GetComponent<MAT_ChoiceGroup>().MultiChoiceAttack((AbilityMulti)ability, ability.initialUseDelay[0], choice));
+                StartCoroutine(TriggerEnableToUse("Attack").GetComponent<MAT_ChoiceGroup>().MultiChoiceAttack((AbilityMulti)ability, ability.initialUseDelay[0], choice));
 
                 //Special Functionality
                 ArchetypeUse_MultiChoiceAttack(ability, choice);
@@ -412,28 +423,10 @@ public class CombatFunctionality : MonoBehaviour
 
 
                 //Actuall Attack
-                TriggerEnableToUse().GetComponent<MAT_FollowupGroup>().StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
+                TriggerEnableToUse("Attack").GetComponent<MAT_FollowupGroup>().StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
 
                 //Special Functionality
                 ArchetypeUse_FollowUpAttack((AbilityMulti)ability);
-
-                break;
-
-            case AbilityAttack.Archetype.Multi_FollowupInput:
-
-               
-
-                //Actuall Attack
-                if(mode == "Attack")
-                    TriggerEnableToUse().GetComponent<MAT_FollowupInputGroup>().StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
-                if(mode == "Combo")
-                {
-                    AbilityCombo comboAbility = (AbilityCombo)ability;
-                    TriggerEnableToUse().GetComponent<MAT_FollowupInputGroup>().StartUsingAbilityTrigger(comboAbility.comboChain, comboAbility.initialUseDelay[0]);
-                }
-
-                //Special Functionality
-                //ArchetypeUse_FollowUpAttack((AbilityMulti)ability);
 
                 break;
         }
@@ -452,9 +445,30 @@ public class CombatFunctionality : MonoBehaviour
         {
             case AbilityCounter.CounterArchetype.StandingRiposte:
 
-                TriggerEnableToUse().StartUsingAbilityTrigger(counterAbility, counterAbility.initialUseDelay[0]);
+                TriggerEnableToUse("Counter").StartUsingAbilityTrigger(counterAbility, counterAbility.initialUseDelay[0]);
 
                 StandingRiposte();
+
+                break;
+        }
+    }
+
+    void Combo()
+    {
+        AbilityCombo ability = (AbilityCombo)Controls.Mode("Combo").data.currentAbility;
+
+        StartAttacking();
+
+        switch (ability.comboType)
+        {
+            case AbilityCombo.ComboType.Linear:
+
+                //Actuall Attack
+                TriggerEnableToUse("Combo").GetComponent<CombotTriggerGroup>().StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
+
+
+                //Special Functionality
+                //ArchetypeUse_FollowUpAttack((AbilityMulti)ability);
 
                 break;
         }
@@ -520,39 +534,39 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     /// 
 
-    ModeTriggerGroup TriggerEnableToUse()
+    ModeTriggerGroup TriggerEnableToUse(string mode)
     {
         ModeTriggerGroup usingThisTriggerGroup = null;
 
         switch (dir)
         {
             case "right":
-                Controls.t_right.gameObject.SetActive(true);
-                Controls.t_left.gameObject.SetActive(false);
-                Controls.t_up.gameObject.SetActive(false);
-                Controls.t_down.gameObject.SetActive(false);
-                usingThisTriggerGroup = Controls.t_right;
+                Controls.Mode(mode).triggers[0].gameObject.SetActive(true);
+                Controls.Mode(mode).triggers[1].gameObject.SetActive(false);
+                Controls.Mode(mode).triggers[2].gameObject.SetActive(false);
+                Controls.Mode(mode).triggers[3].gameObject.SetActive(false);
+                usingThisTriggerGroup = Controls.Mode(mode).triggers[0].gameObject.GetComponent<ModeTriggerGroup>();
                 break;
             case "left":
-                Controls.t_right.gameObject.SetActive(false);
-                Controls.t_left.gameObject.SetActive(true);
-                Controls.t_up.gameObject.SetActive(false);
-                Controls.t_down.gameObject.SetActive(false);
-                usingThisTriggerGroup = Controls.t_left;
+                Controls.Mode(mode).triggers[0].gameObject.SetActive(false);
+                Controls.Mode(mode).triggers[1].gameObject.SetActive(true);
+                Controls.Mode(mode).triggers[2].gameObject.SetActive(false);
+                Controls.Mode(mode).triggers[3].gameObject.SetActive(false);
+                usingThisTriggerGroup = Controls.Mode(mode).triggers[1].gameObject.GetComponent<ModeTriggerGroup>();
                 break;
             case "up":
-                Controls.t_right.gameObject.SetActive(false);
-                Controls.t_left.gameObject.SetActive(false);
-                Controls.t_up.gameObject.SetActive(true);
-                Controls.t_down.gameObject.SetActive(false);
-                usingThisTriggerGroup = Controls.t_up;
+                Controls.Mode(mode).triggers[0].gameObject.SetActive(false);
+                Controls.Mode(mode).triggers[1].gameObject.SetActive(false);
+                Controls.Mode(mode).triggers[2].gameObject.SetActive(true);
+                Controls.Mode(mode).triggers[3].gameObject.SetActive(false);
+                usingThisTriggerGroup = Controls.Mode(mode).triggers[2].gameObject.GetComponent<ModeTriggerGroup>();
                 break;
             case "down":
-                Controls.t_right.gameObject.SetActive(false);
-                Controls.t_left.gameObject.SetActive(false);
-                Controls.t_up.gameObject.SetActive(false);
-                Controls.t_down.gameObject.SetActive(true);
-                usingThisTriggerGroup = Controls.t_down;
+                Controls.Mode(mode).triggers[0].gameObject.SetActive(true);
+                Controls.Mode(mode).triggers[1].gameObject.SetActive(false);
+                Controls.Mode(mode).triggers[2].gameObject.SetActive(false);
+                Controls.Mode(mode).triggers[3].gameObject.SetActive(true);
+                usingThisTriggerGroup = Controls.Mode(mode).triggers[3].gameObject.GetComponent<ModeTriggerGroup>();
                 break;
             default:
                 usingThisTriggerGroup = null;
@@ -561,6 +575,7 @@ public class CombatFunctionality : MonoBehaviour
         }
         return usingThisTriggerGroup;
     }
+
 
 
     void ArchetypeUse_SingularAttack(AbilityAttack attack)

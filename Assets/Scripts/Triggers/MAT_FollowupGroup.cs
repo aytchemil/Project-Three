@@ -43,8 +43,9 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
 
 
 
-    void SetAllTriggersToFalse()
+    public void SetAllTriggersToFalse()
     {
+        print("set all triggers to false");
         for (int i = 0; i < triggers.Count - 1; i++)
         {
             triggerProgress[i] = false;
@@ -69,7 +70,6 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
 
     public virtual void CheckForTriggerUpdates_ReturnDelay(int i)
     {
-
         if (triggerBeingUsed.used)
         { 
             print("following up... hit");
@@ -82,6 +82,7 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
             print("following up... miss");
             triggerProgress[i] = true;
         }
+
     }
 
     #region Methods
@@ -98,6 +99,7 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
 
         for (int i = 0; i < triggerProgress.Count; i++)
         {
+            print("starting to move through child triggers");
             //Applies the trigger on whatever current index its on
 
 
@@ -107,7 +109,6 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
 
             TakeOnTriggerBeingUsed(currentAbility, i);
 
-            AdditionalSetup();
 
 
             print($"FOLLOW UP TRIGGER LOOP {i} : " + triggerBeingUsed.name);
@@ -115,7 +116,7 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
 
             while (triggerProgress[i] == false)
             {
-                print($"Waiting for index: {i}");
+                //print($"Waiting for index: {i}");
 
                 if (!gameObject.activeSelf) {  print("This trigger has been disabled, breaking out of loop");   yield break;  }
 
@@ -138,14 +139,10 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
 
         }
 
-        print("finished follow up attack");
+        //print("finished follow up attack");
 
     }
 
-    public virtual void AdditionalSetup()
-    {
-
-    }
 
     #endregion
 

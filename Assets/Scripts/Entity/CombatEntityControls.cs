@@ -28,8 +28,9 @@ public class CombatEntityController : MonoBehaviour
 
     //Combo Reattacking
     public Action<float> comboReattackDelay;
-    public bool comboCanReattack;
+    public bool waitingToReattack;
     public bool didReattack = false;
+    public bool reattackChecking = false;
 
     [Header("Observer Events")]
     public Func<CombatEntityController> GetTarget;
@@ -82,9 +83,9 @@ public class CombatEntityController : MonoBehaviour
         CreateMyOwnModeInstances();
     }
 
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
-        comboReattackDelay += AttackInputtedTOANDFROMdelay;
+        useAbility += ReAttackCheck;
     }
 
     protected virtual void OnDisable()
@@ -216,21 +217,23 @@ public class CombatEntityController : MonoBehaviour
         t_down = Mode(mode).triggers[3].GetComponent<ModeTriggerGroup>();
     }
 
-    void AttackInputtedTOANDFROMdelay(float delay)
+    public void ReAttackCheck(string dir)
     {
-        print($" {gameObject.name} Enabled combocanreattack");
-        comboCanReattack = true;
-
-        StartCoroutine(AttackInputOnThenOff(delay));
+        print("Reattack check");
+        if (waitingToReattack)
+            didReattack = true;
+        else
+            didReattack = false;
     }
 
-    IEnumerator AttackInputOnThenOff(float delay)
+    IEnumerator DelayReAttackCheck()
     {
-        yield return new WaitForSeconds(delay);
-
-        comboCanReattack = false;
+        yield return new WaitForSeconds(0.05f);
+        if (waitingToReattack)
+            didReattack = true;
+        else
+            didReattack = false;
     }
-
 
 
 

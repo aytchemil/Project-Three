@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class GeneralAttackTriggerGroup : ModeTriggerGroup
@@ -107,9 +108,11 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
         if (hitAttack)
         {
             //print("hit atack succesffull, calling combo");
-            Invoke(nameof(ComboOffOfHitNowAvaliable), myAbility.successDelay);
+            StartCoroutine(ComboOffOfHitNowAvaliable());
             return;
         }
+
+        print("missed attack global");
 
         MissAttackCuttoffLocal();
 
@@ -178,10 +181,12 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
         combatFunctionality.Controls.MissedAttack?.Invoke();
     }
 
-    public void ComboOffOfHitNowAvaliable()
+    public IEnumerator ComboOffOfHitNowAvaliable()
     {
         print("Comboing");
-       // print(gameObject.name + " | Combo hit avaliable, DisableTrigger()");
+
+        yield return new WaitForSeconds(myAbility.successDelay);
+
         DisableThisTrigger();
     }
 

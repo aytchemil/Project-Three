@@ -90,6 +90,8 @@ public abstract class ModeTriggerGroup : MonoBehaviour
     {
         DisableThisTriggerLocallyImplementation();
 
+        //print("disabling trigger locally");
+
         usingTrigger = false;
         unused = false;
 

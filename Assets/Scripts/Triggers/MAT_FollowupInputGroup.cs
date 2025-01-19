@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class MAT_FollowupInputGroup : MAT_FollowupGroup
@@ -9,22 +10,78 @@ public class MAT_FollowupInputGroup : MAT_FollowupGroup
         set => myMultiFollowInputAbility = value as AbilityMultiFolloupInput;
     }
 
-    public override void AdditionalSetup()
-    {
-        combatFunctionality.Controls.comboReattackDelay?.Invoke(myMultiFollowInputAbility.reattackTimeUntilReset);
-        print($"MAT_FollowupInput: Set up successfull");
-
-    }
+    public int secondsCountedToReattackCooldown = 0;
+    public bool countingToReattackCooldown = false;
 
     public override void CheckForTriggerUpdates_ReturnDelay(int i)
     {
-        print("checking for continuation");
+
+        if (!combatFunctionality.Controls.waitingToReattack)
+            StartCoroutine(WaitForContinuation(i));
+        else
+        {
+            StartCoroutine(CountToReattackCuttoff(i));
+        }
+        
+
+        if (!(triggerBeingUsed as GeneralAttackTriggerGroup).hitAttack && !(triggerBeingUsed as GeneralAttackTriggerGroup).missedAttack) return;
+
+        //print("checking for continuation");
         if (combatFunctionality.Controls.didReattack)
         {
-            print("followupInput reattack... ");
+            //print("followupInput reattack... ");
             triggerProgress[i] = true;
+
+            combatFunctionality.Controls.waitingToReattack = false;
+            combatFunctionality.Controls.didReattack = false;
         }
 
     }
 
+
+    IEnumerator WaitForContinuation(int i)
+    {
+        secondsCountedToReattackCooldown = 0;
+
+        combatFunctionality.Controls.waitingToReattack = true;
+        yield return new WaitForEndOfFrame();
+        combatFunctionality.Controls.didReattack = false;
+
+
+        yield return new WaitForSeconds(myMultiFollowInputAbility.reattackTimeUntilReset);
+
+        combatFunctionality.Controls.waitingToReattack = false;
+
+
+        if (combatFunctionality.Controls.didReattack || triggerProgress[i] == true) yield break;
+
+        //print("DISABLING");
+
+        //SetAllTriggersToFalse();
+
+        //MissAttackCuttoff();
+
+        //DisableThisTrigger();
+    }
+
+    IEnumerator CountToReattackCuttoff(int i)
+    {
+        yield return new WaitForSeconds(1);
+        secondsCountedToReattackCooldown++;
+
+        if(secondsCountedToReattackCooldown > myMultiFollowInputAbility.reattackTimeUntilReset)
+        {
+            if (triggerProgress[i] == false)
+                DisableThisTrigger();
+        }
+    }
+
+
+    protected override void DisableThisTriggerImplementation()
+    {
+        combatFunctionality.Controls.waitingToReattack = false;
+        combatFunctionality.Controls.didReattack = false;
+
+        base.DisableThisTriggerImplementation();
+    }
 }

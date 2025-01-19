@@ -45,13 +45,16 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
         //Hit
         if (triggerBeingUsed.used)
         {
-            ComboOffOfHitNowAvaliable();
+            print("combo");
+            StartCoroutine(ComboOffOfHitNowAvaliable());
             return false;
         }
 
         //miss
         if (triggerBeingUsed.unused)
         {
+            print("miss");
+
             MissAttackCuttoff();
             return false;
         }

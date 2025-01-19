@@ -21,6 +21,7 @@ public abstract class ModeTriggerGroup : MonoBehaviour
 
         usingTrigger = true;
         unused = false;
+        combatFunctionality.Controls.didReattack = false;
 
         //print("starting to use ability from " + gameObject.name + " setting my ability : " + myAbility);
         EnableTrigger();

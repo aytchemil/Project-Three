@@ -55,9 +55,17 @@ public class PlayerController : CombatEntityController
         ia_dash.performed += ctx => dash?.Invoke();
 
         ia_attack.Enable();
-        ia_attack.performed += ctx => useAbility?.Invoke(mode);
+        ia_attack.performed += ctx =>
+        {
+            useAbility?.Invoke(mode);
 
-        ia_block.Enable();
+            if (comboCanReattack)
+                didReattack = true;
+            else
+                didReattack = false;
+        };
+
+         ia_block.Enable();
         ia_block.started += ctx => blockStart?.Invoke();
         ia_block.canceled += ctx => blockStop?.Invoke();
 

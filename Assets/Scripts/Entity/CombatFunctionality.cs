@@ -400,7 +400,7 @@ public class CombatFunctionality : MonoBehaviour
 
                 break;
 
-            case AbilityAttack.Archetype.Multi_FollowUp:
+            case AbilityAttack.Archetype.Multi_Followup:
 
 
                 //Actuall Attack
@@ -411,7 +411,16 @@ public class CombatFunctionality : MonoBehaviour
 
                 break;
 
+            case AbilityAttack.Archetype.Multi_FollowupInput:
 
+
+                //Actuall Attack
+                TriggerEnableToUse().GetComponent<MAT_FollowupInputGroup>().StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
+
+                //Special Functionality
+                //ArchetypeUse_FollowUpAttack((AbilityMulti)ability);
+
+                break;
         }
     }
 

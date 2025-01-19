@@ -95,6 +95,7 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
         //Set them all to false
         SetAllTriggersToFalse();
 
+
         for (int i = 0; i < triggerProgress.Count; i++)
         {
             //Applies the trigger on whatever current index its on
@@ -106,7 +107,9 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
 
             TakeOnTriggerBeingUsed(currentAbility, i);
 
-      
+            AdditionalSetup();
+
+
             print($"FOLLOW UP TRIGGER LOOP {i} : " + triggerBeingUsed.name);
 
 
@@ -139,7 +142,10 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
 
     }
 
+    public virtual void AdditionalSetup()
+    {
 
+    }
 
     #endregion
 

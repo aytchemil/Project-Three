@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using NUnit.Framework;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using System.Collections;
 
 /// <summary>
 /// Centralized Controller and controls for every combat entity.
@@ -24,6 +25,11 @@ public class CombatEntityController : MonoBehaviour
     public Action blockStop;
     public Action switchAttackMode;
     public string mode = "Attack";
+
+    //Combo Reattacking
+    public Action<float> comboReattackDelay;
+    public bool comboCanReattack;
+    public bool didReattack = false;
 
     [Header("Observer Events")]
     public Func<CombatEntityController> GetTarget;
@@ -74,6 +80,11 @@ public class CombatEntityController : MonoBehaviour
         //print($"{gameObject.name} onEnable()");
         cantUseAbility = () => (!isLockedOn || alreadyAttacking || isBlocking || isFlinching || isCountering);
         CreateMyOwnModeInstances();
+    }
+
+    private void OnEnable()
+    {
+        comboReattackDelay += AttackInputtedTOANDFROMdelay;
     }
 
     protected virtual void OnDisable()
@@ -204,5 +215,23 @@ public class CombatEntityController : MonoBehaviour
         t_up = Mode(mode).triggers[2].GetComponent<ModeTriggerGroup>();
         t_down = Mode(mode).triggers[3].GetComponent<ModeTriggerGroup>();
     }
+
+    void AttackInputtedTOANDFROMdelay(float delay)
+    {
+        print($" {gameObject.name} Enabled combocanreattack");
+        comboCanReattack = true;
+
+        StartCoroutine(AttackInputOnThenOff(delay));
+    }
+
+    IEnumerator AttackInputOnThenOff(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+
+        comboCanReattack = false;
+    }
+
+
+
 
 }

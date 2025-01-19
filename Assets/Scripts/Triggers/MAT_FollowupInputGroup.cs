@@ -9,8 +9,6 @@ public class MAT_FollowupInputGroup : MAT_FollowupGroup
         get => myMultiFollowInputAbility;
         set => myMultiFollowInputAbility = value as AbilityMultiFolloupInput;
     }
-
-    public int secondsCountedToReattackCooldown = 0;
     public bool countingToReattackCooldown = false;
 
     public override void CheckForTriggerUpdates_ReturnDelay(int i)
@@ -41,7 +39,6 @@ public class MAT_FollowupInputGroup : MAT_FollowupGroup
 
     IEnumerator WaitForContinuation(int i)
     {
-        secondsCountedToReattackCooldown = 0;
 
         combatFunctionality.Controls.waitingToReattack = true;
         yield return new WaitForEndOfFrame();
@@ -54,26 +51,14 @@ public class MAT_FollowupInputGroup : MAT_FollowupGroup
 
 
         if (combatFunctionality.Controls.didReattack || triggerProgress[i] == true) yield break;
-
-        //print("DISABLING");
-
-        //SetAllTriggersToFalse();
-
-        //MissAttackCuttoff();
-
-        //DisableThisTrigger();
     }
 
     IEnumerator CountToReattackCuttoff(int i)
     {
-        yield return new WaitForSeconds(1);
-        secondsCountedToReattackCooldown++;
+        yield return new WaitForSeconds(myMultiFollowInputAbility.reattackTimeUntilReset);
 
-        if(secondsCountedToReattackCooldown > myMultiFollowInputAbility.reattackTimeUntilReset)
-        {
-            if (triggerProgress[i] == false)
-                DisableThisTrigger();
-        }
+        if (triggerProgress[i] == false)
+            DisableThisTrigger();
     }
 
 

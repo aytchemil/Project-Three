@@ -18,8 +18,9 @@ MonoBehaviour:
   - 0.3
   - 0.3
   - 0.3
-  successDelay: 0.3
-  unsuccessDelay: 0
+  successDelay: 0.05
+  unsuccessDelay: 0.1
+  movementAmount: 0
   archetype: 3
   trait: 0
   MultiAbilityGroupingPrefab: {fileID: 1766159213802189594, guid: c3a13b68d2130dc408722a0ba5a0094d, type: 3}

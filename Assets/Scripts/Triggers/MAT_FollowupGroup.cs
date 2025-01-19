@@ -137,12 +137,31 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
 
             //print("after while loop");
 
+            yield return new WaitForSeconds(DelayNextTrigger());
+
         }
 
         //print("finished follow up attack");
 
     }
 
+    public virtual float DelayNextTrigger()
+    {
+        float delay = 0f;
+
+        if (triggerBeingUsed.used)
+        {
+            delay = myMultiAbility.successDelay;
+        }
+
+        //miss
+        if (triggerBeingUsed.unused)
+        {
+            delay = myMultiAbility.unsuccessDelay;
+        }
+
+        return delay;
+    }
 
     #endregion
 

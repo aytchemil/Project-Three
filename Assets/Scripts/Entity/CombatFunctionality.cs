@@ -88,7 +88,7 @@ public class CombatFunctionality : MonoBehaviour
         //print("combatFunctionality: in combat");
 
         //Auto Set the current ability
-        Controls.Mode("Attack").data.currentAbility = Controls.AbilitySet("Attack").up;
+        Controls.Mode("Counter").data.currentAbility = Controls.AbilitySet("Counter").up;
 
         foreach (ModeRuntimeData mode in Controls.modes)
             if (!mode.data.initializedTriggers)
@@ -219,7 +219,7 @@ public class CombatFunctionality : MonoBehaviour
     /// <param name="down"></param>
     public void InstantiateTriggersForMode(AbilitySet abilitySet, Transform parent)
     {
-        //print("Instantiating triggers");
+        print("Instantiating triggers");
 
         if (abilitySet == null)
             Debug.LogError("Mode AbilitiesSO null");
@@ -248,7 +248,7 @@ public class CombatFunctionality : MonoBehaviour
 
     private ModeTriggerGroup InitializeTrigger(Ability ability, Transform parent, string direction)
     {
-        //print($"Initializing trigger {ability}...");
+        print($"Initializing trigger {ability}...");
 
         ModeTriggerGroup trigger = null;
 
@@ -271,7 +271,10 @@ public class CombatFunctionality : MonoBehaviour
         //    trigger = Instantiate(blockAbility.prefab, parent, false).GetComponent<BlockTriggerGroup>();
 
         else if (ability is AbilityCombo comboAbility)
-            trigger = Instantiate(comboAbility.comboChain.prefab, parent, false).GetComponent<ComboTriggerGroup>();
+        {
+            trigger = Instantiate(comboAbility.comboChain.prefab, parent, false).GetComponent<MultiAttackTriggerGroup>();
+            ability = comboAbility.comboChain;
+        }
 
         else
             Debug.LogError($"Unsupported Ability type for {direction}: {ability}");
@@ -345,16 +348,21 @@ public class CombatFunctionality : MonoBehaviour
 
 
         if (mode == "Attack")
-            Attack();
+            Attack("Attack");
+
+        else if(mode == "Combo")
+            Attack("Combo");
+
         else if (mode == "Counter")
             Counter();
+
         else
             Debug.LogError(gameObject.name + " | Error: No mode found to use in UseAbility(mode)");
 
 
     }
 
-    void Attack()
+    void Attack(string mode)
     {
 
         //print("attacking");
@@ -366,7 +374,7 @@ public class CombatFunctionality : MonoBehaviour
         /// animate all 4, integrate that
 
 
-        Ability ability = Controls.Mode("Attack").data.currentAbility;
+        Ability ability = Controls.Mode(mode).data.currentAbility;
 
         print(ability);
 
@@ -413,9 +421,16 @@ public class CombatFunctionality : MonoBehaviour
 
             case AbilityAttack.Archetype.Multi_FollowupInput:
 
+               
 
                 //Actuall Attack
-                TriggerEnableToUse().GetComponent<MAT_FollowupInputGroup>().StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
+                if(mode == "Attack")
+                    TriggerEnableToUse().GetComponent<MAT_FollowupInputGroup>().StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
+                if(mode == "Combo")
+                {
+                    AbilityCombo comboAbility = (AbilityCombo)ability;
+                    TriggerEnableToUse().GetComponent<MAT_FollowupInputGroup>().StartUsingAbilityTrigger(comboAbility.comboChain, comboAbility.initialUseDelay[0]);
+                }
 
                 //Special Functionality
                 //ArchetypeUse_FollowUpAttack((AbilityMulti)ability);

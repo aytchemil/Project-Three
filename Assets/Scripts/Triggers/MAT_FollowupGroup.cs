@@ -60,10 +60,6 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
         triggerBeingUsed.gameObject.SetActive(true);
 
 
-        if (i > currentAbility.initialUseDelay.Length)
-            Debug.LogError("Initial use delay not set for ability in this multi ability (followup)");
-
-
         triggerBeingUsed.StartUsingAbilityTrigger(triggerBeingUsed.myAbility, currentAbility.initialUseDelay[i]);
     }
 

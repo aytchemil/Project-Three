@@ -34,6 +34,18 @@ public class MAT_FollowupInputGroup : MAT_FollowupGroup
             combatFunctionality.Controls.didReattack = false;
         }
 
+        if(combatFunctionality.Controls.mode == "Attack")
+            if (combatFunctionality.Controls.Mode(combatFunctionality.Controls.mode).data.currentAbility != myMultiFollowInputAbility)
+                DisableThisTrigger();
+        if (combatFunctionality.Controls.mode == "Combo")
+        {
+            AbilityCombo comboAbility = (AbilityCombo)combatFunctionality.Controls.Mode(combatFunctionality.Controls.mode).data.currentAbility;
+
+            if (comboAbility.comboChain != myMultiFollowInputAbility)
+                DisableThisTrigger();
+        }
+
+
     }
 
 

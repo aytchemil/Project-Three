@@ -7,6 +7,5 @@ public class ComboTriggerGroup : MAT_FollowupInputGroup
     {
         get => myComboAbility;
         set => myComboAbility = value as AbilityCombo;
-
     }
 }

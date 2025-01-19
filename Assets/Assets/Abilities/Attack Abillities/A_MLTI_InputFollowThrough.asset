@@ -18,8 +18,8 @@ MonoBehaviour:
   - 0.3
   - 0.3
   - 0.3
-  successDelay: 0.05
-  unsuccessDelay: 0.1
+  successDelay: 0.1
+  unsuccessDelay: 0.15
   movementAmount: 0
   archetype: 3
   trait: 0

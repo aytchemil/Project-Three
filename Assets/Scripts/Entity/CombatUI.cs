@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using Unity.VisualScripting;
 
 [RequireComponent(typeof(PlayerController))]
 public class CombatUI : MonoBehaviour
 {
     //Cache
-    PlayerController controls;
+    PlayerController Controls;
 
     #region UI and Basic Functionality
 
@@ -22,9 +23,6 @@ public class CombatUI : MonoBehaviour
 
     //Prefabs
     [SerializeField] private GameObject combatUIParent;
-
-    //Privates
-    string lookDir;
 
     //Adjustable component references
     public Transform locationUpdator;
@@ -45,6 +43,12 @@ public class CombatUI : MonoBehaviour
     [SerializeField] private RawImage modeIndicator;
     [SerializeField] private TextMeshProUGUI modeText;
 
+    [SerializeField] private GameObject comboRefParent;
+    [SerializeField] private RawImage comboOneRef;
+    [SerializeField] private RawImage comboTwoRef;
+    [SerializeField] private RawImage comboThreeRef;
+    [SerializeField] private RawImage comboFourRef;
+
 
 
     #endregion
@@ -53,28 +57,39 @@ public class CombatUI : MonoBehaviour
     {
 
         //Cache
-        controls = GetComponent<PlayerController>();
+        Controls = GetComponent<PlayerController>();
 
     }
 
     private void OnEnable()
     {
         //Input Action Observers
-        controls.EnterCombat += EnableUI;
-        controls.ExitCombat += DisableUI;
-        controls.SelectCertainAbility += UpdateCurrentAbilityText;
+        Controls.EnterCombat += EnableUI;
+        Controls.ExitCombat += DisableUI;
+        Controls.SelectCertainAbility += UpdateCurrentAbilityText;
 
-        controls.switchAttackMode += SwitchAttackMode;
+        Controls.switchAttackMode += SwitchAttackMode;
+
+        Controls.comboOne += ChoiceComboEnabled;
+        Controls.comboTwo += ChoiceComboEnabled;
+        Controls.comboThree += ChoiceComboEnabled;
+        Controls.comboFour += ChoiceComboEnabled;
+
     }
 
     private void OnDisable()
     {
         //Input Action Observers
-        controls.EnterCombat -= EnableUI;
-        controls.ExitCombat -= DisableUI;
-        controls.SelectCertainAbility -= UpdateCurrentAbilityText;
+        Controls.EnterCombat -= EnableUI;
+        Controls.ExitCombat -= DisableUI;
+        Controls.SelectCertainAbility -= UpdateCurrentAbilityText;
 
-        controls.switchAttackMode -= SwitchAttackMode;
+        Controls.switchAttackMode -= SwitchAttackMode;
+
+        Controls.comboOne -= ChoiceComboEnabled;
+        Controls.comboTwo -= ChoiceComboEnabled;
+        Controls.comboThree -= ChoiceComboEnabled;
+        Controls.comboFour -= ChoiceComboEnabled;
     }
 
 
@@ -82,7 +97,7 @@ public class CombatUI : MonoBehaviour
     {
         //Updates the Attack Indicator rotation
         if (!changeOnCooldown && combatUIParent.activeInHierarchy)
-            UpdateAttackIndicatorRotation(controls.ia_look.ReadValue<Vector2>());
+            UpdateAttackIndicatorRotation(Controls.ia_look.ReadValue<Vector2>());
     }
 
     #region UI and Basic Functionality
@@ -108,13 +123,13 @@ public class CombatUI : MonoBehaviour
             downDZ = deadZone;
 
         //Apply the proximal multiplier (lessens) to the sensitivy of the proximal input direction
-        if (lookDir == "right" || lookDir == "left")
+        if (Controls.lookDir == "right" || Controls.lookDir == "left")
         {
             upDZ *= changeCloseProximityMultiplier;
             downDZ *= changeCloseProximityMultiplier;
         }
 
-        if (lookDir == "up" || lookDir == "down")
+        if (Controls.lookDir == "up" || Controls.lookDir == "down")
         {
             leftDZ *= changeCloseProximityMultiplier;
             rightDZ *= changeCloseProximityMultiplier;
@@ -161,23 +176,23 @@ public class CombatUI : MonoBehaviour
             //Further specifiy which one out of left right, (the right or the left one)
             //Debug.Log(mouseInput);
             if (mouseInput.x > 0)//Right{
-                lookDir = "right"; 
+                Controls.lookDir = "right"; 
             else if (mouseInput.x < 0) //Left
-                lookDir = "left";
+                Controls.lookDir = "left";
         }
         else
         {
             if (mouseInput.y > 0)//Up
-                lookDir = "up";
+                Controls.lookDir = "up";
             else if (mouseInput.y < 0) //Down
-                lookDir = "down";
+                Controls.lookDir = "down";
         }
 
         //Updates the actual UI with the value specified
-        UpdateCombatUIVisuals(lookDir);
+        UpdateCombatUIVisuals(Controls.lookDir);
 
         //Pushes the direction to the functionality (and any other listeners)
-        controls.SelectCertainAbility?.Invoke(lookDir);
+        Controls.SelectCertainAbility?.Invoke(Controls.lookDir);
 
     }
 
@@ -199,7 +214,8 @@ public class CombatUI : MonoBehaviour
         ChangeAllImageIcons();
         UpdateModeUIObjects();
         UpdateAttackIndicatorRotation(new Vector2(0, deadZone + 1));
-        controls.UpdateMainTriggers();
+        Controls.UpdateMainTriggers();
+        InitalizeCurrentComboUI();
     }
 
     /// <summary>
@@ -277,22 +293,22 @@ public class CombatUI : MonoBehaviour
 
     void UpdateCurrentAbilityText(string dir)
     {
-        Ability currentAbility = controls.Mode(controls.mode).data.currentAbility;
+        Ability currentAbility = Controls.Mode(Controls.mode).data.currentAbility;
         text.text = "Current Ability: " + currentAbility.abilityName;
     }
 
     void ChangeAllImageIcons()
     {
-        rightImgRef.texture = controls.Mode(controls.mode).data.abilitySet.right.icon;
-        leftImgRef.texture = controls.Mode(controls.mode).data.abilitySet.left.icon;
-        upImgRef.texture = controls.Mode(controls.mode).data.abilitySet.up.icon;
-        downImgRef.texture = controls.Mode(controls.mode).data.abilitySet.down.icon;
+        rightImgRef.texture = Controls.Mode(Controls.mode).data.abilitySet.right.icon;
+        leftImgRef.texture = Controls.Mode(Controls.mode).data.abilitySet.left.icon;
+        upImgRef.texture = Controls.Mode(Controls.mode).data.abilitySet.up.icon;
+        downImgRef.texture = Controls.Mode(Controls.mode).data.abilitySet.down.icon;
     }
 
     void UpdateModeUIObjects()
     {
-        modeIndicator.texture = controls.Mode(controls.mode).data.UIIndicator;
-        modeText.text = "You are " + controls.Mode(controls.mode).data.modeTextDesc;
+        modeIndicator.texture = Controls.Mode(Controls.mode).data.UIIndicator;
+        modeText.text = "You are " + Controls.Mode(Controls.mode).data.modeTextDesc;
         //print("updated mode ui");
 
     }
@@ -302,27 +318,61 @@ public class CombatUI : MonoBehaviour
 
     void SwitchAttackMode()
     {
-        int currIndex = controls.modes.IndexOf(controls.Mode(controls.mode));
-
-        if (currIndex >= controls.modes.Count-1)
-            currIndex = 0;
-        else
-            currIndex++;
-
-
-        controls.mode = controls.modes[currIndex].data.modeName;
-
-        print($"Switching Mode to {controls.Mode(controls.mode)}");
+        print("Updating mode UIS");
         ChangeAllImageIcons();
         UpdateModeUIObjects();
-
-        controls.UpdateMainTriggers();
-
-        controls.SelectCertainAbility?.Invoke(lookDir);
-        print(lookDir);
-
-
     }
 
+    void InitalizeCurrentComboUI()
+    {
+        Color less = new Color(1, 1, 1, 0.2f);
+        Color more = new Color(1, 1, 1, 1);
+
+        comboOneRef.texture = Controls.Mode("Combo").data.abilitySet.right.icon;
+        comboTwoRef.texture = Controls.Mode("Combo").data.abilitySet.left.icon;
+        comboThreeRef.texture = Controls.Mode("Combo").data.abilitySet.up.icon;
+        comboFourRef.texture = Controls.Mode("Combo").data.abilitySet.down.icon;
+
+        comboOneRef.color = more;
+        comboTwoRef.color = less;
+        comboThreeRef.color = less;
+        comboFourRef.color = less;
+    }
+
+    void ChoiceComboEnabled(int choice)
+    {
+        Color less = new Color(1, 1, 1, 0.2f);
+        Color more = new Color(1, 1, 1, 1);
+
+        switch (choice)
+        {
+            case 0:
+                comboOneRef.color = more;
+                comboTwoRef.color = less;
+                comboThreeRef.color = less;
+                comboFourRef.color = less;
+                break;
+            case 1:
+                comboOneRef.color = less;
+                comboTwoRef.color = more;
+                comboThreeRef.color = less;
+                comboFourRef.color = less;
+                break;
+            case 2:
+                comboOneRef.color = less;
+                comboTwoRef.color = less;
+                comboThreeRef.color = more;
+                comboFourRef.color = less;
+                break;
+            case 3:
+                comboOneRef.color = less;
+                comboTwoRef.color = less;
+                comboThreeRef.color = less;
+                comboFourRef.color = more;
+                break;
+
+
+        }
+    }
 
 }

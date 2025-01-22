@@ -18,6 +18,11 @@ public class PlayerController : CombatEntityController
     public InputAction ia_useCombo;
     public InputAction ia_block;
     public InputAction ia_switchAttackMode;
+    [Space]
+    public InputAction ia_comboOne;
+    public InputAction ia_comboTwo;
+    public InputAction ia_comboThree;
+    public InputAction ia_comboFour;
 
     private void Awake()
     {
@@ -33,6 +38,11 @@ public class PlayerController : CombatEntityController
         ia_useCombo = controls.Player.UseCombo;
         ia_block = controls.Player.Block;
         ia_switchAttackMode = controls.Player.SwitchAttackMode;
+
+        ia_comboOne = controls.Player.Combo1;
+        ia_comboTwo = controls.Player.Combo2;
+        ia_comboThree = controls.Player.Combo3;
+        ia_comboFour = controls.Player.Combo4;
     }
 
 
@@ -76,6 +86,18 @@ public class PlayerController : CombatEntityController
         {
             switchAttackMode?.Invoke();
         };
+
+
+        ia_comboOne.Enable();
+        ia_comboTwo.Enable();
+        ia_comboThree.Enable();
+        ia_comboFour.Enable();
+
+        ia_comboOne.performed += ctx => comboOne?.Invoke(0);
+        ia_comboTwo.performed += ctx => comboTwo?.Invoke(1);
+        ia_comboThree.performed += ctx => comboThree?.Invoke(2);
+        ia_comboFour.performed += ctx => comboFour?.Invoke(3);
+
     }
 
 
@@ -107,6 +129,16 @@ public class PlayerController : CombatEntityController
 
         ia_switchAttackMode.Disable();
         ia_switchAttackMode.performed -= ctx => switchAttackMode?.Invoke();
+
+        ia_comboOne.Disable();
+        ia_comboTwo.Disable();
+        ia_comboThree.Disable();
+        ia_comboFour.Disable();
+
+        ia_comboOne.performed -= ctx => comboOne?.Invoke(0);
+        ia_comboTwo.performed -= ctx => comboTwo?.Invoke(1);
+        ia_comboThree.performed -= ctx => comboThree?.Invoke(2);
+        ia_comboFour.performed -= ctx => comboFour?.Invoke(3);
 
         base.OnDisable();
     }

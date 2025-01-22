@@ -3,6 +3,8 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Playables;
+using UnityEditor.Rendering.LookDev;
+using UnityEditor.ShaderGraph;
 
 
 [RequireComponent(typeof(CombatEntityController))]
@@ -43,6 +45,8 @@ public class CombatFunctionality : MonoBehaviour
 
         Controls.useAbility += UseAbility;
 
+        Controls.switchAttackMode += SwitchAttackMode;
+
         Controls.useCombo += UseCombo;
 
         //Controls.blockStart += Block;
@@ -50,7 +54,10 @@ public class CombatFunctionality : MonoBehaviour
 
         Controls.Flinch += Flinch;
 
-
+        Controls.comboOne += SwitchToCombo;
+        Controls.comboTwo += SwitchToCombo;
+        Controls.comboThree += SwitchToCombo;
+        Controls.comboFour += SwitchToCombo;
     }
 
 
@@ -69,6 +76,8 @@ public class CombatFunctionality : MonoBehaviour
 
         Controls.useAbility -= UseAbility;
 
+        Controls.switchAttackMode -= SwitchAttackMode;
+
         Controls.useCombo -= UseCombo;
 
 
@@ -76,6 +85,11 @@ public class CombatFunctionality : MonoBehaviour
         //Controls.blockStop -= StopBlock;
 
         Controls.Flinch -= Flinch;
+
+        Controls.comboOne -= SwitchToCombo;
+        Controls.comboTwo -= SwitchToCombo;
+        Controls.comboThree -= SwitchToCombo;
+        Controls.comboFour -= SwitchToCombo;
 
     }
 
@@ -92,10 +106,14 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     void InCombat()
     {
+
+
+
         //print("combatFunctionality: in combat");
 
         //Auto Set the current ability
-        Controls.Mode("Counter").data.currentAbility = Controls.AbilitySet("Counter").up;
+        Controls.Mode("Attack").data.currentAbility = Controls.AbilitySet("Attack").up;
+        Controls.Mode("Combo").data.currentAbility = Controls.AbilitySet("Combo").up;
 
         foreach (ModeRuntimeData mode in Controls.modes)
             if (!mode.data.initializedTriggers)
@@ -116,6 +134,7 @@ public class CombatFunctionality : MonoBehaviour
         //    InitializeBlockingTrigger();
 
     }
+
 
     /// <summary>
     /// Action Delegate Method for exiting combat
@@ -175,7 +194,7 @@ public class CombatFunctionality : MonoBehaviour
         if (triggers.Any(item => item == null)) //Checks if any item just put into that list are null, if one is, then error
             Debug.LogError("Items in attack trigger not properly cached, please look");
         //else
-            //print("Successfully Cached triggers for mode " + parent.name);
+        //print("Successfully Cached triggers for mode " + parent.name);
 
     }
 
@@ -187,9 +206,9 @@ public class CombatFunctionality : MonoBehaviour
     public void DisableTriggers(bool local, ModeRuntimeData mode)
     {
         //Debug.Log(gameObject.name + " | Disabling Attack All Triggers");
-        if (!Controls.Mode(mode.data.modeName).triggers.Any() || Controls.Mode(mode.data.modeName).parent.childCount == 0) 
-        { 
-            print("triggers not setup or already disabled, not disabling something that isnt there"); 
+        if (!Controls.Mode(mode.data.modeName).triggers.Any() || Controls.Mode(mode.data.modeName).parent.childCount == 0)
+        {
+            print("triggers not setup or already disabled, not disabling something that isnt there");
             return;
         }
 
@@ -231,7 +250,7 @@ public class CombatFunctionality : MonoBehaviour
         if (abilitySet == null)
             Debug.LogError("Mode AbilitiesSO null");
 
-        if(abilitySet.right == null || abilitySet.left == null || abilitySet.up == null || abilitySet.down == null)
+        if (abilitySet.right == null || abilitySet.left == null || abilitySet.up == null || abilitySet.down == null)
         {
             Debug.LogError("Abilities Given to Instantiate attack triggers are null:");
             Debug.LogError("right : " + abilitySet.right);
@@ -245,7 +264,7 @@ public class CombatFunctionality : MonoBehaviour
         Controls.t_up = InitializeTrigger(abilitySet.up, parent, "up trigger");
         Controls.t_down = InitializeTrigger(abilitySet.down, parent, "down trigger");
 
-        if(Controls.t_right == null || Controls.t_left == null || Controls.t_up  == null || Controls.t_down == null)
+        if (Controls.t_right == null || Controls.t_left == null || Controls.t_up == null || Controls.t_down == null)
             Debug.LogError("Trigger group triggers not iniailized corectly, check");
 
         print("Successfully Instantiating triggers for mode " + parent.name);
@@ -311,7 +330,7 @@ public class CombatFunctionality : MonoBehaviour
 
         //Reset the current ability for all the modes
         foreach (ModeRuntimeData mode in Controls.modes)
-            if(mode.data.modeName != "Combo")
+            if (mode.data.modeName != "Combo")
                 mode.data.currentAbility = null;
 
 
@@ -319,19 +338,19 @@ public class CombatFunctionality : MonoBehaviour
         {
             case "right":
                 Controls.Mode(m).data.currentAbility = Controls.AbilitySet(m).right;
-               // print($"Mode: {Controls.Mode(m)}, Ability set: {Controls.AbilitySet(m).right} ");
+                // print($"Mode: {Controls.Mode(m)}, Ability set: {Controls.AbilitySet(m).right} ");
                 break;
             case "left":
                 Controls.Mode(m).data.currentAbility = Controls.AbilitySet(m).left;
-               // print($"Mode: {Controls.Mode(m)}, Ability set: {Controls.AbilitySet(m).left} ");
+                // print($"Mode: {Controls.Mode(m)}, Ability set: {Controls.AbilitySet(m).left} ");
                 break;
             case "up":
                 Controls.Mode(m).data.currentAbility = Controls.AbilitySet(m).up;
-               // print($"Mode: {Controls.Mode(m)}, Ability set: {Controls.AbilitySet(m).up} ");
+                // print($"Mode: {Controls.Mode(m)}, Ability set: {Controls.AbilitySet(m).up} ");
                 break;
             case "down":
                 Controls.Mode(m).data.currentAbility = Controls.AbilitySet(m).down;
-               // print($"Mode: {Controls.Mode(m)}, Ability set: {Controls.AbilitySet(m).down} ");
+                // print($"Mode: {Controls.Mode(m)}, Ability set: {Controls.AbilitySet(m).down} ");
                 break;
         }
     }
@@ -344,7 +363,7 @@ public class CombatFunctionality : MonoBehaviour
     public virtual void UseAbility(string mode)
     {
         //print("-> Comabt Functionality: Attempting Attack");
-        if(Controls.cantUseAbility.Invoke())
+        if (Controls.cantUseAbility.Invoke())
             return;
 
 
@@ -453,27 +472,6 @@ public class CombatFunctionality : MonoBehaviour
         }
     }
 
-    void Combo()
-    {
-        AbilityCombo ability = (AbilityCombo)Controls.Mode("Combo").data.currentAbility;
-
-        StartAttacking();
-
-        switch (ability.comboType)
-        {
-            case AbilityCombo.ComboType.Linear:
-
-                //Actuall Attack
-                TriggerEnableToUse("Combo").GetComponent<CombotTriggerGroup>().StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
-
-
-                //Special Functionality
-                //ArchetypeUse_FollowUpAttack((AbilityMulti)ability);
-
-                break;
-        }
-    }
-
     void StandingRiposte()
     {
         print("Counter attack: Standing riposte");
@@ -491,10 +489,10 @@ public class CombatFunctionality : MonoBehaviour
         //print("initial attack delay over?: " + initialAttackDelayOver);
         while (!initialAbilityUseDelayOver)
         {
-           // print("waiting...");
+            // print("waiting...");
             yield return new WaitForEndOfFrame();
         }
-       // print("Attacking started, initialAttackDelayOver is over (true)");
+        // print("Attacking started, initialAttackDelayOver is over (true)");
 
 
         gameObject.GetComponent<Movement>().Lunge("up", attack.movementAmount);
@@ -525,7 +523,7 @@ public class CombatFunctionality : MonoBehaviour
             // print("waiting...");
             yield return new WaitForEndOfFrame();
         }
-        
+
     }
 
 
@@ -575,7 +573,6 @@ public class CombatFunctionality : MonoBehaviour
         }
         return usingThisTriggerGroup;
     }
-
 
 
     void ArchetypeUse_SingularAttack(AbilityAttack attack)
@@ -692,7 +689,7 @@ public class CombatFunctionality : MonoBehaviour
     public void DisableAllAttackTriggers()
     {
         print("Disabling all attack triggers");
-        foreach(ModeRuntimeData mode in Controls.modes)
+        foreach (ModeRuntimeData mode in Controls.modes)
             DisableTriggers(false, Controls.Mode(mode.data.modeName));
 
     }
@@ -704,7 +701,7 @@ public class CombatFunctionality : MonoBehaviour
 
     public void Flinch(float flinchTime)
     {
-       // print(this.gameObject.name + " has flinched");
+        // print(this.gameObject.name + " has flinched");
         DisableTriggers(false, Controls.Mode(Controls.mode));
     }
 
@@ -727,12 +724,137 @@ public class CombatFunctionality : MonoBehaviour
         counteredEffect.gameObject.SetActive(true);
         yield return new WaitForSeconds(1);
         counteredEffect.gameObject.SetActive(false);
+    }
+
+    #endregion
+
+
+
+    void SwitchAttackMode()
+    {
+        int currIndex = Controls.modes.IndexOf(Controls.Mode(Controls.mode));
+
+        if (currIndex >= Controls.modes.Count - 1)
+            currIndex = 0;
+        else
+            currIndex++;
+
+        if (Controls.modes[currIndex].data.solo)
+        {
+            print("SOLO MODE DETECTED");
+            if (currIndex >= Controls.modes.Count - 1)
+                currIndex = 0;
+            else
+                currIndex++;
+        }
+
+        Controls.mode = Controls.modes[currIndex].data.modeName;
+
+
+        print($"Switching Mode to {Controls.Mode(Controls.mode)}");
+        Controls.UpdateMainTriggers();
+
+        Controls.SelectCertainAbility?.Invoke(Controls.lookDir);
+        //print(Controls.lookDir);
+
 
     }
 
 
 
 
-    #endregion
+
+
+
+    void SwitchToCombo(int combo)
+    {
+        print("switching to combo: " + combo);
+
+        Controls.Mode("Combo").data.currentAbility = ChooseCurrentAbility(combo);
+        Controls.c_current = combo;
+    }
+
+    Ability ChooseCurrentAbility(int combo)
+    {
+        Ability ret = null;
+
+        if (combo == 0)
+            ret = Controls.Mode("Combo").data.abilitySet.right;
+
+        else if (combo == 1)
+            ret = Controls.Mode("Combo").data.abilitySet.left;
+
+        else if (combo == 2)
+            ret = Controls.Mode("Combo").data.abilitySet.up;
+
+        else if (combo == 3)
+            ret = Controls.Mode("Combo").data.abilitySet.down;
+
+        return ret;
+    }
+
+    CombotTriggerGroup UseCurrentCombo(int combo)
+    {
+        if (combo == 0)
+        {
+            Controls.Mode("Combo").triggers[0].gameObject.SetActive(true);
+            Controls.Mode("Combo").triggers[1].gameObject.SetActive(false);
+            Controls.Mode("Combo").triggers[2].gameObject.SetActive(false);
+            Controls.Mode("Combo").triggers[3].gameObject.SetActive(false);
+        }
+
+        else if (combo == 1)
+        {
+            Controls.Mode("Combo").triggers[0].gameObject.SetActive(false);
+            Controls.Mode("Combo").triggers[1].gameObject.SetActive(true);
+            Controls.Mode("Combo").triggers[2].gameObject.SetActive(false);
+            Controls.Mode("Combo").triggers[3].gameObject.SetActive(false);
+        }
+        else if (combo == 2)
+        {
+            Controls.Mode("Combo").triggers[0].gameObject.SetActive(false);
+            Controls.Mode("Combo").triggers[1].gameObject.SetActive(false);
+            Controls.Mode("Combo").triggers[2].gameObject.SetActive(true);
+            Controls.Mode("Combo").triggers[3].gameObject.SetActive(false);
+        }
+        else if (combo == 3)
+        {
+            Controls.Mode("Combo").triggers[0].gameObject.SetActive(false);
+            Controls.Mode("Combo").triggers[1].gameObject.SetActive(false);
+            Controls.Mode("Combo").triggers[2].gameObject.SetActive(false);
+            Controls.Mode("Combo").triggers[3].gameObject.SetActive(true);
+        }
+        return Controls.Mode("Combo").triggers[combo].gameObject.GetComponent<CombotTriggerGroup>();
+
+    }
+
+
+
+
+    void Combo()
+    {
+        print("comboing");
+        AbilityCombo ability = (AbilityCombo)Controls.Mode("Combo").data.currentAbility;
+
+        //Set all combos to false
+        for (int i = 0; i < Controls.Mode("Combo").triggers.Length; i++)
+            Controls.Mode("Combo").triggers[i].gameObject.SetActive(false);
+
+        StartAttacking();
+
+        switch (ability.comboType)
+        {
+            case AbilityCombo.ComboType.Linear:
+
+                //Actuall Attack
+                UseCurrentCombo(Controls.c_current).GetComponent<CombotTriggerGroup>().StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
+
+
+                //Special Functionality
+                //ArchetypeUse_FollowUpAttack((AbilityMulti)ability);
+
+                break;
+        }
+    }
 
 }

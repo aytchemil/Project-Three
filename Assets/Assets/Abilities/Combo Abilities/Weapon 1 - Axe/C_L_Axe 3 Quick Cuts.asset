@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: C_L_Axe 3 Quick Cuts
   m_EditorClassIdentifier: 
   abilityName: Quick Cuts
-  icon: {fileID: 2800000, guid: 937285a2d9be1ae4aa7e2de93c9c145c, type: 3}
+  icon: {fileID: 2800000, guid: 34c6e15aaabbf1f4bb20738036898e76, type: 3}
   initialUseDelay:
   - 0.3
   - 0.3

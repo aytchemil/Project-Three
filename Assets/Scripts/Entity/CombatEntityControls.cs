@@ -26,6 +26,7 @@ public class CombatEntityController : MonoBehaviour
     public Action blockStop;
     public Action switchAttackMode;
     public string mode = "Attack";
+    public string lookDir;
 
     //Combo Reattacking
     public Action<float> comboReattackDelay;
@@ -53,11 +54,13 @@ public class CombatEntityController : MonoBehaviour
     [Header("Mode Inputted Ability Sets")]
     public List<AbilitySet> abilitySetInputs;
 
-    [Header("Combo Current Ability Sets")]
-    public CombotTriggerGroup c_right;
-    public CombotTriggerGroup c_left;
-    public CombotTriggerGroup c_up;
-    public CombotTriggerGroup c_down;
+    [Header("Combo Choice")]
+    public ModeRuntimeData comboMode;
+    public int c_current;
+    public Action<int> comboOne;
+    public Action<int> comboTwo;
+    public Action<int> comboThree;
+    public Action<int> comboFour;
 
     [Header("Main Current Ability Sets")]
     public ModeTriggerGroup t_right;
@@ -109,6 +112,10 @@ public class CombatEntityController : MonoBehaviour
         blockStop = null;
         GetTarget = null;
         cantUseAbility = null;
+        comboOne = null;
+        comboTwo = null;
+        comboThree = null;
+        comboFour = null;
     }
 
     void CreateMyOwnModeInstances()
@@ -135,6 +142,7 @@ public class CombatEntityController : MonoBehaviour
             newModeData.modeName = template.modeName;
             newModeData.UIIndicator = template.UIIndicator;
             newModeData.modeTextDesc = template.modeTextDesc;
+            newModeData.solo = template.solo;
 
             //Create NEW MODE runtime wrapper, put the data in the wrapper
             GameObject modeWrapper = Instantiate(new GameObject(), modeParent, false);

@@ -152,6 +152,42 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Combo1"",
+                    ""type"": ""Button"",
+                    ""id"": ""8f7f0756-3577-4da1-bc9d-7c3f040472d8"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Combo2"",
+                    ""type"": ""Button"",
+                    ""id"": ""7cc7f5e1-28e4-4309-8519-26f865894e4f"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Combo3"",
+                    ""type"": ""Button"",
+                    ""id"": ""2e2f8408-9ba0-4d34-96ef-0b1249bef05c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Combo4"",
+                    ""type"": ""Button"",
+                    ""id"": ""9d447fc9-8682-46a6-a94a-b867bfab3f97"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -603,6 +639,50 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""UseCombo"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4a0c3a0c-71d7-4ade-8b0f-6b25f102f893"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Combo1"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""01f0c256-7bce-4ae4-94ab-546ac88c86d9"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Combo2"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""94c2b9fa-2cc8-4bc2-8dd1-e952ac4b5960"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Combo3"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ab837f65-34b3-4dcd-ab57-0c138c545109"",
+                    ""path"": ""<Keyboard>/4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Combo4"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1204,6 +1284,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Dash = m_Player.FindAction("Dash", throwIfNotFound: true);
         m_Player_Block = m_Player.FindAction("Block", throwIfNotFound: true);
         m_Player_SwitchAttackMode = m_Player.FindAction("SwitchAttackMode", throwIfNotFound: true);
+        m_Player_Combo1 = m_Player.FindAction("Combo1", throwIfNotFound: true);
+        m_Player_Combo2 = m_Player.FindAction("Combo2", throwIfNotFound: true);
+        m_Player_Combo3 = m_Player.FindAction("Combo3", throwIfNotFound: true);
+        m_Player_Combo4 = m_Player.FindAction("Combo4", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1297,6 +1381,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Dash;
     private readonly InputAction m_Player_Block;
     private readonly InputAction m_Player_SwitchAttackMode;
+    private readonly InputAction m_Player_Combo1;
+    private readonly InputAction m_Player_Combo2;
+    private readonly InputAction m_Player_Combo3;
+    private readonly InputAction m_Player_Combo4;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -1315,6 +1403,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @Dash => m_Wrapper.m_Player_Dash;
         public InputAction @Block => m_Wrapper.m_Player_Block;
         public InputAction @SwitchAttackMode => m_Wrapper.m_Player_SwitchAttackMode;
+        public InputAction @Combo1 => m_Wrapper.m_Player_Combo1;
+        public InputAction @Combo2 => m_Wrapper.m_Player_Combo2;
+        public InputAction @Combo3 => m_Wrapper.m_Player_Combo3;
+        public InputAction @Combo4 => m_Wrapper.m_Player_Combo4;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1366,6 +1458,18 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @SwitchAttackMode.started += instance.OnSwitchAttackMode;
             @SwitchAttackMode.performed += instance.OnSwitchAttackMode;
             @SwitchAttackMode.canceled += instance.OnSwitchAttackMode;
+            @Combo1.started += instance.OnCombo1;
+            @Combo1.performed += instance.OnCombo1;
+            @Combo1.canceled += instance.OnCombo1;
+            @Combo2.started += instance.OnCombo2;
+            @Combo2.performed += instance.OnCombo2;
+            @Combo2.canceled += instance.OnCombo2;
+            @Combo3.started += instance.OnCombo3;
+            @Combo3.performed += instance.OnCombo3;
+            @Combo3.canceled += instance.OnCombo3;
+            @Combo4.started += instance.OnCombo4;
+            @Combo4.performed += instance.OnCombo4;
+            @Combo4.canceled += instance.OnCombo4;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1412,6 +1516,18 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @SwitchAttackMode.started -= instance.OnSwitchAttackMode;
             @SwitchAttackMode.performed -= instance.OnSwitchAttackMode;
             @SwitchAttackMode.canceled -= instance.OnSwitchAttackMode;
+            @Combo1.started -= instance.OnCombo1;
+            @Combo1.performed -= instance.OnCombo1;
+            @Combo1.canceled -= instance.OnCombo1;
+            @Combo2.started -= instance.OnCombo2;
+            @Combo2.performed -= instance.OnCombo2;
+            @Combo2.canceled -= instance.OnCombo2;
+            @Combo3.started -= instance.OnCombo3;
+            @Combo3.performed -= instance.OnCombo3;
+            @Combo3.canceled -= instance.OnCombo3;
+            @Combo4.started -= instance.OnCombo4;
+            @Combo4.performed -= instance.OnCombo4;
+            @Combo4.canceled -= instance.OnCombo4;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1608,6 +1724,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnDash(InputAction.CallbackContext context);
         void OnBlock(InputAction.CallbackContext context);
         void OnSwitchAttackMode(InputAction.CallbackContext context);
+        void OnCombo1(InputAction.CallbackContext context);
+        void OnCombo2(InputAction.CallbackContext context);
+        void OnCombo3(InputAction.CallbackContext context);
+        void OnCombo4(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

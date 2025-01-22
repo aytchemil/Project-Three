@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: C_L_Axe 4 Barbaric Slices
   m_EditorClassIdentifier: 
   abilityName: Barbaric Slices
-  icon: {fileID: 2800000, guid: 937285a2d9be1ae4aa7e2de93c9c145c, type: 3}
+  icon: {fileID: 2800000, guid: c6b61406c4bde26458b26643b032586c, type: 3}
   initialUseDelay:
   - 0.3
   - 0.3

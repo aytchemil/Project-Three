@@ -13,7 +13,7 @@ public class CombotTriggerGroup : MAT_FollowupGroup
 
     public override void CheckForTriggerUpdates_ReturnDelay(int i)
     {
-
+        //print("Combo checking for reattacks");
         if (!combatFunctionality.Controls.waitingToReattack)
             StartCoroutine(WaitForContinuation(i));
         else
@@ -27,7 +27,7 @@ public class CombotTriggerGroup : MAT_FollowupGroup
         //print("checking for continuation");
         if (combatFunctionality.Controls.didReattack)
         {
-            //print("followupInput reattack... ");
+            print("combo reattacked... ");
             triggerProgress[i] = true;
 
             combatFunctionality.Controls.waitingToReattack = false;
@@ -35,15 +35,19 @@ public class CombotTriggerGroup : MAT_FollowupGroup
         }
 
         if (combatFunctionality.Controls.Mode("Combo").data.currentAbility != myComboAbility)
+        {
+            print($"Current ability from mode: {combatFunctionality.Controls.Mode("Combo").data.currentAbility} and myComboAbility from combo trigger: {myComboAbility}");
+            print("Switched abilites mid reattack, disabling trigger");
             DisableThisTrigger();
 
+        }
 
     }
 
 
     IEnumerator WaitForContinuation(int i)
     {
-
+        print("Waiting for a reattack");
         combatFunctionality.Controls.waitingToReattack = true;
         yield return new WaitForEndOfFrame();
         combatFunctionality.Controls.didReattack = false;
@@ -62,7 +66,10 @@ public class CombotTriggerGroup : MAT_FollowupGroup
         yield return new WaitForSeconds(myComboAbility.reattackTimeUntilReset);
 
         if (triggerProgress[i] == false)
+        {
+            print("No Reattack Found Disabling combo trigger");
             DisableThisTrigger();
+        }
     }
 
 

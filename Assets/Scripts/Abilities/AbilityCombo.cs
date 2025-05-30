@@ -4,6 +4,7 @@ using UnityEngine;
 public class AbilityCombo : AbilityMulti
 {
     public float reattackTimeUntilReset;
+    public float changeOrCompleteComboDelay;
 
     public enum ComboType
     {

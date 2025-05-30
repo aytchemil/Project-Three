@@ -4,7 +4,6 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Playables;
 using UnityEditor.Rendering.LookDev;
-using UnityEditor.ShaderGraph;
 
 
 [RequireComponent(typeof(CombatEntityController))]
@@ -106,14 +105,13 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     void InCombat()
     {
-
-
-
         //print("combatFunctionality: in combat");
 
         //Auto Set the current ability
         Controls.Mode("Attack").data.currentAbility = Controls.AbilitySet("Attack").up;
-        Controls.Mode("Combo").data.currentAbility = Controls.AbilitySet("Combo").up;
+        Controls.Mode("Combo").data.currentAbility = Controls.AbilitySet("Combo").right;
+        //up is 3
+        //left is 2
 
         foreach (ModeRuntimeData mode in Controls.modes)
             if (!mode.data.initializedTriggers)
@@ -250,6 +248,7 @@ public class CombatFunctionality : MonoBehaviour
         if (abilitySet == null)
             Debug.LogError("Mode AbilitiesSO null");
 
+        //Null Check
         if (abilitySet.right == null || abilitySet.left == null || abilitySet.up == null || abilitySet.down == null)
         {
             Debug.LogError("Abilities Given to Instantiate attack triggers are null:");
@@ -258,6 +257,7 @@ public class CombatFunctionality : MonoBehaviour
             Debug.LogError("up : " + abilitySet.up);
             Debug.LogError("down : " + abilitySet.down);
         }
+
 
         Controls.t_right = InitializeTrigger(abilitySet.right, parent, "right trigger");
         Controls.t_left = InitializeTrigger(abilitySet.left, parent, "left trigger");
@@ -278,6 +278,7 @@ public class CombatFunctionality : MonoBehaviour
 
         ModeTriggerGroup trigger = null;
 
+        //Null Check
         if (ability == null)
         {
             Debug.LogError($"Ability for {direction} is null in ModeAbilitySO");
@@ -362,14 +363,13 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     public virtual void UseAbility(string mode)
     {
-        //print("-> Comabt Functionality: Attempting Attack");
+        print("-> Comabt Functionality: Attempting Attack");
         if (Controls.cantUseAbility.Invoke())
             return;
 
 
         if (Controls.Mode(mode) == null)
             Debug.LogError("There is currently no selected ability (currentAttackAbility) that this combat functionality script can use.");
-
 
         if (mode == "Attack")
             Attack();
@@ -397,7 +397,8 @@ public class CombatFunctionality : MonoBehaviour
     void Attack()
     {
 
-        //print("attacking");
+        print("attacking");
+
 
         StartAttacking();
 
@@ -407,11 +408,15 @@ public class CombatFunctionality : MonoBehaviour
 
 
         Ability ability = Controls.Mode("Attack").data.currentAbility;
+        print($"Using attack ability: {ability.abilityName}");
+
 
         switch (ability.archetype)
         {
 
             case AbilityAttack.Archetype.Singular:
+
+                print("attackingarchetype: singular");
 
                 //Actuall Attack
                 TriggerEnableToUse("Attack").StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
@@ -423,6 +428,7 @@ public class CombatFunctionality : MonoBehaviour
 
             case AbilityAttack.Archetype.Multi_Choice:
 
+                print("attacking archetype: multichoice");
 
                 //Gets the Choice
                 string choice = GetMultiChoiceAttack(ability);
@@ -440,6 +446,7 @@ public class CombatFunctionality : MonoBehaviour
 
             case AbilityAttack.Archetype.Multi_Followup:
 
+                print("attacking archetype: multi_followup");
 
                 //Actuall Attack
                 TriggerEnableToUse("Attack").GetComponent<MAT_FollowupGroup>().StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
@@ -560,7 +567,7 @@ public class CombatFunctionality : MonoBehaviour
                 usingThisTriggerGroup = Controls.Mode(mode).triggers[2].gameObject.GetComponent<ModeTriggerGroup>();
                 break;
             case "down":
-                Controls.Mode(mode).triggers[0].gameObject.SetActive(true);
+                Controls.Mode(mode).triggers[0].gameObject.SetActive(false);
                 Controls.Mode(mode).triggers[1].gameObject.SetActive(false);
                 Controls.Mode(mode).triggers[2].gameObject.SetActive(false);
                 Controls.Mode(mode).triggers[3].gameObject.SetActive(true);
@@ -571,6 +578,9 @@ public class CombatFunctionality : MonoBehaviour
                 Debug.LogError("Havn't chosen an attack trigger group to use out of: right, left, up, down");
                 break;
         }
+
+        print($"Trigger Enabled to use: {usingThisTriggerGroup.name}");
+
         return usingThisTriggerGroup;
     }
 
@@ -769,6 +779,12 @@ public class CombatFunctionality : MonoBehaviour
     void SwitchToCombo(int combo)
     {
         print("switching to combo: " + combo);
+
+        if (Controls.alreadyAttacking)
+        {
+            print("Already attacking, returning");
+            return;
+        }
 
         Controls.Mode("Combo").data.currentAbility = ChooseCurrentAbility(combo);
         Controls.c_current = combo;

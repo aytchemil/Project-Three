@@ -34,6 +34,7 @@ public class CombotTriggerGroup : MAT_FollowupGroup
             combatFunctionality.Controls.didReattack = false;
         }
 
+        //Switching combos mid combo check
         if (combatFunctionality.Controls.Mode("Combo").data.currentAbility != myComboAbility)
         {
             print($"Current ability from mode: {combatFunctionality.Controls.Mode("Combo").data.currentAbility} and myComboAbility from combo trigger: {myComboAbility}");
@@ -70,6 +71,12 @@ public class CombotTriggerGroup : MAT_FollowupGroup
             print("No Reattack Found Disabling combo trigger");
             DisableThisTrigger();
         }
+    }
+
+    IEnumerator DelayChangeOfCombo(float delay)
+    {
+        yield return new WaitForSeconds(delay);
+        DisableThisTrigger();
     }
 
 

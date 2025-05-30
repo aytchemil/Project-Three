@@ -46,7 +46,7 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
         if (triggerBeingUsed.used)
         {
             print("combo");
-            StartCoroutine(ComboOffOfHitNowAvaliable());
+            StartCoroutine(SuccessfullyFinishedAttacked());
             return false;
         }
 

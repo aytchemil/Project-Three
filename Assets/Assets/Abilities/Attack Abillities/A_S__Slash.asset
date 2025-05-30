@@ -14,13 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilityName: Slash
   icon: {fileID: 2800000, guid: 5d648196f53723d499590b1df6cf38a9, type: 3}
-  initialAttackDelay:
-  - 0.35
-  missDelay: 1
-  comnboDelayOnHit: 0.2
-  damage: 1
-  flinchAmount: 1
+  initialUseDelay:
+  - 0.3
+  <successDelay>k__BackingField: 0.3
+  unsuccessDelay:
+  - 0.3
+  movementAmount: 0
   archetype: 0
   trait: 0
+  damage: 1
+  flinchAmount: 1
   triggerCollider: {fileID: 8475917669229452261, guid: f964f0d6098938940bad90bad00b8b69, type: 3}
-  movementAmount: 0

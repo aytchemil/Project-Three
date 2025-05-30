@@ -45,7 +45,7 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
 
     public void SetAllTriggersToFalse()
     {
-        print("set all triggers to false");
+        print($"set all {triggers.Count} triggers to false");
         for (int i = 0; i < triggers.Count - 1; i++)
         {
             triggerProgress[i] = false;
@@ -122,7 +122,7 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
 
                 if (i == triggerProgress.Count - 1) //last
                 {
-                    print("LAST");
+                    //print("LAST");
 
                     if (triggerBeingUsed.used) { HitAttack(); MissAttackCuttoff(); yield break; }
                     if ((triggerBeingUsed as GeneralAttackTriggerGroup).missedAttack) { MissAttackCuttoff(); yield break; }
@@ -133,7 +133,7 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
 
             //print("after while loop");
 
-            yield return new WaitForSeconds(DelayNextTrigger());
+            yield return new WaitForSeconds(DelayNextTrigger(i));
 
         }
 
@@ -141,22 +141,34 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
 
     }
 
-    public virtual float DelayNextTrigger()
+    public virtual float DelayNextTrigger(int prog)
     {
         float delay = 0f;
 
         if (triggerBeingUsed.used)
         {
-            delay = myMultiAbility.successDelay;
+            delay = myMultiAbility.successDelay[prog];
         }
 
         //miss
         if (triggerBeingUsed.unused)
         {
-            delay = myMultiAbility.unsuccessDelay;
+            delay = myMultiAbility.unsuccessDelay[prog];
         }
 
         return delay;
+    }
+
+    public override IEnumerator SuccessfullyFinishedAttacked()
+    {
+        print("MultiFollowup: Succesfuly finifhsed attack");
+        float delay = myMultiAbility.successDelay[triggerProgress.Count - 1];
+        print($"{this.name} : Comboing, delay is: {delay}");
+        print("ability is: " + myAbility);
+
+        yield return new WaitForSeconds(delay);
+
+        DisableThisTrigger();
     }
 
     #endregion

@@ -13,20 +13,28 @@ MonoBehaviour:
   m_Name: C_L_Axe 1 Barrage
   m_EditorClassIdentifier: 
   abilityName: Barrage
-  icon: {fileID: 2800000, guid: 937285a2d9be1ae4aa7e2de93c9c145c, type: 3}
+  icon: {fileID: 2800000, guid: 94e6782d9a64d2f499013b429d491031, type: 3}
   initialUseDelay:
   - 0.3
+  - 0.2
+  - 0.2
+  <successDelay>k__BackingField: 0
+  unsuccessDelay:
   - 0.3
   - 0.3
-  successDelay: 0.1
-  unsuccessDelay: 0.15
+  - 1
   movementAmount: 0
   archetype: 0
   trait: 0
+  successDelay:
+  - 0.25
+  - 0.25
+  - 0.75
   MultiAbilityGroupingPrefab: {fileID: 1766159213802189594, guid: c3a13b68d2130dc408722a0ba5a0094d, type: 3}
   abilities:
   - {fileID: 11400000, guid: 99169ba6d6fb38a4f8ff536f275928aa, type: 2}
   - {fileID: 11400000, guid: 6df32e096622839438a45810cf14019e, type: 2}
   - {fileID: 11400000, guid: 57c8b27f3b1a8134b8e9c7edb069b681, type: 2}
   reattackTimeUntilReset: 1
+  changeOrCompleteComboDelay: 1.5
   comboType: 0

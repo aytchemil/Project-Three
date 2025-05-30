@@ -24,7 +24,7 @@ public class PlayerController : CombatEntityController
     public InputAction ia_comboThree;
     public InputAction ia_comboFour;
 
-    private void Awake()
+    protected override void Awake()
     {
         controls = new PlayerInputActions();
 

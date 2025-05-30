@@ -14,13 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilityName: Reverse Slash
   icon: {fileID: 2800000, guid: c61f6c6efd54b134a9b3964c2f580679, type: 3}
-  initialAttackDelay:
-  - 0.35
-  missDelay: 1
-  comnboDelayOnHit: 0.2
-  damage: 1
-  flinchAmount: 1
+  initialUseDelay:
+  - 0.3
+  <successDelay>k__BackingField: 0.3
+  unsuccessDelay:
+  - 0.3
+  movementAmount: 0
   archetype: 0
   trait: 0
+  damage: 1
+  flinchAmount: 1
   triggerCollider: {fileID: 8475917669229452261, guid: d1ee7cca869ec7a4fa31c7f8d2d2f7b0, type: 3}
-  movementAmount: 0

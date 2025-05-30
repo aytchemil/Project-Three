@@ -62,6 +62,9 @@ public class CombatEntityController : MonoBehaviour
     public Action<int> comboThree;
     public Action<int> comboFour;
 
+    [Header("Weapon System")]
+    public Weapon currentWeapon;
+
     [Header("Main Current Ability Sets")]
     public ModeTriggerGroup t_right;
     public ModeTriggerGroup t_left;
@@ -86,6 +89,11 @@ public class CombatEntityController : MonoBehaviour
 
     Transform modeParent;
     bool modesInitialized = false;
+
+    protected virtual void Awake()
+    {
+    }
+
     protected virtual void Start()
     {
         //print($"{gameObject.name} onEnable()");
@@ -95,6 +103,7 @@ public class CombatEntityController : MonoBehaviour
 
     protected virtual void OnEnable()
     {
+        cantUseAbility = () => (!isLockedOn || alreadyAttacking || isBlocking || isFlinching || isCountering);
         useCombo += ReAttackCheck;
     }
 
@@ -192,14 +201,17 @@ public class CombatEntityController : MonoBehaviour
 
         foreach(ModeRuntimeData mode in modes)
         {
-            //print($"Mode check comparing {mode.modeName} against {name}");
+            print($"[{gameObject.name}] Mode check comparing {mode.data.modeName} against {name}");
 
             if (mode.data.modeName == name)
                 retMode = mode;
         }
 
+        if(modes.Count == 0)
+            Debug.LogError($"[{gameObject.name}] No modes detected ");
+
         if (retMode == null)
-            Debug.LogError($"Could not find a mode of name [{name}] please change it");
+            Debug.LogError($"[{gameObject.name}] Could not find a mode of name [{name}] please change it");
 
         return retMode;
     }
@@ -210,8 +222,7 @@ public class CombatEntityController : MonoBehaviour
 
         foreach (AbilitySet abilitySet in abilitySetInputs)
         {
-            //print(gameObject.name + "Ability Set Search: " + abilitySet.mode.ToString());
-            //print(gameObject.name + "Ability Set Search Against: " + modeName);
+            //print(gameObject.name + "Ability Set Search: " + abilitySet.mode.ToString() + " against " + modeName);
             if (abilitySet.mode.ToString() == modeName)
                 retAbilitySet = abilitySet;
         }

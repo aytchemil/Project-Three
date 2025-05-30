@@ -108,7 +108,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
         if (hitAttack)
         {
             //print("hit atack succesffull, calling combo");
-            StartCoroutine(ComboOffOfHitNowAvaliable());
+            StartCoroutine(SuccessfullyFinishedAttacked());
             return;
         }
 
@@ -118,7 +118,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
 
         MissedAttackCaller();
 
-        Invoke(nameof(DisableThisTrigger), myAbility.unsuccessDelay);
+        Invoke(nameof(DisableThisTrigger), myAbility.unsuccessDelay[myAbility.unsuccessDelay.Length-1]);
 
     }
 
@@ -181,9 +181,10 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
         combatFunctionality.Controls.MissedAttack?.Invoke();
     }
 
-    public IEnumerator ComboOffOfHitNowAvaliable()
+    public virtual IEnumerator SuccessfullyFinishedAttacked()
     {
-        print("Comboing");
+        print($"{this.name} : Comboing, delay is: {myAbility.successDelay}");
+        print("ability is: " + myAbility);
 
         yield return new WaitForSeconds(myAbility.successDelay);
 

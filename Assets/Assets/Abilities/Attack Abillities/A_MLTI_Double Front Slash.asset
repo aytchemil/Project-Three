@@ -17,10 +17,16 @@ MonoBehaviour:
   initialUseDelay:
   - 0.3
   - 0.3
-  successDelay: 0.3
-  unsuccessDelay: 0
+  <successDelay>k__BackingField: 0
+  unsuccessDelay:
+  - 0.3
+  - 0.3
+  movementAmount: 0
   archetype: 2
   trait: 0
+  successDelay:
+  - 0.3
+  - 0.3
   MultiAbilityGroupingPrefab: {fileID: 4834910296176868713, guid: 3fc8f2e54397062409d80547499993ea, type: 3}
   abilities:
   - {fileID: 11400000, guid: 99169ba6d6fb38a4f8ff536f275928aa, type: 2}

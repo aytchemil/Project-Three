@@ -1,0 +1,55 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class WeaponController : MonoBehaviour
+{
+    public ModeRuntimeData comboMode;
+
+    public GameObject weaponParent;
+    public GameObject currentWeaponObject;
+
+    public virtual CombatEntityController Controls { get; set; }
+
+    protected virtual void Awake()
+    {
+        Controls = GetComponent<CombatEntityController>();
+    }
+
+    private void Start()
+    {
+        if(gameObject.GetComponent<CombatEntityController>().Mode("Combo") != null)
+            comboMode = gameObject.GetComponent<CombatEntityController>().Mode("Combo");
+
+        SetAbilitySet();
+        CreateWeaponParent();
+        InstantiateChosenWeapon();
+    }
+
+    void SetAbilitySet()
+    {
+        //print(Controls.AbilitySet("Combo").name);
+
+        int index = Controls.abilitySetInputs.FindIndex(x => x == Controls.AbilitySet("Combo"));
+
+        if (index != -1) // Check if the item was found
+        {
+            Controls.abilitySetInputs[index] = Controls.currentWeapon.chosenAbilitySet;
+        }
+        else
+            Debug.LogError("AbilitySet 'Combo' not found!");
+
+    }
+
+    void CreateWeaponParent()
+    {
+        weaponParent = Instantiate(new GameObject(), transform, false);
+        weaponParent.name = "Weapon Parent";
+    }
+
+    void InstantiateChosenWeapon()
+    {
+        currentWeaponObject = Instantiate(Controls.currentWeapon.prefab, weaponParent.transform, false);
+    }
+
+
+}

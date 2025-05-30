@@ -341,6 +341,9 @@ public class CombatUI : MonoBehaviour
 
     void ChoiceComboEnabled(int choice)
     {
+        if (Controls.alreadyAttacking)
+            return;
+
         Color less = new Color(1, 1, 1, 0.2f);
         Color more = new Color(1, 1, 1, 1);
 

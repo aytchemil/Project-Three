@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
@@ -16,16 +17,17 @@ public class GameManager : MonoBehaviour
     private void Awake()
     {
         controlls = player.GetComponent<PlayerController>();
-        player.gameObject.SetActive(false);
     }
 
     private void Start()
     {
-        player.SetActive(false);
+        StartCoroutine(DisablePlayer());
         menu.SetActive(true);
 
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
+
+
     }
 
     public void StartGame()
@@ -55,5 +57,11 @@ public class GameManager : MonoBehaviour
         }
     }
 
+
+    IEnumerator DisablePlayer()
+    {
+        yield return new WaitForEndOfFrame();
+        player.SetActive(false);
+    }
 
 }

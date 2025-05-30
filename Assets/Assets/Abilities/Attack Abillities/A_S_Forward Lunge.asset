@@ -14,13 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilityName: Forward Lunge
   icon: {fileID: 2800000, guid: c7f1ce3715d640c46b11327dd7472006, type: 3}
-  initialAttackDelay:
-  - 0.6
-  missDelay: 1
-  comnboDelayOnHit: 0.15
-  damage: 4
-  flinchAmount: 1
+  initialUseDelay:
+  - 0.3
+  <successDelay>k__BackingField: 0.3
+  unsuccessDelay:
+  - 0.3
+  movementAmount: 75
   archetype: 0
   trait: 4
+  damage: 4
+  flinchAmount: 1
   triggerCollider: {fileID: 9152381543741592740, guid: 876364ef1f1b2f94ebb3893dea57a553, type: 3}
-  movementAmount: 75

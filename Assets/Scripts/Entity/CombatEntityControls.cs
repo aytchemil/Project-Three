@@ -201,7 +201,7 @@ public class CombatEntityController : MonoBehaviour
 
         foreach(ModeRuntimeData mode in modes)
         {
-            print($"[{gameObject.name}] Mode check comparing {mode.data.modeName} against {name}");
+            //print($"[{gameObject.name}] Mode check comparing {mode.data.modeName} against {name}");
 
             if (mode.data.modeName == name)
                 retMode = mode;

@@ -36,6 +36,9 @@ public class ColliderDetector : MonoBehaviour
     /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
+        if(!other.GetComponent<CombatEntityController>())
+            Debug.LogError($"Object came into contact with Combat Collision Detection Zone thats tagged as 'Combat Entity', Yet it doesnt have a the CombatEntityController script: [{other.gameObject.name}]");
+
         if (other.GetComponent<CombatEntityController>().isAlive)
         {
             if (collidedWithCombatEntities.Count <= 0)
@@ -49,6 +52,8 @@ public class ColliderDetector : MonoBehaviour
                 collidedWithCombatEntities.Add(other.gameObject); //must Be first
             }
         }
+ 
+
     }
 
     /// <summary>

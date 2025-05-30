@@ -5,6 +5,7 @@ public class WeaponController : MonoBehaviour
 {
     public ModeRuntimeData comboMode;
 
+    public GameObject characterAnimationParent;
     public GameObject weaponParent;
     public GameObject currentWeaponObject;
 
@@ -21,7 +22,7 @@ public class WeaponController : MonoBehaviour
             comboMode = gameObject.GetComponent<CombatEntityController>().Mode("Combo");
 
         SetAbilitySet();
-        CreateWeaponParent();
+        AssignWeaponParent();
         InstantiateChosenWeapon();
     }
 
@@ -40,9 +41,9 @@ public class WeaponController : MonoBehaviour
 
     }
 
-    void CreateWeaponParent()
+    void AssignWeaponParent()
     {
-        weaponParent = Instantiate(new GameObject(), transform, false);
+        weaponParent = Instantiate(new GameObject(), characterAnimationParent.transform, false);
         weaponParent.name = "Weapon Parent";
     }
 

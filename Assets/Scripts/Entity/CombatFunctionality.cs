@@ -274,7 +274,7 @@ public class CombatFunctionality : MonoBehaviour
 
     private ModeTriggerGroup InitializeTrigger(Ability ability, Transform parent, string direction)
     {
-        print($"Initializing trigger {ability}...");
+        //print($"Initializing trigger {ability}...");
 
         ModeTriggerGroup trigger = null;
 
@@ -423,6 +423,8 @@ public class CombatFunctionality : MonoBehaviour
 
                 //Special Functionality
                 ArchetypeUse_SingularAttack((AbilityAttack)ability);
+
+                AnimationAttack((ability as AbilityAttack).anim_name.ToString());
 
                 break;
 
@@ -639,6 +641,12 @@ public class CombatFunctionality : MonoBehaviour
 
     }
 
+    void AnimationAttack(string name)
+    {
+        Debug.Log($"[{gameObject.name}] [CombatFunctionality] is using AnimationAttack( [{name}] )");
+
+
+    }
 
 
     /// <summary>

@@ -25,3 +25,4 @@ MonoBehaviour:
   damage: 1
   flinchAmount: 1
   triggerCollider: {fileID: 4891867310014873478, guid: 3516a31e340b1a44a91d099fa2e0d6e3, type: 3}
+  anim_name: 1

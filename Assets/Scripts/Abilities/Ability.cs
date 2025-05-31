@@ -3,6 +3,7 @@ using UnityEngine;
 public class Ability : ScriptableObject
 {
     public string abilityName;
+
     public Texture icon;
     public float[] initialUseDelay = { 0.3f };
     [field:SerializeField] public virtual float successDelay { get; set; }

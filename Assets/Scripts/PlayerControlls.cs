@@ -75,9 +75,13 @@ public class PlayerController : CombatEntityController
         };
 
         ia_useCombo.Enable();
-        ia_useCombo.performed += ctx => useCombo?.Invoke("Combo");
+        ia_useCombo.performed += ctx =>
+        {
+            usedCombo = true;
+            useAbility?.Invoke("Combo");
+        };
 
-         ia_block.Enable();
+        ia_block.Enable();
         ia_block.started += ctx => blockStart?.Invoke();
         ia_block.canceled += ctx => blockStop?.Invoke();
 
@@ -121,7 +125,7 @@ public class PlayerController : CombatEntityController
         ia_useAbility.performed -= ctx => useAbility?.Invoke(mode);
 
         ia_useCombo.Disable();
-        ia_useCombo.performed -= ctx => useCombo?.Invoke("Combo");
+        ia_useCombo.performed -= ctx => useAbility?.Invoke("Combo");
 
         ia_block.Disable();
         ia_block.performed -= ctx => blockStart?.Invoke();

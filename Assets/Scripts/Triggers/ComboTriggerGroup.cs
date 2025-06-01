@@ -35,7 +35,7 @@ public class CombotTriggerGroup : MAT_FollowupGroup
         }
 
         //Switching combos mid combo check
-        if (combatFunctionality.Controls.Mode("Combo").data.currentAbility != myComboAbility)
+        if (combatFunctionality.Controls.Mode("Combo").data.currentAbility != combatFunctionality.Controls.Mode("Combo").data.currentAbility)
         {
             print($"Current ability from mode: {combatFunctionality.Controls.Mode("Combo").data.currentAbility} and myComboAbility from combo trigger: {myComboAbility}");
             print("Switched abilites mid reattack, disabling trigger");

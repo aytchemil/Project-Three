@@ -51,7 +51,7 @@ public class CounterTriggerGroup : MAT_FollowupGroup
 
     protected override void DisableThisTriggerImplementation()
     {
-        combatFunctionality.FinishCountering();
+        (combatFunctionality.Controls.Mode("Counter").data.modeFunctionality as ModeCounterFunctionality).FinishCountering();
 
         print("Disabling this Counter Attack Trigger, Not locally");
         StopAllCoroutines();

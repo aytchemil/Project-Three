@@ -18,7 +18,6 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
     
     void Attack()
     {
-
         print("attacking");
 
 

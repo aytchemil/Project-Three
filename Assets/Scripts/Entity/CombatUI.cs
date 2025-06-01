@@ -20,6 +20,7 @@ public class CombatUI : MonoBehaviour
     public float changeCooldown = 0.1f;
     public bool changeOnCooldown;
     public float changeCloseProximityMultiplier = 0.6f;
+    public int lastComboChoice = 0;
 
     //Prefabs
     [SerializeField] private GameObject combatUIParent;
@@ -216,6 +217,7 @@ public class CombatUI : MonoBehaviour
         UpdateAttackIndicatorRotation(new Vector2(0, deadZone + 1));
         Controls.UpdateMainTriggers();
         InitalizeCurrentComboUI();
+        ChoiceComboEnabled(lastComboChoice);
     }
 
     /// <summary>
@@ -341,8 +343,8 @@ public class CombatUI : MonoBehaviour
 
     void ChoiceComboEnabled(int choice)
     {
-        if (Controls.alreadyAttacking)
-            return;
+
+        lastComboChoice = choice;
 
         Color less = new Color(1, 1, 1, 0.2f);
         Color more = new Color(1, 1, 1, 1);

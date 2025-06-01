@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 /// <summary>
 /// Centralized Controller and controls for every combat entity.
@@ -21,7 +22,7 @@ public class CombatEntityController : MonoBehaviour
     public Action lockOn;
     public Action dash;
     public Action<string> useAbility;
-    public Action<string> useCombo;
+    public bool usedCombo;
     public Action blockStart;
     public Action blockStop;
     public Action switchAttackMode;
@@ -132,7 +133,14 @@ public class CombatEntityController : MonoBehaviour
     protected virtual void OnEnable()
     {
         cantUseAbility = () => (!isLockedOn || alreadyAttacking || isBlocking || isFlinching || isCountering);
-        useCombo += ReAttackCheck;
+        useAbility += (input) => 
+        {
+            if (usedCombo)
+            {
+                ReAttackCheck(input);
+                usedCombo = false;
+            }
+        };
     }
 
     protected virtual void OnDisable()
@@ -144,7 +152,6 @@ public class CombatEntityController : MonoBehaviour
         lockOn = null;
         dash = null;
         useAbility = null;
-        useCombo = null;
         blockStart = null;
         blockStop = null;
         GetTarget = null;

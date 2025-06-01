@@ -60,7 +60,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
 
     protected override void DisableThisTriggerImplementation()
     {
-        combatFunctionality.FinishCountering();
+        (combatFunctionality.Controls.Mode("Block").data.modeFunctionality as ModeCounterFunctionality).FinishCountering();
 
         print("Disabling this Counter Attack Trigger, Not locally");
         StopAllCoroutines();

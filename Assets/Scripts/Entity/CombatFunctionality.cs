@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using UnityEditor.Playables;
 using UnityEditor.Rendering.LookDev;
 using System;
+using Unity.Burst.Intrinsics;
 
 
 [RequireComponent(typeof(CombatEntityController))]
@@ -19,6 +20,7 @@ public class CombatFunctionality : MonoBehaviour
     bool initializedBlockingTrigger;
 
     public bool initialAbilityUseDelayOver;
+    bool waiting = false;
 
     public ParticleSystem counteredEffect;
 
@@ -48,8 +50,6 @@ public class CombatFunctionality : MonoBehaviour
 
         Controls.switchAttackMode += SwitchAttackMode;
 
-        Controls.useCombo += UseCombo;
-
         //Controls.blockStart += Block;
         //Controls.blockStop += StopBlock;
 
@@ -78,8 +78,6 @@ public class CombatFunctionality : MonoBehaviour
         Controls.useAbility -= UseAbility;
 
         Controls.switchAttackMode -= SwitchAttackMode;
-
-        Controls.useCombo -= UseCombo;
 
 
         // Controls.blockStart -= Block;
@@ -365,7 +363,7 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     public virtual void UseAbility(string mode)
     {
-        print("-> Comabt Functionality: Attempting Attack");
+        print("-> Comabt Functionality: Attempting To Use an Ability");
         if (Controls.cantUseAbility.Invoke())
             return;
 
@@ -378,43 +376,7 @@ public class CombatFunctionality : MonoBehaviour
     }
 
 
-    public virtual void UseCombo(string mode)
-    {
-        if (Controls.cantUseAbility.Invoke())
-            return;
 
-        if (mode != "Combo") { Debug.LogError("Calling combo with a mode thats node combo"); return; }
-
-        Combo();
-    }
-
-    void Counter()
-    {
-        //print("countering");
-
-        StartCountering();
-
-        AbilityCounter counterAbility = (AbilityCounter)Controls.Mode("Counter").data.currentAbility;
-
-        SearchCurrentModesForMode("Counter").SetAbility(counterAbility);
-
-        switch (counterAbility.counterArchetype)
-        {
-            case AbilityCounter.CounterArchetype.StandingRiposte:
-
-                TriggerEnableToUse("Counter").StartUsingAbilityTrigger(counterAbility, counterAbility.initialUseDelay[0]);
-
-                StandingRiposte();
-
-                break;
-        }
-    }
-
-    void StandingRiposte()
-    {
-        print("Counter attack: Standing riposte");
-
-    }
 
 
     #region Attack Collision Types
@@ -488,24 +450,6 @@ public class CombatFunctionality : MonoBehaviour
         throw new InvalidOperationException("Cannot return a ref to a new struct instance.");
     }
 
-
-
-    /// <summary>
-    /// Sets Control's isCountering flag to TRUE
-    /// </summary>
-    void StartCountering()
-    {
-        Controls.isCountering = true;
-    }
-
-    /// <summary>
-    /// Sets Control's isCountering flag to FALSE
-    /// </summary>
-    public void FinishCountering()
-    {
-        Controls.isCountering = false;
-    }
-
     #endregion
 
     #region Target Death
@@ -555,7 +499,8 @@ public class CombatFunctionality : MonoBehaviour
     public void GetCountered(Vector3 effectPos)
     {
         (Controls.Mode("Attack").data.modeFunctionality as ModeAttackFunctionality).FinishAttacking();
-        FinishCountering();
+        (Controls.Mode("Counter").data.modeFunctionality as ModeCounterFunctionality).FinishCountering();
+
         DisableTriggers(false, Controls.Mode(Controls.mode));
         Controls.Countered?.Invoke();
         StartCoroutine(CounteredEffect(effectPos));
@@ -609,12 +554,26 @@ public class CombatFunctionality : MonoBehaviour
 
         if (Controls.alreadyAttacking)
         {
-            print("Already attacking, returning");
-            return;
+            if (waiting == true)
+                StopCoroutine(WaitForComboingToFinishToSwitchToAnother(combo));
+
+            waiting = true;
+            StartCoroutine(WaitForComboingToFinishToSwitchToAnother(combo));
         }
 
         Controls.Mode("Combo").data.currentAbility = ChooseCurrentAbility(combo);
         Controls.c_current = combo;
+    }
+
+    IEnumerator WaitForComboingToFinishToSwitchToAnother(int combo)
+    {
+        while (Controls.alreadyAttacking)
+        {
+            yield return new WaitForEndOfFrame();
+        }
+        Controls.Mode("Combo").data.currentAbility = ChooseCurrentAbility(combo);
+        Controls.c_current = combo;
+        waiting = false;
     }
 
     Ability ChooseCurrentAbility(int combo)
@@ -636,70 +595,7 @@ public class CombatFunctionality : MonoBehaviour
         return ret;
     }
 
-    CombotTriggerGroup UseCurrentCombo(int combo)
-    {
-        if (combo == 0)
-        {
-            Controls.Mode("Combo").triggers[0].gameObject.SetActive(true);
-            Controls.Mode("Combo").triggers[1].gameObject.SetActive(false);
-            Controls.Mode("Combo").triggers[2].gameObject.SetActive(false);
-            Controls.Mode("Combo").triggers[3].gameObject.SetActive(false);
-        }
-
-        else if (combo == 1)
-        {
-            Controls.Mode("Combo").triggers[0].gameObject.SetActive(false);
-            Controls.Mode("Combo").triggers[1].gameObject.SetActive(true);
-            Controls.Mode("Combo").triggers[2].gameObject.SetActive(false);
-            Controls.Mode("Combo").triggers[3].gameObject.SetActive(false);
-        }
-        else if (combo == 2)
-        {
-            Controls.Mode("Combo").triggers[0].gameObject.SetActive(false);
-            Controls.Mode("Combo").triggers[1].gameObject.SetActive(false);
-            Controls.Mode("Combo").triggers[2].gameObject.SetActive(true);
-            Controls.Mode("Combo").triggers[3].gameObject.SetActive(false);
-        }
-        else if (combo == 3)
-        {
-            Controls.Mode("Combo").triggers[0].gameObject.SetActive(false);
-            Controls.Mode("Combo").triggers[1].gameObject.SetActive(false);
-            Controls.Mode("Combo").triggers[2].gameObject.SetActive(false);
-            Controls.Mode("Combo").triggers[3].gameObject.SetActive(true);
-        }
-        return Controls.Mode("Combo").triggers[combo].gameObject.GetComponent<CombotTriggerGroup>();
-
-    }
 
 
-
-
-    void Combo()
-    {
-        print("comboing");
-        AbilityCombo ability = (AbilityCombo)Controls.Mode("Combo").data.currentAbility;
-
-        //Set all combos to false
-        for (int i = 0; i < Controls.Mode("Combo").triggers.Length; i++)
-            Controls.Mode("Combo").triggers[i].gameObject.SetActive(false);
-
-        SearchCurrentModesForMode("Combo").SetAbility(ability);
-
-        (Controls.Mode("Attack").data.modeFunctionality as ModeAttackFunctionality).StartAttacking();
-
-        switch (ability.comboType)
-        {
-            case AbilityCombo.ComboType.Linear:
-
-                //Actuall Attack
-                UseCurrentCombo(Controls.c_current).GetComponent<CombotTriggerGroup>().StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
-
-
-                //Special Functionality
-                //ArchetypeUse_FollowUpAttack((AbilityMulti)ability);
-
-                break;
-        }
-    }
 
 }

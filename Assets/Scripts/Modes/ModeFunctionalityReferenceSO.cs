@@ -1,36 +1,43 @@
 using UnityEngine;
 using System;
-using System.Collections.Generic;
+
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
 
 [CreateAssetMenu(fileName = "NewModeFunctionality", menuName = "Mode/ModeFunctionality")]
 public class ModeFunctionalityReferenceSO : ScriptableObject
 {
     [SerializeField] private string modeName;
-    [SerializeField] private MonoScript modeScript; // Reference to the script asset
+    [SerializeField] private string modeTypeName; // Store the type name as a string for runtime
+
+#if UNITY_EDITOR
+    [SerializeField] private MonoScript modeScript; // Editor-only field for selecting the script
+#endif
 
     public string ModeName => modeName;
 
-    // Get the Type, with validation
+    // Get the Type at runtime
     public Type GetModeType()
     {
-        if (modeScript == null)
+        if (string.IsNullOrEmpty(modeTypeName))
         {
-            Debug.LogError($"[ModeDataSO] No script assigned in {name}");
+            Debug.LogError($"[ModeDataSO] No type name assigned in {name}");
             return null;
         }
 
-        Type type = modeScript.GetClass();
+        Type type = Type.GetType(modeTypeName);
         if (type != null && typeof(ModeGeneralFunctionality).IsAssignableFrom(type) && type.IsSubclassOf(typeof(MonoBehaviour)))
         {
             return type;
         }
 
-        Debug.LogError($"[ModeDataSO] Script {modeScript.name} is not a valid ModeGeneralFunctionality type in {name}");
+        Debug.LogError($"[ModeDataSO] Type {modeTypeName} is not a valid ModeGeneralFunctionality type in {name}");
         return null;
     }
 
-    // Validate in Editor
+#if UNITY_EDITOR
+    // Validate in Editor and update modeTypeName
     private void OnValidate()
     {
         if (modeScript != null)
@@ -40,7 +47,18 @@ public class ModeFunctionalityReferenceSO : ScriptableObject
             {
                 Debug.LogError($"[ModeDataSO] Assigned script {modeScript.name} is not a valid ModeGeneralFunctionality type in {name}");
                 modeScript = null;
+                modeTypeName = null;
+            }
+            else
+            {
+                // Store the fully qualified type name (namespace + class) for runtime
+                modeTypeName = type.AssemblyQualifiedName;
             }
         }
+        else
+        {
+            modeTypeName = null;
+        }
     }
+#endif
 }

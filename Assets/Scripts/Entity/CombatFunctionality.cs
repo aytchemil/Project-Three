@@ -2,10 +2,7 @@ using UnityEngine;
 using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Playables;
-using UnityEditor.Rendering.LookDev;
 using System;
-using Unity.Burst.Intrinsics;
 
 
 [RequireComponent(typeof(CombatEntityController))]

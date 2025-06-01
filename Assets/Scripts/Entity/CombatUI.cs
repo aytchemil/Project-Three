@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
-using Unity.VisualScripting;
 
 [RequireComponent(typeof(PlayerController))]
 public class CombatUI : MonoBehaviour

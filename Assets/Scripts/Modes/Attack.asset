@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: Attack
   m_EditorClassIdentifier: 
   modeName: Attack
+  modeTypeName: ModeAttackFunctionality, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+    PublicKeyToken=null
   modeScript: {fileID: 11500000, guid: d9143121c89dce04aaf8499043ca90e6, type: 3}

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Playables;
 using UnityEditor.Rendering.LookDev;
+using System;
 
 
 [RequireComponent(typeof(CombatEntityController))]
@@ -410,6 +411,8 @@ public class CombatFunctionality : MonoBehaviour
         Ability ability = Controls.Mode("Attack").data.currentAbility;
         print($"Using attack ability: {ability.abilityName}");
 
+        //Current Ability Being Used For Each Mode System
+        SearchCurrentModesForMode("Attack").SetAbility(ability);
 
         switch (ability.archetype)
         {
@@ -423,6 +426,7 @@ public class CombatFunctionality : MonoBehaviour
 
                 //Special Functionality
                 ArchetypeUse_SingularAttack((AbilityAttack)ability);
+
 
                 AnimationAttack((ability as AbilityAttack).anim_name.ToString());
 
@@ -468,6 +472,7 @@ public class CombatFunctionality : MonoBehaviour
 
         AbilityCounter counterAbility = (AbilityCounter)Controls.Mode("Counter").data.currentAbility;
 
+        SearchCurrentModesForMode("Counter").SetAbility(counterAbility);
 
         switch (counterAbility.counterArchetype)
         {
@@ -641,6 +646,18 @@ public class CombatFunctionality : MonoBehaviour
 
     }
 
+    ref CombatEntityController.CurrentAbilityForMode SearchCurrentModesForMode(string mode)
+    {
+        for (int i = 0; i < Controls.currentAbilityBeingUsedForEachMode.Length; i++)
+        {
+            if (Controls.currentAbilityBeingUsedForEachMode[i].GetMode().Replace("Mode: ", "") == mode)
+                return ref Controls.currentAbilityBeingUsedForEachMode[i];
+        }
+
+        Debug.LogError("No mode found when searching for mode in Current Mode System");
+        throw new InvalidOperationException("Cannot return a ref to a new struct instance.");
+    }
+
     void AnimationAttack(string name)
     {
         Debug.Log($"[{gameObject.name}] [CombatFunctionality] is using AnimationAttack( [{name}] )");
@@ -778,12 +795,6 @@ public class CombatFunctionality : MonoBehaviour
 
     }
 
-
-
-
-
-
-
     void SwitchToCombo(int combo)
     {
         print("switching to combo: " + combo);
@@ -863,6 +874,8 @@ public class CombatFunctionality : MonoBehaviour
         //Set all combos to false
         for (int i = 0; i < Controls.Mode("Combo").triggers.Length; i++)
             Controls.Mode("Combo").triggers[i].gameObject.SetActive(false);
+
+        SearchCurrentModesForMode("Combo").SetAbility(ability);
 
         StartAttacking();
 

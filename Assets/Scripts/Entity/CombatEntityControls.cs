@@ -3,10 +3,12 @@ using System;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using System.Collections;
+using System.Linq;
 
 /// <summary>
 /// Centralized Controller and controls for every combat entity.
 /// </summary>
+/// 
 public class CombatEntityController : MonoBehaviour
 {
     //Rule of thumb : Keep these such that they are always set on the outside, never during gameplay
@@ -48,6 +50,34 @@ public class CombatEntityController : MonoBehaviour
 
     [Header("Modes")]
     public List<ModeRuntimeData> modes = new List<ModeRuntimeData>();
+
+    [System.Serializable]
+    public struct CurrentAbilityForMode
+    {
+        public Ability current;
+        public string mode;
+
+        public CurrentAbilityForMode(string _mode)
+        {
+            current = null;
+            mode = _mode;
+        }
+
+        public void SetAbility(Ability ability)
+        {
+            current = ability;
+        }
+
+        public string GetMode()
+        {
+            return mode;
+        }
+    }
+
+
+
+    [Header("Current Ability For Each modes")]
+    public CurrentAbilityForMode[] currentAbilityBeingUsedForEachMode;
 
     [Header("Mode Inputted Ability Sets")]
     public List<AbilitySet> abilitySetInputs;
@@ -163,8 +193,16 @@ public class CombatEntityController : MonoBehaviour
             //print($"newmode modeName is {newMode.data.name}");
 
             modes.Add(newMode);
+
+
             i++;
         }
+
+        //Current Ability Being Used For Each Mode System
+        currentAbilityBeingUsedForEachMode = new CurrentAbilityForMode[modes.Count];
+        for (int j = 0; j < modes.Count; j++)
+            currentAbilityBeingUsedForEachMode[j] = new CurrentAbilityForMode(modes[j].name);
+
 
 
         AssignAbilitySetsToModeData();
@@ -173,6 +211,8 @@ public class CombatEntityController : MonoBehaviour
         modesInitialized = true;
         print($"{gameObject.name} Modes initialized");
     }
+
+
 
     void AssignAbilitySetsToModeData()
     {

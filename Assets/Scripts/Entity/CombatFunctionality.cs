@@ -20,7 +20,6 @@ public class CombatFunctionality : MonoBehaviour
     bool initializedBlockingTrigger;
 
     public bool initialAbilityUseDelayOver;
-    bool waiting = false;
 
     public ParticleSystem counteredEffect;
 
@@ -55,10 +54,6 @@ public class CombatFunctionality : MonoBehaviour
 
         Controls.Flinch += Flinch;
 
-        Controls.comboOne += SwitchToCombo;
-        Controls.comboTwo += SwitchToCombo;
-        Controls.comboThree += SwitchToCombo;
-        Controls.comboFour += SwitchToCombo;
     }
 
 
@@ -84,11 +79,6 @@ public class CombatFunctionality : MonoBehaviour
         //Controls.blockStop -= StopBlock;
 
         Controls.Flinch -= Flinch;
-
-        Controls.comboOne -= SwitchToCombo;
-        Controls.comboTwo -= SwitchToCombo;
-        Controls.comboThree -= SwitchToCombo;
-        Controls.comboFour -= SwitchToCombo;
 
     }
 
@@ -548,52 +538,7 @@ public class CombatFunctionality : MonoBehaviour
 
     }
 
-    void SwitchToCombo(int combo)
-    {
-        print("switching to combo: " + combo);
 
-        if (Controls.alreadyAttacking)
-        {
-            if (waiting == true)
-                StopCoroutine(WaitForComboingToFinishToSwitchToAnother(combo));
-
-            waiting = true;
-            StartCoroutine(WaitForComboingToFinishToSwitchToAnother(combo));
-        }
-
-        Controls.Mode("Combo").data.currentAbility = ChooseCurrentAbility(combo);
-        Controls.c_current = combo;
-    }
-
-    IEnumerator WaitForComboingToFinishToSwitchToAnother(int combo)
-    {
-        while (Controls.alreadyAttacking)
-        {
-            yield return new WaitForEndOfFrame();
-        }
-        Controls.Mode("Combo").data.currentAbility = ChooseCurrentAbility(combo);
-        Controls.c_current = combo;
-        waiting = false;
-    }
-
-    Ability ChooseCurrentAbility(int combo)
-    {
-        Ability ret = null;
-
-        if (combo == 0)
-            ret = Controls.Mode("Combo").data.abilitySet.right;
-
-        else if (combo == 1)
-            ret = Controls.Mode("Combo").data.abilitySet.left;
-
-        else if (combo == 2)
-            ret = Controls.Mode("Combo").data.abilitySet.up;
-
-        else if (combo == 3)
-            ret = Controls.Mode("Combo").data.abilitySet.down;
-
-        return ret;
-    }
 
 
 

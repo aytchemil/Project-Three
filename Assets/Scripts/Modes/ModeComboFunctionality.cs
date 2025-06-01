@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using Unity.VisualScripting;
 using UnityEditor.ShaderGraph;
 using UnityEngine;
@@ -6,13 +7,29 @@ using UnityEngine;
 public class ModeComboFunctionality : ModeGeneralFunctionality
 {
     private CombatFunctionality cf;
-
-
     public override string MODE_NAME { get => "Combo"; }
+
+    bool waiting = false;
 
     void Awake()
     {
         cf = gameObject.GetComponent<CombatFunctionality>();
+    }
+
+    private void OnEnable()
+    {
+        cf.Controls.comboOne += SwitchToCombo;
+        cf.Controls.comboTwo += SwitchToCombo;
+        cf.Controls.comboThree += SwitchToCombo;
+        cf.Controls.comboFour += SwitchToCombo;
+    }
+
+    private void OnDisable()
+    {
+        cf.Controls.comboOne -= SwitchToCombo;
+        cf.Controls.comboTwo -= SwitchToCombo;
+        cf.Controls.comboThree -= SwitchToCombo;
+        cf.Controls.comboFour -= SwitchToCombo;
     }
 
     public override void UseModeFunctionality() => Combo();
@@ -70,4 +87,52 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
         return mode.triggers[combo].GetComponent<CombotTriggerGroup>();
 
     }
+
+    void SwitchToCombo(int combo)
+    {
+        print("switching to combo: " + combo);
+
+        if (cf.Controls.alreadyAttacking)
+        {
+            if (waiting == true)
+                StopCoroutine(WaitForComboingToFinishToSwitchToAnother(combo));
+
+            waiting = true;
+            StartCoroutine(WaitForComboingToFinishToSwitchToAnother(combo));
+        }
+
+        cf.Controls.Mode("Combo").data.currentAbility = ChooseCurrentComboAbility(combo);
+        cf.Controls.c_current = combo;
+    }
+
+    IEnumerator WaitForComboingToFinishToSwitchToAnother(int combo)
+    {
+        while (cf.Controls.alreadyAttacking)
+        {
+            yield return new WaitForEndOfFrame();
+        }
+        cf.Controls.Mode("Combo").data.currentAbility = ChooseCurrentComboAbility(combo);
+        cf.Controls.c_current = combo;
+        waiting = false;
+    }
+
+    Ability ChooseCurrentComboAbility(int combo)
+    {
+        Ability ret = null;
+
+        if (combo == 0)
+            ret = cf.Controls.Mode("Combo").data.abilitySet.right;
+
+        else if (combo == 1)
+            ret = cf.Controls.Mode("Combo").data.abilitySet.left;
+
+        else if (combo == 2)
+            ret = cf.Controls.Mode("Combo").data.abilitySet.up;
+
+        else if (combo == 3)
+            ret = cf.Controls.Mode("Combo").data.abilitySet.down;
+
+        return ret;
+    }
+
 }

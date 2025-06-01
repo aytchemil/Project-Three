@@ -104,7 +104,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
             return;
         }
 
-        //print(combatFunctionality.gameObject.name + "'s Miss Attack Cuttoff Reached" + ": " + myAttackingAbility);
+        print(combatFunctionality.gameObject.name + "'s Miss Attack Cuttoff Reached");
         if (hitAttack)
         {
             //print("hit atack succesffull, calling combo");

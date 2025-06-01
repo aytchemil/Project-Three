@@ -124,7 +124,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   combatFunctionality: {fileID: 0}
-  isLocal: 1
+  isLocal: 0
   countered: 0
   attackColisionWith:
     serializedVersion: 2

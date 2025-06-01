@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Attack Set 2
   m_EditorClassIdentifier: 
   mode: 0
-  right: {fileID: 11400000, guid: 896542e6db2ab0948a9c127016922ed4, type: 2}
-  left: {fileID: 11400000, guid: 0e12207f444c15244822b55e9823b061, type: 2}
-  up: {fileID: 11400000, guid: db1dbceafc38df14a8a00cce0da55387, type: 2}
-  down: {fileID: 11400000, guid: f70474e9dbc7cb74e9e11772d7ab18fc, type: 2}
+  right: {fileID: 11400000, guid: 57c8b27f3b1a8134b8e9c7edb069b681, type: 2}
+  left: {fileID: 11400000, guid: cc188b88764ff3c478da26feea8ec6bc, type: 2}
+  up: {fileID: 11400000, guid: 90d73c4cb12b02a40bfbffb1eea894b8, type: 2}
+  down: {fileID: 11400000, guid: 99169ba6d6fb38a4f8ff536f275928aa, type: 2}

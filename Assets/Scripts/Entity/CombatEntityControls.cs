@@ -94,6 +94,9 @@ public class CombatEntityController : MonoBehaviour
     [Header("Weapon System")]
     public Weapon currentWeapon;
 
+    [Header("Animation System")]
+    public CharacterAnimationController animController;
+
     [Header("Main Current Ability Sets")]
     public ModeTriggerGroup t_right;
     public ModeTriggerGroup t_left;
@@ -141,6 +144,9 @@ public class CombatEntityController : MonoBehaviour
                 usedCombo = false;
             }
         };
+
+        UpdateAnimationManagersWeapon();
+
     }
 
     protected virtual void OnDisable()
@@ -312,6 +318,10 @@ public class CombatEntityController : MonoBehaviour
             didReattack = false;
     }
 
-
+    void UpdateAnimationManagersWeapon()
+    {
+        if(animController != null)
+            animController.weapon = currentWeapon;
+    }
 
 }

@@ -205,10 +205,10 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
     }
 
     #region Animation
-    void AnimationAttack(string name)
+    void AnimationAttack(string animationName)
     {
         Debug.Log($"[{gameObject.name}] [CombatFunctionality] is using AnimationAttack( [{name}] )");
-
+        cf.Controls.animController.UseAnimation?.Invoke(animationName);
 
     }
 

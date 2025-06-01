@@ -7,6 +7,7 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
 {
     public virtual AbilityAttack myAttackAbility { get; set; }
 
+
     //Overriding base class Ability reference
     public override Ability myAbility
     {
@@ -28,7 +29,10 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
     {
         base.EnableTriggerImplementation();
 
-        DisableIndiviualCollider(Color.grey);
+        if (!DebugManager.instance.AttackCollisionDebugsOn)
+            DisableIndiviualCollider(Color.grey);
+        else
+            EnableColliderVisual(false);
 
         animator.SetBool("windupDone", false);
         animator.SetBool("missed", false);
@@ -40,8 +44,13 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
         hitAttack = false;
         countered = false;
 
-        gameObject.GetComponent<MeshRenderer>().material.color = Color.red;
-        col.enabled = true;
+        if (!DebugManager.instance.AttackCollisionDebugsOn)
+        {
+            gameObject.GetComponent<MeshRenderer>().material.color = Color.red;
+            col.enabled = true;
+        }
+        else
+            EnableColliderVisual(false);
 
         animator.SetBool("windupDone", true);
     }
@@ -120,7 +129,10 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
     {
         base.HitAttack();
 
-        DisableIndiviualCollider(Color.green);
+        if (!DebugManager.instance.AttackCollisionDebugsOn)
+            DisableIndiviualCollider(Color.green);
+        else
+            EnableColliderVisual(false);
     }
 
     public override void MissAttackCuttoffLocal()
@@ -129,7 +141,10 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
 
         base.MissAttackCuttoffLocal();
 
-        DisableIndiviualCollider(Color.grey);
+        if (!DebugManager.instance.AttackCollisionDebugsOn)
+            DisableIndiviualCollider(Color.grey);
+        else
+            EnableColliderVisual(false);
 
         animator.SetBool("missed", true);
     }
@@ -144,8 +159,14 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
 
     public void DisableIndiviualCollider(Color color)
     {
+        gameObject.GetComponent<MeshRenderer>().enabled = true;
         gameObject.GetComponent<MeshRenderer>().material.color = color;
         col.enabled = false;
+    }
+
+    public void EnableColliderVisual(bool enable)
+    {
+        gameObject.GetComponent<MeshRenderer>().enabled = enable;
     }
 
 

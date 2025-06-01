@@ -5,9 +5,14 @@ public class CharacterAnimationController : MonoBehaviour
 {
     public Action<string> UseAnimation;
 
-    private Weapon weapon;
+    public Weapon weapon;
     private Animator animator;
-    
+
+    private void Awake()
+    {
+        animator = GetComponent<Animator>();
+    }
+
     public void OnEnable()
     {
         UseAnimation += PlayAnimation;
@@ -21,6 +26,10 @@ public class CharacterAnimationController : MonoBehaviour
 
     private void PlayAnimation(string animName)
     {
+        float speed = animator.speed = weapon.GetAnimation(animName).speed;
+
+        Debug.Log($"[AnimtationController] playing animation: [{animName}], speed: [{speed}]");
+        animator.speed = speed;
         animator.Play(animName);
     }
 }

@@ -190,6 +190,10 @@ public class CombatEntityController : MonoBehaviour
             newMode.data = newModeData;
             newMode.name = "Mode: " + newMode.data.modeName;
 
+            //ModeFunctionality System
+            ModeGeneralFunctionality modeFunctionality = gameObject.AddComponent(ModeManager.instance.ReturnModeFunctionality(template.modeName)) as ModeGeneralFunctionality;
+            newMode.data.modeFunctionality = modeFunctionality;
+
             //print($"newmode modeName is {newMode.data.name}");
 
             modes.Add(newMode);

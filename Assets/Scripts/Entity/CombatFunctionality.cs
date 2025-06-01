@@ -19,6 +19,7 @@ public class CombatFunctionality : MonoBehaviour
     bool initializedBlockingTrigger;
 
     public bool initialAbilityUseDelayOver;
+
     public ParticleSystem counteredEffect;
 
     protected virtual void Awake()
@@ -368,18 +369,10 @@ public class CombatFunctionality : MonoBehaviour
         if (Controls.cantUseAbility.Invoke())
             return;
 
+        Controls.Mode(mode).data.modeFunctionality.UseModeFunctionality();
 
         if (Controls.Mode(mode) == null)
             Debug.LogError("There is currently no selected ability (currentAttackAbility) that this combat functionality script can use.");
-
-        if (mode == "Attack")
-            Attack();
-
-        else if (mode == "Counter")
-            Counter();
-
-        else
-            Debug.LogError(gameObject.name + " | Error: No mode found to use in UseAbility(mode)");
 
 
     }
@@ -393,75 +386,6 @@ public class CombatFunctionality : MonoBehaviour
         if (mode != "Combo") { Debug.LogError("Calling combo with a mode thats node combo"); return; }
 
         Combo();
-    }
-
-    void Attack()
-    {
-
-        print("attacking");
-
-
-        StartAttacking();
-
-        ///to do: create a way for it to animate,
-        ///create 4 different attack triggers(like box)
-        /// animate all 4, integrate that
-
-
-        Ability ability = Controls.Mode("Attack").data.currentAbility;
-        print($"Using attack ability: {ability.abilityName}");
-
-        //Current Ability Being Used For Each Mode System
-        SearchCurrentModesForMode("Attack").SetAbility(ability);
-
-        switch (ability.archetype)
-        {
-
-            case AbilityAttack.Archetype.Singular:
-
-                print("attackingarchetype: singular");
-
-                //Actuall Attack
-                TriggerEnableToUse("Attack").StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
-
-                //Special Functionality
-                ArchetypeUse_SingularAttack((AbilityAttack)ability);
-
-
-                AnimationAttack((ability as AbilityAttack).anim_name.ToString());
-
-                break;
-
-            case AbilityAttack.Archetype.Multi_Choice:
-
-                print("attacking archetype: multichoice");
-
-                //Gets the Choice
-                string choice = GetMultiChoiceAttack(ability);
-
-                if (choice == "none") break;
-
-                //Actuall Attack
-                StartCoroutine(TriggerEnableToUse("Attack").GetComponent<MAT_ChoiceGroup>().MultiChoiceAttack((AbilityMulti)ability, ability.initialUseDelay[0], choice));
-
-                //Special Functionality
-                ArchetypeUse_MultiChoiceAttack(ability, choice);
-
-
-                break;
-
-            case AbilityAttack.Archetype.Multi_Followup:
-
-                print("attacking archetype: multi_followup");
-
-                //Actuall Attack
-                TriggerEnableToUse("Attack").GetComponent<MAT_FollowupGroup>().StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
-
-                //Special Functionality
-                ArchetypeUse_FollowUpAttack((AbilityMulti)ability);
-
-                break;
-        }
     }
 
     void Counter()
@@ -495,50 +419,9 @@ public class CombatFunctionality : MonoBehaviour
 
     #region Attack Collision Types
 
-    IEnumerator MovementForwardAttack(AbilityAttack attack)
-    {
-        Debug.Log(" * MoveForwardAttacK Called");
-
-        //print("Waiting for attack to start, initialAttackDelayOver not over yet (its false)");
-        //print("initial attack delay over?: " + initialAttackDelayOver);
-        while (!initialAbilityUseDelayOver)
-        {
-            // print("waiting...");
-            yield return new WaitForEndOfFrame();
-        }
-        // print("Attacking started, initialAttackDelayOver is over (true)");
-
-
-        gameObject.GetComponent<Movement>().Lunge("up", attack.movementAmount);
-        gameObject.GetComponent<Movement>().DisableMovement();
-        Invoke(nameof(ReEnableMovement), gameObject.GetComponent<Movement>().entityStates.dashTime);
-    }
 
     #endregion
 
-    void ReEnableMovement()
-    {
-        gameObject.GetComponent<Movement>().EnableMovement();
-    }
-
-    IEnumerator MovementRightOrLeftAttack(string choice, Ability ability)
-    {
-        Debug.Log(gameObject.name + " | Combat Functionality: attacking w/ MovementLeftOrRight attack");
-
-
-
-
-        gameObject.GetComponent<Movement>().Lunge(choice, ability.movementAmount);
-
-        print("multi attack trigger, movementatttackrightorleft : lunging in dir " + choice);
-
-        while (!initialAbilityUseDelayOver)
-        {
-            // print("waiting...");
-            yield return new WaitForEndOfFrame();
-        }
-
-    }
 
 
     /// <summary>
@@ -546,7 +429,7 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     /// 
 
-    ModeTriggerGroup TriggerEnableToUse(string mode)
+    public ModeTriggerGroup TriggerEnableToUse(string mode)
     {
         ModeTriggerGroup usingThisTriggerGroup = null;
 
@@ -592,61 +475,8 @@ public class CombatFunctionality : MonoBehaviour
     }
 
 
-    void ArchetypeUse_SingularAttack(AbilityAttack attack)
-    {
-        switch (attack.trait)
-        {
-            case AbilityAttack.Trait.MovementForward:
 
-                StartCoroutine(MovementForwardAttack(attack));
-
-                break;
-        }
-    }
-
-    string GetMultiChoiceAttack(Ability ability)
-    {
-        string choice = "";
-
-        switch (ability.trait)
-        {
-            case AbilityAttack.Trait.MovementLeftOrRight:
-
-                choice = Controls.getMoveDirection?.Invoke();
-
-                if (choice == "foward" || choice == "back" || choice == "none")
-                {
-                    choice = "none";
-                    print("Not able to use ability, critiera not met");
-                    FinishAttacking();
-                    break;
-                }
-
-                break;
-        }
-
-        return choice;
-    }
-
-
-    void ArchetypeUse_MultiChoiceAttack(Ability ability, string choice)
-    {
-        switch (ability.trait)
-        {
-            case AbilityAttack.Trait.MovementLeftOrRight:
-
-                StartCoroutine(MovementRightOrLeftAttack(choice, ability));
-
-                break;
-        }
-    }
-
-    void ArchetypeUse_FollowUpAttack(AbilityMulti mltiAbility)
-    {
-
-    }
-
-    ref CombatEntityController.CurrentAbilityForMode SearchCurrentModesForMode(string mode)
+    public ref CombatEntityController.CurrentAbilityForMode SearchCurrentModesForMode(string mode)
     {
         for (int i = 0; i < Controls.currentAbilityBeingUsedForEachMode.Length; i++)
         {
@@ -658,29 +488,7 @@ public class CombatFunctionality : MonoBehaviour
         throw new InvalidOperationException("Cannot return a ref to a new struct instance.");
     }
 
-    void AnimationAttack(string name)
-    {
-        Debug.Log($"[{gameObject.name}] [CombatFunctionality] is using AnimationAttack( [{name}] )");
 
-
-    }
-
-
-    /// <summary>
-    /// Sets Control's alreadyAttacking flag to TRUE
-    /// </summary>
-    void StartAttacking()
-    {
-        Controls.alreadyAttacking = true;
-    }
-
-    /// <summary>
-    /// Sets Control's alreadyAttacking flag to FALSE
-    /// </summary>
-    public void FinishAttacking()
-    {
-        Controls.alreadyAttacking = false;
-    }
 
     /// <summary>
     /// Sets Control's isCountering flag to TRUE
@@ -746,7 +554,7 @@ public class CombatFunctionality : MonoBehaviour
 
     public void GetCountered(Vector3 effectPos)
     {
-        FinishAttacking();
+        (Controls.Mode("Attack").data.modeFunctionality as ModeAttackFunctionality).FinishAttacking();
         FinishCountering();
         DisableTriggers(false, Controls.Mode(Controls.mode));
         Controls.Countered?.Invoke();
@@ -877,7 +685,7 @@ public class CombatFunctionality : MonoBehaviour
 
         SearchCurrentModesForMode("Combo").SetAbility(ability);
 
-        StartAttacking();
+        (Controls.Mode("Attack").data.modeFunctionality as ModeAttackFunctionality).StartAttacking();
 
         switch (ability.comboType)
         {

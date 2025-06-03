@@ -16,7 +16,8 @@ public class AbilityAttack : Ability
         Attack_Flat_Right = 2,
         Attack_Up_Right = 3,
         Attack_Overhead_Center = 4,
-        Attack_Diagnal_Right = 5
+        Attack_Diagnal_Right = 5,
+        Attack_Diagnal_Left = 6
     }
     public AnimationConnection anim_name;
     public override GameObject prefab

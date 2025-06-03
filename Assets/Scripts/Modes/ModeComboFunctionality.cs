@@ -53,7 +53,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
             case AbilityCombo.ComboType.Linear:
 
                 //Actuall Attack
-                UseCurrentCombo(cf.Controls.c_current).GetComponent<CombotTriggerGroup>().StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
+                UseCurrentCombo(cf.Controls.c_current).GetComponent<CombotTriggerGroup>().StartUsingAbilityTrigger(ability, ability.InitialUseDelay[0]);
 
 
                 //Special Functionality

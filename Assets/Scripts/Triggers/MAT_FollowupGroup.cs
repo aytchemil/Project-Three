@@ -32,13 +32,15 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
     #endregion
 
 
-
-    public override void StartUsingAbilityTrigger(Ability currentAbility, float delay)
+    //Changed without knowing
+    public override Ability StartUsingAbilityTrigger(Ability currentAbility, float delay)
     {
-        print("started using follow up atack");
+        print("[MAT_FollowupGroup] started using this ability trigger");
         base.StartUsingAbilityTrigger(currentAbility, delay);
 
         StartCoroutine(FollowUpUse(currentAbility));
+
+        return currentAbility;
     }
 
 
@@ -60,7 +62,7 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
         triggerBeingUsed.gameObject.SetActive(true);
 
 
-        triggerBeingUsed.StartUsingAbilityTrigger(triggerBeingUsed.myAbility, currentAbility.initialUseDelay[i]);
+        triggerBeingUsed.StartUsingAbilityTrigger(triggerBeingUsed.myAbility, currentAbility.InitialUseDelay[i]);
     }
 
 

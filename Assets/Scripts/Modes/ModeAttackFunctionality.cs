@@ -1,5 +1,31 @@
+using NUnit.Framework;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
+
+public class AbilityWrapper
+{
+    public List<Ability> Values;
+    public List<bool> completedAnimation;
+
+    public AbilityWrapper()
+    {
+        Values = new List<Ability>();
+        completedAnimation = new List<bool>();
+    }
+
+    public AbilityWrapper(Ability[] values)
+    {
+        Values = new List<Ability>();
+        completedAnimation = new List<bool>();
+
+        for(int i = 0; i < values.Length; i++)
+        {
+            Values.Add(values[i]);
+            completedAnimation.Add(false);
+        }
+    }
+}
 
 public class ModeAttackFunctionality : ModeGeneralFunctionality
 {
@@ -17,7 +43,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
     
     void Attack()
     {
-        print("attacking");
+        print("[ModeAttackFunctionality] Attacking");
 
 
         StartAttacking();
@@ -28,53 +54,68 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
 
 
         Ability ability = cf.Controls.Mode("Attack").data.currentAbility;
-        print($"Using attack ability: {ability.abilityName}");
+        print($" + Using attack ability: {ability.abilityName}");
 
         //Current Ability Being Used For Each Mode System
         cf.SearchCurrentModesForMode("Attack").SetAbility(ability);
+
+        //Trigger----------------------------------------------------
+        ModeTriggerGroup usingTrigger = cf.TriggerEnableToUse("Attack");
+        //Ability
+        AbilityWrapper usingAbility = new AbilityWrapper();
 
         switch (ability.archetype)
         {
 
             case AbilityAttack.Archetype.Singular:
 
-                print("attackingarchetype: singular");
+                print(" + + archetype: singular");
 
-                //Actuall Attack
-                cf.TriggerEnableToUse("Attack").StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
+                //Setup
 
-                //Special Functionality
-                Archetype_SingularAttack((AbilityAttack)ability);
+                //Trigger
+                usingAbility.Values.Add(usingTrigger.StartUsingAbilityTrigger(ability, ability.InitialUseDelay[0]));
 
+                //Additional Functionality 
+                Archetype_SingularAttack((AbilityAttack)usingAbility.Values[0]);
 
-                AnimationAttack((ability as AbilityAttack).anim_name.ToString());
+                //Animation
+                AnimationAttack((usingAbility.Values[0] as AbilityAttack).anim_name.ToString(), usingAbility.Values[0].InitialUseDelay[0]);
 
                 break;
 
             case AbilityAttack.Archetype.Multi_Choice:
 
-                print("attacking archetype: multichoice");
+                print(" + + archetype: multichoice");
 
-                //Gets the Choice
+                //Setup
                 string choice = GetMultiChoiceAttack(ability);
-
                 if (choice == "none") break;
 
-                //Actuall Attack
-                StartCoroutine(cf.TriggerEnableToUse("Attack").GetComponent<MAT_ChoiceGroup>().MultiChoiceAttack((AbilityMulti)ability, ability.initialUseDelay[0], choice));
+                //Trigger
+                StartCoroutine(usingTrigger.GetComponent<MAT_ChoiceGroup>().MultiChoiceAttack((AbilityMulti)ability, ability.InitialUseDelay[0], choice, usingAbility));
+                Debug.Log($"[ModeAttackFunctionality] Multi_Choice attack chosen is: [{usingAbility.Values[0]}]");
 
-                //Special Functionality
+                //Additional Functionality
                 Archetype_MultiChoiceAttack(ability, choice);
 
+                //Animation
+                AnimationAttack((usingAbility.Values[0] as AbilityAttack).anim_name.ToString(), usingAbility.Values[0].InitialUseDelay[0]);
 
                 break;
 
             case AbilityAttack.Archetype.Multi_Followup:
 
-                print("attacking archetype: multi_followup");
+                print(" + + archetype: multi_followup");
 
-                //Actuall Attack
-                cf.TriggerEnableToUse("Attack").GetComponent<MAT_FollowupGroup>().StartUsingAbilityTrigger(ability, ability.initialUseDelay[0]);
+                //Setup
+                usingAbility = new AbilityWrapper((ability as AbilityMulti).abilities);
+                usingAbility.completedAnimation = usingTrigger.GetComponent<MAT_FollowupGroup>().triggerProgress;
+
+                StartCoroutine(UpdateAnimationsForFollowUpAttacks(usingAbility, usingTrigger));
+
+                //Trigger
+                usingTrigger.GetComponent<MAT_FollowupGroup>().StartUsingAbilityTrigger(ability, ability.InitialUseDelay[0]);
 
                 //Special Functionality
                 Archetype_FollowUpAttack((AbilityMulti)ability);
@@ -204,10 +245,25 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
     }
 
     #region Animation
-    void AnimationAttack(string animationName)
+    void AnimationAttack(string animationName, float delay)
     {
         Debug.Log($"[{gameObject.name}] [CombatFunctionality] is using AnimationAttack( [{name}] )");
-        cf.Controls.animController.UseAnimation?.Invoke(animationName);
+        cf.Controls.animController.UseAnimation?.Invoke(animationName, delay);
+    }
+
+
+    IEnumerator UpdateAnimationsForFollowUpAttacks(AbilityWrapper usingAbility, ModeTriggerGroup usingTrigger)
+    {
+        for(int i = 0; i < usingTrigger.GetComponent<MAT_FollowupGroup>().triggerProgress.Count && cf.Controls.alreadyAttacking; i++)
+        {
+            AnimationAttack((usingAbility.Values[i] as AbilityAttack).anim_name.ToString(), usingAbility.Values[i].InitialUseDelay[0]);
+            while (cf.Controls.alreadyAttacking && usingAbility.completedAnimation[i] == false)
+            {
+                Debug.Log("Updating animation");
+                yield return new WaitForEndOfFrame();
+                usingAbility.completedAnimation = usingTrigger.GetComponent<MAT_FollowupGroup>().triggerProgress;
+            }
+        }
 
     }
 

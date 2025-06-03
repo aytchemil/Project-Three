@@ -350,7 +350,7 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     public virtual void UseAbility(string mode)
     {
-        print("-> Comabt Functionality: Attempting To Use an Ability");
+        print("[Combat Functionality]: Attempting To Use an Ability");
         if (Controls.cantUseAbility.Invoke())
             return;
 
@@ -418,12 +418,15 @@ public class CombatFunctionality : MonoBehaviour
                 break;
         }
 
-        print($"Trigger Enabled to use: {usingThisTriggerGroup.name}");
+        print($"[CombatFunctionality] Trigger Enabled to use: {usingThisTriggerGroup.name}");
 
         return usingThisTriggerGroup;
     }
 
+    public void UsingAbility(Ability ability)
+    {
 
+    }
 
     public ref CombatEntityController.CurrentAbilityForMode SearchCurrentModesForMode(string mode)
     {

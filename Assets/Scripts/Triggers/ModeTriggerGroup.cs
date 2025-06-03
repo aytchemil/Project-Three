@@ -14,20 +14,22 @@ public abstract class ModeTriggerGroup : MonoBehaviour
     public bool isLocal;
 
 
-    public virtual void StartUsingAbilityTrigger(Ability currentAbility, float delay)
+    public virtual Ability StartUsingAbilityTrigger(Ability currentAbility, float delay)
     {
-        if (usingTrigger)
-            return;
+        if (!usingTrigger)
+        {
+            usingTrigger = true;
+            unused = false;
+            combatFunctionality.Controls.didReattack = false;
 
-        usingTrigger = true;
-        unused = false;
-        combatFunctionality.Controls.didReattack = false;
+            //print("starting to use ability from " + gameObject.name + " setting my ability : " + myAbility);
+            EnableTrigger();
 
-        //print("starting to use ability from " + gameObject.name + " setting my ability : " + myAbility);
-        EnableTrigger();
-
-        Invoke(nameof(InitialDelayOver_ReEnableTrigger), delay);
-        //print("successfully started using ability: " + currentAbility);
+            Invoke(nameof(InitialDelayOver_ReEnableTrigger), delay);
+            //print("successfully started using ability: " + currentAbility);
+            return currentAbility;
+        }
+        return null;
     }
 
 

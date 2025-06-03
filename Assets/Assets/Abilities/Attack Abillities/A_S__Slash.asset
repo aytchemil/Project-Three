@@ -15,7 +15,7 @@ MonoBehaviour:
   abilityName: Slash
   icon: {fileID: 2800000, guid: 5d648196f53723d499590b1df6cf38a9, type: 3}
   initialUseDelay:
-  - 0.3
+  - 0.4
   <successDelay>k__BackingField: 0.3
   unsuccessDelay:
   - 0.3

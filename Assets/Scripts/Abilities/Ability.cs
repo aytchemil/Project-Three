@@ -5,7 +5,15 @@ public class Ability : ScriptableObject
     public string abilityName;
 
     public Texture icon;
-    public float[] initialUseDelay = { 0.3f };
+    
+    public virtual float[] InitialUseDelay
+    {
+        get => initialUseDelay;
+        set => initialUseDelay = value;
+    }
+
+    [SerializeField]
+    private float[] initialUseDelay = { 0.3f };
     [field:SerializeField] public virtual float successDelay { get; set; }
     public float[] unsuccessDelay = { 0.3f };
     public float movementAmount;

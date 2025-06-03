@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
@@ -15,7 +16,7 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
     {
         ModeTriggerGroup chosenMode = null;
 
-        print(gameObject.name + " | given choice: " + choice);
+        print("[MAT_ChoiceGroup] [" + gameObject.name + "] given choice: " + choice);
 
         for (int i = 0; i < triggers.Count; i++)
         {
@@ -40,7 +41,7 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
 
         if (!gameObject.activeInHierarchy) return false;
 
-        print(triggerBeingUsed);
+        //print(triggerBeingUsed);
 
         //Hit
         if (triggerBeingUsed.used)
@@ -63,9 +64,9 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
     }
 
 
-    public virtual IEnumerator MultiChoiceAttack(AbilityMulti multiAbility, float delay, string choice)
+    public virtual IEnumerator MultiChoiceAttack(AbilityMulti multiAbility, float delay, string choice, AbilityWrapper location)
     {
-        print("Attacking with multi attack choice trigger");
+        print("[MAT_ChoiceGroup] Attacking with multi attack choice trigger");
 
         triggerBeingUsed = null;
 
@@ -77,14 +78,14 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
         print("Chosen attack trigger is : " + triggerBeingUsed.name);
 
         //MultiChoice's Ability Trigger
-        StartUsingAbilityTrigger(multiAbility, multiAbility.initialUseDelay[0]);
+        StartUsingAbilityTrigger(multiAbility, multiAbility.InitialUseDelay[0]);
 
         if (!initializedChildTriggers)
             InitializeChildTriggers(myMultiAbility);
 
         //The chosen Ability Trigger's Ability
         triggerBeingUsed.gameObject.SetActive(true);
-        triggerBeingUsed.StartUsingAbilityTrigger(triggerBeingUsed.myAbility, multiAbility.initialUseDelay[0]);
+        location.Values.Add(triggerBeingUsed.StartUsingAbilityTrigger(triggerBeingUsed.myAbility, multiAbility.InitialUseDelay[0]));
 
         while (gameObject.activeInHierarchy)
         {

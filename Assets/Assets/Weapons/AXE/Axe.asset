@@ -35,3 +35,6 @@ MonoBehaviour:
   - animationName: Attack_Overhead_Center
     speed: 0.79
     clip: {fileID: 7400000, guid: ab6af89383358a24aa776b4977634244, type: 2}
+  - animationName: Attack_Diagnal_Left
+    speed: 0.79
+    clip: {fileID: 7400000, guid: 4805054ac975c364eb52fcf1690ef17f, type: 2}

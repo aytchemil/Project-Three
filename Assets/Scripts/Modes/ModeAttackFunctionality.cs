@@ -5,17 +5,20 @@ using UnityEngine;
 
 public class AbilityWrapper
 {
+    public Ability parentAbility;
     public List<Ability> Values;
     public List<bool> completedAnimation;
 
     public AbilityWrapper()
     {
+        parentAbility = new Ability();
         Values = new List<Ability>();
         completedAnimation = new List<bool>();
     }
 
-    public AbilityWrapper(Ability[] values)
+    public AbilityWrapper(Ability[] values, Ability parent)
     {
+        parentAbility = parent;
         Values = new List<Ability>();
         completedAnimation = new List<bool>();
 
@@ -60,7 +63,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
         cf.SearchCurrentModesForMode("Attack").SetAbility(ability);
 
         //Trigger----------------------------------------------------
-        ModeTriggerGroup usingTrigger = cf.TriggerEnableToUse("Attack");
+        ModeTriggerGroup usingTrigger = cf.AbilityTriggerEnableUse("Attack");
         //Ability
         AbilityWrapper usingAbility = new AbilityWrapper();
 
@@ -109,10 +112,12 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
                 print(" + + archetype: multi_followup");
 
                 //Setup
-                usingAbility = new AbilityWrapper((ability as AbilityMulti).abilities);
+                usingAbility = new AbilityWrapper((ability as AbilityMulti).abilities, ability);
                 usingAbility.completedAnimation = usingTrigger.GetComponent<MAT_FollowupGroup>().triggerProgress;
 
+                //Animation
                 StartCoroutine(UpdateAnimationsForFollowUpAttacks(usingAbility, usingTrigger));
+
 
                 //Trigger
                 usingTrigger.GetComponent<MAT_FollowupGroup>().StartUsingAbilityTrigger(ability, ability.InitialUseDelay[0]);
@@ -256,7 +261,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
     {
         for(int i = 0; i < usingTrigger.GetComponent<MAT_FollowupGroup>().triggerProgress.Count && cf.Controls.alreadyAttacking; i++)
         {
-            AnimationAttack((usingAbility.Values[i] as AbilityAttack).anim_name.ToString(), usingAbility.Values[i].InitialUseDelay[0]);
+            AnimationAttack((usingAbility.Values[i] as AbilityAttack).anim_name.ToString(), usingAbility.parentAbility.InitialUseDelay[i]);
             while (cf.Controls.alreadyAttacking && usingAbility.completedAnimation[i] == false)
             {
                 Debug.Log("Updating animation");

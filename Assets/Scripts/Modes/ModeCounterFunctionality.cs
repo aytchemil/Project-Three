@@ -27,7 +27,7 @@ public class ModeCounterFunctionality : ModeGeneralFunctionality
         {
             case AbilityCounter.CounterArchetype.StandingRiposte:
 
-                cf.TriggerEnableToUse("Counter").StartUsingAbilityTrigger(counterAbility, counterAbility.InitialUseDelay[0]);
+                cf.AbilityTriggerEnableUse("Counter").StartUsingAbilityTrigger(counterAbility, counterAbility.InitialUseDelay[0]);
 
                 StandingRiposte();
 

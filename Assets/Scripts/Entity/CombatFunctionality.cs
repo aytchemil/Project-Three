@@ -378,7 +378,7 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     /// 
 
-    public ModeTriggerGroup TriggerEnableToUse(string mode)
+    public ModeTriggerGroup AbilityTriggerEnableUse(string mode)
     {
         ModeTriggerGroup usingThisTriggerGroup = null;
 
@@ -418,14 +418,24 @@ public class CombatFunctionality : MonoBehaviour
                 break;
         }
 
-        print($"[CombatFunctionality] Trigger Enabled to use: {usingThisTriggerGroup.name}");
+        //print($"[Combat Functionality] Trigger Enabled to use: {usingThisTriggerGroup.name}");
 
         return usingThisTriggerGroup;
     }
 
-    public void UsingAbility(Ability ability)
-    {
 
+    public ModeTriggerGroup ComboTriggerEnableUse()
+    {
+        ModeTriggerGroup usingThisTriggerGroup = null;
+        ModeRuntimeData d = Controls.Mode("Combo");
+
+        for(int i = 0; i < d.triggers.Length-1; i++)
+            d.triggers[i].gameObject.SetActive(false);
+
+        d.triggers[Controls.c_current].gameObject.SetActive(true);
+        usingThisTriggerGroup = d.triggers[Controls.c_current].gameObject.GetComponent<ModeTriggerGroup>();
+
+        return usingThisTriggerGroup;
     }
 
     public ref CombatEntityController.CurrentAbilityForMode SearchCurrentModesForMode(string mode)

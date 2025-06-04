@@ -21,16 +21,16 @@ MonoBehaviour:
     speed: 1
     clip: {fileID: 7400000, guid: b5aa498f282a175438b4e704d50b763f, type: 2}
   - animationName: Attack_Flat_Left
-    speed: 0.66
+    speed: 0.87
     clip: {fileID: 7400000, guid: 88cbdc362b983be4a933270609ed036d, type: 2}
   - animationName: Attack_Flat_Right
-    speed: 0.6
+    speed: 1
     clip: {fileID: 7400000, guid: f7599026414522347945c5f3cea971b5, type: 2}
   - animationName: Attack_Up_Right
     speed: 1
     clip: {fileID: 7400000, guid: b74d694091ee1054d85da18bd8932e1e, type: 2}
   - animationName: Attack_Diagnal_Right
-    speed: 0.7
+    speed: 1.44
     clip: {fileID: 7400000, guid: 7ac38547b9654504788c014c3c0e21de, type: 2}
   - animationName: Attack_Overhead_Center
     speed: 0.79

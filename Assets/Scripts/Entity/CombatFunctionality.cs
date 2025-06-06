@@ -9,8 +9,7 @@ using static CombatEntityController;
 [RequireComponent(typeof(CombatEntityController))]
 public class CombatFunctionality : MonoBehaviour
 {
-    string dir = "";
-
+    int cur_Ability = 0;
     // Virtual property for 'Controls'
     public virtual CombatEntityController Controls { get; set; }
 
@@ -32,11 +31,12 @@ public class CombatFunctionality : MonoBehaviour
     {
         counteredEffect.gameObject.SetActive(false);
 
-
         //Adding methods to Action Delegates
         //Debug.Log("Combat functionaly enable");
         //UI
-        Controls.SelectCertainAbility += EnableAbility;
+
+        for (int i = 0; i < CombatEntityController.AMOUNT_OF_ABIL_SLOTS; i++)
+            Controls.abilitySlots[i] += EnableAbility;
 
         //Attacking
         Controls.EnterCombat += InCombat;
@@ -61,7 +61,9 @@ public class CombatFunctionality : MonoBehaviour
     protected virtual void OnDisable()
     {
         //UI
-        Controls.SelectCertainAbility -= EnableAbility;
+        for(int i = 0; i < Controls.abilitySlots.Length-1; i++)
+            Controls.abilitySlots[i] -= EnableAbility;
+
 
         //Attacking
         Controls.EnterCombat -= InCombat;
@@ -311,9 +313,9 @@ public class CombatFunctionality : MonoBehaviour
     /// Enables the currently selected ability
     /// </summary>
     /// <param name="dir"></param>
-    void EnableAbility(string dir)
+    void EnableAbility(int num)
     {
-        this.dir = dir;
+        cur_Ability = num;
         string m = Controls.mode;
         //print("enabling ability in dir: " + dir);
 
@@ -323,21 +325,21 @@ public class CombatFunctionality : MonoBehaviour
                 mode.ability = null;
 
 
-        switch (dir)
+        switch (cur_Ability)
         {
-            case "right":
+            case 0:
                 Controls.Mode(m).ability = Controls.AbilitySet(m).right;
                 // print($"Mode: {Controls.Mode(m)}, Ability set: {Controls.AbilitySet(m).right} ");
                 break;
-            case "left":
+            case 1:
                 Controls.Mode(m).ability = Controls.AbilitySet(m).left;
                 // print($"Mode: {Controls.Mode(m)}, Ability set: {Controls.AbilitySet(m).left} ");
                 break;
-            case "up":
+            case 2:
                 Controls.Mode(m).ability = Controls.AbilitySet(m).up;
                 // print($"Mode: {Controls.Mode(m)}, Ability set: {Controls.AbilitySet(m).up} ");
                 break;
-            case "down":
+            case 3:
                 Controls.Mode(m).ability = Controls.AbilitySet(m).down;
                 // print($"Mode: {Controls.Mode(m)}, Ability set: {Controls.AbilitySet(m).down} ");
                 break;
@@ -353,7 +355,10 @@ public class CombatFunctionality : MonoBehaviour
     {
         print($"[Combat Functionality]: Attempting To Use an Ability from mode [{mode}]");
         if (Controls.cantUseAbility.Invoke())
+        {
+            print($"[Combat Functionality]: [{gameObject.name}] cantUseAbility");
             return;
+        }
 
         Controls.Mode(mode).data.modeFunctionality.UseModeFunctionality();
 
@@ -383,61 +388,18 @@ public class CombatFunctionality : MonoBehaviour
     {
         ModeTriggerGroup usingThisTriggerGroup = null;
 
-        switch (dir)
-        {
-            case "right":
-                Controls.Mode(mode).triggers[0].gameObject.SetActive(true);
-                Controls.Mode(mode).triggers[1].gameObject.SetActive(false);
-                Controls.Mode(mode).triggers[2].gameObject.SetActive(false);
-                Controls.Mode(mode).triggers[3].gameObject.SetActive(false);
-                usingThisTriggerGroup = Controls.Mode(mode).triggers[0].gameObject.GetComponent<ModeTriggerGroup>();
-                break;
-            case "left":
-                Controls.Mode(mode).triggers[0].gameObject.SetActive(false);
-                Controls.Mode(mode).triggers[1].gameObject.SetActive(true);
-                Controls.Mode(mode).triggers[2].gameObject.SetActive(false);
-                Controls.Mode(mode).triggers[3].gameObject.SetActive(false);
-                usingThisTriggerGroup = Controls.Mode(mode).triggers[1].gameObject.GetComponent<ModeTriggerGroup>();
-                break;
-            case "up":
-                Controls.Mode(mode).triggers[0].gameObject.SetActive(false);
-                Controls.Mode(mode).triggers[1].gameObject.SetActive(false);
-                Controls.Mode(mode).triggers[2].gameObject.SetActive(true);
-                Controls.Mode(mode).triggers[3].gameObject.SetActive(false);
-                usingThisTriggerGroup = Controls.Mode(mode).triggers[2].gameObject.GetComponent<ModeTriggerGroup>();
-                break;
-            case "down":
-                Controls.Mode(mode).triggers[0].gameObject.SetActive(false);
-                Controls.Mode(mode).triggers[1].gameObject.SetActive(false);
-                Controls.Mode(mode).triggers[2].gameObject.SetActive(false);
-                Controls.Mode(mode).triggers[3].gameObject.SetActive(true);
-                usingThisTriggerGroup = Controls.Mode(mode).triggers[3].gameObject.GetComponent<ModeTriggerGroup>();
-                break;
-            default:
-                usingThisTriggerGroup = null;
-                Debug.LogError("Havn't chosen an attack trigger group to use out of: right, left, up, down");
-                break;
-        }
+        for(int i = 0; i < Controls.Mode(mode).triggers.Length; i++)
+            Controls.Mode(mode).triggers[i].gameObject.SetActive(false);
+
+        Controls.Mode(mode).triggers[cur_Ability].gameObject.SetActive(true);
+        usingThisTriggerGroup = Controls.Mode(mode).triggers[cur_Ability].gameObject.GetComponent<ModeTriggerGroup>();
+
 
         //print($"[Combat Functionality] Trigger Enabled to use: {usingThisTriggerGroup.name}");
 
         return usingThisTriggerGroup;
     }
 
-
-    public ModeTriggerGroup ComboTriggerEnableUse()
-    {
-        ModeTriggerGroup usingThisTriggerGroup = null;
-        CombatEntityModeData m = Controls.Mode("Combo");
-
-        for(int i = 0; i < m.triggers.Length-1; i++)
-            m.triggers[i].gameObject.SetActive(false);
-
-        m.triggers[Controls.c_current].gameObject.SetActive(true);
-        usingThisTriggerGroup = m.triggers[Controls.c_current].gameObject.GetComponent<ModeTriggerGroup>();
-
-        return usingThisTriggerGroup;
-    }
 
 
     #endregion
@@ -532,7 +494,7 @@ public class CombatFunctionality : MonoBehaviour
         print($"Switching Mode to {Controls.Mode(Controls.mode)}");
         Controls.UpdateMainTriggers();
 
-        Controls.SelectCertainAbility?.Invoke(Controls.lookDir);
+        Controls.abilitySlots[currIndex]?.Invoke(0);
         //print(Controls.lookDir);
 
 

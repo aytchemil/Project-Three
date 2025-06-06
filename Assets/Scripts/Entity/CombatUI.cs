@@ -44,10 +44,7 @@ public class CombatUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI modeText;
 
     [SerializeField] private GameObject comboRefParent;
-    [SerializeField] private RawImage comboOneRef;
-    [SerializeField] private RawImage comboTwoRef;
-    [SerializeField] private RawImage comboThreeRef;
-    [SerializeField] private RawImage comboFourRef;
+    [SerializeField] private RawImage[] abilityImgs;
 
 
 
@@ -66,14 +63,15 @@ public class CombatUI : MonoBehaviour
         //Input Action Observers
         Controls.EnterCombat += EnableUI;
         Controls.ExitCombat += DisableUI;
-        Controls.SelectCertainAbility += UpdateCurrentAbilityText;
 
         Controls.switchAttackMode += SwitchAttackMode;
+        
+        for (int i = 0; i < CombatEntityController.AMOUNT_OF_ABIL_SLOTS; i++)
+        {
+            Controls.abilitySlots[i] += AbilityChoose;
+            Controls.abilitySlots[i] += UpdateCurrentAbilityText;
+        }
 
-        Controls.comboOne += ChoiceComboEnabled;
-        Controls.comboTwo += ChoiceComboEnabled;
-        Controls.comboThree += ChoiceComboEnabled;
-        Controls.comboFour += ChoiceComboEnabled;
 
     }
 
@@ -82,14 +80,14 @@ public class CombatUI : MonoBehaviour
         //Input Action Observers
         Controls.EnterCombat -= EnableUI;
         Controls.ExitCombat -= DisableUI;
-        Controls.SelectCertainAbility -= UpdateCurrentAbilityText;
 
         Controls.switchAttackMode -= SwitchAttackMode;
 
-        Controls.comboOne -= ChoiceComboEnabled;
-        Controls.comboTwo -= ChoiceComboEnabled;
-        Controls.comboThree -= ChoiceComboEnabled;
-        Controls.comboFour -= ChoiceComboEnabled;
+        for (int i = 0; i < CombatEntityController.AMOUNT_OF_ABIL_SLOTS; i++)
+        {
+            Controls.abilitySlots[i] -= AbilityChoose;
+            Controls.abilitySlots[i] -= UpdateCurrentAbilityText;
+        }
     }
 
 
@@ -192,7 +190,7 @@ public class CombatUI : MonoBehaviour
         UpdateCombatUIVisuals(Controls.lookDir);
 
         //Pushes the direction to the functionality (and any other listeners)
-        Controls.SelectCertainAbility?.Invoke(Controls.lookDir);
+        Controls.ComboWheelSelectCombo?.Invoke(Controls.lookDir);
 
     }
 
@@ -211,12 +209,11 @@ public class CombatUI : MonoBehaviour
     {
         //print("enabling ui");
         combatUIParent.SetActive(true);
-        ChangeAllImageIcons();
-        UpdateModeUIObjects();
+        SwitchAttackMode();
         UpdateAttackIndicatorRotation(new Vector2(0, deadZone + 1));
         Controls.UpdateMainTriggers();
-        InitalizeCurrentComboUI();
-        ChoiceComboEnabled(lastComboChoice);
+        UpdateComboWheel();
+        AbilityChoose(lastComboChoice);
     }
 
     /// <summary>
@@ -292,24 +289,24 @@ public class CombatUI : MonoBehaviour
         }
     }
 
-    void UpdateCurrentAbilityText(string dir)
+    void UpdateCurrentAbilityText(int slot)
     {
         Ability currentAbility = Controls.Mode(Controls.mode).ability;
         text.text = "Current Ability: " + currentAbility.abilityName;
     }
 
-    void ChangeAllImageIcons()
+    void SetWheelIcons()  
     {
-        rightImgRef.texture = Controls.Mode(Controls.mode).data.abilitySet.right.icon;
-        leftImgRef.texture = Controls.Mode(Controls.mode).data.abilitySet.left.icon;
-        upImgRef.texture = Controls.Mode(Controls.mode).data.abilitySet.up.icon;
-        downImgRef.texture = Controls.Mode(Controls.mode).data.abilitySet.down.icon;
+        rightImgRef.texture = Controls.Mode("Combo").data.abilitySet.right.icon;
+        leftImgRef.texture = Controls.Mode("Combo").data.abilitySet.left.icon;
+        upImgRef.texture = Controls.Mode("Combo").data.abilitySet.up.icon;
+        downImgRef.texture = Controls.Mode("Combo").data.abilitySet.down.icon;
     }
 
-    void UpdateModeUIObjects()
+    void SetWheelInfo()
     {
-        modeIndicator.texture = Controls.Mode(Controls.mode).data.UIIndicator;
-        modeText.text = "You are " + Controls.Mode(Controls.mode).data.modeTextDesc;
+        modeIndicator.texture = Controls.Mode("Combo").data.UIIndicator;
+        modeText.text = "You are " + Controls.Mode("Combo").data.modeTextDesc;
         //print("updated mode ui");
 
     }
@@ -320,63 +317,48 @@ public class CombatUI : MonoBehaviour
     void SwitchAttackMode()
     {
         print("Updating mode UIS");
-        ChangeAllImageIcons();
-        UpdateModeUIObjects();
+        SetWheelIcons();
+        SetWheelInfo();
+        SetAbilityImgs();
     }
 
-    void InitalizeCurrentComboUI()
+    void UpdateComboWheel()
     {
         Color less = new Color(1, 1, 1, 0.2f);
         Color more = new Color(1, 1, 1, 1);
 
-        comboOneRef.texture = Controls.Mode("Combo").data.abilitySet.right.icon;
-        comboTwoRef.texture = Controls.Mode("Combo").data.abilitySet.left.icon;
-        comboThreeRef.texture = Controls.Mode("Combo").data.abilitySet.up.icon;
-        comboFourRef.texture = Controls.Mode("Combo").data.abilitySet.down.icon;
+        rightImgRef.texture = Controls.Mode("Combo").data.abilitySet.right.icon;
+        leftImgRef.texture = Controls.Mode("Combo").data.abilitySet.left.icon;
+        upImgRef.texture = Controls.Mode("Combo").data.abilitySet.up.icon;
+        downImgRef.texture = Controls.Mode("Combo").data.abilitySet.down.icon;
 
-        comboOneRef.color = more;
-        comboTwoRef.color = less;
-        comboThreeRef.color = less;
-        comboFourRef.color = less;
+        rightImgRef.color = more;
+        leftImgRef.color = less;
+        upImgRef.color = less;
+        downImgRef.color = less;
     }
 
-    void ChoiceComboEnabled(int choice)
+    void SetAbilityImgs()
     {
+        print("Current mode:" + Controls.mode);
+        abilityImgs[0].texture = Controls.Mode(Controls.mode).data.abilitySet.right.icon;
+        abilityImgs[1].texture = Controls.Mode(Controls.mode).data.abilitySet.left.icon;
+        abilityImgs[2].texture = Controls.Mode(Controls.mode).data.abilitySet.up.icon;
+        abilityImgs[3].texture = Controls.Mode(Controls.mode).data.abilitySet.down.icon;
+    }
 
+    void AbilityChoose(int choice)
+    {
+        print($"[CombatUI] Chosen ability is [{choice}]");
         lastComboChoice = choice;
 
         Color less = new Color(1, 1, 1, 0.2f);
         Color more = new Color(1, 1, 1, 1);
 
-        switch (choice)
-        {
-            case 0:
-                comboOneRef.color = more;
-                comboTwoRef.color = less;
-                comboThreeRef.color = less;
-                comboFourRef.color = less;
-                break;
-            case 1:
-                comboOneRef.color = less;
-                comboTwoRef.color = more;
-                comboThreeRef.color = less;
-                comboFourRef.color = less;
-                break;
-            case 2:
-                comboOneRef.color = less;
-                comboTwoRef.color = less;
-                comboThreeRef.color = more;
-                comboFourRef.color = less;
-                break;
-            case 3:
-                comboOneRef.color = less;
-                comboTwoRef.color = less;
-                comboThreeRef.color = less;
-                comboFourRef.color = more;
-                break;
+        foreach(RawImage img in abilityImgs)
+            img.color = less;
 
-
-        }
+        abilityImgs[choice].color = more;
     }
 
 }

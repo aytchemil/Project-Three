@@ -135,7 +135,7 @@ public class AttackingAI : MonoBehaviour
             //Debug.Log("Selected Attack Direction: " + attackPattern.attackDir[i]);
 
             //Select the attack we are using
-            Controls.SelectCertainAbility?.Invoke(attackPattern.attackDir[i].ToString());
+            Controls.abilitySlots[0]?.Invoke(0); ////////////////////////////////////////////////////////////////////////////////
 
            // print("Attacking...");
             //Actually Start the Attack

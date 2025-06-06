@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using UnityEditor.ShaderGraph;
 using UnityEngine;
 using static CombatEntityController;
 
@@ -17,18 +18,12 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
 
     private void OnEnable()
     {
-        cf.Controls.comboOne += SwitchToCombo;
-        cf.Controls.comboTwo += SwitchToCombo;
-        cf.Controls.comboThree += SwitchToCombo;
-        cf.Controls.comboFour += SwitchToCombo;
+        cf.Controls.ComboWheelSelectCombo += SwitchToCombo;
     }
 
     private void OnDisable()
     {
-        cf.Controls.comboOne -= SwitchToCombo;
-        cf.Controls.comboTwo -= SwitchToCombo;
-        cf.Controls.comboThree -= SwitchToCombo;
-        cf.Controls.comboFour -= SwitchToCombo;
+        cf.Controls.ComboWheelSelectCombo -= SwitchToCombo;
     }
 
     public override void UseModeFunctionality() => Combo();
@@ -52,7 +47,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
 
 
         //Trigger
-        ModeTriggerGroup usingTrigger = cf.ComboTriggerEnableUse();
+        ModeTriggerGroup usingTrigger = ComboTriggerEnableUse();
         //Ability
         AbilityWrapper usingAbility = new((ability as AbilityCombo).abilities, ability);
         print($"[Combo Functionality] the abilities for this combo are:{usingAbility.Values[0]} {usingAbility.Values[1]} {usingAbility.Values[2]} for trigger: [{usingTrigger.gameObject.name}]");
@@ -78,30 +73,47 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
         }
     }
 
-    CombotTriggerGroup UseCurrentCombo(int combo)
+    public ModeTriggerGroup ComboTriggerEnableUse()
+    {
+        ModeTriggerGroup usingThisTriggerGroup = null;
+        CombatEntityModeData m = cf.Controls.Mode("Combo");
+        int triggerIndx = GetComboTriggerIndex(cf.Controls.c_current);
+
+        for (int i = 0; i < m.triggers.Length - 1; i++)
+            m.triggers[i].gameObject.SetActive(false);
+
+        m.triggers[triggerIndx].gameObject.SetActive(true);
+        usingThisTriggerGroup = m.triggers[triggerIndx].gameObject.GetComponent<ModeTriggerGroup>();
+
+        return usingThisTriggerGroup;
+    }
+
+    CombotTriggerGroup UseCurrentCombo(string dir)
     {
         CombatEntityModeData mode = cf.Controls.Mode("Combo");
+        int trigerIndx = GetComboTriggerIndex(dir);
 
         //Checks
         if (mode == null || mode.triggers == null)
         {
             throw new NullReferenceException("Mode 'Combo' or its triggers are null.");
         }
-        if (combo < 0 || combo >= mode.triggers.Length)
+        if (dir == null)
         {
-            throw new ArgumentOutOfRangeException(nameof(combo), "Combo index is out of range.");
+            throw new ArgumentOutOfRangeException($"{dir} is null");
         }
 
+        //Set all triggers to false
         foreach (GameObject trigger in mode.triggers)
             trigger.SetActive(false);
 
-        mode.triggers[combo].SetActive(true);
+        mode.triggers[trigerIndx].SetActive(true);
 
-        return mode.triggers[combo].GetComponent<CombotTriggerGroup>();
+        return mode.triggers[trigerIndx].GetComponent<CombotTriggerGroup>();
 
     }
 
-    void SwitchToCombo(int combo)
+    void SwitchToCombo(string combo)
     {
         print("switching to combo: " + combo);
 
@@ -114,37 +126,54 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
             StartCoroutine(WaitForComboingToFinishToSwitchToAnother(combo));
         }
 
-        cf.Controls.Mode("Combo").ability = ChooseCurrentComboAbility(combo);
+        cf.Controls.Mode("Combo").ability = ChooseCurrentCombo(combo);
         cf.Controls.c_current = combo;
     }
 
-    IEnumerator WaitForComboingToFinishToSwitchToAnother(int combo)
+    IEnumerator WaitForComboingToFinishToSwitchToAnother(string combo)
     {
         while (cf.Controls.Mode("Attack").isUsing)
         {
             yield return new WaitForEndOfFrame();
         }
-        cf.Controls.Mode("Combo").ability = ChooseCurrentComboAbility(combo);
+        cf.Controls.Mode("Combo").ability = ChooseCurrentCombo(combo);
         cf.Controls.c_current = combo;
         waiting = false;
     }
 
-    Ability ChooseCurrentComboAbility(int combo)
+    Ability ChooseCurrentCombo(string combo)
     {
         Ability ret = null;
 
-        if (combo == 0)
+        if (combo == "right")
             ret = cf.Controls.Mode("Combo").data.abilitySet.right;
 
-        else if (combo == 1)
+        else if (combo == "left")
             ret = cf.Controls.Mode("Combo").data.abilitySet.left;
 
-        else if (combo == 2)
+        else if (combo == "up")
             ret = cf.Controls.Mode("Combo").data.abilitySet.up;
 
-        else if (combo == 3)
+        else if (combo == "down")
             ret = cf.Controls.Mode("Combo").data.abilitySet.down;
 
         return ret;
+    }
+
+    int GetComboTriggerIndex(string combo)
+    {
+        if (combo == "right")
+            return 0;
+
+        else if (combo == "left")
+            return 1;
+
+        else if (combo == "up")
+            return 2;
+
+        else if (combo == "down")
+            return 3;
+
+        throw new Exception($"[ModeComboFunc] trigger index not found for [{combo}]");
     }
 }

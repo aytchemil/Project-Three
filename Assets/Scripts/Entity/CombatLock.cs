@@ -116,9 +116,9 @@ public class CombatLock : MonoBehaviour
         //print("is now locked on");
 
         //CALLER : SELECT CERTAIN ABILITY CALLER (DEFAULT INPUT)
-        if (Controls.SelectCertainAbility == null)
-            Debug.LogError("Select Certain Ability subscribers are null, please check subscribers to ensure they are subscribed for : " + gameObject.name);
-        Controls.SelectCertainAbility?.Invoke("up");
+        if (Controls.abilitySlots == null)
+            Debug.LogError($"[{gameObject.name}] Select Certain Ability subscribers are null, please check subscribers to ensure they are subscribed for : " + gameObject.name);
+        Controls.abilitySlots[0]?.Invoke(0);
 
 
         //CALLER : ENTER COMBAT 

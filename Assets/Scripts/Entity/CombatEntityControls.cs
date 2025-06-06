@@ -12,6 +12,7 @@ using System.Linq;
 public class CombatEntityController : MonoBehaviour
 {
     //Rule of thumb : Keep these such that they are always set on the outside, never during gameplay
+    public static int AMOUNT_OF_ABIL_SLOTS = 4;
 
     [Header("Controls")]
     public Func<Vector2> look;
@@ -39,7 +40,7 @@ public class CombatEntityController : MonoBehaviour
     public Action EnterCombat;
     public Action ExitCombat;
     public Action<CombatEntityController> CombatFollowTarget;
-    public Action<string> SelectCertainAbility;
+    public Action<string> ComboWheelSelectCombo;
     public Action<CombatEntityController> TargetDeath;
     public Action ResetAttack;
     public Action MissedAttack;
@@ -90,13 +91,10 @@ public class CombatEntityController : MonoBehaviour
     [Header("Mode Inputted Ability Sets")]
     public List<AbilitySet> abilitySetInputs;
 
-    [Header("Combo Choice")]
+    [Header("Ability Choice")]
     public ModeRuntimeData comboMode;
-    public int c_current;
-    public Action<int> comboOne;
-    public Action<int> comboTwo;
-    public Action<int> comboThree;
-    public Action<int> comboFour;
+    public string c_current;
+    public Action<int>[] abilitySlots = new Action<int>[AMOUNT_OF_ABIL_SLOTS];
 
     [Header("Weapon System")]
     public Weapon currentWeapon;
@@ -130,6 +128,7 @@ public class CombatEntityController : MonoBehaviour
 
     protected virtual void Awake()
     {
+        abilitySlots = new Action<int>[AMOUNT_OF_ABIL_SLOTS];
     }
 
     protected virtual void Start()
@@ -168,10 +167,7 @@ public class CombatEntityController : MonoBehaviour
         blockStop = null;
         GetTarget = null;
         cantUseAbility = null;
-        comboOne = null;
-        comboTwo = null;
-        comboThree = null;
-        comboFour = null;
+        ComboWheelSelectCombo = null;
     }
 
     void CreateMyOwnModeInstances()

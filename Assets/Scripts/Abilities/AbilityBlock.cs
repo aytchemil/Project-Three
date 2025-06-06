@@ -14,13 +14,6 @@ public class AbilityBlock : Ability
     }
     public Collision collision;
 
-    public enum AnimationConnection
-    {
-        Idle = 0,
-        Block_Top = 1
-    }
-    public AnimationConnection anim_name;
-
     public GameObject blockTriggerCollider;
     public override GameObject prefab
     {

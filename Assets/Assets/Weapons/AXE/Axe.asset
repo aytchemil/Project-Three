@@ -50,3 +50,6 @@ MonoBehaviour:
   - animationName: Attack_Pierce
     speed: 0.79
     clip: {fileID: 7400000, guid: 267c92649dd02484b92cf8a14beca795, type: 2}
+  - animationName: Block_Right
+    speed: 0.79
+    clip: {fileID: 7400000, guid: 0b3d11e6e6695734593cc0800ca87e47, type: 2}

@@ -63,7 +63,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
         cf.Controls.Mode("Attack").SetAbility(ability);
 
         //Trigger----------------------------------------------------
-        ModeTriggerGroup usingTrigger = cf.AbilityTriggerEnableUse("Attack");
+        ModeTriggerGroup usingTrigger = cf.AbilityTriggerEnableUse();
         //Ability
         AbilityWrapper usingAbility = new AbilityWrapper();
 
@@ -113,6 +113,12 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
 
                 //Setup
                 usingAbility = new AbilityWrapper((ability as AbilityMulti).abilities, ability);
+                print(usingAbility);
+                print(usingAbility.completedAnimation);
+                print(usingTrigger);
+                print(usingTrigger.GetComponent<MAT_FollowupGroup>());
+                print(usingTrigger.GetComponent<MAT_FollowupGroup>().triggerProgress);
+
                 usingAbility.completedAnimation = usingTrigger.GetComponent<MAT_FollowupGroup>().triggerProgress;
 
                 //Animation

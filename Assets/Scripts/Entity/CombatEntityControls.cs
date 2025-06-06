@@ -266,6 +266,11 @@ public class CombatEntityController : MonoBehaviour
         throw new InvalidOperationException("Cannot return a ref to a new struct instance.");
     }
 
+    public CombatEntityModeData CurMode()
+    {
+        return Mode(mode);
+    }
+
     public AbilitySet AbilitySet(string modeName)
     {
         AbilitySet retAbilitySet = null;

@@ -97,11 +97,10 @@ public class CombatFunctionality : MonoBehaviour
     {
         //print("combatFunctionality: in combat");
 
-        //Auto Set the current ability
-        Controls.Mode("Attack").ability = Controls.AbilitySet("Attack").up;
+        //Auto Set the current ability (in this case right is 0)
+        Controls.Mode("Attack").ability = Controls.AbilitySet("Attack").right; 
         Controls.Mode("Combo").ability = Controls.AbilitySet("Combo").right;
-        //up is 3
-        //left is 2
+
 
         foreach (CombatEntityModeData mode in Controls.modes)
             if (!mode.data.initializedTriggers)
@@ -384,15 +383,20 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     /// 
 
-    public ModeTriggerGroup AbilityTriggerEnableUse(string mode)
+    public ModeTriggerGroup AbilityTriggerEnableUse()
     {
         ModeTriggerGroup usingThisTriggerGroup = null;
+        CombatEntityModeData mode = Controls.CurMode();
 
-        for(int i = 0; i < Controls.Mode(mode).triggers.Length; i++)
-            Controls.Mode(mode).triggers[i].gameObject.SetActive(false);
+        //Set all triggers of this mode to false
+        for (int i = 0; i < mode.triggers.Length; i++)
+            mode.triggers[i].gameObject.SetActive(false);
 
-        Controls.Mode(mode).triggers[cur_Ability].gameObject.SetActive(true);
-        usingThisTriggerGroup = Controls.Mode(mode).triggers[cur_Ability].gameObject.GetComponent<ModeTriggerGroup>();
+        //Enable the trigger we are using
+        mode.triggers[cur_Ability].gameObject.SetActive(true);
+
+        //Set this as the return
+        usingThisTriggerGroup = mode.triggers[cur_Ability].GetComponent<ModeTriggerGroup>();
 
 
         //print($"[Combat Functionality] Trigger Enabled to use: {usingThisTriggerGroup.name}");

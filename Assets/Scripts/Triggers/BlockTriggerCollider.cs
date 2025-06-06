@@ -51,7 +51,13 @@ public class BlockTriggerCollider : ModeTriggerGroup
         blockUp = true;
         animator.SetBool("windupDone", true);
 
-        gameObject.GetComponent<MeshRenderer>().material.color = Color.blue;
+
+
+        if (!DebugManager.instance.AttackCollisionDebugsOn)
+            gameObject.GetComponent<MeshRenderer>().material.color = Color.blue;
+        else
+            gameObject.GetComponent<MeshRenderer>().enabled = false;
+
         StartCoroutine(CounterDown());
 
         print("intial delay done. counter is up...");
@@ -108,7 +114,9 @@ public class BlockTriggerCollider : ModeTriggerGroup
     void CounterAttack()
     {
         blocking = true;
-        gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
+
+        if (!DebugManager.instance.AttackCollisionDebugsOn)
+            gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
         animator.SetBool("counter", true);
     }
 

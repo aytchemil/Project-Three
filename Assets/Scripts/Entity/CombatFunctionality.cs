@@ -111,8 +111,6 @@ public class CombatFunctionality : MonoBehaviour
                 DisableTriggers(true, mode);
             }
 
-        Controls.UpdateMainTriggers();
-
 
 
 
@@ -248,12 +246,13 @@ public class CombatFunctionality : MonoBehaviour
         }
 
 
-        Controls.t_right = InitializeTrigger(abilitySet.right, parent, "right trigger");
-        Controls.t_left = InitializeTrigger(abilitySet.left, parent, "left trigger");
-        Controls.t_up = InitializeTrigger(abilitySet.up, parent, "up trigger");
-        Controls.t_down = InitializeTrigger(abilitySet.down, parent, "down trigger");
 
-        if (Controls.t_right == null || Controls.t_left == null || Controls.t_up == null || Controls.t_down == null)
+        ModeTriggerGroup one = InitializeTrigger(abilitySet.right, parent, "right trigger");
+        ModeTriggerGroup two = InitializeTrigger(abilitySet.left, parent, "left trigger");
+        ModeTriggerGroup three = InitializeTrigger(abilitySet.up, parent, "up trigger");
+        ModeTriggerGroup four = InitializeTrigger(abilitySet.down, parent, "down trigger");
+
+        if (one == null || two == null || three == null || four == null)
             Debug.LogError("Trigger group triggers not iniailized corectly, check");
 
         print("Successfully Instantiating triggers for mode " + parent.name);
@@ -496,7 +495,6 @@ public class CombatFunctionality : MonoBehaviour
 
 
         print($"Switching Mode to {Controls.Mode(Controls.mode)}");
-        Controls.UpdateMainTriggers();
 
         Controls.abilitySlots[currIndex]?.Invoke(0);
         //print(Controls.lookDir);

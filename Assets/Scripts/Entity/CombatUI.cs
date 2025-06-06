@@ -40,10 +40,9 @@ public class CombatUI : MonoBehaviour
     [SerializeField] private RawImage rightImgRef;
     [SerializeField] private TextMeshProUGUI text;
 
-    [SerializeField] private RawImage modeIndicator;
     [SerializeField] private TextMeshProUGUI modeText;
+    [SerializeField] private TextMeshProUGUI comboText;
 
-    [SerializeField] private GameObject comboRefParent;
     [SerializeField] private RawImage[] abilityImgs;
 
 
@@ -192,6 +191,7 @@ public class CombatUI : MonoBehaviour
         //Pushes the direction to the functionality (and any other listeners)
         Controls.ComboWheelSelectCombo?.Invoke(Controls.lookDir);
 
+        SetWheelInfo();
     }
 
     void ChangeOpacityImage(RawImage img, float opacity)
@@ -211,8 +211,7 @@ public class CombatUI : MonoBehaviour
         combatUIParent.SetActive(true);
         SwitchAttackMode();
         UpdateAttackIndicatorRotation(new Vector2(0, deadZone + 1));
-        Controls.UpdateMainTriggers();
-        UpdateComboWheel();
+        InitComboWheel();
         AbilityChoose(lastComboChoice);
     }
 
@@ -303,12 +302,16 @@ public class CombatUI : MonoBehaviour
         downImgRef.texture = Controls.Mode("Combo").data.abilitySet.down.icon;
     }
 
-    void SetWheelInfo()
+    void SetModeInfo()
     {
-        modeIndicator.texture = Controls.Mode("Combo").data.UIIndicator;
-        modeText.text = "You are " + Controls.Mode("Combo").data.modeTextDesc;
+        modeText.text = "ABILITIES: " + Controls.CurMode().data.modeTextDesc;
         //print("updated mode ui");
 
+    }
+
+    void SetWheelInfo()
+    {
+        comboText.text = "COMBO: " + Controls.Mode("Combo").ability.abilityName;
     }
 
 
@@ -318,11 +321,11 @@ public class CombatUI : MonoBehaviour
     {
         print("Updating mode UIS");
         SetWheelIcons();
-        SetWheelInfo();
+        SetModeInfo();
         SetAbilityImgs();
     }
 
-    void UpdateComboWheel()
+    void InitComboWheel()
     {
         Color less = new Color(1, 1, 1, 0.2f);
         Color more = new Color(1, 1, 1, 1);

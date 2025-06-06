@@ -101,12 +101,6 @@ public class CombatEntityController : MonoBehaviour
 
     [Header("Animation System")]
     public CharacterAnimationController animController;
-
-    [Header("Main Current Ability Sets")]
-    public ModeTriggerGroup t_right;
-    public ModeTriggerGroup t_left;
-    public ModeTriggerGroup t_up;
-    public ModeTriggerGroup t_down;
     [Space]
 
     [Header("Central Flags")]
@@ -288,15 +282,6 @@ public class CombatEntityController : MonoBehaviour
 
 
         return retAbilitySet;
-    }
-
-    public void UpdateMainTriggers()
-    {
-        //print("going to " + controls.mode);
-        t_right = Mode(mode).triggers[0].GetComponent<ModeTriggerGroup>();
-        t_left = Mode(mode).triggers[1].GetComponent<ModeTriggerGroup>();
-        t_up = Mode(mode).triggers[2].GetComponent<ModeTriggerGroup>();
-        t_down = Mode(mode).triggers[3].GetComponent<ModeTriggerGroup>();
     }
 
 

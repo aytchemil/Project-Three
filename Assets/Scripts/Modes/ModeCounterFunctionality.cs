@@ -5,6 +5,7 @@ public class ModeCounterFunctionality : ModeGeneralFunctionality
 {
     private CombatFunctionality cf;
 
+
     public override string MODE_NAME { get => "Attack"; }
 
     public string stopBlockingBool = "stopBlocking";
@@ -15,6 +16,9 @@ public class ModeCounterFunctionality : ModeGeneralFunctionality
         cf = gameObject.GetComponent<CombatFunctionality>();
     }
 
+    /// <summary>
+    /// Override passage to mode functionality
+    /// </summary>
     public override void UseModeFunctionality() => Counter();
     void Counter()
     {
@@ -73,6 +77,12 @@ public class ModeCounterFunctionality : ModeGeneralFunctionality
 
     }
 
+    /// <summary>
+    /// Override for finishing 1 animation in a sequence, sets the stop blocking bool to false in this case because all counters are 1 block and then something else
+    /// </summary>
+    /// <param name="count"></param>
+    /// <param name="animName"></param>
+    /// <param name="animCont"></param>
     public override void FinishedAnAnimation(int count, string animName, CharacterAnimationController animCont)
     {
         base.FinishedAnAnimation(count, animName, animCont);
@@ -82,6 +92,11 @@ public class ModeCounterFunctionality : ModeGeneralFunctionality
 
     }
 
+    /// <summary>
+    /// Reset the stopBlocking bool for future use
+    /// </summary>
+    /// <param name="animCont"></param>
+    /// <returns></returns>
     public override IEnumerator CompletedAnimationSequence(CharacterAnimationController animCont)
     {
         yield return new WaitForEndOfFrame();

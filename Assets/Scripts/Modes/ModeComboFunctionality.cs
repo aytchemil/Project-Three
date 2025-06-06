@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using static CombatEntityController;
 
 public class ModeComboFunctionality : ModeGeneralFunctionality
 {
@@ -34,19 +35,21 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
 
     void Combo()
     {
+        //Validation
         if (cf.Controls.cantUseAbility.Invoke())
             return;
 
         print("comboing");
-        AbilityCombo ability = (AbilityCombo)cf.Controls.Mode("Combo").data.currentAbility;
 
-        //Set all combo triggers to false
-        for (int i = 0; i < cf.Controls.Mode("Combo").triggers.Length; i++)
+        //Setup
+        AbilityCombo ability = (AbilityCombo)cf.Controls.Mode("Combo").ability;
+
+        for (int i = 0; i < cf.Controls.Mode("Combo").triggers.Length; i++)   //All triggers become falsee
             cf.Controls.Mode("Combo").triggers[i].gameObject.SetActive(false);
 
-        cf.SearchCurrentModesForMode("Combo").SetAbility(ability);
+        cf.Controls.Mode("Combo").SetAbility(ability); //Parse and edit the mode becuase it prints like "Mode: mode" for some reason
+        (cf.Controls.Mode("Attack").data.modeFunctionality as ModeAttackFunctionality).StartAttacking(); //Flag: attacking true (in cf)
 
-        (cf.Controls.Mode("Attack").data.modeFunctionality as ModeAttackFunctionality).StartAttacking(); //Flag
 
         //Trigger
         ModeTriggerGroup usingTrigger = cf.ComboTriggerEnableUse();
@@ -62,7 +65,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
                 usingAbility.completedAnimation = usingTrigger.GetComponent<CombotTriggerGroup>().triggerProgress;
 
                 //Animation
-                StartCoroutine(UpdateAnimationsForFollowUpAttacks(usingAbility, usingTrigger));
+                StartCoroutine(AnimateFollowUpAbilities(usingAbility, usingTrigger, cf.Controls.Mode("Attack"), cf.Controls.animController));
 
                 //Actuall Attack
                 UseCurrentCombo(cf.Controls.c_current).GetComponent<CombotTriggerGroup>().StartUsingAbilityTrigger(ability, ability.InitialUseDelay[0]);
@@ -77,7 +80,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
 
     CombotTriggerGroup UseCurrentCombo(int combo)
     {
-        ModeRuntimeData mode = cf.Controls.Mode("Combo");
+        CombatEntityModeData mode = cf.Controls.Mode("Combo");
 
         //Checks
         if (mode == null || mode.triggers == null)
@@ -102,7 +105,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
     {
         print("switching to combo: " + combo);
 
-        if (cf.Controls.alreadyAttacking)
+        if (cf.Controls.Mode("Attack").isUsing)
         {
             if (waiting == true)
                 StopCoroutine(WaitForComboingToFinishToSwitchToAnother(combo));
@@ -111,17 +114,17 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
             StartCoroutine(WaitForComboingToFinishToSwitchToAnother(combo));
         }
 
-        cf.Controls.Mode("Combo").data.currentAbility = ChooseCurrentComboAbility(combo);
+        cf.Controls.Mode("Combo").ability = ChooseCurrentComboAbility(combo);
         cf.Controls.c_current = combo;
     }
 
     IEnumerator WaitForComboingToFinishToSwitchToAnother(int combo)
     {
-        while (cf.Controls.alreadyAttacking)
+        while (cf.Controls.Mode("Attack").isUsing)
         {
             yield return new WaitForEndOfFrame();
         }
-        cf.Controls.Mode("Combo").data.currentAbility = ChooseCurrentComboAbility(combo);
+        cf.Controls.Mode("Combo").ability = ChooseCurrentComboAbility(combo);
         cf.Controls.c_current = combo;
         waiting = false;
     }
@@ -143,29 +146,5 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
             ret = cf.Controls.Mode("Combo").data.abilitySet.down;
 
         return ret;
-    }
-
-    void AnimationComboAttack(string animationName, float delay)
-    {
-        Debug.Log($"[{gameObject.name}] [ComboFunctionality] is using AnimationAttack( [{animationName}] )");
-        cf.Controls.animController.UseAnimation?.Invoke(animationName, delay);
-    }
-
-
-    IEnumerator UpdateAnimationsForFollowUpAttacks(AbilityWrapper usingAbility, ModeTriggerGroup usingTrigger)
-    {
-        for (int i = 0; i < usingTrigger.GetComponent<CombotTriggerGroup>().triggerProgress.Count && cf.Controls.alreadyAttacking; i++)
-        {
-            print($"[ComboFunctionality] combo animation on attack [{i}]");
-            AnimationComboAttack((usingAbility.Values[i] as AbilityAttack).anim_name.ToString(), usingAbility.parentAbility.InitialUseDelay[i]);
-            while (cf.Controls.alreadyAttacking && usingAbility.completedAnimation[i] == false)
-            {
-                Debug.Log($"Updating animation, current progress for [{i}] is [{usingAbility.completedAnimation[i]}]");
-                print(usingTrigger.gameObject.name);
-                yield return new WaitForEndOfFrame();
-                usingAbility.completedAnimation = usingTrigger.GetComponent<CombotTriggerGroup>().triggerProgress;
-            }
-        }
-
     }
 }

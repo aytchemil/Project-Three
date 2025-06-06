@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System;
+using static CombatEntityController;
 
 
 [RequireComponent(typeof(CombatEntityController))]
@@ -95,12 +96,12 @@ public class CombatFunctionality : MonoBehaviour
         //print("combatFunctionality: in combat");
 
         //Auto Set the current ability
-        Controls.Mode("Attack").data.currentAbility = Controls.AbilitySet("Attack").up;
-        Controls.Mode("Combo").data.currentAbility = Controls.AbilitySet("Combo").right;
+        Controls.Mode("Attack").ability = Controls.AbilitySet("Attack").up;
+        Controls.Mode("Combo").ability = Controls.AbilitySet("Combo").right;
         //up is 3
         //left is 2
 
-        foreach (ModeRuntimeData mode in Controls.modes)
+        foreach (CombatEntityModeData mode in Controls.modes)
             if (!mode.data.initializedTriggers)
             {
                 InstantiateTriggersForMode(mode.data.abilitySet, mode.parent);
@@ -131,7 +132,7 @@ public class CombatFunctionality : MonoBehaviour
     {
         //print("exiting combat");
         //StopBlock(); //Must be first
-        Controls.alreadyAttacking = false;
+        Controls.Mode("Attack").isUsing = false;
         DisableTriggers(false, Controls.Mode(Controls.mode));
     }
 
@@ -188,7 +189,7 @@ public class CombatFunctionality : MonoBehaviour
     /// <summary>
     /// Disables all the attack triggers
     /// </summary>
-    public void DisableTriggers(bool local, ModeRuntimeData mode)
+    public void DisableTriggers(bool local, CombatEntityModeData mode)
     {
         //Debug.Log(gameObject.name + " | Disabling Attack All Triggers");
         if (!Controls.Mode(mode.data.modeName).triggers.Any() || Controls.Mode(mode.data.modeName).parent.childCount == 0)
@@ -317,27 +318,27 @@ public class CombatFunctionality : MonoBehaviour
         //print("enabling ability in dir: " + dir);
 
         //Reset the current ability for all the modes
-        foreach (ModeRuntimeData mode in Controls.modes)
-            if (mode.data.modeName != "Combo")
-                mode.data.currentAbility = null;
+        foreach (CombatEntityModeData mode in Controls.modes)
+            if (mode.name != "Combo")
+                mode.ability = null;
 
 
         switch (dir)
         {
             case "right":
-                Controls.Mode(m).data.currentAbility = Controls.AbilitySet(m).right;
+                Controls.Mode(m).ability = Controls.AbilitySet(m).right;
                 // print($"Mode: {Controls.Mode(m)}, Ability set: {Controls.AbilitySet(m).right} ");
                 break;
             case "left":
-                Controls.Mode(m).data.currentAbility = Controls.AbilitySet(m).left;
+                Controls.Mode(m).ability = Controls.AbilitySet(m).left;
                 // print($"Mode: {Controls.Mode(m)}, Ability set: {Controls.AbilitySet(m).left} ");
                 break;
             case "up":
-                Controls.Mode(m).data.currentAbility = Controls.AbilitySet(m).up;
+                Controls.Mode(m).ability = Controls.AbilitySet(m).up;
                 // print($"Mode: {Controls.Mode(m)}, Ability set: {Controls.AbilitySet(m).up} ");
                 break;
             case "down":
-                Controls.Mode(m).data.currentAbility = Controls.AbilitySet(m).down;
+                Controls.Mode(m).ability = Controls.AbilitySet(m).down;
                 // print($"Mode: {Controls.Mode(m)}, Ability set: {Controls.AbilitySet(m).down} ");
                 break;
         }
@@ -350,7 +351,7 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     public virtual void UseAbility(string mode)
     {
-        print("[Combat Functionality]: Attempting To Use an Ability");
+        print($"[Combat Functionality]: Attempting To Use an Ability from mode [{mode}]");
         if (Controls.cantUseAbility.Invoke())
             return;
 
@@ -427,28 +428,17 @@ public class CombatFunctionality : MonoBehaviour
     public ModeTriggerGroup ComboTriggerEnableUse()
     {
         ModeTriggerGroup usingThisTriggerGroup = null;
-        ModeRuntimeData d = Controls.Mode("Combo");
+        CombatEntityModeData m = Controls.Mode("Combo");
 
-        for(int i = 0; i < d.triggers.Length-1; i++)
-            d.triggers[i].gameObject.SetActive(false);
+        for(int i = 0; i < m.triggers.Length-1; i++)
+            m.triggers[i].gameObject.SetActive(false);
 
-        d.triggers[Controls.c_current].gameObject.SetActive(true);
-        usingThisTriggerGroup = d.triggers[Controls.c_current].gameObject.GetComponent<ModeTriggerGroup>();
+        m.triggers[Controls.c_current].gameObject.SetActive(true);
+        usingThisTriggerGroup = m.triggers[Controls.c_current].gameObject.GetComponent<ModeTriggerGroup>();
 
         return usingThisTriggerGroup;
     }
 
-    public ref CombatEntityController.CurrentAbilityForMode SearchCurrentModesForMode(string mode)
-    {
-        for (int i = 0; i < Controls.currentAbilityBeingUsedForEachMode.Length; i++)
-        {
-            if (Controls.currentAbilityBeingUsedForEachMode[i].GetMode().Replace("Mode: ", "") == mode)
-                return ref Controls.currentAbilityBeingUsedForEachMode[i];
-        }
-
-        Debug.LogError("No mode found when searching for mode in Current Mode System");
-        throw new InvalidOperationException("Cannot return a ref to a new struct instance.");
-    }
 
     #endregion
 
@@ -476,8 +466,8 @@ public class CombatFunctionality : MonoBehaviour
     public void DisableAllAttackTriggers()
     {
         print("Disabling all attack triggers");
-        foreach (ModeRuntimeData mode in Controls.modes)
-            DisableTriggers(false, Controls.Mode(mode.data.modeName));
+        foreach (CombatEntityModeData mode in Controls.modes)
+            DisableTriggers(false, Controls.Mode(mode.name));
 
     }
 

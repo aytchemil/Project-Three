@@ -294,7 +294,7 @@ public class CombatUI : MonoBehaviour
 
     void UpdateCurrentAbilityText(string dir)
     {
-        Ability currentAbility = Controls.Mode(Controls.mode).data.currentAbility;
+        Ability currentAbility = Controls.Mode(Controls.mode).ability;
         text.text = "Current Ability: " + currentAbility.abilityName;
     }
 

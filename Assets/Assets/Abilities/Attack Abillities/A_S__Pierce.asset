@@ -22,6 +22,7 @@ MonoBehaviour:
   movementAmount: 0
   archetype: 0
   trait: 0
+  animation_name: Attack_Hit
   damage: 2
   flinchAmount: 1
   triggerCollider: {fileID: 8475917669229452261, guid: 0521fe6a29007bf44b768a2f0c4cb863, type: 3}

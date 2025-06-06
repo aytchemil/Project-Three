@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using UnityEditor.ShaderGraph;
 
 /// <summary>
 /// Centralized Controller and controls for every combat entity.
@@ -48,36 +49,44 @@ public class CombatEntityController : MonoBehaviour
     public Action<float> Flinch;
     public Func<string> getMoveDirection;
 
-    [Header("Modes")]
-    public List<ModeRuntimeData> modes = new List<ModeRuntimeData>();
-
     [System.Serializable]
-    public struct CurrentAbilityForMode
+    public class CombatEntityModeData
     {
-        public Ability current;
-        public string mode;
+        public static int AMOUNT_OF_TRIGGERS = 4;
 
-        public CurrentAbilityForMode(string _mode)
+        public Ability ability;
+        public string name;
+        public bool isUsing;
+        public ModeTemplate data;
+        public Transform parent;
+        public GameObject[] triggers = new GameObject[AMOUNT_OF_TRIGGERS];
+
+        void AssignMyData(ModeTemplate data)
         {
-            current = null;
-            mode = _mode;
+            this.data = data;
         }
 
-        public void SetAbility(Ability ability)
+        public CombatEntityModeData(string _mode)
         {
-            current = ability;
+            ability = null;
+            name = _mode.Replace("Mode: ", "");
+        }
+
+        public void SetAbility(Ability _ability)
+        {
+            ability = _ability;
         }
 
         public string GetMode()
         {
-            return mode;
+            return name;
         }
     }
 
 
 
-    [Header("Current Ability For Each modes")]
-    public CurrentAbilityForMode[] currentAbilityBeingUsedForEachMode;
+    [Header("Modes and Data")]
+    public List<CombatEntityModeData> modes;
 
     [Header("Mode Inputted Ability Sets")]
     public List<AbilitySet> abilitySetInputs;
@@ -108,12 +117,11 @@ public class CombatEntityController : MonoBehaviour
     public bool dashing;
     public bool dashOnCooldown;
     public bool isLockedOn;
-    public bool alreadyAttacking;
-    public bool isBlocking;
     public bool currentlyRetargetting;
     public bool isAlive = true;
     public bool isFlinching = false;
-    public bool isCountering;
+    public bool isBlocking;
+
 
     [Header("Combat Flags")]
     public bool targetIsDodging;
@@ -128,13 +136,13 @@ public class CombatEntityController : MonoBehaviour
     protected virtual void Start()
     {
         //print($"{gameObject.name} onEnable()");
-        cantUseAbility = () => (!isLockedOn || alreadyAttacking || isBlocking || isFlinching || isCountering);
+        cantUseAbility = () => (!isLockedOn || Mode("Attack").isUsing || isBlocking || isFlinching || Mode("Counter").isUsing);
         CreateMyOwnModeInstances();
     }
 
     protected virtual void OnEnable()
     {
-        cantUseAbility = () => (!isLockedOn || alreadyAttacking || isBlocking || isFlinching || isCountering);
+        cantUseAbility = () => (!isLockedOn || Mode("Attack").isUsing || isBlocking || isFlinching || Mode("Counter").isUsing);
         useAbility += (input) => 
         {
             if (usedCombo)
@@ -183,24 +191,25 @@ public class CombatEntityController : MonoBehaviour
         //print(ModeManager.instance.modes);
 
         //Take in all the modes
-        foreach (ModeData template in ModeManager.instance.modes)
+        foreach (ModeTemplate info in ModeManager.instance.modes)
         {
             //print("Copying template " + template.modeName + " on iteration " + i);
-            //Create new tempalte data
-            ModeData newModeData = ScriptableObject.CreateInstance<ModeData>();
-            newModeData.modeName = template.modeName;
-            newModeData.UIIndicator = template.UIIndicator;
-            newModeData.modeTextDesc = template.modeTextDesc;
-            newModeData.solo = template.solo;
 
-            //Create NEW MODE runtime wrapper, put the data in the wrapper
-            GameObject modeWrapper = Instantiate(new GameObject(), modeParent, false);
+            //Create new SO Template with inputted data from the ModeManager (External)
+            ModeTemplate template = ScriptableObject.CreateInstance<ModeTemplate>();
+            template.modeName = info.modeName;
+            template.UIIndicator = info.UIIndicator;
+            template.modeTextDesc = info.modeTextDesc;
+            template.solo = info.solo;
 
+            //Create new ModeData, insert template data into new mode
+            CombatEntityModeData newMode = new CombatEntityModeData(template.modeName);
+            newMode.data = template;
 
-            ModeRuntimeData newMode = modeWrapper.AddComponent<ModeRuntimeData>();
-            modeWrapper.transform.parent = modeParent;
-            newMode.data = newModeData;
-            newMode.name = "Mode: " + newMode.data.modeName;
+            //Create a GameObject under the mode parent to organize all modes
+            newMode.parent = Instantiate(new GameObject(), modeParent, false).transform;
+            newMode.parent.gameObject.name = newMode.name;
+
 
             //ModeFunctionality System
             ModeGeneralFunctionality modeFunctionality = gameObject.AddComponent(ModeManager.instance.ReturnModeFunctionality(template.modeName)) as ModeGeneralFunctionality;
@@ -215,9 +224,9 @@ public class CombatEntityController : MonoBehaviour
         }
 
         //Current Ability Being Used For Each Mode System
-        currentAbilityBeingUsedForEachMode = new CurrentAbilityForMode[modes.Count];
-        for (int j = 0; j < modes.Count; j++)
-            currentAbilityBeingUsedForEachMode[j] = new CurrentAbilityForMode(modes[j].name);
+        //currentModeData = new CombatEntityModeData[modes.Count];
+        //for (int j = 0; j < modes.Count; j++)
+        //    currentModeData[j] = new CombatEntityModeData(modes[j].name, false);
 
 
 
@@ -229,17 +238,16 @@ public class CombatEntityController : MonoBehaviour
     }
 
 
-
     void AssignAbilitySetsToModeData()
     {
-        foreach (ModeRuntimeData myMode in modes)
+        foreach (CombatEntityModeData myMode in modes)
             myMode.data.abilitySet = AbilitySet(myMode.data.modeName);
 
     }
 
     void InstantiateModeParents()
     {
-        foreach (ModeRuntimeData mode in modes)
+        foreach (CombatEntityModeData mode in modes)
             if (mode.parent == null)
             {
                // print($"Assigning parent for {mode.data.modeName} ");
@@ -249,25 +257,18 @@ public class CombatEntityController : MonoBehaviour
             }
     }
 
-    public ModeRuntimeData Mode(string name)
+    public CombatEntityModeData Mode(string mode)
     {
-        ModeRuntimeData retMode = null;
+        foreach(CombatEntityModeData _mode in modes)
+            if(_mode.name == mode)
+                return _mode;
 
-        foreach(ModeRuntimeData mode in modes)
-        {
-            //print($"[{gameObject.name}] Mode check comparing {mode.data.modeName} against {name}");
-
-            if (mode.data.modeName == name)
-                retMode = mode;
-        }
-
-        if(modes.Count == 0)
+        if (modes.Count == 0)
             Debug.LogError($"[{gameObject.name}] No modes detected ");
 
-        if (retMode == null)
-            Debug.LogError($"[{gameObject.name}] Could not find a mode of name [{name}] please change it");
 
-        return retMode;
+        Debug.LogError($"[CombatEntityController : {gameObject.name}] Could not find a mode of the name [{mode}] in currentModeData");
+        throw new InvalidOperationException("Cannot return a ref to a new struct instance.");
     }
 
     public AbilitySet AbilitySet(string modeName)

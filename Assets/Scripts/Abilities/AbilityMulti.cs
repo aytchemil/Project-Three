@@ -15,4 +15,12 @@ public class AbilityMulti : Ability
 
     public Ability[] abilities;
 
+    public override string AnimName 
+    {
+        get
+        {
+            Debug.LogError($"[AbilityMulti] Multi Ability has no Animation for the Parent");
+            return null;
+        }
+    }
 }

@@ -22,7 +22,7 @@ MonoBehaviour:
   movementAmount: 0
   archetype: 0
   trait: 0
+  animation_name: Attack_Diagnal_Right
   damage: 1
   flinchAmount: 1
   triggerCollider: {fileID: 8475917669229452261, guid: f964f0d6098938940bad90bad00b8b69, type: 3}
-  anim_name: 5

@@ -1,3 +1,5 @@
+using NUnit.Framework;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Ability : ScriptableObject
@@ -33,4 +35,13 @@ public class Ability : ScriptableObject
         MovementLeftOrRight = 5,
     }
     public Trait trait;
+
+    [SerializeField]
+    private string animation_name;
+
+    public virtual string AnimName
+    {
+        get => animation_name;
+        set => animation_name = value;
+    }
 }

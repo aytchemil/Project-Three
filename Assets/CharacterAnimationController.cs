@@ -27,6 +27,7 @@ public class CharacterAnimationController : MonoBehaviour
 
     private void PlayAnimation(string animName, float delay)
     {
+        print($"[Animation Controller] playing animation name [{animName}]");
         StartCoroutine(Animate(animName, delay));
     }
 
@@ -39,5 +40,10 @@ public class CharacterAnimationController : MonoBehaviour
         Debug.Log($"[AnimtationController] playing animation: [{animName}], speed: [{speed}]");
         animator.speed = speed;
         animator.Play(animName);
+    }
+
+    public void SetBool (string boolname, bool val)
+    {
+        animator.SetBool(boolname, val);
     }
 }

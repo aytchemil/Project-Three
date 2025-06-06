@@ -56,11 +56,11 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
         /// animate all 4, integrate that
 
 
-        Ability ability = cf.Controls.Mode("Attack").data.currentAbility;
+        Ability ability = cf.Controls.Mode("Attack").ability;
         print($" + Using attack ability: {ability.abilityName}");
 
         //Current Ability Being Used For Each Mode System
-        cf.SearchCurrentModesForMode("Attack").SetAbility(ability);
+        cf.Controls.Mode("Attack").SetAbility(ability);
 
         //Trigger----------------------------------------------------
         ModeTriggerGroup usingTrigger = cf.AbilityTriggerEnableUse("Attack");
@@ -83,7 +83,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
                 Archetype_SingularAttack((AbilityAttack)usingAbility.Values[0]);
 
                 //Animation
-                AnimationAttack((usingAbility.Values[0] as AbilityAttack).anim_name.ToString(), usingAbility.Values[0].InitialUseDelay[0]);
+                AnimateAblity(usingAbility.Values[0].AnimName.ToString(), usingAbility.Values[0].InitialUseDelay[0], cf.Controls.animController);
 
                 break;
 
@@ -103,7 +103,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
                 Archetype_MultiChoiceAttack(ability, choice);
 
                 //Animation
-                AnimationAttack((usingAbility.Values[0] as AbilityAttack).anim_name.ToString(), usingAbility.Values[0].InitialUseDelay[0]);
+                AnimateAblity(usingAbility.Values[0].AnimName.ToString(), usingAbility.Values[0].InitialUseDelay[0], cf.Controls.animController);
 
                 break;
 
@@ -116,7 +116,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
                 usingAbility.completedAnimation = usingTrigger.GetComponent<MAT_FollowupGroup>().triggerProgress;
 
                 //Animation
-                StartCoroutine(UpdateAnimationsForFollowUpAttacks(usingAbility, usingTrigger));
+                StartCoroutine(AnimateFollowUpAbilities(usingAbility, usingTrigger, cf.Controls.Mode("Attack"), cf.Controls.animController));
 
 
                 //Trigger
@@ -136,7 +136,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
     /// </summary>
     public void StartAttacking()
     {
-        cf.Controls.alreadyAttacking = true;
+        cf.Controls.Mode("Attack").isUsing = true;
     }
 
     /// <summary>
@@ -144,7 +144,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
     /// </summary>
     public void FinishAttacking()
     {
-        cf.Controls.alreadyAttacking = false;
+        cf.Controls.Mode("Attack").isUsing = false;
     }
     #endregion
 
@@ -250,30 +250,6 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
     }
 
     #region Animation
-    void AnimationAttack(string animationName, float delay)
-    {
-        Debug.Log($"[{gameObject.name}] [CombatFunctionality] is using AnimationAttack( [{name}] )");
-        cf.Controls.animController.UseAnimation?.Invoke(animationName, delay);
-    }
-
-
-    IEnumerator UpdateAnimationsForFollowUpAttacks(AbilityWrapper usingAbility, ModeTriggerGroup usingTrigger)
-    {
-        for(int i = 0; i < usingTrigger.GetComponent<MAT_FollowupGroup>().triggerProgress.Count && cf.Controls.alreadyAttacking; i++)
-        {
-            AnimationAttack((usingAbility.Values[i] as AbilityAttack).anim_name.ToString(), usingAbility.parentAbility.InitialUseDelay[i]);
-            while (cf.Controls.alreadyAttacking && usingAbility.completedAnimation[i] == false)
-            {
-                Debug.Log("Updating animation");
-                yield return new WaitForEndOfFrame();
-                usingAbility.completedAnimation = usingTrigger.GetComponent<MAT_FollowupGroup>().triggerProgress;
-            }
-        }
-
-    }
-
-
-
 
     #endregion
 }

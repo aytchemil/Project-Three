@@ -110,7 +110,7 @@ public class ColliderDetector : MonoBehaviour
                 //Testing for attacking then missing
                 //print(combatLock.gameObject.name + " | needs to be: false OR false, false");
                 //print(combatLock.gameObject.name + " | " + combatLock.Controls.targetIsDodging  + "  " + combatLock.Controls.alreadyAttacking + " " + combatLock.Controls.isFlinching);
-                if (!combatLock.Controls.targetIsDodging || !combatLock.Controls.alreadyAttacking)
+                if (!combatLock.Controls.targetIsDodging || !combatLock.Controls.Mode("Attack").isUsing)
                 {
                     if (!combatLock.Controls.isFlinching)
                     {

@@ -88,7 +88,7 @@ public class AttackingAI : MonoBehaviour
 
 
             //Attacking
-            if (!thinking && !Controls.alreadyAttacking && !attackingWithPattern && !Controls.isFlinching)
+            if (!thinking && !Controls.Mode("Attack").isUsing && !attackingWithPattern && !Controls.isFlinching)
             {
                 EntityAttackPattern attackPattern = ChoseRandomAttackPattern();
                 StartCoroutine(Attack(attackPattern));

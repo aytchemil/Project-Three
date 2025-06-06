@@ -1,3 +1,5 @@
+using System.Collections;
+using UnityEditor.Playables;
 using UnityEngine;
 
 public class ModeCounterFunctionality : ModeGeneralFunctionality
@@ -5,6 +7,8 @@ public class ModeCounterFunctionality : ModeGeneralFunctionality
     private CombatFunctionality cf;
 
     public override string MODE_NAME { get => "Attack"; }
+
+    public string stopBlockingBool = "stopBlocking";
 
 
     void Awake()
@@ -15,21 +19,33 @@ public class ModeCounterFunctionality : ModeGeneralFunctionality
     public override void UseModeFunctionality() => Counter();
     void Counter()
     {
-        //print("countering");
+        print("countering");
 
+        //Setup
         StartCountering();
+        AbilityCounter ability = (AbilityCounter)cf.Controls.Mode("Counter").ability;
+        cf.Controls.Mode("Counter").SetAbility(ability);
 
-        AbilityCounter counterAbility = (AbilityCounter)cf.Controls.Mode("Counter").data.currentAbility;
+        //Trigger
+        ModeTriggerGroup usingTrigger = cf.AbilityTriggerEnableUse("Counter");
+        //Ability
+        AbilityWrapper usingAbility = new((ability as AbilityCounter).abilities, ability);
 
-        cf.SearchCurrentModesForMode("Counter").SetAbility(counterAbility);
-
-        switch (counterAbility.counterArchetype)
+        switch (ability.counterArchetype)
         {
             case AbilityCounter.CounterArchetype.StandingRiposte:
 
-                cf.AbilityTriggerEnableUse("Counter").StartUsingAbilityTrigger(counterAbility, counterAbility.InitialUseDelay[0]);
+                //Setup
+                usingAbility.completedAnimation = usingTrigger.GetComponent<CounterTriggerGroup>().triggerProgress;
 
-                StandingRiposte();
+                //Animation
+                StartCoroutine(AnimateFollowUpAbilities(usingAbility, usingTrigger, cf.Controls.Mode("Counter"), cf.Controls.animController));
+
+                //Trigger
+                usingAbility.Values.Add(usingTrigger.StartUsingAbilityTrigger(ability, ability.InitialUseDelay[0]));
+
+                //Additional Functionality 
+                StandingRiposte(ability);
 
                 break;
         }
@@ -41,7 +57,7 @@ public class ModeCounterFunctionality : ModeGeneralFunctionality
     /// </summary>
     void StartCountering()
     {
-        cf.Controls.isCountering = true;
+        cf.Controls.Mode("Counter").isUsing = true;
     }
 
     /// <summary>
@@ -49,15 +65,31 @@ public class ModeCounterFunctionality : ModeGeneralFunctionality
     /// </summary>
     public void FinishCountering()
     {
-        cf.Controls.isCountering = false;
+        cf.Controls.Mode("Counter").isUsing = false;
     }
 
-
-
-    void StandingRiposte()
+    void StandingRiposte(AbilityCounter ability)
     {
         print("Counter attack: Standing riposte");
 
+    }
+
+    public override void FinishedAnAnimation(int count, string animName, CharacterAnimationController animCont)
+    {
+        base.FinishedAnAnimation(count, animName, animCont);
+
+        animCont.SetBool(stopBlockingBool, true);
+        print("Setting bool of stop blocking to true");
+
+    }
+
+    public override IEnumerator CompletedAnimationSequence(CharacterAnimationController animCont)
+    {
+        yield return new WaitForEndOfFrame();
+
+        animCont.SetBool(stopBlockingBool, false);
+
+        print("Setting bool of stop blocking to false");
     }
 
 }

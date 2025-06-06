@@ -38,3 +38,15 @@ MonoBehaviour:
   - animationName: Attack_Diagnal_Left
     speed: 0.79
     clip: {fileID: 7400000, guid: 4805054ac975c364eb52fcf1690ef17f, type: 2}
+  - animationName: Block_Top
+    speed: 0.79
+    clip: {fileID: 7400000, guid: d086ac6519aba7745b5af0d81ff2bb2d, type: 2}
+  - animationName: Attack_Uppercut
+    speed: 0.79
+    clip: {fileID: 7400000, guid: b6978daa62a061c4f9e9ba0bb16d9b8a, type: 2}
+  - animationName: Attack_Hit
+    speed: 1.2
+    clip: {fileID: 7400000, guid: 267c92649dd02484b92cf8a14beca795, type: 2}
+  - animationName: Attack_Pierce
+    speed: 0.79
+    clip: {fileID: 7400000, guid: 267c92649dd02484b92cf8a14beca795, type: 2}

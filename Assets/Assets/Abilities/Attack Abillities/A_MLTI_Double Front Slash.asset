@@ -24,6 +24,7 @@ MonoBehaviour:
   movementAmount: 0
   archetype: 2
   trait: 0
+  animation_name: 
   successDelay:
   - 0.3
   - 0.3

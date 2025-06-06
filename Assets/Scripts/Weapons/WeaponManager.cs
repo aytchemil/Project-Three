@@ -1,9 +1,10 @@
 using System.Collections.Generic;
 using UnityEngine;
+using static CombatEntityController;
 
 public class WeaponManager : MonoBehaviour
 {
-    public ModeRuntimeData comboMode;
+    public CombatEntityModeData comboMode;
 
     public GameObject characterAnimationParent;
     public GameObject weaponParent;

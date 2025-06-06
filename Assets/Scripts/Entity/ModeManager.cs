@@ -16,7 +16,7 @@ public class ModeManager : MonoBehaviour
 
     public ModeFunctionalityReferenceSO[] ModeFunctionalities;
 
-    public List<ModeData> modes = new List<ModeData>();
+    public List<ModeTemplate> modes = new List<ModeTemplate>();
     private void Awake()
     {
         //print("initializing mode manager");

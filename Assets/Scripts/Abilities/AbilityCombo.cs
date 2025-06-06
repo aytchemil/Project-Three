@@ -11,4 +11,13 @@ public class AbilityCombo : AbilityMulti
         Linear = 0,
     }
     public ComboType comboType;
+
+    public override string AnimName
+    {
+        get
+        {
+            Debug.LogError($"[AbilityCombo] Multi Ability has no Animation for the Parent");
+            return null;
+        }
+    }
 }

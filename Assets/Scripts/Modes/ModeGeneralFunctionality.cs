@@ -46,7 +46,7 @@ public class ModeGeneralFunctionality : MonoBehaviour
         {
             //Setup
             string animName = (usingAbility.Values[i]).AnimName.ToString();
-            print($"[CounterFunctionality] combo animation on attack [{i}] which is ability [{animName}]");
+            //print($"[Followup] combo animation on attack [{i}] which is ability [{animName}]");
 
             //Animates
             AnimateAblity(animName, usingAbility.parentAbility.InitialUseDelay[i], animCont);
@@ -57,7 +57,7 @@ public class ModeGeneralFunctionality : MonoBehaviour
             //Checking if the trigger progressed
             while (mode.isUsing && usingAbility.completedAnimation[i] == false)
             {
-                Debug.Log($"Updating animation, current progress for [{i}] is [{usingAbility.completedAnimation[i]}]");
+                //Debug.Log($"[Followup] [Animation] Updating animation, current progress for [{i}] is [{usingAbility.completedAnimation[i]}]");
                 print(usingTrigger.gameObject.name);
                 yield return new WaitForEndOfFrame();
                 usingAbility.completedAnimation = usingTrigger.GetComponent<MAT_FollowupGroup>().triggerProgress;
@@ -69,7 +69,7 @@ public class ModeGeneralFunctionality : MonoBehaviour
 
         //Waiting an extra frame for the animation to complete because FinishedAnimation will also run on this frame, and they may cancle eachother out
         StartCoroutine(CompletedAnimationSequence(animCont));
-        print("[Followup] Full Followup Completed");
+        print("[Followup] [Animation] Full Followup Completed");
 
     }
 

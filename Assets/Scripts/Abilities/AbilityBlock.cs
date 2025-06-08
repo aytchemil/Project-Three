@@ -8,7 +8,7 @@ public class AbilityBlock : Ability
         Top = 0,
         Left = 1,
         Right = 2,
-        Bottom = 3,
+        Down = 3,
         LeftAndRight = 4,
         Front = 5,
     }

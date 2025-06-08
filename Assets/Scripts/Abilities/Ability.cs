@@ -1,9 +1,11 @@
 using NUnit.Framework;
+using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class Ability : ScriptableObject
 {
+    public static float MAX_INITIAL_USE_DELAY = 10;
     public string abilityName;
 
     public Texture icon;
@@ -15,7 +17,14 @@ public class Ability : ScriptableObject
     }
 
     [SerializeField]
+    [PropertyRange(0, "maxInitialUseDelay")]
     private float[] initialUseDelay = { 0.3f };
+
+    [SerializeField]
+    public virtual float maxInitialUseDelay
+    {
+        get => MAX_INITIAL_USE_DELAY;
+    }
     [field:SerializeField] public virtual float successDelay { get; set; }
     public float[] unsuccessDelay = { 0.3f };
     public float movementAmount;

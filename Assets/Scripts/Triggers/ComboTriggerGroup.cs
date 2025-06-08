@@ -30,6 +30,7 @@ public class CombotTriggerGroup : MAT_FollowupGroup
             print("combo reattacked... ");
             triggerProgress[i] = true;
 
+
             combatFunctionality.Controls.waitingToReattack = false;
             combatFunctionality.Controls.didReattack = false;
         }
@@ -64,7 +65,7 @@ public class CombotTriggerGroup : MAT_FollowupGroup
 
     IEnumerator CountToReattackCuttoff(int i)
     {
-        yield return new WaitForSeconds(myComboAbility.reattackTimeUntilReset);
+        yield return new WaitForSeconds(myComboAbility.reattackTimeUntilReset + myComboAbility.InitialUseDelay[i]);
 
         if (triggerProgress[i] == false)
         {

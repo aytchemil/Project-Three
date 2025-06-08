@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Counter Set 1
   m_EditorClassIdentifier: 
   mode: 1
-  right: {fileID: 11400000, guid: e13753d1fc987874284bf4840f0eccea, type: 2}
-  left: {fileID: 11400000, guid: 8b452daf4fead554790892bbba417500, type: 2}
+  right: {fileID: 11400000, guid: 8b452daf4fead554790892bbba417500, type: 2}
+  left: {fileID: 11400000, guid: cec9bc42dd27a3b4e885f90e39b12da2, type: 2}
   up: {fileID: 11400000, guid: e13753d1fc987874284bf4840f0eccea, type: 2}
   down: {fileID: 11400000, guid: 174066c9b206dcd47a9f68a1a2db53f1, type: 2}

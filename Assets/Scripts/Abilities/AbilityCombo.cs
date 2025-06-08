@@ -1,10 +1,13 @@
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ComboAbility", menuName = "ScriptableObjects/Abilities/Multi/Combo Ability")]
 public class AbilityCombo : AbilityMulti
 {
     public float reattackTimeUntilReset;
-    public float changeOrCompleteComboDelay;
+
+    [HideInInspector]
+    public override float maxInitialUseDelay => reattackTimeUntilReset;
 
     public enum ComboType
     {
@@ -20,4 +23,5 @@ public class AbilityCombo : AbilityMulti
             return null;
         }
     }
+
 }

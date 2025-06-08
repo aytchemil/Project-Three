@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 316368a6a30190149a3e1844875a050c, type: 3}
+  m_Name: B_S_Down
+  m_EditorClassIdentifier: 
+  abilityName: Down Block
+  icon: {fileID: 2800000, guid: 388dae609d7f8e141a9610a0300f930c, type: 3}
+  initialUseDelay:
+  - 0.1
+  <successDelay>k__BackingField: 0
+  unsuccessDelay:
+  - 0.3
+  movementAmount: 0
+  archetype: 0
+  trait: 0
+  animation_name: Block_Down
+  collision: 3
+  blockTriggerCollider: {fileID: 7760708677549281350, guid: 784e0ec78f388d644bb0bcc0aeb51f0c, type: 3}
+  blockUpTime: 1
+  damagePercentageBlocked: 100
+  slowdownMovementPercentage: 0

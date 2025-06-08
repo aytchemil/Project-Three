@@ -34,6 +34,8 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
         if (cf.Controls.cantUseAbility.Invoke())
             return;
 
+        cf.Controls.Mode("Combo").isUsing = true;
+
         print("comboing");
 
         //Setup
@@ -58,6 +60,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
 
                 //Setup
                 usingAbility.completedAnimation = usingTrigger.GetComponent<CombotTriggerGroup>().triggerProgress;
+                StartCoroutine(WaitForComboToFinish(usingTrigger));
 
                 //Animation
                 StartCoroutine(AnimateFollowUpAbilities(usingAbility, usingTrigger, cf.Controls.Mode("Attack"), cf.Controls.animController));
@@ -115,7 +118,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
 
     void SwitchToCombo(string combo)
     {
-        print("switching to combo: " + combo);
+        //print("switching to combo: " + combo);
 
         if (cf.Controls.Mode("Attack").isUsing)
         {
@@ -175,5 +178,22 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
             return 3;
 
         throw new Exception($"[ModeComboFunc] trigger index not found for [{combo}]");
+    }
+
+    IEnumerator WaitForComboToFinish(ModeTriggerGroup usingTrigger)
+    {
+        CombotTriggerGroup trigger = usingTrigger.GetComponent<CombotTriggerGroup>();
+
+
+        while (cf.Controls.Mode("Combo").isUsing == true)
+        {
+            print("waiting for combo to finish");
+            yield return new WaitForEndOfFrame();
+            if (trigger.triggerProgress[trigger.triggerProgress.Count - 1] == true)
+            {
+                print("combo finished");
+                cf.Controls.Mode("Combo").isUsing = false;
+            }
+        }
     }
 }

@@ -104,7 +104,6 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
             foreach(var trigger in triggers)
                 trigger.gameObject.SetActive(false);
 
-
             TakeOnTriggerBeingUsed(currentAbility, i);
 
 
@@ -127,7 +126,7 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
                     //print("LAST");
 
                     if (triggerBeingUsed.used) { HitAttack(); MissAttackCuttoff(); yield break; }
-                    if ((triggerBeingUsed as GeneralAttackTriggerGroup).missedAttack) { MissAttackCuttoff(); yield break; }
+                    if ((triggerBeingUsed as GeneralAttackTriggerGroup).missedAttack) { yield return new WaitForSeconds(DelayNextTrigger(i)); MissAttackCuttoff(); yield break; }
                 }
 
                 yield return new WaitForEndOfFrame();

@@ -1,0 +1,32 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3721cdb081aaa75458e0d721d087a8ab, type: 3}
+  m_Name: C_Down
+  m_EditorClassIdentifier: 
+  abilityName: Down Counter
+  icon: {fileID: 2800000, guid: 0af620424423e1948908d42174d6e786, type: 3}
+  initialUseDelay:
+  - 0.1
+  - 0.3
+  <successDelay>k__BackingField: 0
+  unsuccessDelay: []
+  movementAmount: 0
+  archetype: 0
+  trait: 0
+  animation_name: 
+  successDelay: []
+  MultiAbilityGroupingPrefab: {fileID: 5273357752252842493, guid: d20e9aed8fbac9640b993a3798879b30, type: 3}
+  abilities:
+  - {fileID: 11400000, guid: 55dc3cc3af7d7914c964f76fd85d7fb3, type: 2}
+  - {fileID: 11400000, guid: 99169ba6d6fb38a4f8ff536f275928aa, type: 2}
+  counterArchetype: 0
+  counterUpTime: 1

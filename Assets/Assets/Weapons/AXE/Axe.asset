@@ -56,3 +56,9 @@ MonoBehaviour:
   - animationName: Block_Left
     speed: 1
     clip: {fileID: 7400000, guid: a24d615460093364993fe293de6da3fb, type: 2}
+  - animationName: Block_Down
+    speed: 1
+    clip: {fileID: 7400000, guid: e7f15a3cc3a77ed41a228d1d3829d872, type: 2}
+  - animationName: Attack_Up_Left
+    speed: 1
+    clip: {fileID: 7400000, guid: a5257ab9d37b38a4da6e49b4f1f88166, type: 2}

@@ -16,7 +16,7 @@ MonoBehaviour:
   icon: {fileID: 2800000, guid: 7b6eebf1e94b32b448514e930e127d4b, type: 3}
   initialUseDelay:
   - 0.368
-  - 1.575
+  - 0.82
   - 0.375
   <successDelay>k__BackingField: 0
   unsuccessDelay:
@@ -36,5 +36,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 57c8b27f3b1a8134b8e9c7edb069b681, type: 2}
   - {fileID: 11400000, guid: 585cc1ee8817ff74c82c4dcaa2d0609d, type: 2}
   - {fileID: 11400000, guid: 9ec6549366cc55d43937de819855f473, type: 2}
-  reattackTimeUntilReset: 2
+  reattackTimeUntilReset: 1.2
   comboType: 0

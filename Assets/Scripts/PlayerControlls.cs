@@ -92,7 +92,7 @@ public class PlayerController : CombatEntityController
 
         for(int i = 0; i < AMOUNT_OF_ABIL_SLOTS; i++)
         {
-            print("enbl index " + i);
+            print($"[PlayerControls] Enabled Ability Slot [{i}]");
             ia_abilities[i].Enable();
         }
 
@@ -151,7 +151,7 @@ public class PlayerController : CombatEntityController
 
         for (int i = 0; i < AMOUNT_OF_ABIL_SLOTS; i++)
         {
-            print("enbl index " + i);
+            print($"[PlayerControls] Disabled Ability Slot [{i}]");
             ia_abilities[i].Disable();
         }
 

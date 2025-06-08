@@ -26,6 +26,7 @@ MonoBehaviour:
   movementAmount: 0
   archetype: 0
   trait: 0
+  animation_name: 
   successDelay:
   - 0.25
   - 0.25
@@ -35,6 +36,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 99169ba6d6fb38a4f8ff536f275928aa, type: 2}
   - {fileID: 11400000, guid: 6df32e096622839438a45810cf14019e, type: 2}
   - {fileID: 11400000, guid: 57c8b27f3b1a8134b8e9c7edb069b681, type: 2}
-  reattackTimeUntilReset: 1
-  changeOrCompleteComboDelay: 1.5
+  reattackTimeUntilReset: 1.2
   comboType: 0

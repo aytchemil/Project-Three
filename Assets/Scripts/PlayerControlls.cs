@@ -92,28 +92,28 @@ public class PlayerController : CombatEntityController
 
         for(int i = 0; i < AMOUNT_OF_ABIL_SLOTS; i++)
         {
-            print($"[PlayerControls] Enabled Ability Slot [{i}]");
+           // print($"[PlayerControls] Enabled Ability Slot [{i}]");
             ia_abilities[i].Enable();
         }
 
         ia_abilities[0].performed += ctx =>
         {
-            print($"[PlayerControlls] pressed ability [{0}]");
+           // print($"[PlayerControlls] pressed ability [{0}]");
             abilitySlots[0]?.Invoke(0);
         };
         ia_abilities[1].performed += ctx =>
         {
-            print($"[PlayerControlls] pressed ability [{1}]");
+           // print($"[PlayerControlls] pressed ability [{1}]");
             abilitySlots[1]?.Invoke(1);
         };
         ia_abilities[2].performed += ctx =>
         {
-            print($"[PlayerControlls] pressed ability [{2}]");
+            //print($"[PlayerControlls] pressed ability [{2}]");
             abilitySlots[2]?.Invoke(2);
         };
         ia_abilities[3].performed += ctx =>
         {
-            print($"[PlayerControlls] pressed ability [{3}]");
+           // print($"[PlayerControlls] pressed ability [{3}]");
             abilitySlots[3]?.Invoke(3);
         };
 
@@ -151,28 +151,28 @@ public class PlayerController : CombatEntityController
 
         for (int i = 0; i < AMOUNT_OF_ABIL_SLOTS; i++)
         {
-            print($"[PlayerControls] Disabled Ability Slot [{i}]");
+            //print($"[PlayerControls] Disabled Ability Slot [{i}]");
             ia_abilities[i].Disable();
         }
 
         ia_abilities[0].performed -= ctx =>
         {
-            print($"[PlayerControlls] pressed ability [{0}]");
+            //print($"[PlayerControlls] pressed ability [{0}]");
             abilitySlots[0]?.Invoke(0);
         };
         ia_abilities[1].performed -= ctx =>
         {
-            print($"[PlayerControlls] pressed ability [{1}]");
+            //print($"[PlayerControlls] pressed ability [{1}]");
             abilitySlots[1]?.Invoke(1);
         };
         ia_abilities[2].performed -= ctx =>
         {
-            print($"[PlayerControlls] pressed ability [{2}]");
+            //print($"[PlayerControlls] pressed ability [{2}]");
             abilitySlots[2]?.Invoke(2);
         };
         ia_abilities[3].performed -= ctx =>
         {
-            print($"[PlayerControlls] pressed ability [{3}]");
+            //print($"[PlayerControlls] pressed ability [{3}]");
             abilitySlots[3]?.Invoke(3);
         };
 

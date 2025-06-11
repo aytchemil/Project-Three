@@ -5,23 +5,27 @@ using UnityEngine;
 public class CharacterAnimationController : MonoBehaviour
 {
     public Action<string, float> UseAnimation;
+    public CombatEntityController CEC;
 
     public Weapon weapon;
     private Animator animator;
 
     private void Awake()
     {
+        CEC = GetComponentInParent<CombatEntityController>();
         animator = GetComponent<Animator>();
     }
 
     public void OnEnable()
     {
         UseAnimation += PlayAnimation;
+        CEC.Flinch += Flinch;
     }
 
     public void OnDisable()
     {
         UseAnimation -= PlayAnimation;
+        CEC.Flinch -= Flinch;
     }
 
 
@@ -35,6 +39,7 @@ public class CharacterAnimationController : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
 
+
         float speed = animator.speed = weapon.GetAnimation(animName).speed;
 
         Debug.Log($"[AnimtationController] playing animation: [{animName}], speed: [{speed}]");
@@ -45,5 +50,13 @@ public class CharacterAnimationController : MonoBehaviour
     public void SetBool (string boolname, bool val)
     {
         animator.SetBool(boolname, val);
+    }
+
+
+    public void Flinch(float time)
+    {
+        print($"[AnimatorController] [{CEC.gameObject.name}] FlinchAnim");
+        animator.Play("Idle");
+    //Fix
     }
 }

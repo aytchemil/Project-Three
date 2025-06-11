@@ -6,7 +6,7 @@ using UnityEngine;
 public class Ability : ScriptableObject
 {
     public static float MAX_INITIAL_USE_DELAY = 10;
-    public string abilityName;
+    public string abilityName = "";
 
     public Texture icon;
     

@@ -65,9 +65,10 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
         triggerBeingUsed.StartUsingAbilityTrigger(triggerBeingUsed.myAbility, currentAbility.InitialUseDelay[i]);
     }
 
-
+    //Base Virtual
     public virtual void CheckForTriggerUpdates_ReturnDelay(int i)
     {
+        print("checking trigger for usage");
         if (triggerBeingUsed.used)
         { 
             print("following up... hit");
@@ -97,7 +98,7 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
 
         for (int i = 0; i < triggerProgress.Count; i++)
         {
-            print("starting to move through child triggers");
+            //print("starting to move through child triggers");
             //Applies the trigger on whatever current index its on
 
 
@@ -108,7 +109,7 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
 
 
 
-            print($"FOLLOW UP TRIGGER LOOP {i} : " + triggerBeingUsed.name);
+            //print($"FOLLOW UP TRIGGER LOOP {i} : " + triggerBeingUsed.name);
 
 
             while (triggerProgress[i] == false)
@@ -117,11 +118,12 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
 
                 if (!gameObject.activeSelf) {  print("This trigger has been disabled, breaking out of loop");   yield break;  }
 
-
+               // print("running trigger update check");
                 CheckForTriggerUpdates_ReturnDelay(i);
+                
 
-
-                if (i == triggerProgress.Count - 1) //last
+                //Last Ability in Combo 
+                if (i == triggerProgress.Count - 1) 
                 {
                     //print("LAST");
 

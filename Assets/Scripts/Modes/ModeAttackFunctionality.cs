@@ -46,7 +46,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
     
     void Attack()
     {
-        print("[ModeAttackFunctionality] Attacking");
+        print($"[{gameObject.name}] [ModeAttackFunctionality] Attacking");
 
 
         StartAttacking();

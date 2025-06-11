@@ -55,6 +55,8 @@ public class CombatFunctionality : MonoBehaviour
     }
 
 
+
+
     /// <summary>
     /// Remove the Action Delegates on Disable
     /// </summary>
@@ -351,10 +353,10 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     public virtual void UseAbility(string mode)
     {
-        print($"[Combat Functionality]: Attempting To Use an Ability from mode [{mode}]");
+        print($"[{gameObject.name}] [Combat Functionality]: Attempting To Use an Ability from mode [{mode}]");
         if (Controls.cantUseAbility.Invoke())
         {
-            print($"[Combat Functionality]: [{gameObject.name}] cantUseAbility");
+            print($"[{gameObject.name}] [Combat Functionality]: [{gameObject.name}] cannot use an ability");
             return;
         }
 
@@ -443,8 +445,8 @@ public class CombatFunctionality : MonoBehaviour
 
     public void Flinch(float flinchTime)
     {
-        // print(this.gameObject.name + " has flinched");
-        DisableTriggers(false, Controls.Mode(Controls.mode));
+        print(this.gameObject.name + " has flinched");
+        DisableAllAttackTriggers();
     }
 
     #endregion

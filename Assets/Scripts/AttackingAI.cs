@@ -1,8 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.Intrinsics;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using Random = UnityEngine.Random;
 
 public class AttackingAI : MonoBehaviour
 {
@@ -11,21 +13,40 @@ public class AttackingAI : MonoBehaviour
     CombatFunctionality combatFunctionality;
     EntityLook entityLook;
 
-    public List<EntityAttackPattern> preSelectedAttackPatterns;
+    string[] lookDirs = { "right", "left", "up", "down" };
 
-    public enum AttackingSpeed
-    {
-        Slow = 0,
-        Medium = 1,
-        Fast = 2,
-    }
-    public AttackingSpeed attackingSpeed;
-    public float[] attackingSpeedDelays;
     public bool thinking;
-    public Vector2 thinkingPeriodBetweenAttackPatternsRange;
-    public bool attackingWithPattern;
-    public List<bool> attackPatternProgress;
-    public int currentAttackInAttackPattern = 0;
+
+    [System.Serializable]
+    public struct aiStats
+    {
+        public float thinkDelay;
+        public float resetAttacksThinkTime;
+        public float[] attackingSpeedDelays;
+    }
+    [SerializeField]
+    public aiStats stats;
+
+
+    public class AIInputs
+    {
+        public static Action<CombatEntityController> input_UseCombo = (Controls) =>
+        {
+            print($"[AttackingAI] [{Controls.gameObject.name}] input: Use Combo");
+            Controls.usedCombo = true;
+            Controls.useAbility?.Invoke("Combo");
+        };
+
+        public static Action<CombatEntityController , string> input_changeLookDir = (Controls, s) =>
+        {
+            print($"[AttackingAI] [{Controls.gameObject.name}] input: Change look direction");
+            Controls.lookDir = s;
+        };
+
+        
+    }
+
+
 
     private void Awake()
     {
@@ -40,11 +61,8 @@ public class AttackingAI : MonoBehaviour
         Controls.useAbility += combatFunctionality.UseAbility;
         Controls.lockOn += combatLock.AttemptLock;
 
-        Controls.CompletedAttack += CompleteAttackInPattern;
         Controls.Flinch += Flinch;
-
-        Controls.ExitCombat += ExitCombat;
-
+        Controls.ResetAttack += ResetAiAttacks;
     }
 
     protected void OnDisable()
@@ -52,21 +70,33 @@ public class AttackingAI : MonoBehaviour
         Controls.useAbility -= combatFunctionality.UseAbility;
         Controls.lockOn -= combatLock.AttemptLock;
 
-        Controls.CompletedAttack -= CompleteAttackInPattern;
         Controls.Flinch -= Flinch;
+        Controls.ResetAttack -= ResetAiAttacks;
+    }
 
-        Controls.ExitCombat -= ExitCombat;
+    private void Start()
+    {
+        StartCoroutine(CheckForLockons());
+
+        IEnumerator CheckForLockons()
+        {
+            while (Controls.isAlive)
+            {
+                print($"[{gameObject.name}] [AttackingAI] Checking for lockon...");
+                yield return new WaitForSeconds(1f);
+                if (!Controls.isLockedOn && !combatLock.myColliderDetector.targetDescisionMade)
+                    AttemptLockOn();
+            }
+        }
     }
 
     private void FixedUpdate()
     {
+        //Checks
         if (!Controls.isAlive) return;
 
 
-        if (!Controls.isLockedOn && !combatLock.myColliderDetector.targetDescisionMade)
-            AttemptLockOn();
-
-        //If not in combat,"Look regularly". else "combat look"
+        //Lock on
         if (Controls.isLockedOn)
         {
             if (!Controls.targetIsDodging)
@@ -81,18 +111,15 @@ public class AttackingAI : MonoBehaviour
             //Analyzing
             CombatEntityController target = Controls.GetTarget?.Invoke();
 
-
             //Dashing
             Controls.targetIsDodging = target.dashing;
 
 
 
             //Attacking
-            if (!thinking && !Controls.Mode("Attack").isUsing && !attackingWithPattern && !Controls.isFlinching)
-            {
-                EntityAttackPattern attackPattern = ChoseRandomAttackPattern();
-                StartCoroutine(Attack(attackPattern));
-            }
+            if (!thinking && !Controls.Mode("Attack").isUsing && !Controls.Mode("Combo").isUsing && !Controls.isFlinching)
+                StartCoroutine(InCombatThinkCycle());
+
 
 
 
@@ -106,117 +133,95 @@ public class AttackingAI : MonoBehaviour
         Controls.lockOn?.Invoke();
     }
 
-    EntityAttackPattern ChoseRandomAttackPattern()
+    AbilityCombo RandomCombo(int indx)
     {
-        //print("Chosen a random attack pattern");
-        int randomIndex = UnityEngine.Random.Range(0, preSelectedAttackPatterns.Count);
-        return preSelectedAttackPatterns[randomIndex];
+        for(int i = 0; i < Controls.abilitySetInputs.Count; i++)
+            if (Controls.abilitySetInputs[i].mode == ModeManager.Modes.Combo)
+                return (Controls.abilitySetInputs[i])[indx] as AbilityCombo;
+
+        throw new Exception("No Combo found");
     }
 
-    IEnumerator Attack(EntityAttackPattern attackPattern)
+    IEnumerator InCombatThinkCycle()
     {
-        attackingWithPattern = true;
-        int attackPatternLength = attackPattern.attackDir.Count;
+        //Setup
+        int randIndx = UnityEngine.Random.Range(0, AbilitySet.MAX_ABILITIES);
+        AbilityCombo combo = RandomCombo(randIndx);
 
-       // print("Attacking w/ attack pattern: " + attackPattern);
+        AIInputs.input_changeLookDir(Controls, SetupAIlookDir(randIndx));
+        print("new look dir is " + Controls.lookDir);
 
-        //Creates the new progress list
-        attackPatternProgress = new List<bool>();
-        for (int i = 0; i < attackPatternLength; i++)
-            attackPatternProgress.Add(new bool());
+        AIInputs.input_UseCombo(Controls);
 
-
-
-       // print("Attack pattern length is : " + attackPatternLength + " indexing until : " + (attackPatternLength));
-
-        for(int i = 0; i < attackPatternLength; i++)
+        while (Controls.Mode("Combo").isUsing)
         {
-            //print("NEW ATTACK IN PATTERN========");
-            //Debug.Log("Selected Attack Direction: " + attackPattern.attackDir[i]);
+            TestForResetCycleFlags();
 
-            //Select the attack we are using
-            Controls.abilitySlots[0]?.Invoke(0); ////////////////////////////////////////////////////////////////////////////////
+            print(combo);
 
-           // print("Attacking...");
-            //Actually Start the Attack
-            Controls.useAbility?.Invoke(Controls.mode);
+            yield return new WaitForSeconds(stats.thinkDelay);
 
-            //Debug.Log("waiting for attack to finish now...");
-            while (attackPatternProgress[i] == false && attackingWithPattern)
-            {
-                //Debug.Log("attack in progress");
-                yield return new WaitForEndOfFrame();
-                if (!Controls.isAlive)
-                {
-                    ResetAttacking();
-                    print("Died, stopping attacking");
-                    yield break;
-                }
-    
-            }
-            //print(gameObject.name + "attack has finished: " + i + " | now moving to start next attack in pattern");
-        }
-        //print("Attacking Period over, Thinking....");
-        ResetAttacking();
-        StartThinking();
-    }
+            InCombatChancesToDoMoves(Random.Range(0, 10));
 
-    /// <summary>
-    /// This is where the animations of the attack, after compelting that attack will use this to iterate to the next attack in the pattern 
-    /// </summary>
-    public void CompleteAttackInPattern()
-    {
-        StartCoroutine(CompleteAttackInPatternContinued());
-    }
 
-    IEnumerator CompleteAttackInPatternContinued()
-    {
-        yield return new WaitForSeconds(attackingSpeedDelays[(int)attackingSpeed]);
-
-        int finalIndexInAttackPattern = attackPatternProgress.Count - 1;
-
-        //Debug.Log("Completed attack [" + currentAttackInAttackPattern + "] in pattern of length " + finalIndexInAttackPattern);
-
-        if (finalIndexInAttackPattern == -1) yield break;
-
-        //print("Last attack in attack pattern is : " + attackPatternProgress[lastIndex]);
-        if (attackPatternProgress[finalIndexInAttackPattern] == false)
-        {
-            //print("Completeing: " + currentAttackInAttackPattern);
-            attackPatternProgress[currentAttackInAttackPattern] = true;
-            currentAttackInAttackPattern++;
         }
     }
 
-    void StartThinking()
+    string SetupAIlookDir(int abilitySetIndex)
     {
-        thinking = true;
-        Invoke(nameof(AttackThinkingPeriodEnd), UnityEngine.Random.Range(thinkingPeriodBetweenAttackPatternsRange.x, thinkingPeriodBetweenAttackPatternsRange.y));
+        return AbilitySet.GetLookDir(abilitySetIndex);
     }
 
-    public void AttackThinkingPeriodEnd()
+    string ChooseRandomString(string string1, string string2, string string3, string string4)
     {
-       // print("attack period ended");
-        thinking = false;
+        string[] strings = { string1, string2, string3, string4 };
+        return strings[Random.Range(0, strings.Length)];
     }
 
-    void ResetAttacking()
+    void InCombatChancesToDoMoves(int num)
     {
-        attackPatternProgress.Clear();
-        attackingWithPattern = false;
-        currentAttackInAttackPattern = 0;
-        StopAllCoroutines();
+        //print($"[AttackingAI] chance to do moves: {num}");
+
+        if (num <= 8)
+            if (!Controls.Mode("Combo").isUsing)
+                AIInputs.input_changeLookDir(Controls, lookDirs[Random.Range(0, 10) % 4]);
+
+        if (num <= 9)
+            AIInputs.input_UseCombo(Controls);
+
     }
+
+
+    void TestForResetCycleFlags()
+    {
+        if (thinking)
+            Controls.Mode("Combo").isUsing = false;
+
+    }
+
 
     void Flinch(float flinchTime)
     {
-        ResetAttacking();
-        StartThinking();
+        Controls.SetAllModesNotUsing();
+        Controls.ResetAttack?.Invoke();
     }
 
-    void ExitCombat()
+    /// <summary>
+    /// Reset the attacks with a delay amount, if no delay put 0
+    /// </summary>
+    /// <param name="amount"></param>
+    void ResetAiAttacks()
     {
-        ResetAttacking();
-        StartThinking();
+        StartCoroutine(DoReset(stats.resetAttacksThinkTime));
+
+        IEnumerator DoReset(float amount)
+        {
+            thinking = true;
+            print($"[AttackingAI] [{gameObject.name}] is thinking at a delay of [{amount}]...");
+            yield return new WaitForSeconds(amount);
+            thinking = false;
+        }
     }
+
+    
 }

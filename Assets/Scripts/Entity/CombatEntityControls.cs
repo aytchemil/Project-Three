@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using UnityEditor.ShaderGraph;
 
 /// <summary>
 /// Centralized Controller and controls for every combat entity.
@@ -49,6 +50,11 @@ public class CombatEntityController : MonoBehaviour
     public Action<float> Flinch;
     public Func<string> getMoveDirection;
 
+    void ResetmyAttack()
+    {
+        print("resetting attack");
+    }
+
     [System.Serializable]
     public class CombatEntityModeData
     {
@@ -93,7 +99,6 @@ public class CombatEntityController : MonoBehaviour
 
     [Header("Ability Choice")]
     public ModeRuntimeData comboMode;
-    public string c_current;
     public Action<int>[] abilitySlots = new Action<int>[AMOUNT_OF_ABIL_SLOTS];
 
     [Header("Weapon System")]
@@ -130,6 +135,7 @@ public class CombatEntityController : MonoBehaviour
         //print($"{gameObject.name} onEnable()");
         cantUseAbility = () => (!isLockedOn || Mode("Attack").isUsing || isBlocking || isFlinching || Mode("Counter").isUsing);
         CreateMyOwnModeInstances();
+        ResetAttack += ResetmyAttack;
     }
 
     protected virtual void OnEnable()
@@ -144,6 +150,7 @@ public class CombatEntityController : MonoBehaviour
             }
         };
 
+        Flinch += BaseFlinch;
         UpdateAnimationManagersWeapon();
 
     }
@@ -162,6 +169,7 @@ public class CombatEntityController : MonoBehaviour
         GetTarget = null;
         cantUseAbility = null;
         ComboWheelSelectCombo = null;
+        Flinch -= BaseFlinch;
     }
 
     void CreateMyOwnModeInstances()
@@ -265,6 +273,12 @@ public class CombatEntityController : MonoBehaviour
         return Mode(mode);
     }
 
+    public void SetAllModesNotUsing()
+    {
+        foreach (CombatEntityModeData m in modes)
+            m.isUsing = false;
+    }
+
     public AbilitySet AbilitySet(string modeName)
     {
         AbilitySet retAbilitySet = null;
@@ -287,11 +301,12 @@ public class CombatEntityController : MonoBehaviour
 
     public void ReAttackCheck(string dir)
     {
-        print("Reattack check");
         if (waitingToReattack)
             didReattack = true;
         else
             didReattack = false;
+
+        print($"Reattack check: didReattack = {didReattack}");
     }
 
     IEnumerator DelayReAttackCheck()
@@ -308,5 +323,16 @@ public class CombatEntityController : MonoBehaviour
         if(animController != null)
             animController.weapon = currentWeapon;
     }
+
+    void BaseFlinch(float flinchTime)
+    {
+        SetAllModesNotUsing();
+        ResetAttack?.Invoke();
+        waitingToReattack = false;
+        didReattack = false;
+        reattackChecking = false;
+        dashing = false;
+    }
+
 
 }

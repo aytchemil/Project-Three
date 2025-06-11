@@ -319,7 +319,7 @@ public class CombatUI : MonoBehaviour
 
     void SwitchAttackMode()
     {
-        print("Updating mode UIS");
+        //print("Updating mode UIS");
         SetWheelIcons();
         SetModeInfo();
         SetAbilityImgs();
@@ -343,7 +343,7 @@ public class CombatUI : MonoBehaviour
 
     void SetAbilityImgs()
     {
-        print("Current mode:" + Controls.mode);
+        //print("Current mode:" + Controls.mode);
         abilityImgs[0].texture = Controls.Mode(Controls.mode).data.abilitySet.right.icon;
         abilityImgs[1].texture = Controls.Mode(Controls.mode).data.abilitySet.left.icon;
         abilityImgs[2].texture = Controls.Mode(Controls.mode).data.abilitySet.up.icon;
@@ -352,7 +352,7 @@ public class CombatUI : MonoBehaviour
 
     void AbilityChoose(int choice)
     {
-        print($"[CombatUI] Chosen ability is [{choice}]");
+        //print($"[CombatUI] Chosen ability is [{choice}]");
         lastComboChoice = choice;
 
         Color less = new Color(1, 1, 1, 0.2f);

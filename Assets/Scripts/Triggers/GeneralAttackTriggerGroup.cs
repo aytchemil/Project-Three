@@ -19,7 +19,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
         set => hitAttack = value;
     }
 
-    public virtual bool missedAttack { get; set; }
+    [SerializeField] public virtual bool missedAttack { get; set; }
 
     public override bool unused 
     { 
@@ -196,6 +196,11 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
         //print(gameObject.name + " I am getting countered");
         countered = true;
         combatFunctionality.GetCountered(effectPos);
+    }
+
+    protected override void DisableThisTriggerOnDelayImplementation()
+    {
+        throw new System.NotImplementedException();
     }
 
     #endregion

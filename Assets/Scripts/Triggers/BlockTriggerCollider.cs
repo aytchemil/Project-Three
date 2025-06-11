@@ -128,4 +128,8 @@ public class BlockTriggerCollider : ModeTriggerGroup
         DisableThisTriggerOnlyLocally();
     }
 
+    protected override void DisableThisTriggerOnDelayImplementation()
+    {
+        throw new System.NotImplementedException();
+    }
 }

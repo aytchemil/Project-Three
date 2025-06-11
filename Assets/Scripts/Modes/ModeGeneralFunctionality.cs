@@ -25,6 +25,11 @@ public class ModeGeneralFunctionality : MonoBehaviour
     /// <param name="animCont"></param>
     public void AnimateAblity(string animationName, float delay, CharacterAnimationController animCont)
     {
+        if(animCont == null)
+        {
+            Debug.LogWarning($"[{gameObject.name}] [ModeGeneralFunc] no animController found on this CombatEntity");
+            return;
+        }
         Debug.Log($"[{gameObject.name}] [{this.GetType()}] is using Ability [{animationName}] )");
         animCont.UseAnimation?.Invoke(animationName, delay);
     }

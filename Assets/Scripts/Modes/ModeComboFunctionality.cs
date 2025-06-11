@@ -41,10 +41,12 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
         //Setup
         AbilityCombo ability = (AbilityCombo)cf.Controls.Mode("Combo").ability;
 
-        for (int i = 0; i < cf.Controls.Mode("Combo").triggers.Length; i++)   //All triggers become falsee
+        //Set all Triggers to False
+        for (int i = 0; i < cf.Controls.Mode("Combo").triggers.Length; i++) 
             cf.Controls.Mode("Combo").triggers[i].gameObject.SetActive(false);
 
-        cf.Controls.Mode("Combo").SetAbility(ability); //Parse and edit the mode becuase it prints like "Mode: mode" for some reason
+
+        cf.Controls.Mode("Combo").SetAbility(ability); 
         (cf.Controls.Mode("Attack").data.modeFunctionality as ModeAttackFunctionality).StartAttacking(); //Flag: attacking true (in cf)
 
 
@@ -54,6 +56,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
         AbilityWrapper usingAbility = new((ability as AbilityCombo).abilities, ability);
         print($"[Combo Functionality] the abilities for this combo are:{usingAbility.Values[0]} {usingAbility.Values[1]} {usingAbility.Values[2]} for trigger: [{usingTrigger.gameObject.name}]");
 
+        print("combo setup complete");
         switch (ability.comboType)
         {
             case AbilityCombo.ComboType.Linear:
@@ -66,7 +69,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
                 StartCoroutine(AnimateFollowUpAbilities(usingAbility, usingTrigger, cf.Controls.Mode("Attack"), cf.Controls.animController));
 
                 //Actuall Attack
-                UseCurrentCombo(cf.Controls.c_current).GetComponent<CombotTriggerGroup>().StartUsingAbilityTrigger(ability, ability.InitialUseDelay[0]);
+                UseCurrentCombo(cf.Controls.lookDir).GetComponent<CombotTriggerGroup>().StartUsingAbilityTrigger(ability, ability.InitialUseDelay[0]);
 
 
                 //Special Functionality
@@ -78,9 +81,10 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
 
     public ModeTriggerGroup ComboTriggerEnableUse()
     {
+        print("Using Combo Trigger... Enabling it");
         ModeTriggerGroup usingThisTriggerGroup = null;
         CombatEntityModeData m = cf.Controls.Mode("Combo");
-        int triggerIndx = GetComboTriggerIndex(cf.Controls.c_current);
+        int triggerIndx = GetComboTriggerIndex(cf.Controls.lookDir);
 
         for (int i = 0; i < m.triggers.Length - 1; i++)
             m.triggers[i].gameObject.SetActive(false);
@@ -103,7 +107,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
         }
         if (dir == null)
         {
-            throw new ArgumentOutOfRangeException($"{dir} is null");
+            throw new Exception($"direction: [ {dir} ] is null");
         }
 
         //Set all triggers to false
@@ -130,7 +134,6 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
         }
 
         cf.Controls.Mode("Combo").ability = ChooseCurrentCombo(combo);
-        cf.Controls.c_current = combo;
     }
 
     IEnumerator WaitForComboingToFinishToSwitchToAnother(string combo)
@@ -140,7 +143,6 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
             yield return new WaitForEndOfFrame();
         }
         cf.Controls.Mode("Combo").ability = ChooseCurrentCombo(combo);
-        cf.Controls.c_current = combo;
         waiting = false;
     }
 
@@ -165,6 +167,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
 
     int GetComboTriggerIndex(string combo)
     {
+        print($"Getting Combo trigger from lookDir(ection) : [{combo}]");
         if (combo == "right")
             return 0;
 
@@ -177,7 +180,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
         else if (combo == "down")
             return 3;
 
-        throw new Exception($"[ModeComboFunc] trigger index not found for [{combo}]");
+        throw new Exception($"[ModeComboFunctionality] +GetComboTriggerIndex: trigger index not found for [{combo}]");
     }
 
     IEnumerator WaitForComboToFinish(ModeTriggerGroup usingTrigger)
@@ -187,11 +190,11 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
 
         while (cf.Controls.Mode("Combo").isUsing == true)
         {
-            print("waiting for combo to finish");
+            print($"[ComboFunctionality] [{gameObject.name}] waiting for combo to finish");
             yield return new WaitForEndOfFrame();
-            if (trigger.triggerProgress[trigger.triggerProgress.Count - 1] == true)
+            if (trigger.triggerProgress[trigger.triggerProgress.Count - 1] == true || cf.Controls.Mode("Attack").isUsing == false)
             {
-                print("combo finished");
+                print("[ComboFunctionality] combo finished");
                 cf.Controls.Mode("Combo").isUsing = false;
             }
         }

@@ -15,22 +15,22 @@ MonoBehaviour:
   abilityName: Quick Cuts
   icon: {fileID: 2800000, guid: 34c6e15aaabbf1f4bb20738036898e76, type: 3}
   initialUseDelay:
-  - 0.3
+  - 0.29
   - 0.3
   - 0.3
   <successDelay>k__BackingField: 0
   unsuccessDelay:
   - 0.3
   - 0.3
-  - 1
+  - 0.3
   movementAmount: 0
   archetype: 0
   trait: 0
   animation_name: 
   successDelay:
-  - 0.25
-  - 0.25
-  - 0.75
+  - 0.3
+  - 0.3
+  - 0.3
   MultiAbilityGroupingPrefab: {fileID: 1766159213802189594, guid: c3a13b68d2130dc408722a0ba5a0094d, type: 3}
   abilities:
   - {fileID: 11400000, guid: 896542e6db2ab0948a9c127016922ed4, type: 2}

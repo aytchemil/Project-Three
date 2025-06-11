@@ -1,5 +1,4 @@
 using System;
-using UnityEditor.ShaderGraph;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "Ability Set", menuName = "ScriptableObjects/Ability Set")]

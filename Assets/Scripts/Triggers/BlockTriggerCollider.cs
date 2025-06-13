@@ -111,6 +111,11 @@ public class BlockTriggerCollider : ModeTriggerGroup
         }
     }
 
+    void BlockAttack()
+    {
+        combatFunctionality.Controls.Mode("Counter");
+    }
+
     void CounterAttack()
     {
         blocking = true;

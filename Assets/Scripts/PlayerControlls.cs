@@ -14,7 +14,6 @@ public class PlayerController : CombatEntityController
     public InputAction ia_sprint;
     public InputAction ia_lockOn;
     public InputAction ia_dash;
-    public InputAction ia_useAbility;
     public InputAction ia_useCombo;
     public InputAction ia_block;
     public InputAction ia_switchAttackMode;
@@ -32,7 +31,6 @@ public class PlayerController : CombatEntityController
         ia_sprint = controls.Player.Sprint;
         ia_lockOn = controls.Player.LockOn;
         ia_dash = controls.Player.Dash;
-        ia_useAbility = controls.Player.UseAbility;
         ia_useCombo = controls.Player.UseCombo;
         ia_block = controls.Player.Block;
         ia_switchAttackMode = controls.Player.SwitchMode;
@@ -66,12 +64,6 @@ public class PlayerController : CombatEntityController
         ia_dash.Enable();
         ia_dash.performed += ctx => dash?.Invoke();
 
-        ia_useAbility.Enable();
-        ia_useAbility.performed += ctx =>
-        {
-            useAbility?.Invoke(mode);
-        };
-
         ia_useCombo.Enable();
         ia_useCombo.performed += ctx =>
         {
@@ -80,8 +72,15 @@ public class PlayerController : CombatEntityController
         };
 
         ia_block.Enable();
-        ia_block.started += ctx => blockStart?.Invoke();
-        ia_block.canceled += ctx => blockStop?.Invoke();
+        ia_block.started += ctx =>
+        {
+            blockStart?.Invoke();
+            useAbility?.Invoke("Block");
+        };
+        ia_block.canceled += ctx =>
+        {
+            blockStop?.Invoke();
+        };
 
         ia_switchAttackMode.Enable();
         ia_switchAttackMode.performed += ctx =>
@@ -140,15 +139,18 @@ public class PlayerController : CombatEntityController
         ia_dash.Disable();
         ia_dash.performed -= ctx => dash?.Invoke();
 
-        ia_useAbility.Disable();
-        ia_useAbility.performed -= ctx => useAbility?.Invoke(mode);
-
         ia_useCombo.Disable();
         ia_useCombo.performed -= ctx => useAbility?.Invoke("Combo");
 
-        ia_block.Disable();
-        ia_block.performed -= ctx => blockStart?.Invoke();
-        ia_block.canceled -= ctx => blockStop?.Invoke();
+        ia_block.started -= ctx =>
+        {
+            blockStart?.Invoke();
+            useAbility?.Invoke("Block");
+        };
+        ia_block.canceled -= ctx =>
+        {
+            blockStop?.Invoke();
+        };
 
         ia_switchAttackMode.Disable();
         ia_switchAttackMode.performed -= ctx => switchAbilityMode?.Invoke();

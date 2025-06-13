@@ -23,8 +23,6 @@ public class CombatEntityController : MonoBehaviour
     public Action dash;
     public Action<string> useAbility;
     public bool usedCombo;
-    public Action blockStart;
-    public Action blockStop;
     public Action switchAbilityMode;
     public string mode = "Attack";
     public string lookDir;
@@ -40,8 +38,10 @@ public class CombatEntityController : MonoBehaviour
     public Action EnterCombat;
     public Action ExitCombat;
     public Action<CombatEntityController> CombatFollowTarget;
-    public Action<string> ComboWheelSelectCombo;
+    public Action<string> CombatWheelSelectDirection;
     public Action<CombatEntityController> TargetDeath;
+    public Action blockStart;
+    public Action blockStop;
     public Action ResetAttack;
     public Action MissedAttack;
     public Action CompletedAttack;
@@ -115,7 +115,6 @@ public class CombatEntityController : MonoBehaviour
     public bool currentlyRetargetting;
     public bool isAlive = true;
     public bool isFlinching = false;
-    public bool isBlocking;
 
 
     [Header("Combat Flags")]
@@ -132,14 +131,14 @@ public class CombatEntityController : MonoBehaviour
     protected virtual void Start()
     {
         //print($"{gameObject.name} onEnable()");
-        cantUseAbility = () => (!isLockedOn || Mode("Attack").isUsing || isBlocking || isFlinching || Mode("Counter").isUsing);
+        cantUseAbility = () => (!isLockedOn || Mode("Attack").isUsing || Mode("Block").isUsing || isFlinching || Mode("Counter").isUsing);
         CreateMyOwnModeInstances();
         ResetAttack += ResetmyAttack;
     }
 
     protected virtual void OnEnable()
     {
-        cantUseAbility = () => (!isLockedOn || Mode("Attack").isUsing || isBlocking || isFlinching || Mode("Counter").isUsing);
+        cantUseAbility = () => (!isLockedOn || Mode("Attack").isUsing || Mode("Block").isUsing || isFlinching || Mode("Counter").isUsing);
         useAbility += (input) => 
         {
             if (usedCombo)
@@ -167,7 +166,7 @@ public class CombatEntityController : MonoBehaviour
         blockStop = null;
         GetTarget = null;
         cantUseAbility = null;
-        ComboWheelSelectCombo = null;
+        CombatWheelSelectDirection = null;
         Flinch -= BaseFlinch;
     }
 
@@ -196,7 +195,7 @@ public class CombatEntityController : MonoBehaviour
             template.modeName = info.modeName;
             template.UIIndicator = info.UIIndicator;
             template.modeTextDesc = info.modeTextDesc;
-            template.isAbility = info.isAbility;
+            template.isStance = info.isStance;
 
             //Create new ModeData, insert template data into new mode
             CombatEntityModeData newMode = new CombatEntityModeData(template.modeName);
@@ -331,7 +330,6 @@ public class CombatEntityController : MonoBehaviour
         didReattack = false;
         reattackChecking = false;
         dashing = false;
-    }
-
+    } 
 
 }

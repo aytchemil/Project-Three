@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Block Set 1
   m_EditorClassIdentifier: 
   mode: 2
-  right: {fileID: 11400000, guid: fe9ba579a1204a5418a1df6fef16a24c, type: 2}
-  left: {fileID: 11400000, guid: fe9ba579a1204a5418a1df6fef16a24c, type: 2}
+  right: {fileID: 11400000, guid: 2ef96bbe48d106f449d149b3a1963966, type: 2}
+  left: {fileID: 11400000, guid: bdb40fea628bb5e45b65331b62245cbd, type: 2}
   up: {fileID: 11400000, guid: fe9ba579a1204a5418a1df6fef16a24c, type: 2}
-  down: {fileID: 11400000, guid: fe9ba579a1204a5418a1df6fef16a24c, type: 2}
+  down: {fileID: 11400000, guid: 55dc3cc3af7d7914c964f76fd85d7fb3, type: 2}

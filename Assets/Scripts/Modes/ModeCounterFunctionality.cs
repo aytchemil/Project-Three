@@ -1,10 +1,10 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
 public class ModeCounterFunctionality : ModeGeneralFunctionality
 {
     private CombatFunctionality cf;
-
 
     public override string MODE_NAME { get => "Counter"; }
 
@@ -16,10 +16,25 @@ public class ModeCounterFunctionality : ModeGeneralFunctionality
         cf = gameObject.GetComponent<CombatFunctionality>();
     }
 
+    private void OnEnable()
+    {
+       // cf.Controls.blockStart += BlockStart;
+       // cf.Controls.blockStop += BlockStop;
+    }
+    private void OnDisable()
+    {
+       // cf.Controls.blockStart -= BlockStart;
+       // cf.Controls.blockStop -= BlockStop;
+    }
+
     /// <summary>
     /// Override passage to mode functionality
     /// </summary>
-    public override void UseModeFunctionality() => Counter();
+    public override void UseModeFunctionality()
+    {
+        Counter();
+    }
+
     void Counter()
     {
         print("countering");
@@ -30,7 +45,7 @@ public class ModeCounterFunctionality : ModeGeneralFunctionality
         cf.Controls.Mode("Counter").SetAbility(ability);
 
         //Trigger
-        ModeTriggerGroup usingTrigger = cf.AbilityTriggerEnableUse();
+        ModeTriggerGroup usingTrigger = cf.AbilityTriggerEnableUse("Counter");
         //Ability
         AbilityWrapper usingAbility = new((ability as AbilityCounter).abilities, ability);
 

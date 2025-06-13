@@ -9,9 +9,9 @@ public class AbilityWrapper
     public List<Ability> Values;
     public List<bool> completedAnimation;
 
-    public AbilityWrapper()
+    public AbilityWrapper(Ability parent)
     {
-        parentAbility = new Ability();
+        parentAbility = parent;
         Values = new List<Ability>();
         completedAnimation = new List<bool>();
     }
@@ -19,10 +19,10 @@ public class AbilityWrapper
     public AbilityWrapper(Ability[] values, Ability parent)
     {
         parentAbility = parent;
-        Values = new List<Ability>();
         completedAnimation = new List<bool>();
 
-        for(int i = 0; i < values.Length; i++)
+        Values = new List<Ability>();
+        for (int i = 0; i < values.Length; i++)
         {
             Values.Add(values[i]);
             completedAnimation.Add(false);
@@ -63,9 +63,9 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
         cf.Controls.Mode("Attack").SetAbility(ability);
 
         //Trigger----------------------------------------------------
-        ModeTriggerGroup usingTrigger = cf.AbilityTriggerEnableUse();
+        ModeTriggerGroup usingTrigger = cf.AbilityTriggerEnableUse("Attack");
         //Ability
-        AbilityWrapper usingAbility = new AbilityWrapper();
+        AbilityWrapper usingAbility = new AbilityWrapper(ability);
 
         switch (ability.archetype)
         {

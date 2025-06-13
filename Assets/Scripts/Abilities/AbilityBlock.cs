@@ -14,6 +14,12 @@ public class AbilityBlock : Ability
     }
     public Collision collision;
 
+    public enum Type
+    {
+        Regular = 0
+    }
+    public Type type;
+
     public GameObject blockTriggerCollider;
     public override GameObject prefab
     {
@@ -23,4 +29,5 @@ public class AbilityBlock : Ability
     public float blockUpTime;
     public float damagePercentageBlocked;
     public float slowdownMovementPercentage;
+    public string animationUnblock;
 }

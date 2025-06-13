@@ -16,6 +16,7 @@ MonoBehaviour:
   prefab: {fileID: 3540297643039045933, guid: 44bbc75683f02b44e8cf22311f58d258, type: 3}
   allAbilitySets:
   - {fileID: 11400000, guid: dc83521a70f03e34882fc8a47d491497, type: 2}
+  - {fileID: 0}
   animations:
   - animationName: Idle
     speed: 1
@@ -62,3 +63,15 @@ MonoBehaviour:
   - animationName: Attack_Up_Left
     speed: 1
     clip: {fileID: 7400000, guid: a5257ab9d37b38a4da6e49b4f1f88166, type: 2}
+  - animationName: Block_Right_Stop
+    speed: 1
+    clip: {fileID: 7400000, guid: 833f2bb71c44bdd46b54b453310d971a, type: 2}
+  - animationName: Block_Left_Stop
+    speed: 1
+    clip: {fileID: 7400000, guid: 35d747cad5a558d4fb23c73e3bfb179f, type: 2}
+  - animationName: Block_Top_Stop
+    speed: 1
+    clip: {fileID: 7400000, guid: fa6aef1b403e9ae4bb41f5c8e44a2b8f, type: 2}
+  - animationName: Block_Down_Stop
+    speed: 1
+    clip: {fileID: 7400000, guid: 40186502a98a3134b9e11cb6a2d9e9a6, type: 2}

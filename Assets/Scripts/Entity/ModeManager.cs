@@ -10,8 +10,10 @@ public class ModeManager : MonoBehaviour
     { 
         Attack = 0,
         Counter = 1,
-        Blocking = 2,
-        Combo = 3
+        Block = 2,
+        Combo = 3,
+        Evade = 4,
+        Defend = 5,
     }
 
     public ModeFunctionalityReferenceSO[] ModeFunctionalities;

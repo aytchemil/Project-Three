@@ -17,12 +17,12 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
 
     private void OnEnable()
     {
-        cf.Controls.ComboWheelSelectCombo += SwitchToCombo;
+        cf.Controls.CombatWheelSelectDirection += SwitchToCombo;
     }
 
     private void OnDisable()
     {
-        cf.Controls.ComboWheelSelectCombo -= SwitchToCombo;
+        cf.Controls.CombatWheelSelectDirection -= SwitchToCombo;
     }
 
     public override void UseModeFunctionality() => Combo();
@@ -50,7 +50,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
 
 
         //Trigger
-        ModeTriggerGroup usingTrigger = ComboTriggerEnableUse();
+        ModeTriggerGroup usingTrigger = cf.WheelTriggerEnableUse("Combo");
         //Ability
         AbilityWrapper usingAbility = new((ability as AbilityCombo).abilities, ability);
         print($"[Combo Functionality] the abilities for this combo are:{usingAbility.Values[0]} {usingAbility.Values[1]} {usingAbility.Values[2]} for trigger: [{usingTrigger.gameObject.name}]");
@@ -78,26 +78,11 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
         }
     }
 
-    public ModeTriggerGroup ComboTriggerEnableUse()
-    {
-        print("Using Combo Trigger... Enabling it");
-        ModeTriggerGroup usingThisTriggerGroup = null;
-        CombatEntityModeData m = cf.Controls.Mode("Combo");
-        int triggerIndx = GetComboTriggerIndex(cf.Controls.lookDir);
-
-        for (int i = 0; i < m.triggers.Length - 1; i++)
-            m.triggers[i].gameObject.SetActive(false);
-
-        m.triggers[triggerIndx].gameObject.SetActive(true);
-        usingThisTriggerGroup = m.triggers[triggerIndx].gameObject.GetComponent<ModeTriggerGroup>();
-
-        return usingThisTriggerGroup;
-    }
 
     CombotTriggerGroup UseCurrentCombo(string dir)
     {
         CombatEntityModeData mode = cf.Controls.Mode("Combo");
-        int trigerIndx = GetComboTriggerIndex(dir);
+        int trigerIndx = cf.GetDirIndex(dir);
 
         //Checks
         if (mode == null || mode.triggers == null)
@@ -119,67 +104,30 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
 
     }
 
-    void SwitchToCombo(string combo)
+    void SwitchToCombo(string dir)
     {
         //print("switching to combo: " + combo);
 
         if (cf.Controls.Mode("Attack").isUsing)
         {
             if (waiting == true)
-                StopCoroutine(WaitForComboingToFinishToSwitchToAnother(combo));
+                StopCoroutine(WaitForComboingToFinishToSwitchToAnother(dir));
 
             waiting = true;
-            StartCoroutine(WaitForComboingToFinishToSwitchToAnother(combo));
+            StartCoroutine(WaitForComboingToFinishToSwitchToAnother(dir));
         }
 
-        cf.Controls.Mode("Combo").ability = ChooseCurrentCombo(combo);
+        cf.Controls.Mode("Combo").ability = cf.ChooseCurrentWheelAbility(dir, "Combo");
     }
 
-    IEnumerator WaitForComboingToFinishToSwitchToAnother(string combo)
+    IEnumerator WaitForComboingToFinishToSwitchToAnother(string dir)
     {
         while (cf.Controls.Mode("Attack").isUsing)
         {
             yield return new WaitForEndOfFrame();
         }
-        cf.Controls.Mode("Combo").ability = ChooseCurrentCombo(combo);
+        cf.Controls.Mode("Combo").ability = cf.ChooseCurrentWheelAbility(dir, "Combo");
         waiting = false;
-    }
-
-    Ability ChooseCurrentCombo(string combo)
-    {
-        Ability ret = null;
-
-        if (combo == "right")
-            ret = cf.Controls.Mode("Combo").data.abilitySet.right;
-
-        else if (combo == "left")
-            ret = cf.Controls.Mode("Combo").data.abilitySet.left;
-
-        else if (combo == "up")
-            ret = cf.Controls.Mode("Combo").data.abilitySet.up;
-
-        else if (combo == "down")
-            ret = cf.Controls.Mode("Combo").data.abilitySet.down;
-
-        return ret;
-    }
-
-    int GetComboTriggerIndex(string combo)
-    {
-        print($"Getting Combo trigger from lookDir(ection) : [{combo}]");
-        if (combo == "right")
-            return 0;
-
-        else if (combo == "left")
-            return 1;
-
-        else if (combo == "up")
-            return 2;
-
-        else if (combo == "down")
-            return 3;
-
-        throw new Exception($"[ModeComboFunctionality] +GetComboTriggerIndex: trigger index not found for [{combo}]");
     }
 
     IEnumerator WaitForComboToFinish(ModeTriggerGroup usingTrigger)

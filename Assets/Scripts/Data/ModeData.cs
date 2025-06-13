@@ -8,8 +8,8 @@ public class ModeTemplate : ScriptableObject
     public string modeName;
     public AbilitySet abilitySet;
     public ModeGeneralFunctionality modeFunctionality;
-    public bool isAbility;
-    [ShowIf("isAbility")]
+    public bool isStance;
+    [ShowIf("isStance")]
     public bool abilityIndividualSelection;
     public bool initializedTriggers;
     public Texture UIIndicator;

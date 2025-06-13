@@ -189,7 +189,7 @@ public class CombatUI : MonoBehaviour
         UpdateCombatUIVisuals(Controls.lookDir);
 
         //Pushes the direction to the functionality (and any other listeners)
-        Controls.ComboWheelSelectCombo?.Invoke(Controls.lookDir);
+        Controls.CombatWheelSelectDirection?.Invoke(Controls.lookDir);
 
         SetWheelInfo();
     }

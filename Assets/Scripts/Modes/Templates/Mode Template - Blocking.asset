@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   modeName: Block
   abilitySet: {fileID: 0}
-  currentAbility: {fileID: 0}
+  modeFunctionality: {fileID: 0}
+  isStance: 0
+  abilityIndividualSelection: 0
   initializedTriggers: 0
-  cachedTriggers: 0
   UIIndicator: {fileID: 2800000, guid: 55bd9092dc7bf064f96d029e1dff0db2, type: 3}
   modeTextDesc: Blocking

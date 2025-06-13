@@ -100,8 +100,7 @@ public class CombatFunctionality : MonoBehaviour
         //print("combatFunctionality: in combat");
 
         //Auto Set the current ability (in this case right is 0)
-        Controls.Mode("Attack").ability = Controls.AbilitySet("Attack").right; 
-        Controls.Mode("Combo").ability = Controls.AbilitySet("Combo").right;
+        SetDefaultAbilityForAllModes();
 
 
         foreach (CombatEntityModeData mode in Controls.modes)
@@ -112,8 +111,6 @@ public class CombatFunctionality : MonoBehaviour
                 mode.data.initializedTriggers = true;
                 DisableTriggers(true, mode);
             }
-
-
 
 
 
@@ -284,8 +281,8 @@ public class CombatFunctionality : MonoBehaviour
         else if (ability is AbilityCounter counterAbility)
             trigger = Instantiate(counterAbility.prefab, parent, false).GetComponent<CounterTriggerGroup>();
 
-        //else if (ability is BlockAbility blockAbility)
-        //    trigger = Instantiate(blockAbility.prefab, parent, false).GetComponent<BlockTriggerGroup>();
+        else if (ability is AbilityBlock blockAbility)
+            trigger = Instantiate(blockAbility.prefab, parent, false).GetComponent<BlockTriggerCollider>();
 
         else if (ability is AbilityCombo comboAbility)
             trigger = Instantiate(comboAbility.prefab, parent, false).GetComponent<CombotTriggerGroup>();
@@ -347,6 +344,13 @@ public class CombatFunctionality : MonoBehaviour
     }
 
 
+    void SetDefaultAbilityForAllModes()
+    {
+        foreach (CombatEntityModeData mode in Controls.modes)
+            mode.ability = Controls.AbilitySet(mode.name).right;
+
+    }
+
 
     /// <summary>
     /// Uses the currently selected ability
@@ -384,10 +388,10 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     /// 
 
-    public ModeTriggerGroup AbilityTriggerEnableUse()
+    public ModeTriggerGroup AbilityTriggerEnableUse(string modeName)
     {
         ModeTriggerGroup usingThisTriggerGroup = null;
-        CombatEntityModeData mode = Controls.CurMode();
+        CombatEntityModeData mode = Controls.Mode(modeName);
 
         //Set all triggers of this mode to false
         for (int i = 0; i < mode.triggers.Length; i++)
@@ -404,6 +408,56 @@ public class CombatFunctionality : MonoBehaviour
 
         return usingThisTriggerGroup;
     }
+
+    public ModeTriggerGroup WheelTriggerEnableUse(string modeName)
+    {
+        print("Using Wheel Trigger... Enabling it");
+        ModeTriggerGroup usingThisTriggerGroup = null;
+        CombatEntityModeData m = Controls.Mode(modeName);
+        int triggerIndx = GetDirIndex(Controls.lookDir);
+
+        for (int i = 0; i < m.triggers.Length - 1; i++)
+            m.triggers[i].gameObject.SetActive(false);
+
+        m.triggers[triggerIndx].gameObject.SetActive(true);
+        usingThisTriggerGroup = m.triggers[triggerIndx].gameObject.GetComponent<ModeTriggerGroup>();
+
+        return usingThisTriggerGroup;
+    }
+
+    public Ability ChooseCurrentWheelAbility(string dir, string mode)
+    {
+        Ability ret = null;
+
+        if (dir == "right")
+            ret = Controls.Mode(mode).data.abilitySet.right;
+
+        else if (dir == "left")
+            ret = Controls.Mode(mode).data.abilitySet.left;
+
+        else if (dir == "up")
+            ret = Controls.Mode(mode).data.abilitySet.up;
+
+        else if (dir == "down")
+            ret = Controls.Mode(mode).data.abilitySet.down;
+
+        return ret;
+    }
+
+    public int GetDirIndex(string dir)
+    {
+        print($"Getting Combo trigger from lookDir(ection) : [{dir}]");
+        if (dir == "right")
+            return 0;
+        else if (dir == "left")
+            return 1;
+        else if (dir == "up")
+            return 2;
+        else if (dir == "down")
+            return 3;
+        throw new Exception($"[ModeComboFunctionality] +GetComboTriggerIndex: trigger index not found for [{dir}]");
+    }
+
 
 
 
@@ -484,7 +538,7 @@ public class CombatFunctionality : MonoBehaviour
         else
             currIndex++;
 
-        while (!Controls.modes[currIndex].data.isAbility)
+        while (!Controls.modes[currIndex].data.isStance)
         {
             print("SOLO MODE DETECTED");
             if (currIndex >= Controls.modes.Count - 1)

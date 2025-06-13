@@ -15,7 +15,7 @@ MonoBehaviour:
   abilityName: Right Block
   icon: {fileID: 2800000, guid: e01eb23e4cf473248808ee651e4c7710, type: 3}
   initialUseDelay:
-  - 0.1
+  - 0
   <successDelay>k__BackingField: 0
   unsuccessDelay:
   - 0.3
@@ -24,7 +24,9 @@ MonoBehaviour:
   trait: 0
   animation_name: Block_Right
   collision: 2
+  type: 0
   blockTriggerCollider: {fileID: 8077712426285546040, guid: 7e64f5472db4c0f419a984d786c947d9, type: 3}
-  blockUpTime: 0.8
+  blockUpTime: 1
   damagePercentageBlocked: 100
   slowdownMovementPercentage: 0
+  animationUnblock: Block_Right_Stop

@@ -19,11 +19,11 @@ public class PlayerController : CombatEntityController
     public InputAction ia_block;
     public InputAction ia_switchAttackMode;
     [Space]
-    public InputAction[] ia_abilities;
+    public InputAction[] ia_abilityUse;
 
     protected override void Awake()
     {
-        ia_abilities = new InputAction[AMOUNT_OF_ABIL_SLOTS];
+        ia_abilityUse = new InputAction[AMOUNT_OF_ABIL_SLOTS];
         controls = new PlayerInputActions();
 
         //Input Cache
@@ -37,10 +37,10 @@ public class PlayerController : CombatEntityController
         ia_block = controls.Player.Block;
         ia_switchAttackMode = controls.Player.SwitchMode;
 
-        ia_abilities[0] = controls.Player.Ability1;
-        ia_abilities[1] = controls.Player.Ability2;
-        ia_abilities[2] = controls.Player.Ability3;
-        ia_abilities[3] = controls.Player.Ability4;
+        ia_abilityUse[0] = controls.Player.Ability1;
+        ia_abilityUse[1] = controls.Player.Ability2;
+        ia_abilityUse[2] = controls.Player.Ability3;
+        ia_abilityUse[3] = controls.Player.Ability4;
     }
 
 
@@ -86,35 +86,39 @@ public class PlayerController : CombatEntityController
         ia_switchAttackMode.Enable();
         ia_switchAttackMode.performed += ctx =>
         {
-            switchAttackMode?.Invoke();
+            switchAbilityMode?.Invoke();
         };
 
 
         for(int i = 0; i < AMOUNT_OF_ABIL_SLOTS; i++)
         {
-           // print($"[PlayerControls] Enabled Ability Slot [{i}]");
-            ia_abilities[i].Enable();
+            // print($"[PlayerControls] Enabled Ability Slot [{i}]");
+            ia_abilityUse[i].Enable();
         }
 
-        ia_abilities[0].performed += ctx =>
+        ia_abilityUse[0].performed += ctx =>
         {
            // print($"[PlayerControlls] pressed ability [{0}]");
             abilitySlots[0]?.Invoke(0);
+            useAbility?.Invoke(CurMode().name);
         };
-        ia_abilities[1].performed += ctx =>
+        ia_abilityUse[1].performed += ctx =>
         {
            // print($"[PlayerControlls] pressed ability [{1}]");
             abilitySlots[1]?.Invoke(1);
+            useAbility?.Invoke(CurMode().name);
         };
-        ia_abilities[2].performed += ctx =>
+        ia_abilityUse[2].performed += ctx =>
         {
             //print($"[PlayerControlls] pressed ability [{2}]");
             abilitySlots[2]?.Invoke(2);
+            useAbility?.Invoke(CurMode().name);
         };
-        ia_abilities[3].performed += ctx =>
+        ia_abilityUse[3].performed += ctx =>
         {
            // print($"[PlayerControlls] pressed ability [{3}]");
             abilitySlots[3]?.Invoke(3);
+            useAbility?.Invoke(CurMode().name);
         };
 
     }
@@ -147,30 +151,30 @@ public class PlayerController : CombatEntityController
         ia_block.canceled -= ctx => blockStop?.Invoke();
 
         ia_switchAttackMode.Disable();
-        ia_switchAttackMode.performed -= ctx => switchAttackMode?.Invoke();
+        ia_switchAttackMode.performed -= ctx => switchAbilityMode?.Invoke();
 
         for (int i = 0; i < AMOUNT_OF_ABIL_SLOTS; i++)
         {
             //print($"[PlayerControls] Disabled Ability Slot [{i}]");
-            ia_abilities[i].Disable();
+            ia_abilityUse[i].Disable();
         }
 
-        ia_abilities[0].performed -= ctx =>
+        ia_abilityUse[0].performed -= ctx =>
         {
             //print($"[PlayerControlls] pressed ability [{0}]");
             abilitySlots[0]?.Invoke(0);
         };
-        ia_abilities[1].performed -= ctx =>
+        ia_abilityUse[1].performed -= ctx =>
         {
             //print($"[PlayerControlls] pressed ability [{1}]");
             abilitySlots[1]?.Invoke(1);
         };
-        ia_abilities[2].performed -= ctx =>
+        ia_abilityUse[2].performed -= ctx =>
         {
             //print($"[PlayerControlls] pressed ability [{2}]");
             abilitySlots[2]?.Invoke(2);
         };
-        ia_abilities[3].performed -= ctx =>
+        ia_abilityUse[3].performed -= ctx =>
         {
             //print($"[PlayerControlls] pressed ability [{3}]");
             abilitySlots[3]?.Invoke(3);

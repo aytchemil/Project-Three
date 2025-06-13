@@ -6,7 +6,7 @@ public class ModeCounterFunctionality : ModeGeneralFunctionality
     private CombatFunctionality cf;
 
 
-    public override string MODE_NAME { get => "Attack"; }
+    public override string MODE_NAME { get => "Counter"; }
 
     public string stopBlockingBool = "stopBlocking";
 

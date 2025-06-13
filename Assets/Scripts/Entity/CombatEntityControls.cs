@@ -25,7 +25,7 @@ public class CombatEntityController : MonoBehaviour
     public bool usedCombo;
     public Action blockStart;
     public Action blockStop;
-    public Action switchAttackMode;
+    public Action switchAbilityMode;
     public string mode = "Attack";
     public string lookDir;
 
@@ -196,7 +196,7 @@ public class CombatEntityController : MonoBehaviour
             template.modeName = info.modeName;
             template.UIIndicator = info.UIIndicator;
             template.modeTextDesc = info.modeTextDesc;
-            template.solo = info.solo;
+            template.isAbility = info.isAbility;
 
             //Create new ModeData, insert template data into new mode
             CombatEntityModeData newMode = new CombatEntityModeData(template.modeName);

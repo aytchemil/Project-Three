@@ -45,7 +45,7 @@ public class CombatFunctionality : MonoBehaviour
 
         Controls.useAbility += UseAbility;
 
-        Controls.switchAttackMode += SwitchAttackMode;
+        Controls.switchAbilityMode += SwitchAbilityMode;
 
         //Controls.blockStart += Block;
         //Controls.blockStop += StopBlock;
@@ -74,7 +74,7 @@ public class CombatFunctionality : MonoBehaviour
 
         Controls.useAbility -= UseAbility;
 
-        Controls.switchAttackMode -= SwitchAttackMode;
+        Controls.switchAbilityMode -= SwitchAbilityMode;
 
 
         // Controls.blockStart -= Block;
@@ -475,7 +475,7 @@ public class CombatFunctionality : MonoBehaviour
 
 
 
-    void SwitchAttackMode()
+    void SwitchAbilityMode()
     {
         int currIndex = Controls.modes.IndexOf(Controls.Mode(Controls.mode));
 
@@ -484,7 +484,7 @@ public class CombatFunctionality : MonoBehaviour
         else
             currIndex++;
 
-        if (Controls.modes[currIndex].data.solo)
+        while (!Controls.modes[currIndex].data.isAbility)
         {
             print("SOLO MODE DETECTED");
             if (currIndex >= Controls.modes.Count - 1)

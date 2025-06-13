@@ -63,7 +63,7 @@ public class CombatUI : MonoBehaviour
         Controls.EnterCombat += EnableUI;
         Controls.ExitCombat += DisableUI;
 
-        Controls.switchAttackMode += SwitchAttackMode;
+        Controls.switchAbilityMode += SwitchAbilityMode;
         
         for (int i = 0; i < CombatEntityController.AMOUNT_OF_ABIL_SLOTS; i++)
         {
@@ -80,7 +80,7 @@ public class CombatUI : MonoBehaviour
         Controls.EnterCombat -= EnableUI;
         Controls.ExitCombat -= DisableUI;
 
-        Controls.switchAttackMode -= SwitchAttackMode;
+        Controls.switchAbilityMode -= SwitchAbilityMode;
 
         for (int i = 0; i < CombatEntityController.AMOUNT_OF_ABIL_SLOTS; i++)
         {
@@ -209,7 +209,7 @@ public class CombatUI : MonoBehaviour
     {
         //print("enabling ui");
         combatUIParent.SetActive(true);
-        SwitchAttackMode();
+        SwitchAbilityMode();
         UpdateAttackIndicatorRotation(new Vector2(0, deadZone + 1));
         InitComboWheel();
         AbilityChoose(lastComboChoice);
@@ -317,7 +317,7 @@ public class CombatUI : MonoBehaviour
 
     #endregion
 
-    void SwitchAttackMode()
+    void SwitchAbilityMode()
     {
         //print("Updating mode UIS");
         SetWheelIcons();
@@ -352,16 +352,23 @@ public class CombatUI : MonoBehaviour
 
     void AbilityChoose(int choice)
     {
-        //print($"[CombatUI] Chosen ability is [{choice}]");
-        lastComboChoice = choice;
-
         Color less = new Color(1, 1, 1, 0.2f);
         Color more = new Color(1, 1, 1, 1);
+        lastComboChoice = choice;
 
-        foreach(RawImage img in abilityImgs)
-            img.color = less;
+        if (Controls.CurMode().data.abilityIndividualSelection == true)
+        {
+            //print($"[CombatUI] Chosen ability is [{choice}]");
+            foreach (RawImage img in abilityImgs)
+                img.color = less;
 
-        abilityImgs[choice].color = more;
+            abilityImgs[choice].color = more;
+        }
+        else
+            foreach (RawImage img in abilityImgs)
+                img.color = more;
+        //TODO LATER: Denote its used, mabye cooldowns idk
+
     }
 
 }

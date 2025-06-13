@@ -41,17 +41,36 @@ public class PlayerMenu : MonoBehaviour
 
     }
 
+    private void LateUpdate()
+    {
+        if (!on)
+            ToggleOff();
+        else
+            ToggleOn();
+    }
+
     void ToggleMenu()
     {
         print("toggle");
         on = !on;
+    }
+
+    void ToggleOn()
+    {
+        print("paused");
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+        Time.timeScale = 0;
         menu.SetActive(on);
-        if (!on)
-            Cursor.lockState = CursorLockMode.None;
-        else
-            Cursor.lockState = CursorLockMode.Locked;
+    }
 
-
+    void ToggleOff()
+    {
+        print("unpaused");
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+        Time.timeScale = 1;
+        menu.SetActive(on);
     }
 
     public void Quit()

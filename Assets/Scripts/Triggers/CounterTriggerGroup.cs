@@ -21,8 +21,8 @@ public class CounterTriggerGroup : MAT_FollowupGroup
     }
     public override bool hitAttack
     {
-        get => countered;
-        set => countered = value;
+        get => blocked;
+        set => blocked = value;
     }
 
     public bool counterUp;
@@ -30,7 +30,7 @@ public class CounterTriggerGroup : MAT_FollowupGroup
     protected override void EnableTriggerImplementation()
     {
         counterUp = false;
-        countered = false;
+        blocked = false;
         countering = false;
 
         base.EnableTriggerImplementation();

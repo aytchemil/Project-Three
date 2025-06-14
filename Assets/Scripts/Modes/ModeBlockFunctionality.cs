@@ -7,6 +7,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
     private CombatFunctionality cf;
 
     public override string MODE_NAME { get => "Block"; }
+    bool readyToUnblock = false;
 
     void Awake()
     {
@@ -23,6 +24,13 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
     {
         cf.Controls.CombatWheelSelectDirection -= ChangeBlockAbility;
         cf.Controls.blockStop -= StopBlocking;
+    }
+
+    IEnumerator WaitToStartBlockingToUnblock(AbilityBlock ability)
+    {
+        readyToUnblock = false;
+        yield return new WaitForSeconds(ability.defaultBlockTimeToBlocking);
+        readyToUnblock = true;
     }
 
     public void ChangeBlockAbility(string dir)
@@ -45,7 +53,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
         if (!cf.Controls.Mode("Block").isUsing)
             Block();
         else
-            StopBlock();
+            print("stop block");
     }
 
     void Block()
@@ -55,6 +63,8 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
 
         AbilityBlock ability = (AbilityBlock)cf.Controls.Mode("Block").ability;
         cf.Controls.Mode("Block").SetAbility(ability);
+        StartCoroutine(WaitToStartBlockingToUnblock(ability));
+
 
         //Trigger
         ModeTriggerGroup usingTrigger = cf.WheelTriggerEnableUse("Block");
@@ -80,10 +90,6 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
         }
     }
 
-    void StopBlock()
-    {
-
-    }
 
     void StartBlocking()
     {
@@ -100,12 +106,12 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
     {
         print("block anim");
         AnimateAblity(ability.AnimName, ability.InitialUseDelay[0], cf.Controls.animController);
-        while (cf.Controls.Mode("Block").isUsing)
+        while (cf.Controls.Mode("Block").isUsing || !readyToUnblock)
         {
             yield return new WaitForEndOfFrame();
         }
         AnimateAblity(ability.animationUnblock, ability.InitialUseDelay[0], cf.Controls.animController);
-
+        readyToUnblock = false;
     }
 
     void AF_Regular(AbilityBlock ability)

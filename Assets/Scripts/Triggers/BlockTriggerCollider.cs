@@ -58,7 +58,10 @@ public class BlockTriggerCollider : ModeTriggerGroup
         else
             gameObject.GetComponent<MeshRenderer>().enabled = false;
 
-        StartCoroutine(CounterDown());
+        if (myBlockAbility.hasBlockUpTime)
+            StartCoroutine(CounterDownDelayed());
+        else
+            StartCoroutine(WaitForBlockToStop());
 
         print("intial delay done. counter is up...");
 
@@ -66,7 +69,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
 
     protected override void DisableThisTriggerImplementation()
     {
-        (combatFunctionality.Controls.Mode("Block").data.modeFunctionality as ModeCounterFunctionality).FinishCountering();
+        combatFunctionality.Controls.BlockedAttack?.Invoke(combatFunctionality.Controls.lookDir);
 
         print("Disabling this Counter Attack Trigger, Not locally");
         StopAllCoroutines();
@@ -100,12 +103,15 @@ public class BlockTriggerCollider : ModeTriggerGroup
 
             if (other.GetComponent<GeneralAttackTriggerGroup>().attacking)
             {
-                print("COUNTER STARTED");
+                print("BLOCKED");
+                string lookdir = combatFunctionality.Controls.lookDir;
+                Vector3 effectpos = other.ClosestPoint(transform.position);
 
                 //print("Countered against: " + other.gameObject.GetComponent<AttackTriggerGroup>().name);
-                other.gameObject.GetComponent<GeneralAttackTriggerGroup>().GetCountered(other.ClosestPoint(transform.position));
+                other.gameObject.GetComponent<GeneralAttackTriggerGroup>().GetBlocked(effectpos, lookdir);
 
-                CounterAttack();
+                //TODO: If in defensive mode counter
+                //CounterAttack();
 
             }
         }
@@ -125,9 +131,22 @@ public class BlockTriggerCollider : ModeTriggerGroup
         animator.SetBool("counter", true);
     }
 
-    IEnumerator CounterDown()
+    IEnumerator CounterDownDelayed()
     {
         yield return new WaitForSeconds(myBlockAbility.blockUpTime);
+        CounterDown();
+    }
+    IEnumerator WaitForBlockToStop()
+    {
+        while(combatFunctionality.Controls.Mode("Block").isUsing)
+        {
+            yield return new WaitForEndOfFrame();
+        }
+        CounterDown();
+    }
+
+    void CounterDown()
+    {
         print("counter collider is down");
         unused = true;
         DisableThisTriggerOnlyLocally();

@@ -27,7 +27,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
         set => missedAttack = value;
     }
 
-    public bool countered;
+    public bool blocked;
 
 
 
@@ -39,7 +39,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
     {
         missedAttack = false;
         hitAttack = false;
-        countered = false;
+        blocked = false;
     }
 
     protected override void InitialDelayOver_ReEnableTriggerImplementation()
@@ -66,7 +66,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
     {
         missedAttack = false;
         hitAttack = false;
-        countered = false;
+        blocked = false;
     }
 
     #endregion
@@ -93,7 +93,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
     {
         //Debug.Log(gameObject.name + " | Attack hit registered");
         hitAttack = true;
-        countered = false;
+        blocked = false;
     }
 
     public virtual void MissAttackCuttoff()
@@ -191,11 +191,12 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
         DisableThisTrigger();
     }
 
-    public void GetCountered(Vector3 effectPos)
+    public void GetBlocked(Vector3 effectPos, string lookdir)
     {
         //print(gameObject.name + " I am getting countered");
-        countered = true;
+        blocked = true;
         combatFunctionality.GetCountered(effectPos);
+        combatFunctionality.Controls.AttackWasBlocked?.Invoke(lookdir);
     }
 
     protected override void DisableThisTriggerOnDelayImplementation()

@@ -42,6 +42,16 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
         cf = gameObject.GetComponent<CombatFunctionality>();
     }
 
+    private void OnEnable()
+    {
+        cf.Controls.AttackWasBlocked += AttackBlocked;
+    }
+
+    private void OnDisable()
+    {
+        cf.Controls.AttackWasBlocked -= AttackBlocked;
+    }
+
     public override void UseModeFunctionality() => Attack();
     
     void Attack()
@@ -151,6 +161,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
     public void FinishAttacking()
     {
         cf.Controls.Mode("Attack").isUsing = false;
+        cf.Controls.didReattack = false;
     }
     #endregion
 
@@ -253,6 +264,12 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
     void ReEnableMovement()
     {
         gameObject.GetComponent<Movement>().EnableMovement();
+    }
+
+    public void AttackBlocked(string lookdir)
+    {
+        print($"[ModeAttackFunctionality] [{gameObject.name}] Attack was blocked");
+        FinishAttacking();
     }
 
     #region Animation

@@ -35,8 +35,15 @@ public class AttackbleEntity : MonoBehaviour
     public float corpseDeathTime;
 
 
-    public virtual float Attacked(AbilityAttack atkedWithAbility)
+    public virtual float Attacked(AbilityAttack atkedWithAbility, string dir)
     {
+        if (WasBlocked(dir))
+        {
+            print($"[AttackableEntity] [{gameObject.name}] blocked an attack");
+            return _health;
+        }
+
+
         float newHealth;
         if (!invincibility)
         {
@@ -108,6 +115,25 @@ public class AttackbleEntity : MonoBehaviour
         health += amount;
         if(health > maxHealth)
             health = maxHealth;
+    }
+
+    bool WasBlocked(string dir)
+    {
+        bool ret = false;
+        if (!controls.Mode("Block").isUsing) return ret;
+
+        if (dir == "right" && controls.lookDir == "right")
+            ret = true;
+        else if (dir == "left" && controls.lookDir == "left")
+            ret = true;
+        else if (dir == "up" && controls.lookDir == "up")
+            ret = true;
+        else if (dir == "right" && controls.lookDir == "right")
+            ret = true;
+
+        return ret;
+
+
     }
 
 }

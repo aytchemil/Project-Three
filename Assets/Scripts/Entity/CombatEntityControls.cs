@@ -21,7 +21,7 @@ public class CombatEntityController : MonoBehaviour
     public Action sprintStop;
     public Action lockOn;
     public Action dash;
-    public Action<string> useAbility;
+    public Action<string> useAbility; //param: ?
     public bool usedCombo;
     public Action switchAbilityMode;
     public string mode = "Attack";
@@ -38,16 +38,18 @@ public class CombatEntityController : MonoBehaviour
     public Action EnterCombat;
     public Action ExitCombat;
     public Action<CombatEntityController> CombatFollowTarget;
-    public Action<string> CombatWheelSelectDirection;
+    public Action<string> CombatWheelSelectDirection; //param: dir
     public Action<CombatEntityController> TargetDeath;
     public Action blockStart;
     public Action blockStop;
     public Action ResetAttack;
     public Action MissedAttack;
     public Action CompletedAttack;
+    public Action<string> BlockedAttack; //param: dir
+    public Action<string> AttackWasBlocked; //param dir
     public Action Countered;
-    public Action<float> Flinch;
-    public Func<string> getMoveDirection;
+    public Action<float> Flinch; //param: flinchTime
+    public Func<string> getMoveDirection; //ret: moveDir
 
     void ResetmyAttack()
     {

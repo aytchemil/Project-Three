@@ -25,7 +25,9 @@ MonoBehaviour:
   collision: 0
   type: 0
   blockTriggerCollider: {fileID: 5678498679238792639, guid: d4d28247890999742a7f5ba7335c78b6, type: 3}
+  hasBlockUpTime: 0
   blockUpTime: 1
   damagePercentageBlocked: 100
   slowdownMovementPercentage: 0
   animationUnblock: Block_Top_Stop
+  defaultBlockTimeToBlocking: 0.5

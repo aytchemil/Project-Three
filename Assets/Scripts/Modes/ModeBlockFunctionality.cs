@@ -58,7 +58,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
 
     void Block()
     {
-        print("Blocking");
+        //print("Blocking");
         StartBlocking();
 
         AbilityBlock ability = (AbilityBlock)cf.Controls.Mode("Block").ability;
@@ -68,6 +68,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
 
         //Trigger
         ModeTriggerGroup usingTrigger = cf.WheelTriggerEnableUse("Block");
+        cf.Controls.Mode("Block").trigger = usingTrigger;
         //Ability
         AbilityWrapper usingAbility = new AbilityWrapper(ability);
 
@@ -104,7 +105,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
 
     IEnumerator WaitForUnblockAnimationSequence(AbilityBlock ability)
     {
-        print("block anim");
+        //print("block anim");
         AnimateAblity(ability.AnimName, ability.InitialUseDelay[0], cf.Controls.animController);
         while (cf.Controls.Mode("Block").isUsing || !readyToUnblock)
         {

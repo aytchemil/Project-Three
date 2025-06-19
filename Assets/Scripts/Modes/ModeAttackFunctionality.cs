@@ -44,12 +44,12 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
 
     private void OnEnable()
     {
-        cf.Controls.AttackWasBlocked += AttackBlocked;
+        cf.Controls.MyAttackWasBlocked += AttackBlocked;
     }
 
     private void OnDisable()
     {
-        cf.Controls.AttackWasBlocked -= AttackBlocked;
+        cf.Controls.MyAttackWasBlocked -= AttackBlocked;
     }
 
     public override void UseModeFunctionality() => Attack();
@@ -74,6 +74,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
 
         //Trigger----------------------------------------------------
         ModeTriggerGroup usingTrigger = cf.AbilityTriggerEnableUse("Attack");
+        cf.Controls.Mode("Attack").trigger = usingTrigger;
         //Ability
         AbilityWrapper usingAbility = new AbilityWrapper(ability);
 
@@ -269,7 +270,6 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
     public void AttackBlocked(string lookdir)
     {
         print($"[ModeAttackFunctionality] [{gameObject.name}] Attack was blocked");
-        FinishAttacking();
     }
 
     #region Animation

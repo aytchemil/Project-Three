@@ -35,5 +35,18 @@ public class ModeManager : MonoBehaviour
 
         Debug.LogError($"[ModeManager] No mode found with the name of [{mode}], please check input");
         return null;
-    }  
+    }
+
+    public static int FindFirstIndex<T>(List<T> list, T value, int startIndex = 0)
+    {
+        if (list == null || startIndex < 0 || startIndex >= list.Count)
+            return -1;
+
+        for (int i = startIndex; i < list.Count; i++)
+        {
+            if (EqualityComparer<T>.Default.Equals(list[i], value))
+                return i;
+        }
+        return -1;
+    }
 }

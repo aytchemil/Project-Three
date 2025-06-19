@@ -25,7 +25,7 @@ MonoBehaviour:
   animation_name: Block_Down
   collision: 3
   type: 0
-  blockTriggerCollider: {fileID: 7760708677549281350, guid: 784e0ec78f388d644bb0bcc0aeb51f0c, type: 3}
+  blockTriggerCollider: {fileID: 5678498679238792639, guid: 833abaa7fc3b68740a1f050b96067633, type: 3}
   hasBlockUpTime: 0
   blockUpTime: 1
   damagePercentageBlocked: 100

@@ -27,6 +27,8 @@ public class AttackingAI : MonoBehaviour
     [SerializeField]
     public aiStats stats;
 
+    public bool blockOnly = false;
+
 
     public class AIInputs
     {
@@ -43,7 +45,14 @@ public class AttackingAI : MonoBehaviour
             Controls.lookDir = s;
         };
 
-        
+        public static Action<CombatEntityController> input_UseBlock = (Controls) =>
+        {
+            print($"[AttackingAI] [{Controls.gameObject.name}] input: Block");
+            Controls.blockStart?.Invoke();
+            Controls.useAbility?.Invoke("Block");
+        };
+
+
     }
 
 
@@ -93,7 +102,7 @@ public class AttackingAI : MonoBehaviour
     private void FixedUpdate()
     {
         //Checks
-        if (!Controls.isAlive) return;
+        if (!Controls.isAlive || thinking || Controls.isFlinching) return;
 
 
         //Lock on
@@ -116,8 +125,16 @@ public class AttackingAI : MonoBehaviour
 
 
 
+            if (blockOnly)
+            {
+                if(!Controls.Mode("Block").isUsing)
+                    StartCoroutine(BlockCycleTest());
+
+                return;
+            }
+
             //Attacking
-            if (!thinking && !Controls.Mode("Attack").isUsing && !Controls.Mode("Combo").isUsing && !Controls.isFlinching)
+            if (!Controls.Mode("Attack").isUsing && !Controls.Mode("Combo").isUsing)
                 StartCoroutine(InCombatThinkCycle());
 
 
@@ -142,8 +159,19 @@ public class AttackingAI : MonoBehaviour
         throw new Exception("No Combo found");
     }
 
+    AbilityBlock RandomBlock(int indx)
+    {
+        for (int i = 0; i < Controls.abilitySetInputs.Count; i++)
+            if (Controls.abilitySetInputs[i].mode == ModeManager.Modes.Block)
+                return Controls.abilitySetInputs[i][indx] as AbilityBlock;
+
+        throw new Exception("No Combo found");
+    }
+
     IEnumerator InCombatThinkCycle()
     {
+        Controls.Mode("Combo").isUsing = true;
+
         //Setup
         int randIndx = UnityEngine.Random.Range(0, AbilitySet.MAX_ABILITIES);
         AbilityCombo combo = RandomCombo(randIndx);
@@ -165,6 +193,24 @@ public class AttackingAI : MonoBehaviour
 
 
         }
+    }
+
+    IEnumerator BlockCycleTest()
+    {
+        print("Block cycle");
+
+        //Setup
+        int randIndx = UnityEngine.Random.Range(0, AbilitySet.MAX_ABILITIES);
+        AbilityBlock block = RandomBlock(randIndx);
+
+        AIInputs.input_changeLookDir(Controls, SetupAIlookDir(randIndx));
+        print("new look dir is " + Controls.lookDir);
+
+        yield return new WaitForSeconds(stats.thinkDelay);
+
+        AIInputs.input_UseBlock(Controls);
+
+        Controls.Mode("Block").isUsing = true;
     }
 
     string SetupAIlookDir(int abilitySetIndex)

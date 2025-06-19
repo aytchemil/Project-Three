@@ -46,15 +46,11 @@ public class CombatEntityController : MonoBehaviour
     public Action MissedAttack;
     public Action CompletedAttack;
     public Action<string> BlockedAttack; //param: dir
-    public Action<string> AttackWasBlocked; //param dir
+    public Action<string> MyAttackWasBlocked; //param dir
     public Action Countered;
     public Action<float> Flinch; //param: flinchTime
     public Func<string> getMoveDirection; //ret: moveDir
 
-    void ResetmyAttack()
-    {
-        print("resetting attack");
-    }
 
     [System.Serializable]
     public class CombatEntityModeData
@@ -62,6 +58,7 @@ public class CombatEntityController : MonoBehaviour
         public static int AMOUNT_OF_TRIGGERS = 4;
 
         public Ability ability;
+        public ModeTriggerGroup trigger;
         public string name;
         public bool isUsing;
         public ModeTemplate data;
@@ -328,10 +325,16 @@ public class CombatEntityController : MonoBehaviour
     {
         SetAllModesNotUsing();
         ResetAttack?.Invoke();
+    }
+    void ResetmyAttack()
+    {
+        print("Didreattack: RESSETING ATTACKING VARIABLES");
         waitingToReattack = false;
         didReattack = false;
         reattackChecking = false;
         dashing = false;
-    } 
+        Mode("Attack").isUsing = false;
+    }
+
 
 }

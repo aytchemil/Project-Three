@@ -46,6 +46,8 @@ public class ModeCounterFunctionality : ModeGeneralFunctionality
 
         //Trigger
         ModeTriggerGroup usingTrigger = cf.AbilityTriggerEnableUse("Counter");
+        cf.Controls.Mode("Counter").trigger = usingTrigger;
+
         //Ability
         AbilityWrapper usingAbility = new((ability as AbilityCounter).abilities, ability);
 

@@ -61,17 +61,24 @@ public class CombotTriggerGroup : MAT_FollowupGroup
         combatFunctionality.Controls.waitingToReattack = false;
         waitForContinuation = null;
 
+        print("FINISHED WAITING FOR CONT");
         //Check if we actually did reattack, or if the trigger progress continued by itself, we break out of tihs coroutine 
         //I dont think this is needed
         if (combatFunctionality.Controls.didReattack || triggerProgress[i] == true) yield break;
     }
 
 
-    void DidReattack(int i)
+    public void DidReattack(int i)
     {
+        print("Didreattack?");
+        if (i == triggerProgress.Count - 1)
+        {
+            print("didreattack: last ability in triggerproggress.. ignoring reattack check");
+            return;
+        }
         if (combatFunctionality.Controls.didReattack)
         {
-            print("combo reattacked... ");
+            print("YES");
             triggerProgress[i] = true;
 
             //Reset reattack flags

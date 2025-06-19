@@ -1,5 +1,6 @@
 using System.Collections;
 using TMPro;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
@@ -42,12 +43,11 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
     {
         missedAttack = false;
         hitAttack = false;
-        blocked = false;
+        col.enabled = true;
 
         if (!DebugManager.instance.AttackCollisionDebugsOn)
         {
             gameObject.GetComponent<MeshRenderer>().material.color = Color.red;
-            col.enabled = true;
         }
         else
             EnableColliderVisual(false);
@@ -146,6 +146,7 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
         else
             EnableColliderVisual(false);
 
+        col.enabled = false;
         animator.SetBool("missed", true);
     }
 
@@ -161,7 +162,6 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
     {
         gameObject.GetComponent<MeshRenderer>().enabled = true;
         gameObject.GetComponent<MeshRenderer>().material.color = color;
-        col.enabled = false;
     }
 
     public void EnableColliderVisual(bool enable)
@@ -169,6 +169,34 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
         gameObject.GetComponent<MeshRenderer>().enabled = enable;
     }
 
+
+
+    public override void AttackTriggerBlocked(Vector3 effectPos, string lookdir)
+    {
+        col.enabled = false;
+
+        print("AT Collider being frozen");
+        StartCoroutine(FreezeAttack(0.2f, effectPos, lookdir));
+    }
+    
+
+    IEnumerator FreezeAttack(float time, Vector3 e, string l)
+    {
+        float prevSpeed = animator.speed;
+        animator.speed = 0;
+        yield return new WaitForSeconds(time);
+        animator.speed = prevSpeed;
+        BlockedCompleteSequence(e, l);
+    }
+
+    void BlockedCompleteSequence(Vector3 e, string l)
+    {
+        DisableThisTrigger();
+        combatFunctionality.Controls.MyAttackWasBlocked?.Invoke(combatFunctionality.Controls.lookDir);
+        base.AttackTriggerBlocked(e, l);
+
+        //combatFunctionality.Controls.Mode("Attack").isUsing = false;
+    }
 
     #endregion
 

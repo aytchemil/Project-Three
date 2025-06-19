@@ -43,7 +43,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
         animator.SetBool("windupDone", false);
 
 
-        print("enabled counter trigger");
+        print("enabled block trigger");
     }
 
     protected override void InitialDelayOver_ReEnableTriggerImplementation()
@@ -51,10 +51,10 @@ public class BlockTriggerCollider : ModeTriggerGroup
         blockUp = true;
         animator.SetBool("windupDone", true);
 
-
+        Color seeThroughBlue = new Color(0, 0, 1, 0.2f);
 
         if (!DebugManager.instance.AttackCollisionDebugsOn)
-            gameObject.GetComponent<MeshRenderer>().material.color = Color.blue;
+            gameObject.GetComponent<MeshRenderer>().material.color = seeThroughBlue;
         else
             gameObject.GetComponent<MeshRenderer>().enabled = false;
 
@@ -63,7 +63,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
         else
             StartCoroutine(WaitForBlockToStop());
 
-        print("intial delay done. counter is up...");
+        print("intial delay done. block trigger is up...");
 
     }
 
@@ -71,7 +71,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
     {
         combatFunctionality.Controls.BlockedAttack?.Invoke(combatFunctionality.Controls.lookDir);
 
-        print("Disabling this Counter Attack Trigger, Not locally");
+        print("Disabling this Block Trigger, Not locally");
         StopAllCoroutines();
     }
 
@@ -108,7 +108,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
                 Vector3 effectpos = other.ClosestPoint(transform.position);
 
                 //print("Countered against: " + other.gameObject.GetComponent<AttackTriggerGroup>().name);
-                other.gameObject.GetComponent<GeneralAttackTriggerGroup>().GetBlocked(effectpos, lookdir);
+                other.gameObject.GetComponent<GeneralAttackTriggerGroup>().AttackTriggerBlocked(effectpos, lookdir);
 
                 //TODO: If in defensive mode counter
                 //CounterAttack();

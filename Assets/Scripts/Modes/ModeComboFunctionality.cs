@@ -18,11 +18,14 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
     private void OnEnable()
     {
         cf.Controls.CombatWheelSelectDirection += SwitchToCombo;
+        cf.Controls.MyAttackWasBlocked += MyComboWasBlocked;
     }
 
     private void OnDisable()
     {
         cf.Controls.CombatWheelSelectDirection -= SwitchToCombo;
+        cf.Controls.MyAttackWasBlocked -= MyComboWasBlocked;
+
     }
 
     public override void UseModeFunctionality() => Combo();
@@ -51,6 +54,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
 
         //Trigger
         ModeTriggerGroup usingTrigger = cf.WheelTriggerEnableUse("Combo");
+        cf.Controls.Mode("Combo").trigger = usingTrigger;
         //Ability
         AbilityWrapper usingAbility = new((ability as AbilityCombo).abilities, ability);
         print($"[Combo Functionality] the abilities for this combo are:{usingAbility.Values[0]} {usingAbility.Values[1]} {usingAbility.Values[2]} for trigger: [{usingTrigger.gameObject.name}]");
@@ -145,5 +149,11 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
                 cf.Controls.Mode("Combo").isUsing = false;
             }
         }
+    }
+
+
+    void MyComboWasBlocked(string dir)
+    {
+        print("didreattack: mycombo was blocked");
     }
 }

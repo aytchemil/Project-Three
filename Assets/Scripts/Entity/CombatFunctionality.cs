@@ -411,7 +411,7 @@ public class CombatFunctionality : MonoBehaviour
 
     public ModeTriggerGroup WheelTriggerEnableUse(string modeName)
     {
-        print("Using Wheel Trigger... Enabling it");
+        //print("Using Wheel Trigger... Enabling it");
         ModeTriggerGroup usingThisTriggerGroup = null;
         CombatEntityModeData m = Controls.Mode(modeName);
         int triggerIndx = GetDirIndex(Controls.lookDir);
@@ -516,6 +516,7 @@ public class CombatFunctionality : MonoBehaviour
         Controls.Countered?.Invoke();
         StartCoroutine(CounteredEffect(effectPos));
     }
+
 
     IEnumerator CounteredEffect(Vector3 effectPos)
     {

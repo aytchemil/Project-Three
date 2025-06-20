@@ -19,6 +19,7 @@ MonoBehaviour:
   <successDelay>k__BackingField: 0
   unsuccessDelay: []
   movementAmount: 0
+  modeBase: 1
   archetype: 0
   trait: 0
   animation_name: Block_Top

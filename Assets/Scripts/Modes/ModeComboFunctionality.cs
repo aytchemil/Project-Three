@@ -152,8 +152,9 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
     }
 
 
-    void MyComboWasBlocked(string dir)
+    void MyComboWasBlocked(string dir, Ability ability)
     {
+        if (ability.GetType() != typeof(AbilityCombo)) return;
         print("didreattack: mycombo was blocked");
     }
 }

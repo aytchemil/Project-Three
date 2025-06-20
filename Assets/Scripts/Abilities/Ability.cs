@@ -30,6 +30,13 @@ public class Ability : ScriptableObject
     public float movementAmount;
     public virtual GameObject prefab { get; set; }
 
+    public enum Mode
+    {
+        AttackBased = 0,
+        BlockBased = 1,
+        ComboBased = 2
+    }
+    public Mode modeBase;
     public enum Archetype
     {
         Singular = 0,

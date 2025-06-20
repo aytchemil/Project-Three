@@ -191,9 +191,9 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
 
     void BlockedCompleteSequence(Vector3 e, string l)
     {
-        DisableThisTrigger();
-        combatFunctionality.Controls.MyAttackWasBlocked?.Invoke(combatFunctionality.Controls.lookDir);
+        print("didreattack: block sequence complete");
         base.AttackTriggerBlocked(e, l);
+        DisableThisTrigger();
 
         //combatFunctionality.Controls.Mode("Attack").isUsing = false;
     }

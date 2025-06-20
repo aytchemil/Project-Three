@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class AbilityWrapper
@@ -267,10 +268,32 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
         gameObject.GetComponent<Movement>().EnableMovement();
     }
 
-    public void AttackBlocked(string lookdir)
+    public void AttackBlocked(string dir, Ability ability)
     {
-        print($"[ModeAttackFunctionality] [{gameObject.name}] Attack was blocked");
+        print("didreattack: on ModeAttackFunc, checking if the ability used is an attack ability");
+        if (ability.modeBase != Ability.Mode.AttackBased) return;
+        print($"+YES:[{gameObject.name}] didreattack : Attack was blocked");
+
+        if (ability.archetype == Ability.Archetype.Multi_Followup)
+        {
+            print("+didreattack: AbilityMulti blocked");
+            MAT_FollowupGroup trigger = cf.Controls.Mode("Attack").trigger.GetComponent<MAT_FollowupGroup>();
+            if(trigger.IncrementTriggerProgress() == true)
+            {
+                print("didreattack: final trigger prog");
+                trigger.DisableThisTrigger();
+            }
+        }
+
+        if (ability.archetype == Ability.Archetype.Multi_Choice)
+        {
+            print("+didreattack: Ability_MultiChoice blocked");
+            MAT_ChoiceGroup trigger = cf.Controls.Mode("Attack").trigger.GetComponent<MAT_ChoiceGroup>();
+
+            trigger.DisableThisTrigger();
+        }
     }
+
 
     #region Animation
 

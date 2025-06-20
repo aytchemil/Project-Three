@@ -24,6 +24,7 @@ MonoBehaviour:
   - 0.3
   - 0.3
   movementAmount: 0
+  modeBase: 2
   archetype: 0
   trait: 0
   animation_name: 

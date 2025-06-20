@@ -189,7 +189,19 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
     public virtual void AttackTriggerBlocked(Vector3 effectPos, string lookdir)
     {
         print(gameObject.name + " I am getting Blocked");
-        //combatFunctionality.Controls.MyAttackWasBlocked?.Invoke(lookdir);
+
+        Ability ability = null;
+
+        if (combatFunctionality.Controls.Mode("Combo").isUsing)
+            ability = combatFunctionality.Controls.Mode("Combo").ability;
+        else if (combatFunctionality.Controls.Mode("Attack").isUsing)
+            ability = combatFunctionality.Controls.Mode("Attack").ability;
+        else
+            throw new System.Exception("AT Collider Single: Block Completed Sequence: ability not found to sent to CF");
+
+        print($"didreattack: ability is {ability}");
+
+        combatFunctionality.Controls.MyAttackWasBlocked?.Invoke(lookdir, ability);
     }
 
     protected override void DisableThisTriggerOnDelayImplementation()

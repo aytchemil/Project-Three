@@ -46,7 +46,7 @@ public class CombatEntityController : MonoBehaviour
     public Action MissedAttack;
     public Action CompletedAttack;
     public Action<string> BlockedAttack; //param: dir
-    public Action<string> MyAttackWasBlocked; //param dir
+    public Action<string, Ability> MyAttackWasBlocked; //param dir
     public Action Countered;
     public Action<float> Flinch; //param: flinchTime
     public Func<string> getMoveDirection; //ret: moveDir

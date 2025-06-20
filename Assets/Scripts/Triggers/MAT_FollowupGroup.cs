@@ -43,7 +43,25 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
         return currentAbility;
     }
 
+    /// <summary>
+    /// Returns if its the last trigger
+    /// </summary>
+    /// <returns></returns>
+    public bool IncrementTriggerProgress()
+    {
+        int currIndx = ModeManager.FindFirstIndex(triggerProgress, false, 0);
 
+        if (currIndx < triggerProgress.Count - 1)
+            triggerProgress[currIndx] = true;
+        else
+        {
+            if (triggerBeingUsed.used) { HitAttack(); MissAttackCuttoff(); }
+            if ((triggerBeingUsed as GeneralAttackTriggerGroup).missedAttack) { MissAttackCuttoff(); }
+            return true;
+        }
+        return false;
+
+    }
 
     public void SetAllTriggersToFalse()
     {
@@ -143,6 +161,7 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
         //print("finished follow up attack");
 
     }
+
 
     public virtual float DelayNextTrigger(int prog)
     {

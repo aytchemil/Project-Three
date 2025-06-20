@@ -44,7 +44,7 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
     }
 
     /// <summary>
-    /// Returns if its the last trigger
+    /// Returns true if its the last trigger
     /// </summary>
     /// <returns></returns>
     public bool IncrementTriggerProgress()

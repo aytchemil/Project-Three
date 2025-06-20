@@ -8,7 +8,7 @@ public class CharacterAnimationController : MonoBehaviour
     public CombatEntityController CEC;
 
     public Weapon weapon;
-    private Animator animator;
+    public Animator animator;
 
     private void Awake()
     {

@@ -176,16 +176,23 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
         col.enabled = false;
 
         print("AT Collider being frozen");
-        StartCoroutine(FreezeAttack(0.2f, effectPos, lookdir));
+        StartCoroutine(FreezeAttack(0, effectPos, lookdir));
     }
     
 
     IEnumerator FreezeAttack(float time, Vector3 e, string l)
     {
         float prevSpeed = animator.speed;
+        float prevanimContSpeed = combatFunctionality.Controls.animController.animator.speed;
+
         animator.speed = 0;
+        combatFunctionality.Controls.animController.animator.speed = 0;
+
         yield return new WaitForSeconds(time);
+
         animator.speed = prevSpeed;
+        combatFunctionality.Controls.animController.animator.speed = prevanimContSpeed;
+
         BlockedCompleteSequence(e, l);
     }
 

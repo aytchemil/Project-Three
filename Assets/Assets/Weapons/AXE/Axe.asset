@@ -22,7 +22,7 @@ MonoBehaviour:
     speed: 1
     clip: {fileID: 7400000, guid: b5aa498f282a175438b4e704d50b763f, type: 2}
   - animationName: Attack_Flat_Left
-    speed: 0.87
+    speed: 1
     clip: {fileID: 7400000, guid: 88cbdc362b983be4a933270609ed036d, type: 2}
   - animationName: Attack_Flat_Right
     speed: 1
@@ -34,22 +34,22 @@ MonoBehaviour:
     speed: 1
     clip: {fileID: 7400000, guid: 7ac38547b9654504788c014c3c0e21de, type: 2}
   - animationName: Attack_Overhead_Center
-    speed: 0.88
+    speed: 1
     clip: {fileID: 7400000, guid: ab6af89383358a24aa776b4977634244, type: 2}
   - animationName: Attack_Diagnal_Left
-    speed: 0.8
+    speed: 1
     clip: {fileID: 7400000, guid: 4805054ac975c364eb52fcf1690ef17f, type: 2}
   - animationName: Block_Top
-    speed: 0.79
+    speed: 1
     clip: {fileID: 7400000, guid: d086ac6519aba7745b5af0d81ff2bb2d, type: 2}
   - animationName: Attack_Uppercut
-    speed: 0.79
+    speed: 1
     clip: {fileID: 7400000, guid: b6978daa62a061c4f9e9ba0bb16d9b8a, type: 2}
   - animationName: Attack_Hit
-    speed: 0.94
+    speed: 0.941
     clip: {fileID: 7400000, guid: 267c92649dd02484b92cf8a14beca795, type: 2}
   - animationName: Attack_Pierce
-    speed: 0.88
+    speed: 1
     clip: {fileID: 7400000, guid: 267c92649dd02484b92cf8a14beca795, type: 2}
   - animationName: Block_Right
     speed: 1

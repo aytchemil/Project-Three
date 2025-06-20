@@ -54,7 +54,7 @@ public class ModeGeneralFunctionality : MonoBehaviour
             //print($"[Followup] combo animation on attack [{i}] which is ability [{animName}]");
 
             //Animates
-            AnimateAblity(animName, usingAbility.parentAbility.InitialUseDelay[i], animCont);
+            AnimateAblity(animName, 0, animCont);
 
             //AdditionalFunctionality Option
             StartedAnAnimation();

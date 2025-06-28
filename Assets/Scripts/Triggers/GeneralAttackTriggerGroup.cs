@@ -186,7 +186,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
         DisableThisTrigger();
     }
 
-    public virtual void AttackTriggerBlocked(Vector3 effectPos, string lookdir)
+    public virtual void AttackTriggerBlocked(string myLookdir, Vector3 effectPos)
     {
         print(gameObject.name + " I am getting Blocked");
 
@@ -201,7 +201,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
 
         print($"didreattack: ability is {ability}");
 
-        combatFunctionality.Controls.MyAttackWasBlocked?.Invoke(lookdir, ability);
+        combatFunctionality.Controls.MyAttackWasBlocked?.Invoke(myLookdir, ability);
     }
 
     protected override void DisableThisTriggerOnDelayImplementation()

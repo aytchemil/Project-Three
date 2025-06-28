@@ -20,6 +20,8 @@ MonoBehaviour:
   unsuccessDelay:
   - 0.3
   movementAmount: 0
+  dir: 1
+  modeBase: 0
   archetype: 0
   trait: 0
   animation_name: Attack_Diagnal_Right

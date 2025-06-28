@@ -171,17 +171,20 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
 
 
 
-    public override void AttackTriggerBlocked(Vector3 effectPos, string lookdir)
+    public override void AttackTriggerBlocked(string myLookDir, Vector3 effectPos)
     {
         col.enabled = false;
 
+        print(effectPos + " " + myLookDir);
+
         print("AT Collider being frozen");
-        StartCoroutine(FreezeAttack(0, effectPos, lookdir));
+        StartCoroutine(FreezeAttack(0, myLookDir, effectPos));
     }
     
 
-    IEnumerator FreezeAttack(float time, Vector3 e, string l)
+    IEnumerator FreezeAttack(float time, string l, Vector3 e)
     {
+        print("Freezing attack");
         float prevSpeed = animator.speed;
         float prevanimContSpeed = combatFunctionality.Controls.animController.animator.speed;
 
@@ -192,14 +195,13 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
 
         animator.speed = prevSpeed;
         combatFunctionality.Controls.animController.animator.speed = prevanimContSpeed;
-
-        BlockedCompleteSequence(e, l);
+        BlockedCompleteSequence(l, e);
     }
 
-    void BlockedCompleteSequence(Vector3 e, string l)
+    void BlockedCompleteSequence(string l, Vector3 e)
     {
         print("didreattack: block sequence complete");
-        base.AttackTriggerBlocked(e, l);
+        base.AttackTriggerBlocked(l, e);
         DisableThisTrigger();
 
         //combatFunctionality.Controls.Mode("Attack").isUsing = false;

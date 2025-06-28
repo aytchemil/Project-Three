@@ -86,7 +86,7 @@ public class CombatFunctionality : MonoBehaviour
 
     #endregion
 
-    #region Delegates: InCombat(), ExitCombat(), CombatFunctionalityElementsLockOntoTarget() ,CombatFunctionalityElementLockOntoTarget()
+    #region Delegates
     ///===========================================================================================================================================================================================================================================================================================
 
     /// <summary>
@@ -376,18 +376,10 @@ public class CombatFunctionality : MonoBehaviour
 
 
 
-    #region Attack Collision Types
-
-
-    #endregion
-
-
-
     /// <summary>
     /// Enables the selected direction's attack trigger and uses that attack trigger's attacktriggerattack method call with the current ability
     /// </summary>
     /// 
-
     public ModeTriggerGroup AbilityTriggerEnableUse(string modeName)
     {
         ModeTriggerGroup usingThisTriggerGroup = null;

@@ -63,6 +63,9 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
 
     }
 
+    /// <summary>
+    /// Sets all Triggers to False
+    /// </summary>
     public void SetAllTriggersToFalse()
     {
         print($"set all {triggers.Count} triggers to false");
@@ -73,6 +76,11 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
         }
     }
 
+    /// <summary>
+    /// Uses the trigger at index i
+    /// </summary>
+    /// <param name="currentAbility"></param>
+    /// <param name="i"></param>
     void TakeOnTriggerBeingUsed(Ability currentAbility, int i)
     {
         //print($"FOLLOWUP Cur INDEX: {i} Ability GROUP: {currentAbility} ");
@@ -83,7 +91,10 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
         triggerBeingUsed.StartUsingAbilityTrigger(triggerBeingUsed.myAbility, currentAbility.InitialUseDelay[i]);
     }
 
-    //Base Virtual
+    /// <summary>
+    /// base virtual: checks for if the trigger is used or unused
+    /// </summary>
+    /// <param name="i"></param>
     public virtual void CheckForTriggerUpdates_ReturnDelay(int i)
     {
         print("checking trigger for usage");

@@ -36,30 +36,28 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
         if (cf.Controls.cantUseAbility.Invoke())
             return;
 
-        cf.Controls.Mode("Combo").isUsing = true;
-
-        print("comboing");
-
         //Setup
-        AbilityCombo ability = (AbilityCombo)cf.Controls.Mode("Combo").ability;
-
-        //Set all Triggers to False
-        for (int i = 0; i < cf.Controls.Mode("Combo").triggers.Length; i++) 
-            cf.Controls.Mode("Combo").triggers[i].gameObject.SetActive(false);
-
-
-        cf.Controls.Mode("Combo").SetAbility(ability); 
-        (cf.Controls.Mode("Attack").data.modeFunctionality as ModeAttackFunctionality).StartAttacking(); //Flag: attacking true (in cf)
-
-
-        //Trigger
+        CombatEntityModeData combo = cf.Controls.Mode("Combo");
+        AbilityCombo ability = (AbilityCombo)combo.ability;
         ModeTriggerGroup usingTrigger = cf.WheelTriggerEnableUse("Combo");
-        cf.Controls.Mode("Combo").trigger = usingTrigger;
-        //Ability
         AbilityWrapper usingAbility = new((ability as AbilityCombo).abilities, ability);
-        print($"[Combo Functionality] the abilities for this combo are:{usingAbility.Values[0]} {usingAbility.Values[1]} {usingAbility.Values[2]} for trigger: [{usingTrigger.gameObject.name}]");
 
-        print("combo setup complete");
+        //Flags
+        combo.isUsing = true;
+        (cf.Controls.Mode("Attack").data.modeFunctionality as ModeAttackFunctionality).StartAttacking();
+
+        //Initial Mutations
+        //+Set all Triggers to False
+        //+Sets the curr ability
+        //+Sets the curr trigger
+        for (int i = 0; i < combo.triggers.Length; i++) 
+            combo.triggers[i].gameObject.SetActive(false);
+        combo.SetAbility(ability); 
+        combo.trigger = usingTrigger;
+
+        ComboSetupCompletePrint();
+
+        //Desired Mutations
         switch (ability.comboType)
         {
             case AbilityCombo.ComboType.Linear:
@@ -74,22 +72,34 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
                 //Actuall Attack
                 UseCurrentCombo(cf.Controls.lookDir).GetComponent<CombotTriggerGroup>().StartUsingAbilityTrigger(ability, ability.InitialUseDelay[0]);
 
-
                 //Special Functionality
                 //ArchetypeUse_FollowUpAttack((AbilityMulti)ability);
-
                 break;
+        }
+
+        void ComboSetupCompletePrint()
+        {
+            print($"[Combo Functionality] the abilities for this combo are:{usingAbility.Values[0]} {usingAbility.Values[1]} {usingAbility.Values[2]} for trigger: [{usingTrigger.gameObject.name}]");
+            print("combo setup complete");
         }
     }
 
-
+    /// <summary>
+    /// +Sets all trigers to false
+    /// +Sets a trigger active
+    /// +returns that trigger
+    /// </summary>
+    /// <param name="dir"></param>
+    /// <returns></returns>
+    /// <exception cref="NullReferenceException"></exception>
+    /// <exception cref="Exception"></exception>
     CombotTriggerGroup UseCurrentCombo(string dir)
     {
-        CombatEntityModeData mode = cf.Controls.Mode("Combo");
+        CombatEntityModeData combo = cf.Controls.Mode("Combo");
         int trigerIndx = cf.GetDirIndex(dir);
 
         //Checks
-        if (mode == null || mode.triggers == null)
+        if (combo == null || combo.triggers == null)
         {
             throw new NullReferenceException("Mode 'Combo' or its triggers are null.");
         }
@@ -99,15 +109,19 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
         }
 
         //Set all triggers to false
-        foreach (GameObject trigger in mode.triggers)
+        foreach (GameObject trigger in combo.triggers)
             trigger.SetActive(false);
 
-        mode.triggers[trigerIndx].SetActive(true);
+        combo.triggers[trigerIndx].SetActive(true);
 
-        return mode.triggers[trigerIndx].GetComponent<CombotTriggerGroup>();
+        return combo.triggers[trigerIndx].GetComponent<CombotTriggerGroup>();
 
     }
 
+    /// <summary>
+    /// Switches to another combo, waiting until attack.isusing is false
+    /// </summary>
+    /// <param name="dir"></param>
     void SwitchToCombo(string dir)
     {
         //print("switching to combo: " + combo);
@@ -122,37 +136,46 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
         }
 
         cf.Controls.Mode("Combo").ability = cf.ChooseCurrentWheelAbility(dir, "Combo");
-    }
 
-    IEnumerator WaitForComboingToFinishToSwitchToAnother(string dir)
-    {
-        while (cf.Controls.Mode("Attack").isUsing)
+        ///Waits until the player stops attacking to switch to another combo
+        IEnumerator WaitForComboingToFinishToSwitchToAnother(string dir)
         {
-            yield return new WaitForEndOfFrame();
+            while (cf.Controls.Mode("Attack").isUsing)
+            {
+                yield return new WaitForEndOfFrame();
+            }
+            cf.Controls.Mode("Combo").ability = cf.ChooseCurrentWheelAbility(dir, "Combo");
+            waiting = false;
         }
-        cf.Controls.Mode("Combo").ability = cf.ChooseCurrentWheelAbility(dir, "Combo");
-        waiting = false;
     }
 
+    /// <summary>
+    /// Waits for the combo to finish (either reach final trigger proggress or attack.isusing = false)
+    /// </summary>
+    /// <param name="usingTrigger"></param>
+    /// <returns></returns>
     IEnumerator WaitForComboToFinish(ModeTriggerGroup usingTrigger)
     {
         CombotTriggerGroup trigger = usingTrigger.GetComponent<CombotTriggerGroup>();
-
 
         while (cf.Controls.Mode("Combo").isUsing == true)
         {
             print($"[ComboFunctionality] [{gameObject.name}] waiting for combo to finish");
             yield return new WaitForEndOfFrame();
+
             if (trigger.triggerProgress[trigger.triggerProgress.Count - 1] == true || cf.Controls.Mode("Attack").isUsing == false)
-            {
-                print("[ComboFunctionality] combo finished");
                 cf.Controls.Mode("Combo").isUsing = false;
-            }
         }
+        print("[ComboFunctionality] combo finished");
+
     }
 
-
-    void MyComboWasBlocked(string dir, Ability ability)
+    /// <summary>
+    /// Listener for combo being blocked
+    /// </summary>
+    /// <param name="dir"></param>
+    /// <param name="ability"></param>
+    void MyComboWasBlocked(string myLookdir, Ability ability)
     {
         if (ability.GetType() != typeof(AbilityCombo)) return;
         print("didreattack: mycombo was blocked");

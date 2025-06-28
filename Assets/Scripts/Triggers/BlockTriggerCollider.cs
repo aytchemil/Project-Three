@@ -91,30 +91,76 @@ public class BlockTriggerCollider : ModeTriggerGroup
 
 
 
-    public virtual void OnTriggerStay(Collider other)
+    public virtual void OnTriggerEnter(Collider other)
     {
-        if (blockUp && !blocking)
+        GeneralAttackTriggerGroup AT = other.gameObject.GetComponent<GeneralAttackTriggerGroup>();
+
+        //Null Check
+        if (AT == null)
+            return;
+
+        // + Block up TRUE
+        // + countering FLASE
+        // + Attack Trigger attacking TRUE
+        if (blockUp && !blocking && AT.attacking)
         {
-            if(other.GetComponent<GeneralAttackTriggerGroup>() == null)
+            print("BlockSys: Potential Block Detected");
+
+
+            //Setup
+            Vector3 effectpos = other.ClosestPoint(transform.position);
+            string myBlocksDirection = myBlockAbility.dir.ToString();
+            string opponentAbilityDir = AT.myAbility.dir.ToString();
+            bool sidePerspectivesHappened = IsLeftRightPerspectiveCheckHappened(myBlocksDirection, opponentAbilityDir);
+            bool sideDirsTheSame = IsSideDirsTheSame(myBlocksDirection, opponentAbilityDir);
+
+            //Mutations
+            if ((myBlocksDirection == opponentAbilityDir || sidePerspectivesHappened) && !sideDirsTheSame)
             {
-                //print("no attack trigger found. returning");
-                return;
+                AT.AttackTriggerBlocked(myBlocksDirection, effectpos);
+                print($"BlockSys: YES Match -> BLOCKED : ({myBlocksDirection}) and ({opponentAbilityDir})");
+            }
+            else
+            {
+                print($"BlockSys: NO Match -> HIT : ({myBlocksDirection}) and ({opponentAbilityDir})");
             }
 
-            if (other.GetComponent<GeneralAttackTriggerGroup>().attacking)
-            {
-                print("BLOCKED");
-                string lookdir = combatFunctionality.Controls.lookDir;
-                Vector3 effectpos = other.ClosestPoint(transform.position);
-
-                //print("Countered against: " + other.gameObject.GetComponent<AttackTriggerGroup>().name);
-                other.gameObject.GetComponent<GeneralAttackTriggerGroup>().AttackTriggerBlocked(effectpos, lookdir);
-
-                //TODO: If in defensive mode counter
-                //CounterAttack();
-
-            }
+            //TODO: If in defensive mode counter
+            //CounterAttack();
         }
+    }
+
+    /// <summary>
+    /// Checks the perspective of two (string) directions that if left and right is given they are same dir
+    /// </summary>
+    /// <param name="my"></param>
+    /// <param name="opp"></param>
+    /// <returns></returns>
+    bool IsLeftRightPerspectiveCheckHappened(string my, string opp)
+    {
+        bool ret = false;
+        if (my == "right" && opp == "left")
+            ret = true;
+        else if (my == "left" && opp == "right")
+            ret = true;
+        return ret;
+    }
+
+    /// <summary>
+    /// Checks if the dirs are both either left or right, if they are check if they are the same. if they are return true
+    /// </summary>
+    /// <param name="my"></param>
+    /// <param name="opp"></param>
+    /// <returns></returns>
+    bool IsSideDirsTheSame(string my, string opp)
+    {
+        bool ret = false;
+
+        if(my == "left" ||  my == "right" && opp == "left" || opp == "right")
+            if (my == opp)
+                ret = true;
+
+        return ret;
     }
 
     void BlockAttack()

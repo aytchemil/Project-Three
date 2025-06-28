@@ -29,7 +29,16 @@ public class Ability : ScriptableObject
     public float[] unsuccessDelay = { 0.3f };
     public float movementAmount;
     public virtual GameObject prefab { get; set; }
-
+    public enum Dir
+    {
+        none = 0,
+        right = 1,
+        left = 2,
+        up = 3,
+        down = 4,
+        pierce = 5
+    }
+    public Dir dir;
     public enum Mode
     {
         AttackBased = 0,

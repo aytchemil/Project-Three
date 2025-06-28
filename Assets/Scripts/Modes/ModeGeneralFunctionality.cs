@@ -5,12 +5,12 @@ using static CombatEntityController;
 public class ModeGeneralFunctionality : MonoBehaviour
 {
     /// <summary>
-    /// Virtual for all names of modes (Set in the child class)
+    /// PARENT VIRTUAL STRING for all names of modes (Set in the child class)
     /// </summary>
-   public virtual string MODE_NAME { get; }
+    public virtual string MODE_NAME { get; }
 
     /// <summary>
-    /// The virtual for using all mode functionalities
+    /// PARENT VIRTUAL FUNCTION for using all mode functionalities
     /// </summary>
    public virtual void UseModeFunctionality()
    {
@@ -18,7 +18,7 @@ public class ModeGeneralFunctionality : MonoBehaviour
    }
 
     /// <summary>
-    /// Individually animates an ability's move
+    /// ANIMATES an individual ability's move
     /// </summary>
     /// <param name="animationName"></param>
     /// <param name="delay"></param>
@@ -35,7 +35,7 @@ public class ModeGeneralFunctionality : MonoBehaviour
     }
 
     /// <summary>
-    /// Animates a parent ability's ability array over time
+    /// ANIMATES a parent ability's ability array over time
     /// </summary>
     /// <param name="usingAbility"></param>
     /// <param name="usingTrigger"></param>
@@ -50,11 +50,14 @@ public class ModeGeneralFunctionality : MonoBehaviour
         for (int i = 0; i < usingTrigger.GetComponent<MAT_FollowupGroup>().triggerProgress.Count && mode.isUsing; i++)
         {
             //Setup
+            ///+gets the animation name
+            ///+determines if we are the first attack, if it is, no delay, if its not the first followupattack, then put an initial delay
             string animName = (usingAbility.Values[i]).AnimName.ToString();
-            //print($"[Followup] combo animation on attack [{i}] which is ability [{animName}]");
+            float delay = 0;
+            delay = (i == 0) ? 0 : usingAbility.Values[i].InitialUseDelay[0];
 
             //Animates
-            AnimateAblity(animName, 0, animCont);
+            AnimateAblity(animName, delay, animCont);
 
             //AdditionalFunctionality Option
             StartedAnAnimation();

@@ -4,6 +4,10 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
+/// <summary>
+/// WRAPPER CLASS for an ability
+/// + provided for abilities with child abilities
+/// </summary>
 public class AbilityWrapper
 {
     public Ability parentAbility;
@@ -31,6 +35,7 @@ public class AbilityWrapper
     }
 }
 
+
 public class ModeAttackFunctionality : ModeGeneralFunctionality
 {
     private CombatFunctionality cf;
@@ -55,33 +60,32 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
 
     public override void UseModeFunctionality() => Attack();
     
+    /// <summary>
+    /// Attack Functionality
+    /// </summary>
     void Attack()
     {
         print($"[{gameObject.name}] [ModeAttackFunctionality] Attacking");
 
 
-        StartAttacking();
-
-        ///to do: create a way for it to animate,
-        ///create 4 different attack triggers(like box)
-        /// animate all 4, integrate that
-
-
-        Ability ability = cf.Controls.Mode("Attack").ability;
-        print($" + Using attack ability: {ability.abilityName}");
-
-        //Current Ability Being Used For Each Mode System
-        cf.Controls.Mode("Attack").SetAbility(ability);
-
-        //Trigger----------------------------------------------------
+        //Setup
+        CombatEntityController.CombatEntityModeData attack = cf.Controls.Mode("Attack");
+        Ability ability = attack.ability;
         ModeTriggerGroup usingTrigger = cf.AbilityTriggerEnableUse("Attack");
-        cf.Controls.Mode("Attack").trigger = usingTrigger;
-        //Ability
         AbilityWrapper usingAbility = new AbilityWrapper(ability);
 
+        //Flags
+        StartAttacking();
+
+        //Initial Mutations
+        // + SETS the curr ability
+        // + SETS the curr Trigger
+        attack.SetAbility(ability);
+        attack.trigger = usingTrigger;
+
+        //Mutations
         switch (ability.archetype)
         {
-
             case AbilityAttack.Archetype.Singular:
 
                 print(" + + archetype: singular");
@@ -98,7 +102,6 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
                 AnimateAblity(usingAbility.Values[0].AnimName.ToString(), usingAbility.Values[0].InitialUseDelay[0], cf.Controls.animController);
 
                 break;
-
             case AbilityAttack.Archetype.Multi_Choice:
 
                 print(" + + archetype: multichoice");
@@ -118,24 +121,17 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
                 AnimateAblity(usingAbility.Values[0].AnimName.ToString(), usingAbility.Values[0].InitialUseDelay[0], cf.Controls.animController);
 
                 break;
-
             case AbilityAttack.Archetype.Multi_Followup:
 
                 print(" + + archetype: multi_followup");
 
                 //Setup
                 usingAbility = new AbilityWrapper((ability as AbilityMulti).abilities, ability);
-                print(usingAbility);
-                print(usingAbility.completedAnimation);
-                print(usingTrigger);
-                print(usingTrigger.GetComponent<MAT_FollowupGroup>());
-                print(usingTrigger.GetComponent<MAT_FollowupGroup>().triggerProgress);
 
                 usingAbility.completedAnimation = usingTrigger.GetComponent<MAT_FollowupGroup>().triggerProgress;
 
                 //Animation
                 StartCoroutine(AnimateFollowUpAbilities(usingAbility, usingTrigger, cf.Controls.Mode("Attack"), cf.Controls.animController));
-
 
                 //Trigger
                 usingTrigger.GetComponent<MAT_FollowupGroup>().StartUsingAbilityTrigger(ability, ability.InitialUseDelay[0]);
@@ -268,7 +264,12 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
         gameObject.GetComponent<Movement>().EnableMovement();
     }
 
-    public void AttackBlocked(string dir, Ability ability)
+    /// <summary>
+    /// LISTENER for attack being blocked (Controls.MyAttackWasBlocked)
+    /// </summary>
+    /// <param name="dir"></param>
+    /// <param name="ability"></param>
+    public void AttackBlocked(string myLookdir, Ability ability)
     {
         print("didreattack: on ModeAttackFunc, checking if the ability used is an attack ability");
         if (ability.modeBase != Ability.Mode.AttackBased) return;
@@ -294,8 +295,4 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
         }
     }
 
-
-    #region Animation
-
-    #endregion
 }

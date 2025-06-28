@@ -13,6 +13,7 @@ public class CharacterAnimationController : MonoBehaviour
     private void Awake()
     {
         CEC = GetComponentInParent<CombatEntityController>();
+        CEC.animController = this;
         animator = GetComponent<Animator>();
     }
 

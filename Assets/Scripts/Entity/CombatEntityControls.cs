@@ -25,7 +25,20 @@ public class CombatEntityController : MonoBehaviour
     public bool usedCombo;
     public Action switchAbilityMode;
     public string mode = "Attack";
-    public string lookDir;
+    [SerializeField] private string _lookDir;
+    public string lookDir
+    {
+        get => _lookDir;
+
+        set
+        {
+            if (!cannotChangeLookDir)
+                _lookDir = value;
+            else
+                print("cannotChangeLookDir FALSE");
+        }
+
+    }
 
     //Combo Reattacking
     public Action<float> comboReattackDelay;
@@ -114,6 +127,7 @@ public class CombatEntityController : MonoBehaviour
     public bool currentlyRetargetting;
     public bool isAlive = true;
     public bool isFlinching = false;
+    public bool cannotChangeLookDir = false;
 
 
     [Header("Combat Flags")]

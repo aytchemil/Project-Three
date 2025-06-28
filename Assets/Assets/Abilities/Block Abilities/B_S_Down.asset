@@ -20,6 +20,7 @@ MonoBehaviour:
   unsuccessDelay:
   - 0.3
   movementAmount: 0
+  dir: 4
   modeBase: 1
   archetype: 0
   trait: 0

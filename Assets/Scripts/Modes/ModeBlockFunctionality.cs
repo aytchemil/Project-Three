@@ -33,10 +33,21 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
         readyToUnblock = true;
     }
 
+    /// <summary>
+    /// Changes the current block ability in the ModeData
+    /// </summary>
+    /// <param name="dir"></param>
     public void ChangeBlockAbility(string dir)
     {
+        //Setup
         CombatEntityModeData d = cf.Controls.Mode("Block");
 
+        //BlockSys: Prevents Blocker from changin lookDir mid block to block a different directional attack
+        //..........without first unblocking
+        if (d.isUsing)
+            return;
+
+        //Mutations
         if (dir == "right")
             d.ability = d.data.abilitySet.right;
         else if(dir == "left")
@@ -56,22 +67,30 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
             print("stop block");
     }
 
+    /// <summary>
+    /// Attempt to block an incoming attack in the direction it comes in
+    /// + Start to block
+    /// + 
+    /// </summary>
     void Block()
     {
-        //print("Blocking");
-        StartBlocking();
-
+        //Setup
         AbilityBlock ability = (AbilityBlock)cf.Controls.Mode("Block").ability;
-        cf.Controls.Mode("Block").SetAbility(ability);
-        StartCoroutine(WaitToStartBlockingToUnblock(ability));
-
-
-        //Trigger
+        CombatEntityModeData block = cf.Controls.Mode("Block");
         ModeTriggerGroup usingTrigger = cf.WheelTriggerEnableUse("Block");
-        cf.Controls.Mode("Block").trigger = usingTrigger;
-        //Ability
         AbilityWrapper usingAbility = new AbilityWrapper(ability);
 
+        //Initial Mutations
+        // + SETS flag value for start blocking
+        // + SETS the ability in modedata
+        // + SETS the trigger as the one we chose
+        // + COROUTINE to wait for an unblock input
+        StartBlocking();
+        block.SetAbility(ability);
+        block.trigger = usingTrigger;
+        StartCoroutine(WaitToStartBlockingToUnblock(ability));
+
+        //Mutations
         switch (ability.type)
         {
             case AbilityBlock.Type.Regular:
@@ -91,18 +110,28 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
         }
     }
 
-
+    /// <summary>
+    /// SETS the modes using flag to TRUE
+    /// </summary>
     void StartBlocking()
     {
         cf.Controls.Mode("Block").isUsing = true;
     }
 
+    /// <summary>
+    /// SETS the modes using flag to FALSE
+    /// </summary>
     void StopBlocking()
     {
         print("stopping block");
         cf.Controls.Mode("Block").isUsing = false;
     }
 
+    /// <summary>
+    /// COROUTINE for the ANIMATION sequence to wait for an unblock
+    /// </summary>
+    /// <param name="ability"></param>
+    /// <returns></returns>
     IEnumerator WaitForUnblockAnimationSequence(AbilityBlock ability)
     {
         //print("block anim");
@@ -115,6 +144,10 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
         readyToUnblock = false;
     }
 
+    /// <summary>
+    /// ADDITIONAL FUNCTIONALITY (Type: Regular)
+    /// </summary>
+    /// <param name="ability"></param>
     void AF_Regular(AbilityBlock ability)
     {
         print("[ModeBlockFunctionality] AF Regular");

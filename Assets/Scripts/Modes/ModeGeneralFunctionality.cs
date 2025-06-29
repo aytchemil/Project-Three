@@ -47,7 +47,7 @@ public class ModeGeneralFunctionality : MonoBehaviour
     /// <returns></returns>
     public IEnumerator AnimateFollowUpAbilities(AbilityWrapper usingAbility, ModeTriggerGroup usingTrigger, CombatEntityModeData mode, CharacterAnimationController animCont)
     {
-        print($"[{gameObject.name}] COMBAT ANIMATION [ModeGeneral]: Animation Sequence Started...");
+        print($"[{gameObject.name}] COMBAT ANIMATION [ModeGeneral]: Animation Sequence STARTED...");
 
 
         //Loop through all triggers and if we are using the mode
@@ -56,15 +56,15 @@ public class ModeGeneralFunctionality : MonoBehaviour
             //Setup
             ///+gets the animation name
             ///+determines if we are the first attack, if it is, no delay, if its not the first followupattack, then put an initial delay
-            string animName = (usingAbility.Values[i]).AnimName.ToString();
+            string animName = (usingAbility.abilities[i]).AnimName.ToString();
             float delay = 0;
-            delay = (i == 0) ? 0 : usingAbility.Values[i].InitialUseDelay[0];
+            delay = (i == 0) ? 0 : usingAbility.abilities[i].InitialUseDelay[0];
 
             //Animates
             AnimateAblity(animName, delay, animCont);
 
             //AdditionalFunctionality Option
-            StartedAnAnimation();
+            AF_StartedAnAnimation();
 
             //Checking if the trigger progressed
             while (mode.isUsing && usingAbility.completedAnimation[i] == false)
@@ -81,8 +81,7 @@ public class ModeGeneralFunctionality : MonoBehaviour
 
         //Waiting an extra frame for the animation to complete because FinishedAnimation will also run on this frame, and they may cancle eachother out
         StartCoroutine(CompletedAnimationSequence(animCont));
-        print("[Followup] [Animation] Full Followup Completed");
-
+        print($"[{gameObject.name}] COMBAT ANIMATION [ModeGeneral]: Animation Sequence COMPLETED. ");
     }
 
     /// <summary>
@@ -93,7 +92,7 @@ public class ModeGeneralFunctionality : MonoBehaviour
     /// <param name="animCont"></param>
     public virtual void FinishedAnAnimation(int count, string animName, CharacterAnimationController animCont)
     {
-        print($"[Followup] Finished animation on index: [{count}] ");
+        print($"[{gameObject.name}] COMBAT ANIMATION [ModeGeneral]: Finished Animation {count} ");
     }
 
     /// <summary>
@@ -109,7 +108,7 @@ public class ModeGeneralFunctionality : MonoBehaviour
     /// <summary>
     /// Optional Functionality for starting an animation
     /// </summary>
-    public virtual void StartedAnAnimation()
+    public virtual void AF_StartedAnAnimation()
     {
 
     }

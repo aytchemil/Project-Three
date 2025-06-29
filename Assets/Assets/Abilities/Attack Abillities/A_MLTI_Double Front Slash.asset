@@ -21,9 +21,12 @@ MonoBehaviour:
   unsuccessDelay:
   - 0.3
   - 0.3
-  movementAmount: 0
+  dir: 0
+  modeBase: 0
   archetype: 2
-  trait: 0
+  hasAdditionalFunctionality: 0
+  af: 0
+  movementAmount: 0
   animation_name: 
   successDelay:
   - 0.3

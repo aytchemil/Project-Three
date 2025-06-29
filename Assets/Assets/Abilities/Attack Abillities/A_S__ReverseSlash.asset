@@ -19,11 +19,12 @@ MonoBehaviour:
   <successDelay>k__BackingField: 0.3
   unsuccessDelay:
   - 0.3
-  movementAmount: 0
   dir: 2
   modeBase: 0
   archetype: 0
-  trait: 0
+  hasAdditionalFunctionality: 0
+  af: 0
+  movementAmount: 0
   animation_name: Attack_Diagnal_Left
   damage: 1
   flinchAmount: 1

@@ -73,7 +73,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
                 StartCoroutine(AnimateFollowUpAbilities(usingAbility, usingTrigger, cf.Controls.Mode("Attack"), cf.Controls.animController));
 
                 //Actuall Attack
-                UseCurrentCombo(cf.Controls.lookDir).GetComponent<CombotTriggerGroup>().StartUsingAbilityTrigger(ability, ability.InitialUseDelay[0]);
+                UseCurrentCombo(cf.Controls.lookDir).GetComponent<CombotTriggerGroup>().StartUsingAbilityTrigger(usingAbility, ability.InitialUseDelay[0]);
 
                 //Special Functionality
                 //ArchetypeUse_FollowUpAttack((AbilityMulti)ability);
@@ -82,7 +82,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
 
         void ComboSetupCompletePrint()
         {
-            print($"[Combo Functionality] the abilities for this combo are:{usingAbility.Values[0]} {usingAbility.Values[1]} {usingAbility.Values[2]} for trigger: [{usingTrigger.gameObject.name}]");
+            print($"[Combo Functionality] the abilities for this combo are:{usingAbility.abilities[0]} {usingAbility.abilities[1]} {usingAbility.abilities[2]} for trigger: [{usingTrigger.gameObject.name}]");
             print("combo setup complete");
         }
     }

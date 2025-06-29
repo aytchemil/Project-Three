@@ -3,6 +3,7 @@ using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class Ability : ScriptableObject
 {
     public static float MAX_INITIAL_USE_DELAY = 10;
@@ -27,7 +28,6 @@ public class Ability : ScriptableObject
     }
     [field:SerializeField] public virtual float successDelay { get; set; }
     public float[] unsuccessDelay = { 0.3f };
-    public float movementAmount;
     public virtual GameObject prefab { get; set; }
     public enum Dir
     {
@@ -53,13 +53,20 @@ public class Ability : ScriptableObject
         Multi_Followup = 2,
     }
     public Archetype archetype;
-    public enum Trait
-    {
-        None = 0,
-        MovementForward = 4,
-        MovementLeftOrRight = 5,
-    }
-    public Trait trait;
+
+    public bool hasAdditionalFunctionality = false;
+
+    [ShowIf("hasAdditionalFunctionality")]
+    public CombatAdditionalFunctionalities.Function af;
+
+
+    private bool isMovement => 
+        ((af == CombatAdditionalFunctionalities.Function.MovementForward) ||
+        (af == CombatAdditionalFunctionalities.Function.MovementLeftOrRight)) &&
+        hasAdditionalFunctionality
+        ;
+    [ShowIf("isMovement")]
+    public float movementAmount;
 
     [SerializeField]
     private string animation_name;

@@ -14,28 +14,37 @@ public abstract class ModeTriggerGroup : MonoBehaviour
 
     public bool isLocal;
 
-
-    public virtual Ability StartUsingAbilityTrigger(Ability currentAbility, float delay)
+    /// <summary>
+    /// VIRTUAL PARENT FUNCTION 
+    /// To use the trigger on a potential delay using an ability
+    /// </summary>
+    /// <param name="currentAbility"></param>
+    /// <param name="delay"></param>
+    /// <returns></returns>
+    public virtual void StartUsingAbilityTrigger(AbilityWrapper usingAbility, float delay)
     {
-        if (!usingTrigger)
-        {
-            usingTrigger = true;
-            unused = false;
-            combatFunctionality.Controls.didReattack = false;
+        //Already Using it Check
+        if (usingTrigger) return;
 
-            //print("starting to use ability from " + gameObject.name + " setting my ability : " + myAbility);
-            EnableTrigger();
-
-            Invoke(nameof(InitialDelayOver_ReEnableTrigger), delay);
-            //print("successfully started using ability: " + currentAbility);
-            return currentAbility;
-        }
-        return null;
+        //Mutations
+        // + SETS using trigger TRUE
+        // + SETS unused FALSE
+        // + SETS did reattack FALSE
+        // + METHOD -> Enables the Trigger
+        // + INVOKE (SPEAKER) -> The initial delay is over -> Renable the trigger
+        usingTrigger = true;
+        unused = false;
+        combatFunctionality.Controls.didReattack = false;
+        EnableTrigger();
+        Invoke(nameof(InitialDelayOver_ReEnableTrigger), delay);
+        combatFunctionality.Controls.UseCombatAdditionalFunctionality?.Invoke(usingAbility);
     }
 
 
     /// <summary>
-    /// Initializes the Trigger
+    /// PATHWAY FUNCTION from StartUsingAbilityTrigger() that moves into a VIRTUAL
+    /// + PATHWAY FUNCTION
+    /// + SETS initial ability use delay over FALSE
     /// </summary>
     public void EnableTrigger()
     {
@@ -48,7 +57,9 @@ public abstract class ModeTriggerGroup : MonoBehaviour
 
     
     /// <summary>
-    /// This method is invoked on a delay, when the delay completes it will tell combatFunctionality that the initial ability delay is over (by flag value)
+    /// SETS initialAbilityUseDelayOver to TRUE
+    /// + SETS a flag value in CombatFunctionality that says the initial attack delay is over
+    /// + PATHWAY FUNCTION to a VIRTUAL 
     /// </summary>
     public void InitialDelayOver_ReEnableTrigger()
     {

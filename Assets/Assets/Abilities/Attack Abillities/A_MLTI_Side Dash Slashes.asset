@@ -19,9 +19,12 @@ MonoBehaviour:
   <successDelay>k__BackingField: 0.2
   unsuccessDelay:
   - 0.3
-  movementAmount: 0
+  dir: 0
+  modeBase: 0
   archetype: 1
-  trait: 5
+  hasAdditionalFunctionality: 1
+  af: 5
+  movementAmount: 100
   animation_name: 
   successDelay:
   - 0.3

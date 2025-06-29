@@ -33,14 +33,12 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
 
 
     //Changed without knowing
-    public override Ability StartUsingAbilityTrigger(Ability currentAbility, float delay)
+    public override void StartUsingAbilityTrigger(AbilityWrapper usingAbility, float delay)
     {
         print("[MAT_FollowupGroup] started using this ability trigger");
-        base.StartUsingAbilityTrigger(currentAbility, delay);
+        base.StartUsingAbilityTrigger(usingAbility, delay);
 
-        StartCoroutine(FollowUpUse(currentAbility));
-
-        return currentAbility;
+        StartCoroutine(FollowUpUse(usingAbility));
     }
 
     /// <summary>
@@ -81,14 +79,14 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
     /// </summary>
     /// <param name="currentAbility"></param>
     /// <param name="i"></param>
-    void TakeOnTriggerBeingUsed(Ability currentAbility, int i)
+    void TakeOnTriggerBeingUsed(AbilityWrapper usingAbility, int i)
     {
         //print($"FOLLOWUP Cur INDEX: {i} Ability GROUP: {currentAbility} ");
         triggerBeingUsed = triggers[i];
         triggerBeingUsed.gameObject.SetActive(true);
 
 
-        triggerBeingUsed.StartUsingAbilityTrigger(triggerBeingUsed.myAbility, currentAbility.InitialUseDelay[i]);
+        triggerBeingUsed.StartUsingAbilityTrigger(usingAbility, usingAbility.parentAbility.InitialUseDelay[i]);
     }
 
     /// <summary>
@@ -117,7 +115,7 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
     //Methods
     //=================================================================================================================================================
 
-    public virtual IEnumerator FollowUpUse(Ability currentAbility)
+    public virtual IEnumerator FollowUpUse(AbilityWrapper usingAbility)
     {
         //print("FollowUpAttack()");
 
@@ -134,7 +132,7 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
             foreach(var trigger in triggers)
                 trigger.gameObject.SetActive(false);
 
-            TakeOnTriggerBeingUsed(currentAbility, i);
+            TakeOnTriggerBeingUsed(usingAbility, i);
 
 
 

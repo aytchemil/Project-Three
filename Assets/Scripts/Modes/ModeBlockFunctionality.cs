@@ -101,7 +101,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
                 StartCoroutine(WaitForUnblockAnimationSequence(ability));
 
                 //Trigger
-                usingTrigger.StartUsingAbilityTrigger(ability, ability.InitialUseDelay[0]);
+                usingTrigger.StartUsingAbilityTrigger(usingAbility, ability.InitialUseDelay[0]);
 
                 //Additional Functionality 
                 AF_Regular(ability);

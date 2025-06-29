@@ -1,7 +1,9 @@
 using NUnit.Framework;
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using Unity.VisualScripting;
+using UnityEditor.Playables;
 using UnityEngine;
 
 /// <summary>
@@ -11,27 +13,37 @@ using UnityEngine;
 public class AbilityWrapper
 {
     public Ability parentAbility;
-    public List<Ability> Values;
+    public List<AF> afs;
+    public List<Ability> abilities;
     public List<bool> completedAnimation;
 
     public AbilityWrapper(Ability parent)
     {
         parentAbility = parent;
-        Values = new List<Ability>();
+        abilities = new List<Ability>();
         completedAnimation = new List<bool>();
+        afs = new List<AF>();
     }
 
     public AbilityWrapper(Ability[] values, Ability parent)
     {
         parentAbility = parent;
         completedAnimation = new List<bool>();
+        afs = new List<AF>();
+        abilities = new List<Ability>();
 
-        Values = new List<Ability>();
         for (int i = 0; i < values.Length; i++)
         {
-            Values.Add(values[i]);
+            abilities.Add(values[i]);
             completedAnimation.Add(false);
         }
+    }
+    public AF GetAF(string name)
+    {
+        foreach (AF af in afs)
+            if (af.name == name)
+                return af;
+        throw new System.Exception($"Combat Additional Functionality ({name}) package Not Found");
     }
 }
 
@@ -65,7 +77,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
     /// </summary>
     void Attack()
     {
-        print($"[{gameObject.name}] [ModeAttackFunctionality] Attacking");
+        print($"[{gameObject.name}] [ModeAttack] Attacking STARTED...");
 
 
         //Setup
@@ -73,6 +85,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
         Ability ability = attack.ability;
         ModeTriggerGroup usingTrigger = cf.AbilityTriggerEnableUse("Attack");
         AbilityWrapper usingAbility = new AbilityWrapper(ability);
+        bool hasAf = ability.hasAdditionalFunctionality;
 
         //Flags
         StartAttacking();
@@ -83,47 +96,55 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
         attack.SetAbility(ability);
         attack.trigger = usingTrigger;
 
+
         //Mutations
         switch (ability.archetype)
         {
             case AbilityAttack.Archetype.Singular:
 
-                print(" + + archetype: singular");
+                print($"[{gameObject.name}] [ModeAttack] Archetype: Singular");
 
                 //Setup
 
-                //Trigger
-                usingAbility.Values.Add(usingTrigger.StartUsingAbilityTrigger(ability, ability.InitialUseDelay[0]));
+                //Mutations
+                usingAbility.abilities.Add(ability);
 
                 //Additional Functionality 
-                Archetype_SingularAttack((AbilityAttack)usingAbility.Values[0]);
+                if (hasAf)
+                    AF_Attack(usingAbility);
+
+                //Trigger
+                usingTrigger.StartUsingAbilityTrigger(usingAbility, ability.InitialUseDelay[0]);
 
                 //Animation
-                AnimateAblity(usingAbility.Values[0].AnimName.ToString(), usingAbility.Values[0].InitialUseDelay[0], cf.Controls.animController);
+                AnimateAblity(usingAbility.abilities[0].AnimName.ToString(), usingAbility.abilities[0].InitialUseDelay[0], cf.Controls.animController);
 
                 break;
             case AbilityAttack.Archetype.Multi_Choice:
 
-                print(" + + archetype: multichoice");
+                print($"[{gameObject.name}] [ModeAttack] Archetype: Multi-Choice");
 
                 //Setup
-                string choice = GetMultiChoiceAttack(ability);
-                if (choice == "none") break;
-
-                //Trigger
-                StartCoroutine(usingTrigger.GetComponent<MAT_ChoiceGroup>().MultiChoiceAttack((AbilityMulti)ability, ability.InitialUseDelay[0], choice, usingAbility));
-                Debug.Log($"[ModeAttackFunctionality] Multi_Choice attack chosen is: [{usingAbility.Values[0]}]");
+                string choice = GetMultiChoiceAttack(ability); if (choice == "none") break;
+                MAT_ChoiceGroup parentTrigger = usingTrigger.GetComponent<MAT_ChoiceGroup>();
 
                 //Additional Functionality
-                Archetype_MultiChoiceAttack(ability, choice);
+                if (hasAf)
+                {
+                    AF_Attack(usingAbility);
+                    AF_Choice(usingAbility, choice);
+                }
+
+                //Trigger 
+                StartCoroutine(parentTrigger.MultiChoiceAttack(usingAbility, ability.InitialUseDelay[0], choice, usingAbility));
 
                 //Animation
-                AnimateAblity(usingAbility.Values[0].AnimName.ToString(), usingAbility.Values[0].InitialUseDelay[0], cf.Controls.animController);
+                AnimateAblity(usingAbility.abilities[0].AnimName.ToString(), usingAbility.abilities[0].InitialUseDelay[0], cf.Controls.animController);
 
                 break;
             case AbilityAttack.Archetype.Multi_Followup:
 
-                print(" + + archetype: multi_followup");
+                print($"[{gameObject.name}] [ModeAttack] Archetype: Multi-Followup");
 
                 //Setup
                 usingAbility = new AbilityWrapper((ability as AbilityMulti).abilities, ability);
@@ -133,11 +154,10 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
                 //Animation
                 StartCoroutine(AnimateFollowUpAbilities(usingAbility, usingTrigger, cf.Controls.Mode("Attack"), cf.Controls.animController));
 
-                //Trigger
-                usingTrigger.GetComponent<MAT_FollowupGroup>().StartUsingAbilityTrigger(ability, ability.InitialUseDelay[0]);
-
                 //Special Functionality
-                Archetype_FollowUpAttack((AbilityMulti)ability);
+                if (hasAf)
+                    Archetype_FollowUpAttack((AbilityMulti)ability);
+
 
                 break;
         }
@@ -163,30 +183,36 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
     }
     #endregion
 
+
+
     #region Archetypes
-    void Archetype_SingularAttack(AbilityAttack attack)
+    void AF_Attack(AbilityWrapper usingAbility)
     {
-        switch (attack.trait)
+        Ability ability = usingAbility.parentAbility;
+
+        if (ability.af == CombatAdditionalFunctionalities.Function.MovementForward)
         {
-            case AbilityAttack.Trait.MovementForward:
-
-                StartCoroutine(MovementForwardAttack(attack));
-
-                break;
+            AF_movement afmove = new(ability.movementAmount);
+            usingAbility.afs.Add(afmove);
+        }
+        else if (ability.af == CombatAdditionalFunctionalities.Function.MovementLeftOrRight)
+        {
+            AF_movement afmove = new(ability.movementAmount);
+            usingAbility.afs.Add(afmove);
         }
     }
 
-    void Archetype_MultiChoiceAttack(Ability ability, string choice)
+    void AF_Choice(AbilityWrapper usingAbility, string choice)
     {
-        switch (ability.trait)
+        Ability ability = usingAbility.parentAbility;
+
+        if (ability.af == CombatAdditionalFunctionalities.Function.MovementLeftOrRight)
         {
-            case AbilityAttack.Trait.MovementLeftOrRight:
-
-                StartCoroutine(MovementRightOrLeftAttack(choice, ability));
-
-                break;
+            AF_choice afchoice = new(choice);
+            usingAbility.afs.Add(afchoice);
         }
     }
+
 
     void Archetype_FollowUpAttack(AbilityMulti mltiAbility)
     {
@@ -197,9 +223,9 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
     {
         string choice = "";
 
-        switch (ability.trait)
+        switch (ability.af)
         {
-            case AbilityAttack.Trait.MovementLeftOrRight:
+            case CombatAdditionalFunctionalities.Function.MovementLeftOrRight:
 
                 choice = cf.Controls.getMoveDirection?.Invoke();
 
@@ -216,53 +242,8 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
 
         return choice;
     }
-    #endregion
-
-    #region Special Attacks
-    IEnumerator MovementForwardAttack(AbilityAttack attack)
-    {
-        Debug.Log(" * MoveForwardAttacK Called");
-
-        //print("Waiting for attack to start, initialAttackDelayOver not over yet (its false)");
-        //print("initial attack delay over?: " + initialAttackDelayOver);
-        while (!cf.initialAbilityUseDelayOver)
-        {
-            // print("waiting...");
-            yield return new WaitForEndOfFrame();
-        }
-        // print("Attacking started, initialAttackDelayOver is over (true)");
 
 
-        gameObject.GetComponent<Movement>().Lunge("up", attack.movementAmount);
-        gameObject.GetComponent<Movement>().DisableMovement();
-        Invoke(nameof(ReEnableMovement), gameObject.GetComponent<Movement>().entityStates.dashTime);
-    }
-
-
-    IEnumerator MovementRightOrLeftAttack(string choice, Ability ability)
-    {
-        Debug.Log(gameObject.name + " | Combat Functionality: attacking w/ MovementLeftOrRight attack");
-
-
-
-
-        gameObject.GetComponent<Movement>().Lunge(choice, ability.movementAmount);
-
-        print("multi attack trigger, movementatttackrightorleft : lunging in dir " + choice);
-
-        while (!cf.initialAbilityUseDelayOver)
-        {
-            // print("waiting...");
-            yield return new WaitForEndOfFrame();
-        }
-
-    }
-    #endregion
-
-    void ReEnableMovement()
-    {
-        gameObject.GetComponent<Movement>().EnableMovement();
-    }
 
     /// <summary>
     /// LISTENER for attack being blocked (Controls.MyAttackWasBlocked)
@@ -296,3 +277,5 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
     }
 
 }
+
+#endregion

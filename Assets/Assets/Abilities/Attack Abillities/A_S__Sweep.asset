@@ -19,11 +19,12 @@ MonoBehaviour:
   <successDelay>k__BackingField: 0.3
   unsuccessDelay:
   - 0.3
-  movementAmount: 0
   dir: 1
   modeBase: 0
   archetype: 0
-  trait: 0
+  hasAdditionalFunctionality: 1
+  af: 4
+  movementAmount: 15
   animation_name: Attack_Flat_Right
   damage: 3
   flinchAmount: 1

@@ -62,7 +62,8 @@ public class ModeCounterFunctionality : ModeGeneralFunctionality
                 StartCoroutine(AnimateFollowUpAbilities(usingAbility, usingTrigger, cf.Controls.Mode("Counter"), cf.Controls.animController));
 
                 //Trigger
-                usingAbility.Values.Add(usingTrigger.StartUsingAbilityTrigger(ability, ability.InitialUseDelay[0]));
+                usingAbility.abilities.Add(ability);
+                usingTrigger.StartUsingAbilityTrigger(usingAbility, ability.InitialUseDelay[0]);
 
                 //Additional Functionality 
                 StandingRiposte(ability);

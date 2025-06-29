@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using UnityEditor.Playables;
 using UnityEngine;
 
 public class MAT_ChoiceGroup : MultiAttackTriggerGroup
@@ -14,27 +15,13 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
 
     ModeTriggerGroup ChooseTrigger(string choice)
     {
-        ModeTriggerGroup chosenMode = null;
-
-        print("[MAT_ChoiceGroup] [" + gameObject.name + "] given choice: " + choice);
-
         for (int i = 0; i < triggers.Count; i++)
-        {
-            print($"checking choice: {i} which is choiceName : {triggers[i].gameObject.GetComponent<MultiChoiceOption>().choiceName}");
-
             if (triggers[i].gameObject.GetComponent<MultiChoiceOption>().choiceName == choice)
-            {
-                chosenMode = triggers[i];
-                return chosenMode;
-            }
-        }
-
-        Debug.LogError("Choice not made, potentially mismatched choice name comparison, or multichoiceoption script not applied");
+                return triggers[i];
 
         return null;
-
     }
-    
+
     public virtual bool CheckChoiceForUpdates_AndContinue()
     {
         bool _continue = true;
@@ -63,8 +50,7 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
         return _continue;
     }
 
-
-    public virtual IEnumerator MultiChoiceAttack(AbilityMulti multiAbility, float delay, string choice, AbilityWrapper location)
+    public virtual IEnumerator MultiChoiceAttack(AbilityWrapper usingAbility, float delay, string choice, AbilityWrapper location)
     {
         print("[MAT_ChoiceGroup] Attacking with multi attack choice trigger");
 
@@ -77,15 +63,19 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
 
         print("Chosen attack trigger is : " + triggerBeingUsed.name);
 
+        // (PARENT TRIGGER)
         //MultiChoice's Ability Trigger
-        StartUsingAbilityTrigger(multiAbility, multiAbility.InitialUseDelay[0]);
+        StartUsingAbilityTrigger(usingAbility, usingAbility.parentAbility.InitialUseDelay[0]);
 
         if (!initializedChildTriggers)
             InitializeChildTriggers(myMultiAbility);
 
-        //The chosen Ability Trigger's Ability
+        //(CHILD TRIGGER)
+        //The chosen Ability Trigger's Ability 
         triggerBeingUsed.gameObject.SetActive(true);
-        location.Values.Add(triggerBeingUsed.StartUsingAbilityTrigger(triggerBeingUsed.myAbility, multiAbility.InitialUseDelay[0]));
+
+        location.abilities.Add(triggerBeingUsed.myAbility);
+        triggerBeingUsed.StartUsingAbilityTrigger(usingAbility, usingAbility.abilities[0].InitialUseDelay[0]);
 
         while (gameObject.activeInHierarchy)
         {

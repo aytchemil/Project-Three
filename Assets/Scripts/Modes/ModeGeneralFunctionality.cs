@@ -25,11 +25,14 @@ public class ModeGeneralFunctionality : MonoBehaviour
     /// <param name="animCont"></param>
     public void AnimateAblity(string animationName, float delay, CharacterAnimationController animCont)
     {
-        if(animCont == null)
+        if (animCont == null)
         {
-            Debug.LogWarning($"[{gameObject.name}] [ModeGeneralFunc] no animController found on this CombatEntity");
+            Debug.LogWarning($"[{gameObject.name}] [ModeGeneral] animController NOT found on this CombatEntity");
             return;
         }
+
+        print($"[{gameObject.name}] COMBAT ANIMATION [ModeGeneral]: Animating: ({animationName})");
+
         Debug.Log($"[{gameObject.name}] [{this.GetType()}] is using Ability [{animationName}] )");
         animCont.UseAnimation?.Invoke(animationName, delay);
     }
@@ -44,7 +47,8 @@ public class ModeGeneralFunctionality : MonoBehaviour
     /// <returns></returns>
     public IEnumerator AnimateFollowUpAbilities(AbilityWrapper usingAbility, ModeTriggerGroup usingTrigger, CombatEntityModeData mode, CharacterAnimationController animCont)
     {
-        print("[Followup] Animation starting");
+        print($"[{gameObject.name}] COMBAT ANIMATION [ModeGeneral]: Animation Sequence Started...");
+
 
         //Loop through all triggers and if we are using the mode
         for (int i = 0; i < usingTrigger.GetComponent<MAT_FollowupGroup>().triggerProgress.Count && mode.isUsing; i++)

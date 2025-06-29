@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using UnityEngine;
+using static Ability;
 using static CombatEntityController;
 
 public class ModeComboFunctionality : ModeGeneralFunctionality
@@ -32,6 +33,8 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
 
     void Combo()
     {
+        print($"[{gameObject.name}] COMBAT [ModeCombo]: Combo Started...");
+
         //Validation
         if (cf.Controls.cantUseAbility.Invoke())
             return;
@@ -95,6 +98,8 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
     /// <exception cref="Exception"></exception>
     CombotTriggerGroup UseCurrentCombo(string dir)
     {
+        print($"[{gameObject.name}] ModeComboFunctionality : UseCurrentCombo({dir})");
+
         CombatEntityModeData combo = cf.Controls.Mode("Combo");
         int trigerIndx = cf.GetDirIndex(dir);
 
@@ -124,7 +129,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
     /// <param name="dir"></param>
     void SwitchToCombo(string dir)
     {
-        //print("switching to combo: " + combo);
+        print($"[{gameObject.name}] ModeComboFunctionality : SwitchToCombo({dir})");
 
         if (cf.Controls.Mode("Attack").isUsing)
         {
@@ -156,6 +161,8 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
     /// <returns></returns>
     IEnumerator WaitForComboToFinish(ModeTriggerGroup usingTrigger)
     {
+        print($"[{gameObject.name}] ModeComboFunctionality : WaitForComboToFinish(ModeTriggerGroup:{usingTrigger.name})");
+
         CombotTriggerGroup trigger = usingTrigger.GetComponent<CombotTriggerGroup>();
 
         while (cf.Controls.Mode("Combo").isUsing == true)

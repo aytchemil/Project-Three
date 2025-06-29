@@ -17,16 +17,23 @@ public class CharacterAnimationController : MonoBehaviour
         animator = GetComponent<Animator>();
     }
 
+    private void Init()
+    {
+        animator.runtimeAnimatorController = weapon.animationController;
+    }
+
     public void OnEnable()
     {
         UseAnimation += PlayAnimation;
         CEC.Flinch += Flinch;
+        CEC.Init += Init;
     }
 
     public void OnDisable()
     {
         UseAnimation -= PlayAnimation;
         CEC.Flinch -= Flinch;
+        CEC.Init -= Init;
     }
 
 

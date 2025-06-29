@@ -71,7 +71,7 @@ public class CombatUI : MonoBehaviour
             Controls.abilitySlots[i] += UpdateCurrentAbilityText;
         }
 
-
+        Controls.CombatWheelSelectDirection += UpdateCombatUIVisuals;
     }
 
     private void OnDisable()
@@ -87,6 +87,8 @@ public class CombatUI : MonoBehaviour
             Controls.abilitySlots[i] -= AbilityChoose;
             Controls.abilitySlots[i] -= UpdateCurrentAbilityText;
         }
+
+        Controls.CombatWheelSelectDirection -= UpdateCombatUIVisuals;
     }
 
 
@@ -184,14 +186,6 @@ public class CombatUI : MonoBehaviour
             else if (mouseInput.y < 0) //Down
                 Controls.lookDir = "down";
         }
-
-        //Updates the actual UI with the value specified
-        UpdateCombatUIVisuals(Controls.lookDir);
-
-        //Pushes the direction to the functionality (and any other listeners)
-        Controls.CombatWheelSelectDirection?.Invoke(Controls.lookDir);
-
-        SetWheelInfo();
     }
 
     void ChangeOpacityImage(RawImage img, float opacity)
@@ -286,6 +280,8 @@ public class CombatUI : MonoBehaviour
                 down.SetActive(true);
                 break;
         }
+
+        SetWheelInfo();
     }
 
     void UpdateCurrentAbilityText(int slot)

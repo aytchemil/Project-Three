@@ -17,9 +17,19 @@ public class WeaponManager : MonoBehaviour
         Controls = GetComponent<CombatEntityController>();
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        if(gameObject.GetComponent<CombatEntityController>().Mode("Combo") != null)
+        Controls.Init += Init;
+    }
+
+    private void OnDisable()
+    {
+        Controls.Init -= Init;
+    }
+
+    private void Init()
+    {
+        if (gameObject.GetComponent<CombatEntityController>().Mode("Combo") != null)
             comboMode = gameObject.GetComponent<CombatEntityController>().Mode("Combo");
 
         SetAbilitySet();

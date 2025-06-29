@@ -357,13 +357,14 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     public virtual void UseAbility(string mode)
     {
-        print($"[{gameObject.name}] [Combat Functionality]: Attempting To Use an Ability from mode [{mode}]");
+        //print($"[{gameObject.name}] [Combat Functionality]: Attempting To Use an Ability from mode [{mode}]");
         if (Controls.cantUseAbility.Invoke())
         {
-            print($"[{gameObject.name}] [Combat Functionality]: [{gameObject.name}] cannot use an ability");
+            print($"[{gameObject.name}] [Combat Functionality] : CANT USE ABILITY ");
             return;
         }
 
+        print($"[{gameObject.name}] [Combat Functionality] : Ability ({mode}) used.");
         Controls.Mode(mode).data.modeFunctionality.UseModeFunctionality();
 
         if (Controls.Mode(mode) == null)

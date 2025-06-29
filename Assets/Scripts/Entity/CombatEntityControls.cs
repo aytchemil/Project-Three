@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using UnityEditor.ShaderGraph;
 
 /// <summary>
 /// Centralized Controller and controls for every combat entity.
@@ -33,7 +34,10 @@ public class CombatEntityController : MonoBehaviour
         set
         {
             if (!cannotChangeLookDir)
+            {
                 _lookDir = value;
+                CombatWheelSelectDirection?.Invoke(lookDir);
+            }
             else
                 print("cannotChangeLookDir FALSE");
         }
@@ -63,6 +67,7 @@ public class CombatEntityController : MonoBehaviour
     public Action Countered;
     public Action<float> Flinch; //param: flinchTime
     public Func<string> getMoveDirection; //ret: moveDir
+    public Action Init;
 
 
     [System.Serializable]
@@ -147,6 +152,7 @@ public class CombatEntityController : MonoBehaviour
         cantUseAbility = () => (!isLockedOn || Mode("Attack").isUsing || Mode("Block").isUsing || isFlinching || Mode("Counter").isUsing);
         CreateMyOwnModeInstances();
         ResetAttack += ResetmyAttack;
+        Init?.Invoke();
     }
 
     protected virtual void OnEnable()

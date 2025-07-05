@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using static CombatEntityController;
 
 [RequireComponent(typeof(PlayerController))]
 public class PlayerMovement : Movement
@@ -37,12 +38,21 @@ public class PlayerMovement : Movement
         //Stores input values from the InputSystem Controls
         Vector2 moveInput = Controls.move != null ? Controls.move.Invoke() : Vector2.zero;
 
+        Controls.moveDirInput?.Invoke(moveInput);
 
-        //Debug.Log(moveInput);
+        //Debug.Log($"[{gameObject.name}] MOVEMENT : {moveInput}");
         //Results in Move Input: (0.0  ,   0.0)
         //                       (+-1.0,   0.0)
         //                       (0.0  , +-1.0)
         //                       (+-1.0, +-1.0)
+
+        // (0.0, +1.0) FORWARD
+        // (0.0, -1.0) BACKWARD
+        // (+1.0, 0.0) RIGHT
+        // (-1.0, 0.0) LEFT
+
+
+
 
         //Stores the move direction of the player, which is always set to where the orientaion's forward and right is 
         //the player facing forward * the move input of y (which is either neg or pos)
@@ -50,7 +60,6 @@ public class PlayerMovement : Movement
         Vector3 moveDirection = orientation.forward * moveInput.y + orientation.right * moveInput.x;
 
         SpeedHandler();
-
 
         if (moveInput.x == 0 && moveInput.y == 0) return;
 
@@ -74,8 +83,11 @@ public class PlayerMovement : Movement
         else
             rb.AddForce(moveDirection.normalized * moveSpeed * 10f * airAccelerationMultiplier, ForceMode.Force);
 
+
+
         //Debug.Log(rb.linearVelocity);
     }
+
 
 
     public override void EnableMovement()
@@ -89,5 +101,6 @@ public class PlayerMovement : Movement
         playerControls.ia_move.Disable();
       //  print("disabling movement from playercontrols");
     }
+
 
 }

@@ -18,6 +18,17 @@ public class CombatEntityController : MonoBehaviour
     [Header("Controls")]
     public Func<Vector2> look;
     public Func<Vector2> move;
+    public Action<Vector2> moveDirInput;
+    public enum MoveDirections
+    {
+        NONE = 0,
+        RIGHT = 1,
+        LEFT = 2,
+        FORWARD = 3,
+        BACK = 4,
+        JUMP = 5
+    }
+    public Action<MoveDirections, int> MoveDirection;
     public Action sprintStart;
     public Action sprintStop;
     public Action lockOn;
@@ -150,7 +161,7 @@ public class CombatEntityController : MonoBehaviour
     protected virtual void Start()
     {
         //print($"{gameObject.name} onEnable()");
-        cantUseAbility = () => (!isLockedOn || Mode("Attack").isUsing || Mode("Block").isUsing || isFlinching || Mode("Counter").isUsing);
+        cantUseAbility = () => (!isLockedOn || Mode("Attack").isUsing || isFlinching || Mode("Counter").isUsing);
         CreateMyOwnModeInstances();
         ResetAttack += ResetmyAttack;
         Init?.Invoke();
@@ -158,7 +169,7 @@ public class CombatEntityController : MonoBehaviour
 
     protected virtual void OnEnable()
     {
-        cantUseAbility = () => (!isLockedOn || Mode("Attack").isUsing || Mode("Block").isUsing || isFlinching || Mode("Counter").isUsing);
+        cantUseAbility = () => (!isLockedOn || Mode("Attack").isUsing || isFlinching || Mode("Counter").isUsing);
         useAbility += (input) => 
         {
             if (usedCombo)
@@ -249,7 +260,7 @@ public class CombatEntityController : MonoBehaviour
         InstantiateModeParents();
 
         modesInitialized = true;
-        print($"{gameObject.name} Modes initialized");
+        print($"[{gameObject.name}] Copied Modes from ModeManager COMPLETED");
     }
 
 
@@ -324,7 +335,7 @@ public class CombatEntityController : MonoBehaviour
         else
             didReattack = false;
 
-        print($"Reattack check: didReattack = {didReattack}");
+        //print($"[{gameObject.name}] Reattack check: didReattack = {didReattack}");
     }
 
     IEnumerator DelayReAttackCheck()
@@ -339,7 +350,7 @@ public class CombatEntityController : MonoBehaviour
     void UpdateAnimationManagersWeapon()
     {
         if(animController != null)
-            animController.weapon = currentWeapon;
+            animController.wpn = currentWeapon;
     }
 
     void BaseFlinch(float flinchTime)
@@ -356,6 +367,5 @@ public class CombatEntityController : MonoBehaviour
         dashing = false;
         Mode("Attack").isUsing = false;
     }
-
 
 }

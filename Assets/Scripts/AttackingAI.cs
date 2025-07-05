@@ -91,7 +91,7 @@ public class AttackingAI : MonoBehaviour
         {
             while (Controls.isAlive)
             {
-                print($"[{gameObject.name}] [AttackingAI] Checking for lockon...");
+                //print($"[{gameObject.name}] [AttackingAI] Checking for lockon...");
                 yield return new WaitForSeconds(1f);
                 if (!Controls.isLockedOn && !combatLock.myColliderDetector.targetDescisionMade)
                     AttemptLockOn();
@@ -185,7 +185,7 @@ public class AttackingAI : MonoBehaviour
         {
             TestForResetCycleFlags();
 
-            print(combo);
+            print($"[{gameObject.name}] [AttackingAI] Changing combo to " + combo);
 
             yield return new WaitForSeconds(stats.thinkDelay);
 

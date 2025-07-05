@@ -11,30 +11,18 @@ public class Weapon : ScriptableObject
 
     public List<AbilitySet> allAbilitySets;
 
-    [System.Serializable]
-    public struct NamedAnimation
-    {
-        public string animationName; // e.g., "attack left", "attack right", "uppercut"
-        public float speed;
-        public AnimationClip clip;    // The corresponding animation clip
-
-        public AnimationClip GetAnimationClip()
-        {
-            return clip;
-        }
-    }
-    public NamedAnimation[] animations;
+    public AnimatorSystem.Animation[] animations;
 
 
-    public NamedAnimation GetAnimation(string name)
+    public AnimatorSystem.Animation GetAnimation(string name)
     {
         for(int i = 0; i < animations.Length; i++)
         {
-            if (animations[i].animationName == name)
+            if (animations[i].name == name)
                 return animations[i];
         }
 
         Debug.LogError($"No Animation of [{name}] found.");
-        return new NamedAnimation();
+        return new AnimatorSystem.Animation();
     }
 }

@@ -129,4 +129,5 @@ public class CombatAdditionalFunctionalities : MonoBehaviour
         gameObject.GetComponent<Movement>().EnableMovement();
     }
 
+
 }

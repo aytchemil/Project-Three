@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using static CombatEntityController;
 
@@ -16,14 +17,19 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
 
     private void OnEnable()
     {
-        cf.Controls.CombatWheelSelectDirection += ChangeBlockAbility;
+        cf.Controls.CombatWheelSelectDirection += ChangeBlock;
         cf.Controls.blockStop += StopBlocking;
+
+        cf.Controls.EnterCombat += EnterCombatAutoBlock;
     }
 
     private void OnDisable()
     {
-        cf.Controls.CombatWheelSelectDirection -= ChangeBlockAbility;
+        cf.Controls.CombatWheelSelectDirection -= ChangeBlock;
         cf.Controls.blockStop -= StopBlocking;
+
+        cf.Controls.EnterCombat -= EnterCombatAutoBlock;
+
     }
 
     IEnumerator WaitToStartBlockingToUnblock(AbilityBlock ability)
@@ -33,19 +39,23 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
         readyToUnblock = true;
     }
 
+    void ChangeBlock(string dir)
+    {
+        print($"[{gameObject.name}] Changing Block");
+        cf.Controls.useAbility?.Invoke("Block");
+        ChangeBlockAbility(dir);
+    }
+
     /// <summary>
     /// Changes the current block ability in the ModeData
     /// </summary>
     /// <param name="dir"></param>
     public void ChangeBlockAbility(string dir)
     {
+        print($"[{gameObject.name}] Changing Block Ability");
         //Setup
         CombatEntityModeData d = cf.Controls.Mode("Block");
 
-        //BlockSys: Prevents Blocker from changin lookDir mid block to block a different directional attack
-        //..........without first unblocking
-        if (d.isUsing)
-            return;
 
         //Mutations
         if (dir == "right")
@@ -60,11 +70,8 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
 
     public override void UseModeFunctionality()
     {
-        print("using block functionality");
-        if (!cf.Controls.Mode("Block").isUsing)
-            Block();
-        else
-            print("stop block");
+        print($"[{gameObject.name}] Used Block");
+        Block();
     }
 
     /// <summary>
@@ -127,6 +134,12 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
         cf.Controls.Mode("Block").isUsing = false;
     }
 
+
+    void EnterCombatAutoBlock()
+    {
+        UseModeFunctionality();
+    }
+
     /// <summary>
     /// COROUTINE for the ANIMATION sequence to wait for an unblock
     /// </summary>
@@ -152,6 +165,8 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
     {
         print("[ModeBlockFunctionality] AF Regular");
     }
+
+
 
 
 }

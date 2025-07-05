@@ -102,16 +102,19 @@ public class CombatFunctionality : MonoBehaviour
         //Auto Set the current ability (in this case right is 0)
         SetDefaultAbilityForAllModes();
 
-
         foreach (CombatEntityModeData mode in Controls.modes)
             if (!mode.data.initializedTriggers)
             {
+                print($"[{gameObject.name}] Initializing mode [{mode.name}]...");
                 InstantiateTriggersForMode(mode.data.abilitySet, mode.parent);
                 CacheParentTriggers(mode.triggers, mode.parent);
                 mode.data.initializedTriggers = true;
                 DisableTriggers(true, mode);
+                print($"[{gameObject.name}] Initialized mode [{mode.name}] COMPLETE");
             }
 
+        //BlockSys: Has to be after The initialization of triggers
+        SetDefaultDir();
 
 
         //if (!initializedBlockingTrigger)
@@ -229,7 +232,7 @@ public class CombatFunctionality : MonoBehaviour
     /// <param name="down"></param>
     public void InstantiateTriggersForMode(AbilitySet abilitySet, Transform parent)
     {
-        print("Instantiating triggers");
+        //print("Instantiating triggers");
 
         if (abilitySet == null)
             Debug.LogError("Mode AbilitiesSO null");
@@ -254,7 +257,7 @@ public class CombatFunctionality : MonoBehaviour
         if (one == null || two == null || three == null || four == null)
             Debug.LogError("Trigger group triggers not iniailized corectly, check");
 
-        print("Successfully Instantiating triggers for mode " + parent.name);
+        //print("Successfully Instantiating triggers for mode " + parent.name);
 
     }
 
@@ -347,8 +350,15 @@ public class CombatFunctionality : MonoBehaviour
     void SetDefaultAbilityForAllModes()
     {
         foreach (CombatEntityModeData mode in Controls.modes)
+        {
+            print($"[{gameObject.name}] [Combat Functionality] Mode [{mode.name}] Ability [{Controls.AbilitySet(mode.name).right}] is new default ability");
             mode.ability = Controls.AbilitySet(mode.name).right;
+        }
+    }
 
+    void SetDefaultDir()
+    {
+        Controls.lookDir = "right";
     }
 
 
@@ -439,7 +449,7 @@ public class CombatFunctionality : MonoBehaviour
 
     public int GetDirIndex(string dir)
     {
-        print($"Getting Combo trigger from lookDir(ection) : [{dir}]");
+        print($"[{gameObject.name}] Get Dir: [{dir}]");
         if (dir == "right")
             return 0;
         else if (dir == "left")
@@ -551,9 +561,6 @@ public class CombatFunctionality : MonoBehaviour
 
 
     }
-
-
-
 
 
 

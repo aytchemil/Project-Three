@@ -1,4 +1,5 @@
 using System.Collections;
+using Unity.Burst.Intrinsics;
 using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using static CombatEntityController;
@@ -41,7 +42,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
 
     void ChangeBlock(string dir)
     {
-        print($"[{gameObject.name}] Changing Block");
+        print($"[{gameObject.name}] BLOCK Direction Changing...");
         cf.Controls.useAbility?.Invoke("Block");
         ChangeBlockAbility(dir);
     }
@@ -52,7 +53,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
     /// <param name="dir"></param>
     public void ChangeBlockAbility(string dir)
     {
-        print($"[{gameObject.name}] Changing Block Ability");
+        print($"[{gameObject.name}] Blocking {dir}");
         //Setup
         CombatEntityModeData d = cf.Controls.Mode("Block");
 
@@ -70,7 +71,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
 
     public override void UseModeFunctionality()
     {
-        print($"[{gameObject.name}] Used Block");
+        print($"[{gameObject.name}] BLOCK used");
         Block();
     }
 
@@ -82,8 +83,11 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
     void Block()
     {
         //Setup
-        AbilityBlock ability = (AbilityBlock)cf.Controls.Mode("Block").ability;
         CombatEntityModeData block = cf.Controls.Mode("Block");
+        // + SETS all triggers to false
+        for (int i = 0; i < block.triggers.Length; i++)
+            block.triggers[i].gameObject.SetActive(false);
+        AbilityBlock ability = (AbilityBlock)cf.Controls.Mode("Block").ability;
         ModeTriggerGroup usingTrigger = cf.WheelTriggerEnableUse("Block");
         AbilityWrapper usingAbility = new AbilityWrapper(ability);
 
@@ -96,6 +100,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
         block.SetAbility(ability);
         block.trigger = usingTrigger;
         StartCoroutine(WaitToStartBlockingToUnblock(ability));
+
 
         //Mutations
         switch (ability.type)
@@ -147,13 +152,13 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
     /// <returns></returns>
     IEnumerator WaitForUnblockAnimationSequence(AbilityBlock ability)
     {
-        //print("block anim");
-        AnimateAblity(ability.AnimName, ability.InitialUseDelay[0], cf.Controls.animController);
+        print($"[{gameObject.name}] BLOCK Sequence STARTED");
+        cf.Controls.animController.BlckAnimation?.Invoke(ability.Block, ability.InitialUseDelay[0]);
         while (cf.Controls.Mode("Block").isUsing || !readyToUnblock)
         {
             yield return new WaitForEndOfFrame();
         }
-        AnimateAblity(ability.animationUnblock, ability.InitialUseDelay[0], cf.Controls.animController);
+        cf.Controls.animController.BlckAnimation?.Invoke(AM.BlockAnimationSet.Anims.NONE, ability.InitialUseDelay[0]);
         readyToUnblock = false;
     }
 
@@ -163,7 +168,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
     /// <param name="ability"></param>
     void AF_Regular(AbilityBlock ability)
     {
-        print("[ModeBlockFunctionality] AF Regular");
+        //print("[ModeBlockFunctionality] AF Regular");
     }
 
 

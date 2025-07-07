@@ -18,26 +18,6 @@ public class ModeGeneralFunctionality : MonoBehaviour
    }
 
     /// <summary>
-    /// ANIMATES an individual ability's move
-    /// </summary>
-    /// <param name="animationName"></param>
-    /// <param name="delay"></param>
-    /// <param name="animCont"></param>
-    public void AnimateAblity(string animationName, float delay, CharacterAnimationController animCont)
-    {
-        if (animCont == null)
-        {
-            Debug.LogWarning($"[{gameObject.name}] [ModeGeneral] animController NOT found on this CombatEntity");
-            return;
-        }
-
-        print($"[{gameObject.name}] COMBAT ANIMATION [ModeGeneral]: Animating: ({animationName})");
-
-        Debug.Log($"[{gameObject.name}] [{this.GetType()}] is using Ability [{animationName}] )");
-        animCont.UseAnimation?.Invoke(animationName, delay);
-    }
-
-    /// <summary>
     /// ANIMATES a parent ability's ability array over time
     /// </summary>
     /// <param name="usingAbility"></param>
@@ -56,12 +36,12 @@ public class ModeGeneralFunctionality : MonoBehaviour
             //Setup
             ///+gets the animation name
             ///+determines if we are the first attack, if it is, no delay, if its not the first followupattack, then put an initial delay
-            string animName = (usingAbility.abilities[i]).AnimName.ToString();
+            //string animName = (usingAbility.abilities[i]).AnimName.ToString();
             float delay = 0;
             delay = (i == 0) ? 0 : usingAbility.abilities[i].InitialUseDelay[0];
 
             //Animates
-            AnimateAblity(animName, delay, animCont);
+            //AnimateAblity(animName, delay, animCont);
 
             //AdditionalFunctionality Option
             AF_StartedAnAnimation();
@@ -76,7 +56,7 @@ public class ModeGeneralFunctionality : MonoBehaviour
             }
 
             //AdditionalFunctionality Option
-            FinishedAnAnimation(i, animName, animCont);
+            //FinishedAnAnimation(i, animName, animCont);
         }
 
         //Waiting an extra frame for the animation to complete because FinishedAnimation will also run on this frame, and they may cancle eachother out

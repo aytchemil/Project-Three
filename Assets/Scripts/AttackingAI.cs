@@ -91,7 +91,7 @@ public class AttackingAI : MonoBehaviour
         {
             while (Controls.isAlive)
             {
-                //print($"[{gameObject.name}] [AttackingAI] Checking for lockon...");
+                print($"[{gameObject.name}] [AttackingAI] Checking for lockon...");
                 yield return new WaitForSeconds(1f);
                 if (!Controls.isLockedOn && !combatLock.myColliderDetector.targetDescisionMade)
                     AttemptLockOn();
@@ -110,7 +110,7 @@ public class AttackingAI : MonoBehaviour
         {
             if (!Controls.targetIsDodging)
             {
-                //Controls.CombatFollowTarget?.Invoke(combatLock.myColliderDetector.closestCombatEntity.GetComponent<CombatEntityController>());
+                Controls.CombatFollowTarget?.Invoke(combatLock.myColliderDetector.closestCombatEntity.GetComponent<CombatEntityController>());
             }
             else
             {
@@ -146,7 +146,7 @@ public class AttackingAI : MonoBehaviour
 
     void AttemptLockOn()
     {
-        //print(gameObject.name + " attempting to lock on");
+        print(gameObject.name + " attempting to lock on");
         Controls.lockOn?.Invoke();
     }
 
@@ -177,7 +177,7 @@ public class AttackingAI : MonoBehaviour
         AbilityCombo combo = RandomCombo(randIndx);
 
         AIInputs.input_changeLookDir(Controls, SetupAIlookDir(randIndx));
-        print("new look dir is " + Controls.lookDir);
+        //print($"[{gameObject.name}] LookDir is ({Controls.lookDir})");
 
         AIInputs.input_UseCombo(Controls);
 

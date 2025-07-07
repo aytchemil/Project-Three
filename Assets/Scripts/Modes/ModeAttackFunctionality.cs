@@ -117,7 +117,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
                 usingTrigger.StartUsingAbilityTrigger(usingAbility, ability.InitialUseDelay[0]);
 
                 //Animation
-                AnimateAblity(usingAbility.abilities[0].AnimName.ToString(), usingAbility.abilities[0].InitialUseDelay[0], cf.Controls.animController);
+                //AnimateAblity(usingAbility.abilities[0].AnimName.ToString(), usingAbility.abilities[0].InitialUseDelay[0], cf.Controls.animController);
 
                 break;
             case AbilityAttack.Archetype.Multi_Choice:
@@ -139,7 +139,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
                 StartCoroutine(parentTrigger.MultiChoiceAttack(usingAbility, ability.InitialUseDelay[0], choice, usingAbility));
 
                 //Animation
-                AnimateAblity(usingAbility.abilities[0].AnimName.ToString(), usingAbility.abilities[0].InitialUseDelay[0], cf.Controls.animController);
+                //AnimateAblity(usingAbility.abilities[0].AnimName.ToString(), usingAbility.abilities[0].InitialUseDelay[0], cf.Controls.animController);
 
                 break;
             case AbilityAttack.Archetype.Multi_Followup:

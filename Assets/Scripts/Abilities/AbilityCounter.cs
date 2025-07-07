@@ -19,13 +19,4 @@ public class AbilityCounter : AbilityMulti
     }
     public float counterUpTime = 1f;
 
-    public override string AnimName
-    {
-        get
-        {
-            Debug.LogError($"[AbilityCounter] Multi Ability has no Animation for the Parent");
-            return null;
-        }
-    }
-
 }

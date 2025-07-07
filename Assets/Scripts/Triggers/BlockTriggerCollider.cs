@@ -43,7 +43,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
         animator.SetBool("windupDone", false);
 
 
-        print("enabled block trigger");
+        //print($"[{combatFunctionality.gameObject.name}] Block Collider ENABLED");
     }
 
     protected override void InitialDelayOver_ReEnableTriggerImplementation()
@@ -63,7 +63,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
         else
             StartCoroutine(WaitForBlockToStop());
 
-        print("intial delay done. block trigger is up...");
+        //print($"[{combatFunctionality.gameObject.name}] Block Delay COMPLETE");
 
     }
 

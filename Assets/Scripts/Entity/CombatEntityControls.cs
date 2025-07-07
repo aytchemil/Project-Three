@@ -44,13 +44,7 @@ public class CombatEntityController : MonoBehaviour
 
         set
         {
-            if (!cannotChangeLookDir)
-            {
-                _lookDir = value;
-                CombatWheelSelectDirection?.Invoke(lookDir);
-            }
-            else
-                print("cannotChangeLookDir FALSE");
+            _lookDir = value;
         }
 
     }
@@ -117,6 +111,9 @@ public class CombatEntityController : MonoBehaviour
             return name;
         }
     }
+    private void Update()
+    {
+    }
 
 
 
@@ -145,7 +142,6 @@ public class CombatEntityController : MonoBehaviour
     public bool currentlyRetargetting;
     public bool isAlive = true;
     public bool isFlinching = false;
-    public bool cannotChangeLookDir = false;
 
 
     [Header("Combat Flags")]

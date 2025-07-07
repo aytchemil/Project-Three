@@ -4,6 +4,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 [System.Serializable]
 public class AnimationLayer
@@ -59,12 +60,22 @@ public class AnimationLayer
 
     public void ChangeCurrSet(System.Type animationType)
     {
-        if (animationType == sets[curr].GetType())
+        string newAnim = (animationType.ToString()).Substring(0, animationType.ToString().Length - 6);
+
+        Debug.Log($"[AS] Comparing {newAnim} and {sets[curr].GetType().ToString()}");
+        if (newAnim == sets[curr].GetType().ToString())
             return;
         else
+        {
+            Debug.Log("[AS] CHANGING CURR SET");
             for (int i = 0; i < sets.Length; i++)
-                if (sets[i].GetType() == animationType)
+                if (sets[i].GetType().ToString() == newAnim)
+                {
+                    Debug.Log($"[AS] Changed Current Set to {i}");
                     curr = i;
+                }
+        }
+        Debug.Log($"[AS] Set is {curr}, from check with type {animationType}");
     }
 }
 
@@ -93,6 +104,8 @@ public class AnimatorSystem : MonoBehaviour
     {
         //Setup
         layers[layer].ChangeCurrSet(animation.GetType());
+        print($"[AS] Animation Type is {animation.GetType()}");
+
         AnimationSet set = layers[layer].sets[layers[layer].curr];
         int animationIndx = Convert.ToInt32(animation);
 

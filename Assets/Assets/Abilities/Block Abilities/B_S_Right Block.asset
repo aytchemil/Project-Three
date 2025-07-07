@@ -25,8 +25,7 @@ MonoBehaviour:
   hasAdditionalFunctionality: 0
   af: 0
   movementAmount: 0
-  animation_name: Block_Right_Idle
-  collision: 2
+  Block: 3
   type: 0
   blockTriggerCollider: {fileID: 5678498679238792639, guid: 833abaa7fc3b68740a1f050b96067633, type: 3}
   hasBlockUpTime: 0

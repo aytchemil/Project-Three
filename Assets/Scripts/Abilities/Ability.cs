@@ -67,13 +67,4 @@ public class Ability : ScriptableObject
         ;
     [ShowIf("isMovement")]
     public float movementAmount;
-
-    [SerializeField]
-    private string animation_name;
-
-    public virtual string AnimName
-    {
-        get => animation_name;
-        set => animation_name = value;
-    }
 }

@@ -105,17 +105,18 @@ public class CombatFunctionality : MonoBehaviour
         foreach (CombatEntityModeData mode in Controls.modes)
             if (!mode.data.initializedTriggers)
             {
-                print($"[{gameObject.name}] Initializing mode [{mode.name}]...");
+                //print($"[{gameObject.name}] Initializing mode [{mode.name}]...");
                 InstantiateTriggersForMode(mode.data.abilitySet, mode.parent);
                 CacheParentTriggers(mode.triggers, mode.parent);
                 mode.data.initializedTriggers = true;
                 DisableTriggers(true, mode);
-                print($"[{gameObject.name}] Initialized mode [{mode.name}] COMPLETE");
+                //print($"[{gameObject.name}] Initialized mode [{mode.name}] COMPLETE");
             }
+        print($"[{gameObject.name}] Initialized Modes COMPLETE");
 
         //BlockSys: Has to be after The initialization of triggers
         SetDefaultDir();
-
+        //print($"[{gameObject.name}] now in combat");
 
         //if (!initializedBlockingTrigger)
         //    InitializeBlockingTrigger();
@@ -351,7 +352,7 @@ public class CombatFunctionality : MonoBehaviour
     {
         foreach (CombatEntityModeData mode in Controls.modes)
         {
-            print($"[{gameObject.name}] [Combat Functionality] Mode [{mode.name}] Ability [{Controls.AbilitySet(mode.name).right}] is new default ability");
+            //print($"[{gameObject.name}] [Combat Functionality] Mode [{mode.name}] Ability [{Controls.AbilitySet(mode.name).right}] is new default ability");
             mode.ability = Controls.AbilitySet(mode.name).right;
         }
     }
@@ -370,11 +371,11 @@ public class CombatFunctionality : MonoBehaviour
         //print($"[{gameObject.name}] [Combat Functionality]: Attempting To Use an Ability from mode [{mode}]");
         if (Controls.cantUseAbility.Invoke())
         {
-            print($"[{gameObject.name}] [Combat Functionality] : CANT USE ABILITY ");
+            print($"[{gameObject.name}] [CF] : CANT USE ABILITY ");
             return;
         }
 
-        print($"[{gameObject.name}] [Combat Functionality] : Ability ({mode}) used.");
+        print($"[{gameObject.name}] [CF] : Ability ({mode}) used.");
         Controls.Mode(mode).data.modeFunctionality.UseModeFunctionality();
 
         if (Controls.Mode(mode) == null)
@@ -398,7 +399,7 @@ public class CombatFunctionality : MonoBehaviour
 
         //Set all triggers of this mode to false
         for (int i = 0; i < mode.triggers.Length; i++)
-            mode.triggers[i].gameObject.SetActive(false);
+            mode.triggers[i].gameObject.SetActive(false);;
 
         //Enable the trigger we are using
         mode.triggers[cur_Ability].gameObject.SetActive(true);
@@ -449,7 +450,7 @@ public class CombatFunctionality : MonoBehaviour
 
     public int GetDirIndex(string dir)
     {
-        print($"[{gameObject.name}] Get Dir: [{dir}]");
+        //print($"[{gameObject.name}] Get Dir: [{dir}]");
         if (dir == "right")
             return 0;
         else if (dir == "left")

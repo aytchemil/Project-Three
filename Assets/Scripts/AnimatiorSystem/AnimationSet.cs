@@ -11,7 +11,7 @@ public class AnimationSet
     public int[] _anims;
     public int currAnimationIndx;
     public int defaultAnimIndx = 0;
-    public virtual string typeName { get => GetType().ToString(); }
+    public string typeName;
     public virtual int[] Animations
     {
         get => _anims;
@@ -23,6 +23,7 @@ public class AnimationSet
 
     public void PopulateAnimations(System.Type AnimationsEnum)
     {
+        typeName = GetType().ToString();
         //Debug.Log($"Populating AnimationSet Animations. Type of: {AnimationsEnum}");
 
         int length = AnimationsEnum.GetEnumValues().GetUpperBound(0);
@@ -143,7 +144,8 @@ public static class AM
             Atk_Flat_L,
             Atk_Flat_R,
             Atk_Diag_L,
-            Atk_Diag_R
+            Atk_Diag_R,
+            NONE
         }
     }
 
@@ -155,7 +157,8 @@ public static class AM
             Block_D,
             Block_T,
             Block_L,
-            Blocl,R
+            Block_R,
+            NONE
         }
     }
 

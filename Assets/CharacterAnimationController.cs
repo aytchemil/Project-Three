@@ -1,22 +1,23 @@
 using System;
 using System.Collections;
-using Unity.VisualScripting;
-using UnityEditor.ShaderGraph;
 using UnityEngine;
 using static AM;
-using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class CharacterAnimationController : AnimatorSystem
 {
-    public Action<string, float> UseAnimation;
     public float crossFade = 0.4f;
     public CombatEntityController CEC;
     public Weapon wpn;
 
     public System.Type[] animationSets = { 
         typeof(AM.MovementAnimationSet),
-        typeof(AM.AttackAnimationSet)
+        typeof(AM.AttackAnimationSet),
+        typeof(AM.BlockAnimationSet)
     };
+
+    public Action<AM.AttackAnimationSet.Anims, float> AtkAnimation;
+    public Action<AM.BlockAnimationSet.Anims, float> BlckAnimation;
+
 
     private const int UPPERBODY = 0;
     private const int LOWERBODY = 1;
@@ -42,7 +43,9 @@ public class CharacterAnimationController : AnimatorSystem
 
     public void OnEnable()
     {
-        UseAnimation += PlayAnimation;
+        AtkAnimation += AttackAnimation;
+        BlckAnimation += BlockAnimation;
+
         CEC.Flinch += Flinch;
         CEC.Init += Init;
         CEC.moveDirInput += SetMoveDirInput;
@@ -52,7 +55,10 @@ public class CharacterAnimationController : AnimatorSystem
 
     public void OnDisable()
     {
-        UseAnimation -= PlayAnimation;
+        AtkAnimation -= AttackAnimation;
+        BlckAnimation -= BlockAnimation;
+
+
         CEC.Flinch -= Flinch;
         CEC.Init -= Init;
         CEC.moveDirInput -= SetMoveDirInput;
@@ -75,24 +81,16 @@ public class CharacterAnimationController : AnimatorSystem
         CheckInputs_LAYER_LOWERBODDY(moveInput);
     }
 
-    private void PlayAnimation(string animName, float delay)
+    private void AttackAnimation(AM.AttackAnimationSet.Anims anim, float delay)
     {
-        animator.Rebind();
-        print($"[Animation Controller] playing animation name [{animName}]");
-        StartCoroutine(Animate(animName, delay));
+        Play(anim, UPPERBODY, false, false);
+    }
+    private void BlockAnimation(AM.BlockAnimationSet.Anims anim, float delay)
+    {
+        print($"BLOCK ANIMATION : {anim}");
+        Play(anim, UPPERBODY, false, false);
     }
 
-    IEnumerator Animate(string animName, float delay)
-    {
-        yield return new WaitForSeconds(delay);
-
-
-        //float speed = animator.speed = wpn.GetAnimation(animName).speed;
-
-        //Debug.Log($"[AnimtationController] playing animation: [{animName}], speed: [{speed}]");
-       // animator.speed = speed;
-        //animator.CrossFade(animName, crossFade);
-    }
 
     public void SetBool(string boolname, bool val)
     {

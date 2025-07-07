@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEditor.Rendering.LookDev;
 
 [RequireComponent(typeof(PlayerController))]
 public class CombatUI : MonoBehaviour
@@ -97,6 +98,8 @@ public class CombatUI : MonoBehaviour
         //Updates the Attack Indicator rotation
         if (!changeOnCooldown && combatUIParent.activeInHierarchy)
             UpdateAttackIndicatorRotation(Controls.ia_look.ReadValue<Vector2>());
+
+        Controls.CombatWheelSelectDirection?.Invoke(Controls.lookDir);
     }
 
     #region UI and Basic Functionality
@@ -109,7 +112,7 @@ public class CombatUI : MonoBehaviour
     /// <param name="mouseInput"></param>
     void UpdateAttackIndicatorRotation(Vector2 mouseInput)
     {
-        //Debug.Log(mouseInput);
+        Debug.Log(mouseInput);
 
         //Deadzone check for the proximal sensitivity 
         bool inXDeadZone1 = (mouseInput.x < deadZone && mouseInput.x > -deadZone);

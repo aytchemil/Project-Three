@@ -10,6 +10,16 @@ public class CharacterAnimationController : AnimatorSystem
     public Action<string, float> UseAnimation;
     public float crossFade = 0.4f;
     public CombatEntityController CEC;
+    public Weapon wpn;
+
+    public System.Type[] animationSets = { 
+        typeof(AM.MovementAnimationSet),
+        typeof(AM.MovementAnimationSet)
+    };
+
+    private const int UPPERBODY = 0;
+    private const int LOWERBODY = 1;
+
     Vector2 moveDirInput;
 
     private void Awake()
@@ -21,18 +31,12 @@ public class CharacterAnimationController : AnimatorSystem
         animator = GetComponent<Animator>();
     }
 
-    private void Init()
-    {
-        animator.runtimeAnimatorController = wpn.animationController;
-        InitializeAnimatorSystem(animator.layerCount, wpn.GetAnimation("MoveIdle"), animator, PlayDefaultAnimation);
-    }
 
     public void OnEnable()
     {
         UseAnimation += PlayAnimation;
         CEC.Flinch += Flinch;
         CEC.Init += Init;
-        CEC.MoveDirection += MoveDir;
         CEC.moveDirInput += SetMoveDirInput;
 
     }
@@ -45,13 +49,28 @@ public class CharacterAnimationController : AnimatorSystem
         CEC.moveDirInput -= SetMoveDirInput;
     }
 
+    void Init()
+    {
+        string defaultAnim = AM.MovementAnimationSet.Anims.IDLE.ToString();
+        InitializeAnimationSystem(animator.layerCount, animationSets, animator);
+    }
+
+    public override void PlayDefaultAnimation(int layer)
+    {
+        if (layer == UPPERBODY)
+            CheckInputsLAYER_UPPERBODY(moveDirInput);
+        else if (layer == LOWERBODY)
+            CheckInputs_LAYER_LOWERBODDY(moveDirInput);
+    }
+
+
     void SetMoveDirInput(Vector2 moveInput)
     {
         print($"[{gameObject.name}] Setting move direction input: {moveInput}");
         moveDirInput = moveInput;
 
-        UpperBodyAnimationsInvoker(moveInput);
-        LowerBodyAnimationsInvoker(moveInput);
+        CheckInputsLAYER_UPPERBODY(moveInput);
+        CheckInputs_LAYER_LOWERBODDY(moveInput);
     }
 
     private void PlayAnimation(string animName, float delay)
@@ -66,11 +85,11 @@ public class CharacterAnimationController : AnimatorSystem
         yield return new WaitForSeconds(delay);
 
 
-        float speed = animator.speed = wpn.GetAnimation(animName).speed;
+        //float speed = animator.speed = wpn.GetAnimation(animName).speed;
 
-        Debug.Log($"[AnimtationController] playing animation: [{animName}], speed: [{speed}]");
-        animator.speed = speed;
-        animator.CrossFade(animName, crossFade);
+        //Debug.Log($"[AnimtationController] playing animation: [{animName}], speed: [{speed}]");
+       // animator.speed = speed;
+        //animator.CrossFade(animName, crossFade);
     }
 
     public void SetBool(string boolname, bool val)
@@ -86,55 +105,34 @@ public class CharacterAnimationController : AnimatorSystem
         //Fix
     }
 
-    protected override void PlayDefaultAnimation(int layer)
+    protected void DeathAnimation()
     {
-        base.PlayDefaultAnimation(layer);
-
-        if (layer == UPPERBODY)
-            UpperBodyAnimationsInvoker(moveDirInput);
-        else 
-            LowerBodyAnimationsInvoker(moveDirInput);
-    }
-
-    protected void MoveDir(CombatEntityController.MoveDirections moveDirs, int layer)
-    {
-        print($"[{gameObject.name}] AnimationSystem Entity Moving: ({moveDirs.ToString()}) layer: ({layer})");
-
-        if (moveDirs == CombatEntityController.MoveDirections.FORWARD)
-            Play("MoveForward", layer, false, false);
-        else if (moveDirs == CombatEntityController.MoveDirections.BACK)
-            Play("MoveBack", layer, false, false);
-        else if(moveDirs == CombatEntityController.MoveDirections.RIGHT)
-            Play("MoveRight", layer, false, false);
-        else if(moveDirs == CombatEntityController.MoveDirections.LEFT)
-            Play("MoveLeft", layer, false, false);
-        else
-            Play("MoveIdle", layer, false, false);
 
     }
 
-    void UpperBodyAnimationsInvoker(Vector2 moveInput)
+
+    void CheckInputsLAYER_UPPERBODY(Vector2 moveInput)
     {
-        MoveAnimationsInvoker(AnimatorSystem.UPPERBODY, moveInput);
+        MoveAnimationsInvoker(UPPERBODY, moveInput);
     }
 
-    void LowerBodyAnimationsInvoker(Vector2 moveInput)
+    void CheckInputs_LAYER_LOWERBODDY(Vector2 moveInput)
     {
-        MoveAnimationsInvoker(AnimatorSystem.LOWERBODY, moveInput);
+        MoveAnimationsInvoker(LOWERBODY, moveInput);
     }
 
     void MoveAnimationsInvoker(int layer, Vector2 moveInput)
     {
         if (moveInput.y >= 1)
-            CEC.MoveDirection?.Invoke(CombatEntityController.MoveDirections.FORWARD, layer);
+            Play(AM.MovementAnimationSet.Anims.FORWARD, layer, false, false);
         else if (moveInput.y <= -1)
-            CEC.MoveDirection?.Invoke(CombatEntityController.MoveDirections.BACK, layer);
+            Play(AM.MovementAnimationSet.Anims.BACK, layer, false, false);
         else if (moveInput.x >= 1)
-            CEC.MoveDirection?.Invoke(CombatEntityController.MoveDirections.RIGHT, layer);
+            Play(AM.MovementAnimationSet.Anims.RIGHT, layer, false, false);
         else if (moveInput.x <= -1)
-            CEC.MoveDirection?.Invoke(CombatEntityController.MoveDirections.LEFT, layer);
+            Play(AM.MovementAnimationSet.Anims.LEFT, layer, false, false);
         else
-            CEC.MoveDirection?.Invoke(CombatEntityController.MoveDirections.NONE, layer);
+            Play(AM.MovementAnimationSet.Anims.IDLE, layer, false, false);
     }
 
 

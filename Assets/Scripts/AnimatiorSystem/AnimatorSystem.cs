@@ -1,97 +1,119 @@
 using NUnit.Framework;
+using Sirenix.OdinInspector;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
+public class AnimationLayer
+{
+    public int curr;
+    [SerializeField] public AnimationSet[] sets;
+    public bool locked;
+
+    public AnimationLayer(System.Type[] _sets)
+    {
+        sets = new AnimationSet[_sets.Length];
+
+        for(int i = 0; i < _sets.Length; i++)
+        {
+            //Checks
+            if (_sets[i] == null)
+            {
+                Debug.LogError($"Type at index {i} is null.");
+                continue;
+            }
+            if (!typeof(AnimationSet).IsAssignableFrom(_sets[i]))
+            {
+                Debug.LogError($"Type {_sets[i].Name} at index {i} is not derived from AnimationSet.");
+                continue;
+            } // Verify that the type derives from AnimationSet
+
+            sets[i] = (AnimationSet)Activator.CreateInstance(_sets[i]);
+            if (sets[i] == null)
+            {
+                Debug.LogError($"Failed to create instance of {_sets[i].Name} at index {i}.");
+                continue;
+            } //Completed Check
+
+            // Initialize the AnimationSet by populating animations
+            System.Type animsType = sets[i].GetEnums();
+
+            if (animsType != null)
+            {
+                sets[i].PopulateAnimations(animsType);
+            } //Completed Check
+            else
+            {
+                Debug.LogError($"No 'Anims' enum found for {_sets[i].Name}.");
+            }
+
+            //Mutations
+            sets[i].currAnimationIndx = sets[i].defaultAnimIndx;
+        }
+
+        locked = false;
+        curr = 0;
+    }
+
+    public void ChangeCurrSet(System.Type animationType)
+    {
+        if (animationType == sets[curr].GetType())
+            return;
+        else
+            for (int i = 0; i < sets.Length; i++)
+                if (sets[i].GetType() == animationType)
+                    curr = i;
+    }
+}
+
+[System.Serializable]
 public class AnimatorSystem : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-
-    public const int UPPERBODY = 0;
-    public const int LOWERBODY = 1;
-    
-    [System.Serializable]
-    public struct Animation
-    {
-        public string name; // e.g., "attack left", "attack right", "uppercut"
-        public int hashIndex;
-        public float speed;
-        public AnimationClip clip;    // The corresponding animation clip
-
-        public AnimationClip GetAnimationClip()
-        {
-            return clip;
-        }
-    }
-
-    [System.Serializable]
-    public class AnimationLayer
-    {
-        public Animation currentAnimation;
-        public bool locked;
-
-        public AnimationLayer(Animation animation)
-        {
-            currentAnimation = animation;
-            locked = false;
-        }
-    }
-
-
-    public Weapon wpn;
-
-
     public Animator animator;
-    protected AnimationLayer[] currLayer; //Array for layers
+
+    [SerializeField] public AnimationLayer[] layers;
     public Action<int> DefaultAnimation;
 
-    protected void InitializeAnimatorSystem(int layers, Animation startAnim, Animator animator, Action<int> DefaultAnimation) 
+    public void InitializeAnimationSystem(int amountOfLayers, System.Type[] sets, Animator animator)
     {
-        //print($"[{gameObject.name}] AnimatiorSystem initialization STARTED...");
+        layers = new AnimationLayer[amountOfLayers];
 
-        currLayer = new AnimationLayer[layers];
-        for (int i = 0; i < layers; i++)
-            currLayer[i] = new AnimationLayer(startAnim);
-
-        this.animator = animator;
-        this.DefaultAnimation = DefaultAnimation;
-
-        print($"[{gameObject.name}] AnimatiorSystem initialization COMPLETED");
-
+        for (int i = 0; i < amountOfLayers; i++)
+            layers[i] = new AnimationLayer(sets);
     }
 
-    protected Animation GetCurrentAnimation(int layer)
+    public void SetLocked(bool lockTheLayer, int layer)
     {
-        return currLayer[layer].currentAnimation;
-    } 
-
-    public void SetLocked(bool locklayer, int layer)
-    {
-        currLayer[layer].locked = locklayer;
+        layers[layer].locked = lockTheLayer;
     }
 
-    public void Play(string animationName, int layer, bool lockLayer, bool bypassLock, float crossfade = 0.2f)
+    public void Play(object animation, int layer, bool lockLayer, bool bypassLock, float crossfade = 0.2f)
     {
-        if(animationName == "NONE")
-        {
-            DefaultAnimation(layer);
-            return;
-        }
+        //Setup
+        layers[layer].ChangeCurrSet(animation.GetType());
+        AnimationSet set = layers[layer].sets[layers[layer].curr];
+        int animationIndx = Convert.ToInt32(animation);
 
-        if (currLayer[layer].locked && !bypassLock) return;
-        if (currLayer[layer].currentAnimation.name == animationName) return;
+        print($"play: layer: {layer} --- [old " + set.currAnimationIndx + " new " + animationIndx + "]");
 
-        currLayer[layer].locked = lockLayer;
-        currLayer[layer].currentAnimation.name = animationName;
-        animator.CrossFade(animationName, crossfade, layer);
+        if (animationIndx == set.currAnimationIndx) return;
+        if (layers[layer].locked && !bypassLock) return;
 
-        print($"[{gameObject.name}] Playing Animation ({animationName}) COMPLETE");
+
+        // Functionality
+        animator.CrossFade(set.Animations[animationIndx], crossfade, layer);
+        print($"[{gameObject.name}] Playing Animation COMPLETED,  [set {set}] [animation {set.Animations[animationIndx]}] [layer {layer}]");
+
+        // Mutations
+        layers[layer].locked = lockLayer;
+        layers[layer].sets[layers[layer].curr].currAnimationIndx = animationIndx;
     }
 
 
-    protected virtual void PlayDefaultAnimation(int layer)
+    public virtual void PlayDefaultAnimation(int layer)
     {
-            
-    }
 
+    }
 }

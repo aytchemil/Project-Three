@@ -80,6 +80,7 @@ public class CombatEntityController : MonoBehaviour
     public Func<string> getMoveDirection; //ret: moveDir
     public Action Init;
     public Action<AbilityWrapper> UseCombatAdditionalFunctionality;
+    public Action Death;
 
 
     [System.Serializable]

@@ -3,6 +3,7 @@ using System.Collections;
 using Unity.VisualScripting;
 using UnityEditor.ShaderGraph;
 using UnityEngine;
+using static AM;
 using static UnityEditor.Experimental.GraphView.GraphView;
 
 public class CharacterAnimationController : AnimatorSystem
@@ -14,11 +15,18 @@ public class CharacterAnimationController : AnimatorSystem
 
     public System.Type[] animationSets = { 
         typeof(AM.MovementAnimationSet),
-        typeof(AM.MovementAnimationSet)
+        typeof(AM.AttackAnimationSet)
     };
 
     private const int UPPERBODY = 0;
     private const int LOWERBODY = 1;
+
+    [SerializeField]
+    public AM.CyclePackage idleCycle = new CyclePackage(
+        (int)AM.MovementAnimationSet.Anims.IDLE1,
+        2f,
+        AM.MovementAnimationSet.idles.Length);
+
 
     Vector2 moveDirInput;
 
@@ -38,6 +46,7 @@ public class CharacterAnimationController : AnimatorSystem
         CEC.Flinch += Flinch;
         CEC.Init += Init;
         CEC.moveDirInput += SetMoveDirInput;
+        CEC.Death += DeathAnimation;
 
     }
 
@@ -47,26 +56,19 @@ public class CharacterAnimationController : AnimatorSystem
         CEC.Flinch -= Flinch;
         CEC.Init -= Init;
         CEC.moveDirInput -= SetMoveDirInput;
+        CEC.Death -= DeathAnimation;
     }
 
     void Init()
     {
-        string defaultAnim = AM.MovementAnimationSet.Anims.IDLE.ToString();
+        string defaultAnim = AM.MovementAnimationSet.Anims.IDLE1.ToString();
         InitializeAnimationSystem(animator.layerCount, animationSets, animator);
-    }
-
-    public override void PlayDefaultAnimation(int layer)
-    {
-        if (layer == UPPERBODY)
-            CheckInputsLAYER_UPPERBODY(moveDirInput);
-        else if (layer == LOWERBODY)
-            CheckInputs_LAYER_LOWERBODDY(moveDirInput);
     }
 
 
     void SetMoveDirInput(Vector2 moveInput)
     {
-        print($"[{gameObject.name}] Setting move direction input: {moveInput}");
+        //print($"[{gameObject.name}] Setting move direction input: {moveInput}");
         moveDirInput = moveInput;
 
         CheckInputsLAYER_UPPERBODY(moveInput);
@@ -107,7 +109,8 @@ public class CharacterAnimationController : AnimatorSystem
 
     protected void DeathAnimation()
     {
-
+        Play(AM.MovementAnimationSet.Anims.DEATH1, UPPERBODY, true, true);
+        Play(AM.MovementAnimationSet.Anims.DEATH1, LOWERBODY, true, true);
     }
 
 
@@ -132,7 +135,11 @@ public class CharacterAnimationController : AnimatorSystem
         else if (moveInput.x <= -1)
             Play(AM.MovementAnimationSet.Anims.LEFT, layer, false, false);
         else
-            Play(AM.MovementAnimationSet.Anims.IDLE, layer, false, false);
+        {
+            if (!idleCycle.cycling)
+                StartCoroutine(idleCycle.Cycle());
+            Play(AM.MovementAnimationSet.idles[idleCycle.curr], layer, false, false);
+        }
     }
 
 

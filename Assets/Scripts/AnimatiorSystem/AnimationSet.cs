@@ -1,6 +1,7 @@
 using NUnit.Framework;
 using Sirenix.OdinInspector;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -22,7 +23,7 @@ public class AnimationSet
 
     public void PopulateAnimations(System.Type AnimationsEnum)
     {
-        Debug.Log("Populating AnimationSet Animations");
+        //Debug.Log($"Populating AnimationSet Animations. Type of: {AnimationsEnum}");
 
         int length = AnimationsEnum.GetEnumValues().GetUpperBound(0);
         _anims = new int[length];
@@ -34,16 +35,6 @@ public class AnimationSet
             //Debug.Log("hash: " + hash);
         }
 
-
-    }
-
-    // Non-generic GetAnim using reflection
-    public object GetAnim(string name)
-    {
-        System.Type animsType = AnimationType.GetNestedType("Anims");
-        if (animsType == null)
-            throw new System.InvalidOperationException("Child class must define an 'Anims' enum.");
-        return System.Enum.Parse(animsType, name);
     }
 
     public System.Type GetEnums()
@@ -51,38 +42,120 @@ public class AnimationSet
         return AnimationType.GetNestedType("Anims");
     }
 
+
 }
 
 public static class AM 
 {
     [System.Serializable]
+    public class CyclePackage
+    {
+        public bool cycling;
+        public int length;
+        [SerializeField]
+        public int curr;
+        public float period = 2f;
+        public Action increment;
+
+
+        public CyclePackage(int startIndx, float period, int length)
+        {
+            cycling = false;
+            curr = startIndx;
+            this.period = period;
+            this.length = length;
+
+            if (length < 1)
+            {
+                Debug.LogError($"Invalid length {length}. Setting to 1 to prevent errors.");
+                this.length = 1;
+            }
+        }
+
+        public IEnumerator Cycle()
+        {
+            //Debug.Log($"Starting Cycle: period={period}, length={length}, initial curr={curr}");
+
+            if (period <= 0f)
+            {
+                Debug.LogError($"Invalid period {period}. Must be positive.");
+                cycling = false;
+                yield break;
+            }
+            if (length < 1)
+            {
+                Debug.LogError($"Invalid length {length}. Must be at least 1.");
+                cycling = false;
+                yield break;
+            }
+
+            cycling = true;
+            while (cycling)
+            {
+                yield return new WaitForSeconds(period);
+                curr++;
+                if (curr >= length)
+                    curr = 0;
+
+                //Debug.Log($"Cycle tick: curr={curr}");
+                increment?.Invoke();
+            }
+
+            //Debug.Log("Cycle coroutine stopped");
+        }
+    }
+
+    [System.Serializable]
     public class MovementAnimationSet : AnimationSet
     {
         public enum Anims
         {
-            IDLE,
+            IDLE1,
+            IDLE2,
+            IDLE3,
             RIGHT,
             LEFT,
             FORWARD,
             BACK,
+            DEATH1,
             NONE
         }
+
+        public static readonly Anims[] idles =
+        {
+            Anims.IDLE1,
+            Anims.IDLE2,
+            Anims.IDLE3
+        };
+
     }
     [System.Serializable]
     public class AttackAnimationSet : AnimationSet
     {
         public enum Anims
         {
-            A_IDLE,
-            A_HIT,
-            A_OVERHEAD_C,
-            A_UP_L,
-            A_UP_R,
-            A_UPPERCUT,
-            A_FLAT_L,
-            A_FLAT_R,
-            A_DIAG_L,
-            A_DIAG_R
+            Atk_Idle,
+            Atk_Hit,
+            Atk_Overhead_T,
+            Atk_Uppercut,
+            Atk_Up_L,
+            Atk_Up_R,
+            Atk_Flat_L,
+            Atk_Flat_R,
+            Atk_Diag_L,
+            Atk_Diag_R
+        }
+    }
+
+    [System.Serializable]
+    public class BlockAnimationSet : AnimationSet
+    {
+        public enum Anims
+        {
+            Block_D,
+            Block_T,
+            Block_L,
+            Blocl,R
         }
     }
 

@@ -1,3 +1,4 @@
+using Sirenix.OdinInspector;
 using System.Collections;
 using UnityEngine;
 
@@ -87,6 +88,20 @@ public class AttackbleEntity : MonoBehaviour
         health -= dmg;
 
         return health;
+    }
+
+    [Button]
+    void TestTakeDamage(float dmg)
+    {
+        TakeDamage(dmg);
+        if (health <= 0)
+        {
+            animator.SetBool("Die", true);
+            controls.isAlive = false;
+            controls.Death?.Invoke();
+            Invoke("Die", deathTime);
+            //For right now invoke death at a delay, later do a death animation, and have the animation event on finish call death
+        }
     }
 
     void Die()

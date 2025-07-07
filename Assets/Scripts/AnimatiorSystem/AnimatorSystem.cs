@@ -96,7 +96,7 @@ public class AnimatorSystem : MonoBehaviour
         AnimationSet set = layers[layer].sets[layers[layer].curr];
         int animationIndx = Convert.ToInt32(animation);
 
-        print($"play: layer: {layer} --- [old " + set.currAnimationIndx + " new " + animationIndx + "]");
+        //print($"play: layer: {layer} --- [old " + set.currAnimationIndx + " new " + animationIndx + "]");
 
         if (animationIndx == set.currAnimationIndx) return;
         if (layers[layer].locked && !bypassLock) return;
@@ -104,16 +104,11 @@ public class AnimatorSystem : MonoBehaviour
 
         // Functionality
         animator.CrossFade(set.Animations[animationIndx], crossfade, layer);
-        print($"[{gameObject.name}] Playing Animation COMPLETED,  [set {set}] [animation {set.Animations[animationIndx]}] [layer {layer}]");
+        //print($"[{gameObject.name}] Playing Animation COMPLETED,  [set {set}] [animation {set.Animations[animationIndx]}] [layer {layer}]");
 
         // Mutations
         layers[layer].locked = lockLayer;
         layers[layer].sets[layers[layer].curr].currAnimationIndx = animationIndx;
     }
 
-
-    public virtual void PlayDefaultAnimation(int layer)
-    {
-
-    }
 }

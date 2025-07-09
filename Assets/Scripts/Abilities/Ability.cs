@@ -1,6 +1,9 @@
 using NUnit.Framework;
 using Sirenix.OdinInspector;
+using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using UnityEditor;
 using UnityEngine;
 
 
@@ -57,16 +60,23 @@ public class Ability : ScriptableObject
     public bool hasAdditionalFunctionality = false;
 
     [ShowIf("hasAdditionalFunctionality")]
-    public CombatAdditionalFunctionalities.Function af;
-    public AF m_af;
+    public MonoScript[] afTypes;
+    [ShowIf("hasAdditionalFunctionality")]
+    [SerializeReference] public AF[] afs;
+    public Dictionary<string, AF> AF_Dictionary;
 
-
-    private bool isMovement => 
-        ((af == CombatAdditionalFunctionalities.Function.MovementForward) ||
-        (af == CombatAdditionalFunctionalities.Function.MovementLeftOrRight)) &&
-        hasAdditionalFunctionality
-        ;
-    [ShowIf("isMovement")]
-    public float movementAmount;
+    [Button]
+    public void InitializeAFValues()
+    {
+        afs = new AF[afTypes.Length];
+        AF_Dictionary = new Dictionary<string, AF>();
+        AF_Dictionary.Clear();
+        for (int i = 0; i < afs.Length; i++)
+        {
+            Type t = afTypes[i].GetClass();
+            afs[i] = (AF)Activator.CreateInstance(t);
+            AF_Dictionary.Add(afs[i].afname, afs[i]);
+        }
+    }
 
 }

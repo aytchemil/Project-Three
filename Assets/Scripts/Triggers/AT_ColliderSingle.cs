@@ -81,7 +81,6 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
     {
         if (other.GetComponent<ModeTriggerGroup>()) return;
         if (other.GetComponent<CombatEntityController>() == combatFunctionality.Controls) return;
-        if (other.GetComponent<BlockTriggerCollider>().combatFunctionality == combatFunctionality) return;
 
         float newEnemyHealth;
         if (attacking && combatFunctionality.initialAbilityUseDelayOver)

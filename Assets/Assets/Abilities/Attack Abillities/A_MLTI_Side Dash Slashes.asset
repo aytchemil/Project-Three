@@ -23,9 +23,12 @@ MonoBehaviour:
   modeBase: 0
   archetype: 1
   hasAdditionalFunctionality: 1
-  af: 5
-  movementAmount: 100
-  animation_name: 
+  afTypes:
+  - {fileID: 11500000, guid: 2902d43e1633dc5429ae4429144bc32d, type: 3}
+  - {fileID: 11500000, guid: b0a7eb1f873993649a43d4a481abf0f9, type: 3}
+  afs:
+  - rid: 3359079709578100815
+  - rid: 3359079709578100816
   successDelay:
   - 0.3
   MultiAbilityGroupingPrefab: {fileID: 3607946116655452447, guid: 0b5f45e6afec5224fa98a9bc50f4713e, type: 3}
@@ -35,3 +38,14 @@ MonoBehaviour:
   choices:
   - left
   - right
+  references:
+    version: 2
+    RefIds:
+    - rid: 3359079709578100815
+      type: {class: AF_movement, ns: , asm: Assembly-CSharp}
+      data:
+        movementAmount: 100
+    - rid: 3359079709578100816
+      type: {class: AF_choice, ns: , asm: Assembly-CSharp}
+      data:
+        choice: 

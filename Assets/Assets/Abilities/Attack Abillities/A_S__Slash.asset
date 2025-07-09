@@ -23,9 +23,18 @@ MonoBehaviour:
   modeBase: 0
   archetype: 0
   hasAdditionalFunctionality: 1
-  af: 4
-  movementAmount: 10
+  afTypes:
+  - {fileID: 11500000, guid: 2902d43e1633dc5429ae4429144bc32d, type: 3}
+  afs:
+  - rid: 3359079709578100823
   damage: 1
   flinchAmount: 1
   Attacks: 9
   triggerCollider: {fileID: 8475917669229452261, guid: f964f0d6098938940bad90bad00b8b69, type: 3}
+  references:
+    version: 2
+    RefIds:
+    - rid: 3359079709578100823
+      type: {class: AF_movement, ns: , asm: Assembly-CSharp}
+      data:
+        movementAmount: 50

@@ -25,9 +25,7 @@ MonoBehaviour:
   modeBase: 0
   archetype: 2
   hasAdditionalFunctionality: 0
-  af: 0
-  movementAmount: 0
-  animation_name: 
+  afs: []
   successDelay:
   - 0.3
   - 0.3

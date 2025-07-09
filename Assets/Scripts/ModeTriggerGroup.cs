@@ -37,7 +37,8 @@ public abstract class ModeTriggerGroup : MonoBehaviour
         combatFunctionality.Controls.didReattack = false;
         EnableTrigger();
         Invoke(nameof(InitialDelayOver_ReEnableTrigger), delay);
-        combatFunctionality.Controls.UseCombatAdditionalFunctionality?.Invoke(ability);
+        if(ability.hasAdditionalFunctionality)
+            combatFunctionality.Controls.UseCombatAdditionalFunctionality?.Invoke(ability);
     }
 
 

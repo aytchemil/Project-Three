@@ -335,22 +335,24 @@ public class Movement : MonoBehaviour
             default:
                 dir = transform.TransformDirection(Vector3.forward);
                 break;
-
-
         }
 
-        //Debug.Log("Attempting Dashing In Direction:  " + dir);
 
         if (isGrounded)
         {
+            print($"[Movement] Grounded");
             //If the player is not on a slope, dash regularly
             if (!onSlope)
             {
+                print($"[Movement] DASING {dir}");
                 rb.AddForce(dir.normalized * multiplier, ForceMode.VelocityChange);
 
             }
             else //if the player is on a slope, dash relative to the slope's move direction
+            {
+                Debug.Log("[Movement] SLOPE DASH:  " + dir);
                 rb.AddForce(GetSlopeMoveDirection(dir) * dashSpeedMultiplier, ForceMode.VelocityChange);
+            }
 
             state = EntityStates.CurrentState.dashing;
         }
@@ -364,11 +366,9 @@ public class Movement : MonoBehaviour
 
     public void Lunge(string dir, float multiplier)
     {
-       // print("Lunging");
+        print("[Movement] Lunging");
         rb.linearVelocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
-
-
 
         Dash(dir, multiplier);
     }

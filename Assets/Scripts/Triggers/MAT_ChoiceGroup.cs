@@ -50,9 +50,10 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
         return _continue;
     }
 
-    public virtual IEnumerator MultiChoiceAttack(Ability ability, float delay, string choice)
+    public virtual IEnumerator MultiChoiceAttack(Ability _ability, float delay, string choice)
     {
-        print("[MAT_ChoiceGroup] Attacking with multi attack choice trigger");
+        AbilityMultiChoice ability = (AbilityMultiChoice)_ability;
+        print($"[CHOICE] {choice}");
 
         triggerBeingUsed = null;
 
@@ -61,21 +62,19 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
 
         if (triggerBeingUsed == null) { print("Chosen attack trigger choice unavaliable, returning"); yield break;  }
 
-        print("Chosen attack trigger is : " + triggerBeingUsed.name);
+        print("Child TRIGGER: " + triggerBeingUsed.name);
 
-        // (PARENT TRIGGER)
-        //MultiChoice's Ability Trigger
-        //StartabilityTrigger(ability, ability.parentAbility.InitialUseDelay[0]);
+        // (PARENT TRIGGER) MultiChoice's Ability Trigger
+        StartabilityTrigger(ability, ability.InitialUseDelay[0]);
 
         if (!initializedChildTriggers)
             InitializeChildTriggers(myMultiAbility);
 
-        //(CHILD TRIGGER)
-        //The chosen Ability Trigger's Ability 
+        //(CHILD TRIGGER) The chosen Ability Trigger's Ability 
+        // + SET child trigger ACTIVE
+        // + Start using child trigger
         triggerBeingUsed.gameObject.SetActive(true);
-
-        //location.abilities.Add(triggerBeingUsed.myAbility);
-        //triggerBeingUsed.StartabilityTrigger(ability, ability.abilities[0].InitialUseDelay[0]);
+        triggerBeingUsed.StartabilityTrigger(ability, triggerBeingUsed.myAbility.InitialUseDelay[0]);
 
         while (gameObject.activeInHierarchy)
         {

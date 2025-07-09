@@ -3,32 +3,13 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class AF
+[System.Serializable]
+public class AF 
 {
-    public virtual string name { get; set; }
+    public virtual string afname { get; set; }
 }
 
-public class AF_movement : AF
-{
-    public override string name => "movement";
-    public float movementAmount;
 
-    public AF_movement(float movementAmount)
-    {
-        this.movementAmount = movementAmount;
-    }
-}
-
-public class AF_choice: AF
-{
-    public override string name => "choice";
-    public string choice;
-
-    public AF_choice(string choice)
-    {
-        this.choice = choice;
-    }
-}
 
 
 
@@ -46,7 +27,7 @@ public class CombatAdditionalFunctionalities : MonoBehaviour
     {
         None = 0,
         MovementForward = 4,
-        MovementLeftOrRight = 5,
+        ChoiceMoveLeftOrRight = 5,
     }
 
     private void OnEnable()
@@ -61,27 +42,17 @@ public class CombatAdditionalFunctionalities : MonoBehaviour
 
     void UseCombatAdditionalFunctionality(Ability ability)
     {
-        switch (ability.af)
-        { 
-            case Function.None:
-                break;
-            case Function.MovementForward:
 
-                float moveAmount = (ability.m_af as AF_movement).movementAmount;
-
-                StartCoroutine(MovementForwardAttack(moveAmount));
-                
-                break;
-            case Function.MovementLeftOrRight:
-
-                float lrmoveAmount = (ability.m_af as AF_movement).movementAmount;
-                string choice = (ability.m_af as AF_choice).choice;
-
-                StartCoroutine(MovementRightOrLeftAttack(lrmoveAmount, choice));
-
-                break;
-
-
+        if(ability.AF_Dictionary.TryGetValue("movement", out AF afmove))
+        {
+            print($"[AF] Movement");
+            StartCoroutine(MovementForwardAttack((afmove as AF_movement).movementAmount));
+        }
+        if (ability.AF_Dictionary.TryGetValue("choice", out AF afchoice))
+        {
+            print($"[AF] Choice");
+            StartCoroutine(MovementRightOrLeftAttack((afmove as AF_movement).movementAmount,
+                                                    (afchoice as AF_choice).choice));
         }
     }
 

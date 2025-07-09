@@ -37,7 +37,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
     /// </summary>
     void Attack()
     {
-        print($"[{gameObject.name}] [ModeAttack] Attacking STARTED...");
+        print($"[{gameObject.name}] ATTACK STARTED...");
 
 
         //Setup
@@ -55,6 +55,8 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
         attack.SetAbility(ability);
         attack.trigger = usingTrigger;
 
+        if(hasAf)
+            ability.InitializeAFValues();
 
         //Mutations
         switch (ability.archetype)
@@ -62,7 +64,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
             case AbilityAttack.Archetype.Singular:
                 AbilityAttack ability_attack = (AbilityAttack)ability;
 
-                print($"[{gameObject.name}] [ModeAttack] Archetype: Singular");
+                print($"[{gameObject.name}] ATTACK: Singular");
 
                 //Setup
 
@@ -81,7 +83,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
                 break;
             case AbilityAttack.Archetype.Multi_Choice:
 
-                print($"[{gameObject.name}] [ModeAttack] Archetype: Multi-Choice");
+                print($"[{gameObject.name}] ATTACK: MLTI-CHOICE");
 
                 //Setup
                 string choice = GetMultiChoiceAttack(ability); if (choice == "none") break;
@@ -94,15 +96,16 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
                     AF_Choice(ability, choice);
                 }
 
+
                 //Trigger 
-                //StartCoroutine(parentTrigger.MultiChoiceAttack(ability, ability.InitialUseDelay[0], choice, ability));
+                StartCoroutine(parentTrigger.MultiChoiceAttack(ability, ability.InitialUseDelay[0], choice));
 
                 //Animation
                 //AnimateAblity(ability.abilities[0].AnimName.ToString(), ability.abilities[0].InitialUseDelay[0], cf.Controls.animController);
 
                 break;
             case AbilityAttack.Archetype.Multi_Followup:
-                print($"[{gameObject.name}] [ModeAttack] Archetype: Multi-Followup");
+                print($"[{gameObject.name}] ATTACK: Multi-Followup");
 
                 AbilityMulti multi_attack = (AbilityMulti)ability;
 
@@ -165,25 +168,17 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
     #region Archetypes
     void AF_Attack(Ability ability)
     {
-        if (ability.af == CombatAdditionalFunctionalities.Function.MovementForward)
+        if (ability.AF_Dictionary.TryGetValue("movement", out AF af))
         {
-            AF_movement afmove = new(ability.movementAmount);
-            ability.m_af = afmove;
-        }
-        else if (ability.af == CombatAdditionalFunctionalities.Function.MovementLeftOrRight)
-        {
-            AF_movement afmove = new(ability.movementAmount);
-            ability.m_af = afmove;
+
         }
     }
 
     void AF_Choice(Ability ability, string choice)
     {
-        if (ability.af == CombatAdditionalFunctionalities.Function.MovementLeftOrRight)
-        {
-            AF_choice afchoice = new(choice);
-            ability.m_af = afchoice;
-        }
+        if (ability.AF_Dictionary.TryGetValue("choice", out AF af))
+            (af as AF_choice).choice = choice;
+
     }
 
 
@@ -192,29 +187,36 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
 
     }
 
-    string GetMultiChoiceAttack(Ability ability)
+    string GetMultiChoiceAttack(Ability _ability)
     {
         string choice = "";
+        AbilityMultiChoice ability = (_ability as AbilityMultiChoice);
 
-        switch (ability.af)
+
+        switch (ability.archetype)
         {
-            case CombatAdditionalFunctionalities.Function.MovementLeftOrRight:
+            case Ability.Archetype.Multi_Choice:
 
                 choice = cf.Controls.getMoveDirection?.Invoke();
 
-                if (choice == "foward" || choice == "back" || choice == "none")
+                for (int i = 0; i < ability.choices.Length; i++)
                 {
-                    choice = "none";
-                    print("Not able to use ability, critiera not met");
-                    FinishAttacking();
-                    break;
+                    print($"comparing: ({ability.choices[i]}) to ({choice})");
+                    if (ability.choices[i] == choice)
+                    {
+                        print($"FOUND CHOICE : {choice}");
+                        return choice;
+                    }
                 }
-
+                choice = "none";
+                FinishAttacking();
                 break;
         }
 
         return choice;
     }
+
+
 
 
 

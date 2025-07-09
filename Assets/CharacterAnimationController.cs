@@ -9,24 +9,18 @@ public class CharacterAnimationController : AnimatorSystem
     public CombatEntityController CEC;
     public Weapon wpn;
 
-    public System.Type[] animationSets = { 
-        typeof(AM.MovementAnimationSet),
-        typeof(AM.AttackAnimationSet),
-        typeof(AM.BlockAnimationSet)
-    };
+    public Action<AM.AttackAnimations.Anims, float> AtkAnimation;
+    public Action<AM.BlockAnimations.Anims, float> BlckAnimation;
 
-    public Action<AM.AttackAnimationSet.Anims, float> AtkAnimation;
-    public Action<AM.BlockAnimationSet.Anims, float> BlckAnimation;
-
-
-    private const int UPPERBODY = 0;
-    private const int LOWERBODY = 1;
+    public const int UPPERBODY = 0;
+    public const int LOWERBODY = 1;
 
     [SerializeField]
     public AM.CyclePackage idleCycle = new CyclePackage(
-        (int)AM.MovementAnimationSet.Anims.IDLE1,
+        (int)AM.MovementAnimations.Anims.IDLE1,
         2f,
-        AM.MovementAnimationSet.idles.Length);
+        AM.MovementAnimations.idles.Length
+    );
 
 
     Vector2 moveDirInput;
@@ -38,6 +32,12 @@ public class CharacterAnimationController : AnimatorSystem
         if (GetComponent<Animator>() == null)
             gameObject.AddComponent<Animator>();
         animator = GetComponent<Animator>();
+
+        animations = new Type[] {
+            typeof(AM.MovementAnimations),
+            typeof(AM.AttackAnimations),
+            typeof(AM.BlockAnimations)
+        };
     }
 
 
@@ -67,8 +67,9 @@ public class CharacterAnimationController : AnimatorSystem
 
     void Init()
     {
-        string defaultAnim = AM.MovementAnimationSet.Anims.IDLE1.ToString();
-        InitializeAnimationSystem(animator.layerCount, animationSets, animator);
+        string defaultAnim = AM.MovementAnimations.Anims.IDLE1.ToString();
+        InitializeAnimationSystem(animator.layerCount, animator);
+        animator.Rebind();
     }
 
 
@@ -81,14 +82,15 @@ public class CharacterAnimationController : AnimatorSystem
         CheckInputs_LAYER_LOWERBODDY(moveInput);
     }
 
-    private void AttackAnimation(AM.AttackAnimationSet.Anims anim, float delay)
+    private void AttackAnimation(AM.AttackAnimations.Anims anim, float delay)
     {
-        Play(anim, UPPERBODY, false, false);
+        print($"ATTACK ANIMATION : {anim}");
+        Play(typeof(AM.AttackAnimations), (int)anim, UPPERBODY, false, false);
     }
-    private void BlockAnimation(AM.BlockAnimationSet.Anims anim, float delay)
+    private void BlockAnimation(AM.BlockAnimations.Anims anim, float delay)
     {
-        print($"BLOCK ANIMATION : {anim}");
-        Play(anim, UPPERBODY, false, false);
+        //print($"BLOCK ANIMATION : {anim}");
+        Play(typeof(AM.BlockAnimations), (int)anim, UPPERBODY, false, false);
     }
 
 
@@ -107,8 +109,8 @@ public class CharacterAnimationController : AnimatorSystem
 
     protected void DeathAnimation()
     {
-        Play(AM.MovementAnimationSet.Anims.DEATH1, UPPERBODY, true, true);
-        Play(AM.MovementAnimationSet.Anims.DEATH1, LOWERBODY, true, true);
+        Play(typeof(AM.MovementAnimations), (int)AM.MovementAnimations.Anims.DEATH1, UPPERBODY, true, true);
+        Play(typeof(AM.MovementAnimations), (int)AM.MovementAnimations.Anims.DEATH1, LOWERBODY, true, true);
     }
 
 
@@ -125,18 +127,19 @@ public class CharacterAnimationController : AnimatorSystem
     void MoveAnimationsInvoker(int layer, Vector2 moveInput)
     {
         if (moveInput.y >= 1)
-            Play(AM.MovementAnimationSet.Anims.FORWARD, layer, false, false);
+            Play(typeof(AM.MovementAnimations), (int)AM.MovementAnimations.Anims.FORWARD, layer, true, true);
         else if (moveInput.y <= -1)
-            Play(AM.MovementAnimationSet.Anims.BACK, layer, false, false);
+            Play(typeof(AM.MovementAnimations), (int)AM.MovementAnimations.Anims.BACK, layer, true, true);
         else if (moveInput.x >= 1)
-            Play(AM.MovementAnimationSet.Anims.RIGHT, layer, false, false);
+            Play(typeof(AM.MovementAnimations), (int)AM.MovementAnimations.Anims.RIGHT, layer, true, true);
         else if (moveInput.x <= -1)
-            Play(AM.MovementAnimationSet.Anims.LEFT, layer, false, false);
+            Play(typeof(AM.MovementAnimations), (int)AM.MovementAnimations.Anims.LEFT, layer, true, true);
         else
         {
             if (!idleCycle.cycling)
                 StartCoroutine(idleCycle.Cycle());
-            Play(AM.MovementAnimationSet.idles[idleCycle.curr], layer, false, false);
+
+            Play(typeof(AM.MovementAnimations), (int)AM.MovementAnimations.idles[idleCycle.curr], layer, true, true);
         }
     }
 

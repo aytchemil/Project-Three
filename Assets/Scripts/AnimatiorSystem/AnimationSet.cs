@@ -3,51 +3,55 @@ using Sirenix.OdinInspector;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
+using Unity.VisualScripting;
 using UnityEngine;
 
-[System.Serializable]
-public class AnimationSet 
+public class AnimationSet
 {
-    public int[] _anims;
-    public int currAnimationIndx;
-    public int defaultAnimIndx = 0;
-    public string typeName;
-    public virtual int[] Animations
-    {
-        get => _anims;
-        set => _anims = value;
+    private readonly Type _animationSetType;
+    private readonly int[] _animsCache;
+    public int curr;
+    public int defaultAnim;
 
+    public AnimationSet(Type animationSetType)
+    {
+        _animationSetType = animationSetType ?? throw new ArgumentNullException(nameof(animationSetType));
+
+        // Compute and cache the hashes during construction
+        Array animsArr = AnimationType != null ? Enum.GetValues(AnimationType) : Array.Empty<Enum>();
+        _animsCache = Array.ConvertAll(animsArr.Cast<Enum>().ToArray(), anim => Animator.StringToHash(anim.ToString()));
     }
 
-    public virtual System.Type AnimationType => this.GetType();
+    public Type AnimationType => _animationSetType.GetNestedType("Anims");
 
-    public void PopulateAnimations(System.Type AnimationsEnum)
-    {
-        typeName = GetType().ToString();
-        //Debug.Log($"Populating AnimationSet Animations. Type of: {AnimationsEnum}");
+    public Array AnimsArr => AnimationType != null ? Enum.GetValues(AnimationType) : Array.Empty<Enum>();
 
-        int length = AnimationsEnum.GetEnumValues().GetUpperBound(0);
-        _anims = new int[length];
-
-        for (int i = 0; i < length; i++)
-        {
-            int hash = Animator.StringToHash(AnimationsEnum.GetEnumValues().GetValue(i).ToString());
-            _anims[i] = hash;
-            //Debug.Log("hash: " + hash);
-        }
-
-    }
-
-    public System.Type GetEnums()
-    {
-        return AnimationType.GetNestedType("Anims");
-    }
-
-
+    public int[] _anims => _animsCache;
 }
 
-public static class AM 
+public static class AM
 {
+    // Dictionary to store cached hashes for each animation set's Anims enum
+    public static readonly Dictionary<Type, int[]> AnimsHashes;
+
+    static AM()
+    {
+        // Initialize the dictionary and cache hashes for all nested animation sets
+        AnimsHashes = new Dictionary<Type, int[]>();
+        var animationSetTypes = typeof(AM).GetNestedTypes(BindingFlags.Public | BindingFlags.Static)
+            .Where(t => t.GetNestedType("Anims") != null);
+
+        foreach (var setType in animationSetTypes)
+        {
+            var animsType = setType.GetNestedType("Anims");
+            var anims = Enum.GetValues(animsType).Cast<Enum>().ToArray();
+            var hashes = Array.ConvertAll(anims, anim => Animator.StringToHash(anim.ToString()));
+            AnimsHashes[setType] = hashes;
+        }
+    }
+
     [System.Serializable]
     public class CyclePackage
     {
@@ -57,7 +61,6 @@ public static class AM
         public int curr;
         public float period = 2f;
         public Action increment;
-
 
         public CyclePackage(int startIndx, float period, int length)
         {
@@ -75,8 +78,6 @@ public static class AM
 
         public IEnumerator Cycle()
         {
-            //Debug.Log($"Starting Cycle: period={period}, length={length}, initial curr={curr}");
-
             if (period <= 0f)
             {
                 Debug.LogError($"Invalid period {period}. Must be positive.");
@@ -98,16 +99,12 @@ public static class AM
                 if (curr >= length)
                     curr = 0;
 
-                //Debug.Log($"Cycle tick: curr={curr}");
                 increment?.Invoke();
             }
-
-            //Debug.Log("Cycle coroutine stopped");
         }
     }
 
-    [System.Serializable]
-    public class MovementAnimationSet : AnimationSet
+    public static class MovementAnimations
     {
         public enum Anims
         {
@@ -128,10 +125,9 @@ public static class AM
             Anims.IDLE2,
             Anims.IDLE3
         };
-
     }
-    [System.Serializable]
-    public class AttackAnimationSet : AnimationSet
+
+    public static class AttackAnimations
     {
         public enum Anims
         {
@@ -149,8 +145,7 @@ public static class AM
         }
     }
 
-    [System.Serializable]
-    public class BlockAnimationSet : AnimationSet
+    public static class BlockAnimations
     {
         public enum Anims
         {
@@ -161,12 +156,4 @@ public static class AM
             NONE
         }
     }
-
 }
-
-
-
-
-
-
-

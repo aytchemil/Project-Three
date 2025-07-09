@@ -4,7 +4,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "BlockAbility", menuName = "ScriptableObjects/Abilities/Block Ability")]
 public class AbilityBlock : Ability
 {
-    public AM.BlockAnimationSet.Anims Block;
+    public AM.BlockAnimations.Anims Block;
 
     public enum Type
     {

@@ -129,7 +129,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
     /// <param name="dir"></param>
     void SwitchToCombo(string dir)
     {
-        print($"[{gameObject.name}] COMBO Direction ({dir})");
+        //print($"[{gameObject.name}] COMBO Direction ({dir})");
 
         if (cf.Controls.Mode("Attack").isUsing)
         {

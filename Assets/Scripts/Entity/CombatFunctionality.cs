@@ -375,7 +375,7 @@ public class CombatFunctionality : MonoBehaviour
             return;
         }
 
-        print($"[{gameObject.name}] [CF] : Ability ({mode}) used.");
+        //print($"[{gameObject.name}] [CF] : Ability ({mode}) used.");
         Controls.Mode(mode).data.modeFunctionality.UseModeFunctionality();
 
         if (Controls.Mode(mode) == null)
@@ -459,7 +459,10 @@ public class CombatFunctionality : MonoBehaviour
             return 2;
         else if (dir == "down")
             return 3;
-        throw new Exception($"[ModeComboFunctionality] +GetComboTriggerIndex: trigger index not found for [{dir}]");
+        else
+        {
+            return 0;
+        }
     }
 
 

@@ -24,14 +24,11 @@ public class BlockTriggerCollider : ModeTriggerGroup
 
     public LayerMask blockCollisionWith;
     public Collider col;
-    public Animator animator;
 
     public virtual void Awake()
     {
         //Cache
         col = GetComponent<Collider>();
-        if (animator == null)
-            animator = GetComponent<Animator>();
     }
 
     protected override void EnableTriggerImplementation()
@@ -39,8 +36,6 @@ public class BlockTriggerCollider : ModeTriggerGroup
         blockUp = false;
         blocking = false;
         blockMissed = false;
-        animator.SetBool("counter", false);
-        animator.SetBool("windupDone", false);
 
 
         //print($"[{combatFunctionality.gameObject.name}] Block Collider ENABLED");
@@ -49,14 +44,6 @@ public class BlockTriggerCollider : ModeTriggerGroup
     protected override void InitialDelayOver_ReEnableTriggerImplementation()
     {
         blockUp = true;
-        animator.SetBool("windupDone", true);
-
-        Color seeThroughBlue = new Color(0, 0, 1, 0.2f);
-
-        if (!DebugManager.instance.AttackCollisionDebugsOn)
-            gameObject.GetComponent<MeshRenderer>().material.color = seeThroughBlue;
-        else
-            gameObject.GetComponent<MeshRenderer>().enabled = false;
 
         if (myBlockAbility.hasBlockUpTime)
             StartCoroutine(CounterDownDelayed());
@@ -81,7 +68,6 @@ public class BlockTriggerCollider : ModeTriggerGroup
         blocking = false;
         blockMissed = false;
 
-        animator.SetBool("counter", false);
     }
 
     protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality, Ability abilty)
@@ -174,7 +160,6 @@ public class BlockTriggerCollider : ModeTriggerGroup
 
         if (!DebugManager.instance.AttackCollisionDebugsOn)
             gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
-        animator.SetBool("counter", true);
     }
 
     IEnumerator CounterDownDelayed()
@@ -186,6 +171,8 @@ public class BlockTriggerCollider : ModeTriggerGroup
     {
         while(combatFunctionality.Controls.Mode("Block").isUsing)
         {
+            gameObject.transform.localPosition = Vector3.zero;
+            gameObject.transform.localEulerAngles = Vector3.zero;
             yield return new WaitForEndOfFrame();
         }
         CounterDown();

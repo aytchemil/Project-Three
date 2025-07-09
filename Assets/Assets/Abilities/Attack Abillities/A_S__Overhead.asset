@@ -25,7 +25,7 @@ MonoBehaviour:
   hasAdditionalFunctionality: 1
   af: 4
   movementAmount: 38
-  animation_name: Attack_Overhead_Center
   damage: 0.5
   flinchAmount: 1
+  Attacks: 2
   triggerCollider: {fileID: 8475917669229452261, guid: c53d5c0878e9175428ea4a958d9e3162, type: 3}

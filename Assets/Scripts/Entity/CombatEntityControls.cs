@@ -44,7 +44,12 @@ public class CombatEntityController : MonoBehaviour
 
         set
         {
-            _lookDir = value;
+            if(_lookDir != value)
+            {
+                print($"changed look dir to {value}");
+                CombatWheelSelectDirection?.Invoke(lookDir);
+                _lookDir = value;
+            }
         }
 
     }

@@ -43,8 +43,9 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
     void ChangeBlock(string dir)
     {
         print($"[{gameObject.name}] BLOCK Direction Changing...");
-        cf.Controls.useAbility?.Invoke("Block");
         ChangeBlockAbility(dir);
+        cf.Controls.useAbility?.Invoke("Block");
+
     }
 
     /// <summary>
@@ -53,7 +54,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
     /// <param name="dir"></param>
     public void ChangeBlockAbility(string dir)
     {
-        print($"[{gameObject.name}] Blocking {dir}");
+        //print($"[{gameObject.name}] Blocking {dir}");
         //Setup
         CombatEntityModeData d = cf.Controls.Mode("Block");
 
@@ -90,6 +91,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
         AbilityBlock ability = (AbilityBlock)cf.Controls.Mode("Block").ability;
         ModeTriggerGroup usingTrigger = cf.WheelTriggerEnableUse("Block");
         AbilityWrapper usingAbility = new AbilityWrapper(ability);
+        CharacterAnimationController animCont = cf.Controls.animController;
 
         //Initial Mutations
         // + SETS flag value for start blocking
@@ -109,8 +111,10 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
 
                 //Setup
 
-                //Animation
-                StartCoroutine(WaitForUnblockAnimationSequence(ability));
+                print($"[AS] BLOCK Animating.. {ability.Block}");
+                //Animation //initial use delay this later
+                animCont.Play(typeof(AM.BlockAnimations), (int)ability.Block, CharacterAnimationController.UPPERBODY, false, false);
+
 
                 //Trigger
                 usingTrigger.StartUsingAbilityTrigger(usingAbility, ability.InitialUseDelay[0]);
@@ -143,23 +147,6 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
     void EnterCombatAutoBlock()
     {
         UseModeFunctionality();
-    }
-
-    /// <summary>
-    /// COROUTINE for the ANIMATION sequence to wait for an unblock
-    /// </summary>
-    /// <param name="ability"></param>
-    /// <returns></returns>
-    IEnumerator WaitForUnblockAnimationSequence(AbilityBlock ability)
-    {
-        print($"[{gameObject.name}] BLOCK Sequence STARTED");
-        cf.Controls.animController.BlckAnimation?.Invoke(ability.Block, ability.InitialUseDelay[0]);
-        while (cf.Controls.Mode("Block").isUsing || !readyToUnblock)
-        {
-            yield return new WaitForEndOfFrame();
-        }
-        cf.Controls.animController.BlckAnimation?.Invoke(AM.BlockAnimationSet.Anims.NONE, ability.InitialUseDelay[0]);
-        readyToUnblock = false;
     }
 
     /// <summary>

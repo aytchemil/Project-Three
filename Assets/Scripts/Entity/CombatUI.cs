@@ -71,8 +71,6 @@ public class CombatUI : MonoBehaviour
             Controls.abilitySlots[i] += AbilityChoose;
             Controls.abilitySlots[i] += UpdateCurrentAbilityText;
         }
-
-        Controls.CombatWheelSelectDirection += UpdateCombatUIVisuals;
     }
 
     private void OnDisable()
@@ -88,8 +86,6 @@ public class CombatUI : MonoBehaviour
             Controls.abilitySlots[i] -= AbilityChoose;
             Controls.abilitySlots[i] -= UpdateCurrentAbilityText;
         }
-
-        Controls.CombatWheelSelectDirection -= UpdateCombatUIVisuals;
     }
 
 
@@ -99,7 +95,7 @@ public class CombatUI : MonoBehaviour
         if (!changeOnCooldown && combatUIParent.activeInHierarchy)
             UpdateAttackIndicatorRotation(Controls.ia_look.ReadValue<Vector2>());
 
-        Controls.CombatWheelSelectDirection?.Invoke(Controls.lookDir);
+        //Controls.CombatWheelSelectDirection?.Invoke(Controls.lookDir);
     }
 
     #region UI and Basic Functionality
@@ -112,7 +108,7 @@ public class CombatUI : MonoBehaviour
     /// <param name="mouseInput"></param>
     void UpdateAttackIndicatorRotation(Vector2 mouseInput)
     {
-        Debug.Log(mouseInput);
+        //Debug.Log(mouseInput);
 
         //Deadzone check for the proximal sensitivity 
         bool inXDeadZone1 = (mouseInput.x < deadZone && mouseInput.x > -deadZone);
@@ -149,8 +145,8 @@ public class CombatUI : MonoBehaviour
         //Return gates for: cooldown and if in deadzone
         if (changeOnCooldown) return;
         if (inXDeadZone2 && inYDeadZone2) 
-        { 
-            //print("In deadzone"); 
+        {
+            //Debug.Log("mouse " + mouseInput + " dz");
             return; 
         }
 
@@ -172,22 +168,27 @@ public class CombatUI : MonoBehaviour
         // (0, 1) up
         // (0, -1) down
 
-        //Abs value because left right is x and up down is y. if one is greater than the other, we can see if were are going left right or up down
-        if (Mathf.Abs(mouseInput.x) > Mathf.Abs(mouseInput.y))
+        //Further specifiy which one out of left right, (the right or the left one)
+        //Debug.Log("mouse " + mouseInput);
+        string newLookdir = GetHighestDirection(mouseInput.x, -mouseInput.x, mouseInput.y, -mouseInput.y);
+
+        Controls.lookDir = newLookdir;
+        UpdateCombatUIVisuals(newLookdir);
+
+        string GetHighestDirection(float right, float left, float up, float down)
         {
-            //Further specifiy which one out of left right, (the right or the left one)
-            //Debug.Log(mouseInput);
-            if (mouseInput.x > 0)//Right{
-                Controls.lookDir = "right"; 
-            else if (mouseInput.x < 0) //Left
-                Controls.lookDir = "left";
-        }
-        else
-        {
-            if (mouseInput.y > 0)//Up
-                Controls.lookDir = "up";
-            else if (mouseInput.y < 0) //Down
-                Controls.lookDir = "down";
+            float maxValue = Mathf.Max(right, left, up, down);
+
+            if (maxValue == right)
+                return "right";
+            if (maxValue == left)
+                return "left";
+            if (maxValue == up)
+                return "up";
+            if (maxValue == down)
+                return "down";
+
+            return ""; // Fallback in case all values are equal and zero
         }
     }
 
@@ -310,7 +311,8 @@ public class CombatUI : MonoBehaviour
 
     void SetWheelInfo()
     {
-        comboText.text = "COMBO: " + Controls.Mode("Combo").ability.abilityName;
+        if(Controls.Mode("Combo").ability != null)
+            comboText.text = "COMBO: " + Controls.Mode("Combo").ability.abilityName;
     }
 
 

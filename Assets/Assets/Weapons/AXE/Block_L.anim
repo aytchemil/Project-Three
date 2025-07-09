@@ -908,7 +908,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Torso/Arms/RIght Arm
+    path: Torso/Arms/Left Arm
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -920,7 +920,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Torso/Arms/RIght Arm
+    path: Torso/Arms/Left Arm
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -932,7 +932,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Torso/Arms/RIght Arm
+    path: Torso/Arms/Left Arm
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -980,7 +980,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Torso/Arms/Left Arm
+    path: Torso/Arms/RIght Arm
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -992,7 +992,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Torso/Arms/Left Arm
+    path: Torso/Arms/RIght Arm
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -1004,7 +1004,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Torso/Arms/Left Arm
+    path: Torso/Arms/RIght Arm
     classID: 4
     script: {fileID: 0}
     flags: 0

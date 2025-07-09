@@ -25,7 +25,7 @@ MonoBehaviour:
   hasAdditionalFunctionality: 1
   af: 4
   movementAmount: 15
-  animation_name: Attack_Flat_Right
   damage: 3
   flinchAmount: 1
+  Attacks: 7
   triggerCollider: {fileID: 8475917669229452261, guid: 98be2273dca22774fa9b053b0e3b6f42, type: 3}

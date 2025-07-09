@@ -7,7 +7,7 @@ public class AbilityAttack : Ability
 {
     public float damage;
     public float flinchAmount = 1f;
-
+    public AM.AttackAnimations.Anims Attacks;
     public GameObject triggerCollider;
 
     public override GameObject prefab

@@ -101,6 +101,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
         switch (ability.archetype)
         {
             case AbilityAttack.Archetype.Singular:
+                AbilityAttack ability_attack = (AbilityAttack)ability;
 
                 print($"[{gameObject.name}] [ModeAttack] Archetype: Singular");
 
@@ -117,7 +118,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
                 usingTrigger.StartUsingAbilityTrigger(usingAbility, ability.InitialUseDelay[0]);
 
                 //Animation
-                //AnimateAblity(usingAbility.abilities[0].AnimName.ToString(), usingAbility.abilities[0].InitialUseDelay[0], cf.Controls.animController);
+                cf.Controls.animController.AtkAnimation?.Invoke(ability_attack.Attacks, ability.InitialUseDelay[0]);
 
                 break;
             case AbilityAttack.Archetype.Multi_Choice:

@@ -1,4 +1,3 @@
-using NUnit.Framework;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections;
@@ -7,50 +6,61 @@ using System.Linq;
 using System.Reflection;
 using Unity.VisualScripting;
 using UnityEngine;
+using static CombatEntityController;
 
 public class AnimationSet
 {
-    private readonly Type _animationSetType;
+    private readonly Type _animationType;
     private readonly int[] _animsCache;
     public int curr;
     public int defaultAnim;
 
     public AnimationSet(Type animationSetType)
     {
-        _animationSetType = animationSetType ?? throw new ArgumentNullException(nameof(animationSetType));
-
-        // Compute and cache the hashes during construction
-        Array animsArr = AnimationType != null ? Enum.GetValues(AnimationType) : Array.Empty<Enum>();
-        _animsCache = Array.ConvertAll(animsArr.Cast<Enum>().ToArray(), anim => Animator.StringToHash(anim.ToString()));
+        _animationType = animationSetType ?? throw new ArgumentNullException(nameof(animationSetType));
+        _animsCache = AM.AnimsHashes.TryGetValue(animationSetType, out var hashes) ? hashes : Array.Empty<int>();
     }
 
-    public Type AnimationType => _animationSetType.GetNestedType("Anims");
-
-    public Array AnimsArr => AnimationType != null ? Enum.GetValues(AnimationType) : Array.Empty<Enum>();
-
+    /// <summary>
+    /// Returns the AnimationSet's Anim Enum from _animEnum
+    /// </summary>
+    public Type EnumsType => _animationType.GetNestedType("Anims");
     public int[] _anims => _animsCache;
 }
 
 public static class AM
 {
-    // Dictionary to store cached hashes for each animation set's Anims enum
+    // Dictionary, (KEY: AnimationType (ex. move, attack, etc), VALUE: animation's enum's hash)
     public static readonly Dictionary<Type, int[]> AnimsHashes;
 
     static AM()
     {
-        // Initialize the dictionary and cache hashes for all nested animation sets
+        // + Initialize dictionary of (KEY animationtype VALUE hashes)
+        // + Ienumerable<type> object is created (basically a list)
+        //      that looks for AM's nested types (GetNestedTypes) that are only PUBLIC and STATIC
+        //      And .Where() the types it finds (t) that itself has a .GetNestedType() called Anims (and its an ENUM)
         AnimsHashes = new Dictionary<Type, int[]>();
-        var animationSetTypes = typeof(AM).GetNestedTypes(BindingFlags.Public | BindingFlags.Static)
-            .Where(t => t.GetNestedType("Anims") != null);
+        IEnumerable<Type> animTypes = typeof(AM).GetNestedTypes(BindingFlags.Public | BindingFlags.Static)
+            .Where(t => t.GetNestedType("Anims")?.IsEnum == true);
 
-        foreach (var setType in animationSetTypes)
+        foreach (Type animType in animTypes)
         {
-            var animsType = setType.GetNestedType("Anims");
-            var anims = Enum.GetValues(animsType).Cast<Enum>().ToArray();
-            var hashes = Array.ConvertAll(anims, anim => Animator.StringToHash(anim.ToString()));
-            AnimsHashes[setType] = hashes;
+            Type animEnum = animType.GetNestedType("Anims");
+            Enum[] _enums = Enum.GetValues(animEnum).Cast<Enum>().ToArray();
+            int[] hashes = Array.ConvertAll<Enum, int>(_enums, anim => Animator.StringToHash(anim.ToString()));
+            AnimsHashes[animType] = hashes;
         }
     }
+    public static Type GetEnumsType(Type animationType)
+    {
+        return animationType.GetNestedType("Anims");
+    }
+
+    public static Array GetEnums(Type EnumType)
+    {
+        return Enum.GetValues(EnumType);
+    }
+
 
     [System.Serializable]
     public class CyclePackage
@@ -104,7 +114,49 @@ public static class AM
         }
     }
 
-    public static class MovementAnimations
+    [System.Serializable]
+    public class FollowUpPackage
+    {
+        public bool[] triggerProg;
+        public Enum[] Enums;
+        CombatEntityModeData mode;
+        Type type;
+        Type EnumType;
+        int layer;
+        bool locklayer;
+        bool bypassLock;
+        float crossfade;
+
+        public FollowUpPackage(ModeTriggerGroup trigger, CombatEntityModeData _mode, Enum[] _Enums, Type type, Type _EnumType, int layer, bool locklayer, bool bypassLock, float crossfade)
+        {
+            triggerProg = trigger.GetComponent<MAT_FollowupGroup>().triggerProgress;
+            mode = _mode ?? throw new ArgumentNullException(nameof(_mode));
+            this.Enums = _Enums;
+            this.type = type;
+            this.EnumType = _EnumType;
+            this.layer = layer;
+            this.locklayer = locklayer;
+            this.bypassLock = bypassLock;
+            this.crossfade = crossfade;
+        }
+
+        public IEnumerator PlayFollowUp(System.Action<Type, int, int, bool, bool, float> Play)
+        {
+            for (int i = 0; i < triggerProg.Length; i++)
+            {
+                Debug.Log(EnumType + "  " + Enums[i]);
+                int EnumsIndx = (int)Enum.ToObject(EnumType, Enums[i]);
+
+                Play?.Invoke(type, (int)AM.GetEnums(EnumType).GetValue(EnumsIndx), layer, locklayer, bypassLock, crossfade);
+                Debug.Log($"[AS] FollowupPackage PLAYING {AM.GetEnums(EnumType).GetValue(EnumsIndx)}");
+
+                while (mode.isUsing && triggerProg[i] == false)
+                    yield return new WaitForEndOfFrame();
+            }
+        }
+    }
+
+    public static class MoveAnims
     {
         public enum Anims
         {
@@ -127,7 +179,7 @@ public static class AM
         };
     }
 
-    public static class AttackAnimations
+    public static class AtkAnims
     {
         public enum Anims
         {
@@ -145,7 +197,7 @@ public static class AM
         }
     }
 
-    public static class BlockAnimations
+    public static class BlkAnims
     {
         public enum Anims
         {

@@ -49,21 +49,19 @@ public class ModeCounterFunctionality : ModeGeneralFunctionality
         cf.Controls.Mode("Counter").trigger = usingTrigger;
 
         //Ability
-        AbilityWrapper usingAbility = new((ability as AbilityCounter).abilities, ability);
 
         switch (ability.counterArchetype)
         {
             case AbilityCounter.CounterArchetype.StandingRiposte:
 
                 //Setup
-                usingAbility.completedAnimation = usingTrigger.GetComponent<CounterTriggerGroup>().triggerProgress;
+                //ability.completedAnimation = usingTrigger.GetComponent<CounterTriggerGroup>().triggerProgress;
 
                 //Animation
-                StartCoroutine(AnimateFollowUpAbilities(usingAbility, usingTrigger, cf.Controls.Mode("Counter"), cf.Controls.animController));
+                //StartCoroutine(AnimateFollowUpAbilities(ability, usingTrigger, cf.Controls.Mode("Counter"), cf.Controls.animController));
 
                 //Trigger
-                usingAbility.abilities.Add(ability);
-                usingTrigger.StartUsingAbilityTrigger(usingAbility, ability.InitialUseDelay[0]);
+                usingTrigger.StartabilityTrigger(ability, ability.InitialUseDelay[0]);
 
                 //Additional Functionality 
                 StandingRiposte(ability);

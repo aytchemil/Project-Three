@@ -42,7 +42,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
 
     void ChangeBlock(string dir)
     {
-        print($"[{gameObject.name}] BLOCK Direction Changing...");
+        //print($"[{gameObject.name}] BLOCK Direction Changing to {dir}");
         ChangeBlockAbility(dir);
         cf.Controls.useAbility?.Invoke("Block");
 
@@ -72,7 +72,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
 
     public override void UseModeFunctionality()
     {
-        print($"[{gameObject.name}] BLOCK used");
+        //print($"[{gameObject.name}] BLOCK used");
         Block();
     }
 
@@ -90,7 +90,6 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
             block.triggers[i].gameObject.SetActive(false);
         AbilityBlock ability = (AbilityBlock)cf.Controls.Mode("Block").ability;
         ModeTriggerGroup usingTrigger = cf.WheelTriggerEnableUse("Block");
-        AbilityWrapper usingAbility = new AbilityWrapper(ability);
         CharacterAnimationController animCont = cf.Controls.animController;
 
         //Initial Mutations
@@ -113,11 +112,11 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
 
                 print($"[AS] BLOCK Animating.. {ability.Block}");
                 //Animation //initial use delay this later
-                animCont.Play(typeof(AM.BlockAnimations), (int)ability.Block, CharacterAnimationController.UPPERBODY, false, false);
+                animCont.Play(typeof(AM.BlkAnims), (int)ability.Block, CharacterAnimationController.UPPERBODY, false, false);
 
 
                 //Trigger
-                usingTrigger.StartUsingAbilityTrigger(usingAbility, ability.InitialUseDelay[0]);
+                usingTrigger.StartabilityTrigger(ability, ability.InitialUseDelay[0]);
 
                 //Additional Functionality 
                 AF_Regular(ability);

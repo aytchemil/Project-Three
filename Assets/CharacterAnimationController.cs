@@ -9,17 +9,18 @@ public class CharacterAnimationController : AnimatorSystem
     public CombatEntityController CEC;
     public Weapon wpn;
 
-    public Action<AM.AttackAnimations.Anims, float> AtkAnimation;
-    public Action<AM.BlockAnimations.Anims, float> BlckAnimation;
+    public Action<AtkAnims.Anims, float> AtkAnimation;
+    public Action<BlkAnims.Anims, float> BlckAnimation;
 
     public const int UPPERBODY = 0;
+    public bool cantAnimateUpperBody => CantAnimateUpperBody();
     public const int LOWERBODY = 1;
 
     [SerializeField]
     public AM.CyclePackage idleCycle = new CyclePackage(
-        (int)AM.MovementAnimations.Anims.IDLE1,
+        (int)MoveAnims.Anims.IDLE1,
         2f,
-        AM.MovementAnimations.idles.Length
+        MoveAnims.idles.Length
     );
 
 
@@ -34,18 +35,15 @@ public class CharacterAnimationController : AnimatorSystem
         animator = GetComponent<Animator>();
 
         animations = new Type[] {
-            typeof(AM.MovementAnimations),
-            typeof(AM.AttackAnimations),
-            typeof(AM.BlockAnimations)
+            typeof(MoveAnims),
+            typeof(AtkAnims),
+            typeof(BlkAnims)
         };
     }
 
 
     public void OnEnable()
     {
-        AtkAnimation += AttackAnimation;
-        BlckAnimation += BlockAnimation;
-
         CEC.Flinch += Flinch;
         CEC.Init += Init;
         CEC.moveDirInput += SetMoveDirInput;
@@ -55,10 +53,6 @@ public class CharacterAnimationController : AnimatorSystem
 
     public void OnDisable()
     {
-        AtkAnimation -= AttackAnimation;
-        BlckAnimation -= BlockAnimation;
-
-
         CEC.Flinch -= Flinch;
         CEC.Init -= Init;
         CEC.moveDirInput -= SetMoveDirInput;
@@ -67,7 +61,7 @@ public class CharacterAnimationController : AnimatorSystem
 
     void Init()
     {
-        string defaultAnim = AM.MovementAnimations.Anims.IDLE1.ToString();
+        string defaultAnim = MoveAnims.Anims.IDLE1.ToString();
         InitializeAnimationSystem(animator.layerCount, animator);
         animator.Rebind();
     }
@@ -77,20 +71,8 @@ public class CharacterAnimationController : AnimatorSystem
     {
         //print($"[{gameObject.name}] Setting move direction input: {moveInput}");
         moveDirInput = moveInput;
-
         CheckInputsLAYER_UPPERBODY(moveInput);
         CheckInputs_LAYER_LOWERBODDY(moveInput);
-    }
-
-    private void AttackAnimation(AM.AttackAnimations.Anims anim, float delay)
-    {
-        print($"ATTACK ANIMATION : {anim}");
-        Play(typeof(AM.AttackAnimations), (int)anim, UPPERBODY, false, false);
-    }
-    private void BlockAnimation(AM.BlockAnimations.Anims anim, float delay)
-    {
-        //print($"BLOCK ANIMATION : {anim}");
-        Play(typeof(AM.BlockAnimations), (int)anim, UPPERBODY, false, false);
     }
 
 
@@ -109,14 +91,27 @@ public class CharacterAnimationController : AnimatorSystem
 
     protected void DeathAnimation()
     {
-        Play(typeof(AM.MovementAnimations), (int)AM.MovementAnimations.Anims.DEATH1, UPPERBODY, true, true);
-        Play(typeof(AM.MovementAnimations), (int)AM.MovementAnimations.Anims.DEATH1, LOWERBODY, true, true);
+        Play(typeof(MoveAnims), (int)MoveAnims.Anims.DEATH1, UPPERBODY, true, true);
+        Play(typeof(MoveAnims), (int)MoveAnims.Anims.DEATH1, LOWERBODY, true, true);
     }
 
 
     void CheckInputsLAYER_UPPERBODY(Vector2 moveInput)
     {
-        MoveAnimationsInvoker(UPPERBODY, moveInput);
+        //print("cant use ability?" + CEC.cantUseAbility);
+        if (!cantAnimateUpperBody)
+            MoveAnimationsInvoker(UPPERBODY, moveInput);
+    }
+
+    bool CantAnimateUpperBody()
+    {
+        bool ret = false;
+
+        if (!CEC.cantUseAbility) ret = true;
+        if (CEC.Mode("Attack").isUsing) ret = true;
+
+
+        return ret;
     }
 
     void CheckInputs_LAYER_LOWERBODDY(Vector2 moveInput)
@@ -127,19 +122,19 @@ public class CharacterAnimationController : AnimatorSystem
     void MoveAnimationsInvoker(int layer, Vector2 moveInput)
     {
         if (moveInput.y >= 1)
-            Play(typeof(AM.MovementAnimations), (int)AM.MovementAnimations.Anims.FORWARD, layer, true, true);
+            Play(typeof(MoveAnims), (int)MoveAnims.Anims.FORWARD, layer, false, false);
         else if (moveInput.y <= -1)
-            Play(typeof(AM.MovementAnimations), (int)AM.MovementAnimations.Anims.BACK, layer, true, true);
+            Play(typeof(MoveAnims), (int)MoveAnims.Anims.BACK, layer, false, false);
         else if (moveInput.x >= 1)
-            Play(typeof(AM.MovementAnimations), (int)AM.MovementAnimations.Anims.RIGHT, layer, true, true);
+            Play(typeof(MoveAnims), (int)MoveAnims.Anims.RIGHT, layer, false, false);
         else if (moveInput.x <= -1)
-            Play(typeof(AM.MovementAnimations), (int)AM.MovementAnimations.Anims.LEFT, layer, true, true);
+            Play(typeof(MoveAnims), (int)MoveAnims.Anims.LEFT, layer, false, false);
         else
         {
             if (!idleCycle.cycling)
                 StartCoroutine(idleCycle.Cycle());
 
-            Play(typeof(AM.MovementAnimations), (int)AM.MovementAnimations.idles[idleCycle.curr], layer, true, true);
+            Play(typeof(MoveAnims), (int)MoveAnims.idles[idleCycle.curr], layer, false, false);
         }
     }
 

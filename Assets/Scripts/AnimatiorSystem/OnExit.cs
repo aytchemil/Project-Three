@@ -9,8 +9,8 @@ public class OnExit : StateMachineBehaviour
 
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
-        animatorSystem = animator.gameObject.GetComponent<AnimatorSystem>();
-        CombatEntityController cec = animatorSystem.gameObject.GetComponent<CharacterAnimationController>().CEC;
+        animatorSystem = animator.gameObject.GetComponent<AnimatorSystem>() ?? throw new System.ArgumentNullException("Animator system not set");
+        CombatEntityController cec = animatorSystem.GetComponent<CharacterAnimationController>().CEC ?? throw new System.ArgumentNullException("CEC not set");
 
         animatorSystem.StartCoroutine(Wait());
 
@@ -18,11 +18,12 @@ public class OnExit : StateMachineBehaviour
         {
             yield return new WaitForSeconds(stateInfo.length - crossfade);
             animatorSystem.SetLocked(false, layerIndex);
-            object desiredAnimation = (cec.Mode("Block").ability as AbilityBlock).Block;
 
-            Debug.Log("[AS] Reblocking");
+            AM.BlkAnims.Anims desiredAnim = (cec.Mode("Block").ability as AbilityBlock).Block;
+            animatorSystem.Play(typeof(AM.BlkAnims), (int)desiredAnim, layerIndex, false, false);
 
         }
+        Debug.Log("[AS] ANIMATION EXITING");
     }
 
 }

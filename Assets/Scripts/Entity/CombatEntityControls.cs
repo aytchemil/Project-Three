@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using UnityEditor.ShaderGraph;
+using static UnityEngine.Rendering.DebugUI;
 
 /// <summary>
 /// Centralized Controller and controls for every combat entity.
@@ -45,13 +46,19 @@ public class CombatEntityController : MonoBehaviour
         set
         {
             if(_lookDir != value)
-            {
-                print($"changed look dir to {value}");
-                CombatWheelSelectDirection?.Invoke(lookDir);
-                _lookDir = value;
-            }
+                StartCoroutine(Wait(value));
         }
 
+
+    }
+
+    IEnumerator Wait(string value)
+    {
+        while(cantUseAbility)
+            yield return new WaitForEndOfFrame();
+
+        _lookDir = value;
+        CombatWheelSelectDirection?.Invoke(lookDir);
     }
 
     //Combo Reattacking
@@ -78,7 +85,7 @@ public class CombatEntityController : MonoBehaviour
     public Action<float> Flinch; //param: flinchTime
     public Func<string> getMoveDirection; //ret: moveDir
     public Action Init;
-    public Action<AbilityWrapper> UseCombatAdditionalFunctionality;
+    public Action<Ability> UseCombatAdditionalFunctionality;
     public Action Death;
 
 
@@ -137,10 +144,10 @@ public class CombatEntityController : MonoBehaviour
 
     [Header("Animation System")]
     public CharacterAnimationController animController;
-    [Space]
 
     [Header("Central Flags")]
-    public Func<bool> cantUseAbility;
+    [SerializeField]
+    public bool cantUseAbility => (!isLockedOn || Mode("Attack").isUsing || isFlinching || Mode("Counter").isUsing);
     public bool dashing;
     public bool dashOnCooldown;
     public bool isLockedOn;
@@ -163,7 +170,6 @@ public class CombatEntityController : MonoBehaviour
     protected virtual void Start()
     {
         //print($"{gameObject.name} onEnable()");
-        cantUseAbility = () => (!isLockedOn || Mode("Attack").isUsing || isFlinching || Mode("Counter").isUsing);
         CreateMyOwnModeInstances();
         ResetAttack += ResetmyAttack;
         Init?.Invoke();
@@ -171,7 +177,6 @@ public class CombatEntityController : MonoBehaviour
 
     protected virtual void OnEnable()
     {
-        cantUseAbility = () => (!isLockedOn || Mode("Attack").isUsing || isFlinching || Mode("Counter").isUsing);
         useAbility += (input) => 
         {
             if (usedCombo)
@@ -198,7 +203,6 @@ public class CombatEntityController : MonoBehaviour
         blockStart = null;
         blockStop = null;
         GetTarget = null;
-        cantUseAbility = null;
         CombatWheelSelectDirection = null;
         Flinch -= BaseFlinch;
     }

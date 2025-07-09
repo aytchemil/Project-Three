@@ -59,23 +59,23 @@ public class CombatAdditionalFunctionalities : MonoBehaviour
         Controls.UseCombatAdditionalFunctionality -= UseCombatAdditionalFunctionality;
     }
 
-    void UseCombatAdditionalFunctionality(AbilityWrapper usingAbility)
+    void UseCombatAdditionalFunctionality(Ability ability)
     {
-        switch (usingAbility.parentAbility.af)
+        switch (ability.af)
         { 
             case Function.None:
                 break;
             case Function.MovementForward:
 
-                float moveAmount = (usingAbility.GetAF("movement") as AF_movement).movementAmount;
+                float moveAmount = (ability.m_af as AF_movement).movementAmount;
 
                 StartCoroutine(MovementForwardAttack(moveAmount));
                 
                 break;
             case Function.MovementLeftOrRight:
 
-                float lrmoveAmount = (usingAbility.GetAF("movement") as AF_movement).movementAmount;
-                string choice = (usingAbility.GetAF("choice") as AF_choice).choice;
+                float lrmoveAmount = (ability.m_af as AF_movement).movementAmount;
+                string choice = (ability.m_af as AF_choice).choice;
 
                 StartCoroutine(MovementRightOrLeftAttack(lrmoveAmount, choice));
 

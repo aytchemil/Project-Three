@@ -321,9 +321,9 @@ public class CombatFunctionality : MonoBehaviour
         //print("enabling ability in dir: " + dir);
 
         //Reset the current ability for all the modes
-        foreach (CombatEntityModeData mode in Controls.modes)
-            if (mode.name != "Combo")
-                mode.ability = null;
+        //foreach (CombatEntityModeData mode in Controls.modes)
+        //    if (mode.name != "Combo")
+         //       mode.ability = null;
 
 
         switch (cur_Ability)
@@ -369,7 +369,7 @@ public class CombatFunctionality : MonoBehaviour
     public virtual void UseAbility(string mode)
     {
         //print($"[{gameObject.name}] [Combat Functionality]: Attempting To Use an Ability from mode [{mode}]");
-        if (Controls.cantUseAbility.Invoke())
+        if (Controls.cantUseAbility)
         {
             print($"[{gameObject.name}] [CF] : CANT USE ABILITY ");
             return;

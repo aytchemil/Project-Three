@@ -44,6 +44,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
     protected override void InitialDelayOver_ReEnableTriggerImplementation()
     {
         blockUp = true;
+        if (!gameObject.activeInHierarchy) return;
 
         if (myBlockAbility.hasBlockUpTime)
             StartCoroutine(CounterDownDelayed());
@@ -82,15 +83,15 @@ public class BlockTriggerCollider : ModeTriggerGroup
         GeneralAttackTriggerGroup AT = other.gameObject.GetComponent<GeneralAttackTriggerGroup>();
 
         //Null Check
-        if (AT == null)
-            return;
+        if (AT == null) return;
+        if (other.GetComponent<AT_ColliderSingle>().combatFunctionality == combatFunctionality) return;
 
         // + Block up TRUE
         // + countering FLASE
         // + Attack Trigger attacking TRUE
         if (blockUp && !blocking && AT.attacking)
         {
-            print("BlockSys: Potential Block Detected");
+            //print("BlockSys: Potential Block Detected");
 
 
             //Setup
@@ -104,11 +105,11 @@ public class BlockTriggerCollider : ModeTriggerGroup
             if ((myBlocksDirection == opponentAbilityDir || sidePerspectivesHappened) && !sideDirsTheSame)
             {
                 AT.AttackTriggerBlocked(myBlocksDirection, effectpos);
-                print($"BlockSys: YES Match -> BLOCKED : ({myBlocksDirection}) and ({opponentAbilityDir})");
+                //print($"BlockSys: YES Match -> BLOCKED : ({myBlocksDirection}) and ({opponentAbilityDir})");
             }
             else
             {
-                print($"BlockSys: NO Match -> HIT : ({myBlocksDirection}) and ({opponentAbilityDir})");
+                //print($"BlockSys: NO Match -> HIT : ({myBlocksDirection}) and ({opponentAbilityDir})");
             }
 
             //TODO: If in defensive mode counter

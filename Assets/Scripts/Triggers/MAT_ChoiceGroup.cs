@@ -50,7 +50,7 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
         return _continue;
     }
 
-    public virtual IEnumerator MultiChoiceAttack(AbilityWrapper usingAbility, float delay, string choice, AbilityWrapper location)
+    public virtual IEnumerator MultiChoiceAttack(Ability ability, float delay, string choice)
     {
         print("[MAT_ChoiceGroup] Attacking with multi attack choice trigger");
 
@@ -65,7 +65,7 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
 
         // (PARENT TRIGGER)
         //MultiChoice's Ability Trigger
-        StartUsingAbilityTrigger(usingAbility, usingAbility.parentAbility.InitialUseDelay[0]);
+        //StartabilityTrigger(ability, ability.parentAbility.InitialUseDelay[0]);
 
         if (!initializedChildTriggers)
             InitializeChildTriggers(myMultiAbility);
@@ -74,8 +74,8 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
         //The chosen Ability Trigger's Ability 
         triggerBeingUsed.gameObject.SetActive(true);
 
-        location.abilities.Add(triggerBeingUsed.myAbility);
-        triggerBeingUsed.StartUsingAbilityTrigger(usingAbility, usingAbility.abilities[0].InitialUseDelay[0]);
+        //location.abilities.Add(triggerBeingUsed.myAbility);
+        //triggerBeingUsed.StartabilityTrigger(ability, ability.abilities[0].InitialUseDelay[0]);
 
         while (gameObject.activeInHierarchy)
         {

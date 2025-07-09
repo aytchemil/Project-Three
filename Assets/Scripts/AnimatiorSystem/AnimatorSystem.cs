@@ -25,7 +25,6 @@ public class AnimatorSystem : MonoBehaviour
 {
     public Animator animator;
     public System.Type[] animations = { };
-    public AnimationSet[] animationSets;
     [SerializeField] public AnimationLayer[] layers;
     public Action<int> DefaultAnimation;
     private readonly Dictionary<Type, AnimationSet> _animationSetsDictionary = new Dictionary<Type, AnimationSet>();
@@ -34,26 +33,26 @@ public class AnimatorSystem : MonoBehaviour
     {
         this.animator = animator ?? throw new ArgumentNullException(nameof(animator));
 
-        // Initialize animationSets and map
-        animationSets = new AnimationSet[animations.Length];
+        // Initialize animationSets
+        // + Clear Dictionary
+        // + For every animation type (ex. movement, attack, block, etc)
+        //      + Null OR doesnt have "Anims" enum -> RETURN
+        //      + dictionary.add (KEY: The animation type, VALUE: the animation set)
         _animationSetsDictionary.Clear();
         for (int i = 0; i < animations.Length; i++)
         {
-            if (animations[i] == null || animations[i].GetNestedType("Anims") == null)
-            {
+            if (animations[i] == null || animations[i].GetNestedType("Anims") == null) {
                 Debug.LogError($"Invalid or missing Anims enum in animation type at index {i}: {animations[i]?.Name}");
-                continue;
-            }
-            animationSets[i] = new AnimationSet(animations[i]);
-            _animationSetsDictionary[animations[i]] = animationSets[i];
+                continue;}
+            _animationSetsDictionary.Add(animations[i], new AnimationSet(animations[i]));
         }
 
         // Initialize layers
+        // + initialize layers list
+        // + foreach layer, set its value to a new animation layer value
         layers = new AnimationLayer[amountOfLayers];
         for (int i = 0; i < amountOfLayers; i++)
-        {
             layers[i] = new AnimationLayer();
-        }
     }
 
     public void SetLocked(bool lockLayer, int layer)
@@ -62,56 +61,52 @@ public class AnimatorSystem : MonoBehaviour
             layers[layer].locked = true;
     }
 
-    public void Play(Type animationSetType, int animationValue, int layer, bool lockLayer, bool bypassLock, float crossfade = 0.2f)
-    {
-
-
-        // Validate animationSetType
-        if (!_animationSetsDictionary.TryGetValue(animationSetType, out AnimationSet set))
+    public void Play(Type setType, int enumIndx, int layer, bool lockLayer, bool bypassLock, float crossfade = 0.2f)
+    {  
+        //Setup 1
+        // + New Animation Set
+        // + Get the animation set's value from the dictionary
+        AnimationSet set;
+        if (!_animationSetsDictionary.TryGetValue(setType, out set))
         {
-            Debug.LogError($"No AnimationSet found for type {animationSetType?.Name}");
+            Debug.LogError($"No AnimationSet found for type {setType?.Name}");
             return;
         }
 
-        // Get the enum type and value
-        Type animsType = set.AnimationType;
-        if (animsType == null)
-        {
-            Debug.LogError($"No Anims enum found for set {animationSetType.Name}");
-            return;
-        }
+        //Setup 2
+        // + Get the anim enum from the set's type
+        // + Gets the Enum value (ex. NONE, FORWARD, etc) from animEnums & the index
+        Type EnumType = set.EnumsType ?? throw new ArgumentNullException($"[AS] No Anims enum found for set {setType.Name}");
+        Enum animEnum = (Enum)Enum.ToObject(EnumType, enumIndx);
 
-        // Validate inputs
-        if (layer < 0 || layer >= layers.Length || layers[layer] == null)
+        //Checks
+        // + VALID Layer
+        // + VALID (Enum to int) animation value
+        // + CHECK for NONE animation
+        // + CHECK if the current animation is the same
+        // + CHECK if layer is locked, and can't bypass lock
+        if (layer < 0 || layer >= layers.Length || layers[layer] == null) 
         {
             Debug.LogError($"Invalid layer index: {layer}");
             return;
         }
-        if (animationValue < 0 || animationValue >= set._anims.Length)
+        if (enumIndx < 0 || enumIndx >= set._anims.Length)
         {
-            Debug.LogError($"Invalid animation value: {animationValue} for set {set.AnimationType?.Name}");
+            Debug.LogError($"Invalid animation value: {enumIndx} for set {set.EnumsType?.Name}");
             return;
         }
-
-        // Check for NONE animation
-        var animEnum = (Enum)Enum.ToObject(animsType, animationValue);
         if (animEnum.ToString() == "NONE")
         {
             Debug.Log("[AS] PLAYING NONE ANIMATION");
             return;
         }
+        if (animEnum.ToString() == layers[layer].currAnimation?.ToString()) return;
+        if (layers[layer].locked && !bypassLock) return;
 
-        // Check if the current animation is the same or if the layer is locked
-        if (animEnum.ToString() == layers[layer].currAnimation?.ToString())
-            return;
-        if (layers[layer].locked && !bypassLock)
-            return;
-
-        // Log the animation being played
-        Debug.Log($"[AS] LAYER ({layer}) ({set.AnimationType?.Name}) PLAYING : {animEnum}");
+        Debug.Log($"[AS] LAYER ({layer}) ({set.EnumsType?.Name}) PLAYING : {animEnum}");
 
         // Functionality
-        animator.CrossFade(set._anims[animationValue], crossfade, layer);
+        animator.CrossFade(set._anims[enumIndx], crossfade, layer);
 
         // Mutations
         layers[layer].locked = lockLayer;

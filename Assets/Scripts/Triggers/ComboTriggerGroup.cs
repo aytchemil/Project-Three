@@ -71,7 +71,7 @@ public class CombotTriggerGroup : MAT_FollowupGroup
     public void DidReattack(int i)
     {
         print("Didreattack?");
-        if (i == triggerProgress.Count - 1)
+        if (i == triggerProgress.Length)
         {
             print("didreattack: last ability in triggerproggress.. ignoring reattack check");
             return;

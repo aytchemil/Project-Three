@@ -58,6 +58,7 @@ public class Ability : ScriptableObject
 
     [ShowIf("hasAdditionalFunctionality")]
     public CombatAdditionalFunctionalities.Function af;
+    public AF m_af;
 
 
     private bool isMovement => 
@@ -67,4 +68,5 @@ public class Ability : ScriptableObject
         ;
     [ShowIf("isMovement")]
     public float movementAmount;
+
 }

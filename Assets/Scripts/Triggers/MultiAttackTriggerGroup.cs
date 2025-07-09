@@ -67,10 +67,12 @@ public class MultiAttackTriggerGroup : GeneralAttackTriggerGroup
     {
         foreach (Ability ability in abilities)
         {
+            if (ability == null)
+                throw new System.Exception("Ability null");
             if (ability.prefab == null) Debug.LogError("prefab not set on ability : " + ability.abilityName);
 
             //print($"MLTI Ability: {ability} -> Creating CHILD prefab: " + ability.prefab);
-            GameObject newChildPrefab = Instantiate(ability.prefab, transform, false);
+            GameObject newChildPrefab = Instantiate(ability.prefab, transform, false) ?? throw new System.Exception("MTLI Child prefab not correctly created");
             newChildPrefab.GetComponent<ModeTriggerGroup>().isLocal = true;
         }
     }

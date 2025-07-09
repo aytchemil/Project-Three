@@ -36,14 +36,13 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
         print($"[{gameObject.name}] COMBAT [ModeCombo]: Combo Started...");
 
         //Validation
-        if (cf.Controls.cantUseAbility.Invoke())
+        if (cf.Controls.cantUseAbility)
             return;
 
         //Setup
         CombatEntityModeData combo = cf.Controls.Mode("Combo");
         AbilityCombo ability = (AbilityCombo)combo.ability;
         ModeTriggerGroup usingTrigger = cf.WheelTriggerEnableUse("Combo");
-        AbilityWrapper usingAbility = new((ability as AbilityCombo).abilities, ability);
 
         //Flags
         combo.isUsing = true;
@@ -66,14 +65,14 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
             case AbilityCombo.ComboType.Linear:
 
                 //Setup
-                usingAbility.completedAnimation = usingTrigger.GetComponent<CombotTriggerGroup>().triggerProgress;
+                //.completedAnimation = usingTrigger.GetComponent<CombotTriggerGroup>().triggerProgress;
                 StartCoroutine(WaitForComboToFinish(usingTrigger));
 
                 //Animation
-                StartCoroutine(AnimateFollowUpAbilities(usingAbility, usingTrigger, cf.Controls.Mode("Attack"), cf.Controls.animController));
+                //StartCoroutine(AnimateFollowUpAbilities(ability, usingTrigger, cf.Controls.Mode("Attack"), cf.Controls.animController));
 
                 //Actuall Attack
-                UseCurrentCombo(cf.Controls.lookDir).GetComponent<CombotTriggerGroup>().StartUsingAbilityTrigger(usingAbility, ability.InitialUseDelay[0]);
+                UseCurrentCombo(cf.Controls.lookDir).GetComponent<CombotTriggerGroup>().StartabilityTrigger(ability, ability.InitialUseDelay[0]);
 
                 //Special Functionality
                 //ArchetypeUse_FollowUpAttack((AbilityMulti)ability);
@@ -82,7 +81,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
 
         void ComboSetupCompletePrint()
         {
-            print($"[Combo Functionality] the abilities for this combo are:{usingAbility.abilities[0]} {usingAbility.abilities[1]} {usingAbility.abilities[2]} for trigger: [{usingTrigger.gameObject.name}]");
+            print($"[Combo Functionality] the abilities for this combo are:{ability.abilities[0]} {ability.abilities[1]} {ability.abilities[2]} for trigger: [{usingTrigger.gameObject.name}]");
             print("combo setup complete");
         }
     }
@@ -170,7 +169,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
             print($"[ComboFunctionality] [{gameObject.name}] waiting for combo to finish");
             yield return new WaitForEndOfFrame();
 
-            if (trigger.triggerProgress[trigger.triggerProgress.Count - 1] == true || cf.Controls.Mode("Attack").isUsing == false)
+            if (trigger.triggerProgress[trigger.triggerProgress.Length] == true || cf.Controls.Mode("Attack").isUsing == false)
                 cf.Controls.Mode("Combo").isUsing = false;
         }
         print("[ComboFunctionality] combo finished");

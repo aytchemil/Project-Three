@@ -21,7 +21,7 @@ public abstract class ModeTriggerGroup : MonoBehaviour
     /// <param name="currentAbility"></param>
     /// <param name="delay"></param>
     /// <returns></returns>
-    public virtual void StartUsingAbilityTrigger(AbilityWrapper usingAbility, float delay)
+    public virtual void StartabilityTrigger(Ability ability, float delay)
     {
         //Already Using it Check
         if (usingTrigger) return;
@@ -37,12 +37,12 @@ public abstract class ModeTriggerGroup : MonoBehaviour
         combatFunctionality.Controls.didReattack = false;
         EnableTrigger();
         Invoke(nameof(InitialDelayOver_ReEnableTrigger), delay);
-        combatFunctionality.Controls.UseCombatAdditionalFunctionality?.Invoke(usingAbility);
+        combatFunctionality.Controls.UseCombatAdditionalFunctionality?.Invoke(ability);
     }
 
 
     /// <summary>
-    /// PATHWAY FUNCTION from StartUsingAbilityTrigger() that moves into a VIRTUAL
+    /// PATHWAY FUNCTION from StartabilityTrigger() that moves into a VIRTUAL
     /// + PATHWAY FUNCTION
     /// + SETS initial ability use delay over FALSE
     /// </summary>

@@ -81,6 +81,7 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
     {
         if (other.GetComponent<ModeTriggerGroup>()) return;
         if (other.GetComponent<CombatEntityController>() == combatFunctionality.Controls) return;
+        if (other.GetComponent<BlockTriggerCollider>().combatFunctionality == combatFunctionality) return;
 
         float newEnemyHealth;
         if (attacking && combatFunctionality.initialAbilityUseDelayOver)
@@ -175,16 +176,16 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
     {
         col.enabled = false;
 
-        print(effectPos + " " + myLookDir);
+        //print(effectPos + " " + myLookDir);
 
-        print("AT Collider being frozen");
+        //print("AT Collider being frozen");
         StartCoroutine(FreezeAttack(0, myLookDir, effectPos));
     }
     
 
     IEnumerator FreezeAttack(float time, string l, Vector3 e)
     {
-        print("Freezing attack");
+        //print("Freezing attack");
         float prevSpeed = animator.speed;
         float prevanimContSpeed = combatFunctionality.Controls.animController.animator.speed;
 

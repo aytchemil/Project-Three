@@ -17,54 +17,7 @@ public class ModeGeneralFunctionality : MonoBehaviour
 
    }
 
-    /// <summary>
-    /// ANIMATES a parent ability's ability array over time
-    /// </summary>
-    /// <param name="usingAbility"></param>
-    /// <param name="usingTrigger"></param>
-    /// <param name="mode"></param>
-    /// <param name="animCont"></param>
-    /// <returns></returns>
-    public IEnumerator AnimateFollowUpAbilities(AbilityWrapper usingAbility, ModeTriggerGroup usingTrigger, CombatEntityModeData mode, CharacterAnimationController animCont)
-    {
-        print($"[{gameObject.name}] COMBAT ANIMATION [ModeGeneral]: Animation Sequence STARTED...");
 
-
-        //Loop through all triggers and if we are using the mode
-        for (int i = 0; i < usingTrigger.GetComponent<MAT_FollowupGroup>().triggerProgress.Count && mode.isUsing; i++)
-        {
-            //Setup
-            ///+gets the animation name
-            ///+determines if we are the first attack, if it is, no delay, if its not the first followupattack, then put an initial delay
-            //string animName = (usingAbility.abilities[i]).AnimName.ToString();
-            float delay = 0;
-            delay = (i == 0) ? 0 : usingAbility.abilities[i].InitialUseDelay[0];
-
-            //Animates
-            //AnimateAblity(animName, delay, animCont);
-
-            //AdditionalFunctionality Option
-            AF_StartedAnAnimation();
-
-            //Checking if the trigger progressed
-            while (mode.isUsing && usingAbility.completedAnimation[i] == false)
-            {
-                //Debug.Log($"[Followup] [Animation] Updating animation, current progress for [{i}] is [{usingAbility.completedAnimation[i]}]");
-                print(usingTrigger.gameObject.name);
-                yield return new WaitForEndOfFrame();
-                usingAbility.completedAnimation = usingTrigger.GetComponent<MAT_FollowupGroup>().triggerProgress;
-            }
-
-            //AdditionalFunctionality Option
-            //FinishedAnAnimation(i, animName, animCont);
-        }
-
-        //Waiting an extra frame for the animation to complete because FinishedAnimation will also run on this frame, and they may cancle eachother out
-        StartCoroutine(CompletedAnimationSequence(animCont));
-        print($"[{gameObject.name}] COMBAT ANIMATION [ModeGeneral]: Animation Sequence COMPLETED. ");
-    }
-
-    /// <summary>
     /// Optional Functionality to finish an animation
     /// </summary>
     /// <param name="count"></param>

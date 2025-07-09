@@ -6,46 +6,6 @@ using Unity.VisualScripting;
 using UnityEditor.Playables;
 using UnityEngine;
 
-/// <summary>
-/// WRAPPER CLASS for an ability
-/// + provided for abilities with child abilities
-/// </summary>
-public class AbilityWrapper
-{
-    public Ability parentAbility;
-    public List<AF> afs;
-    public List<Ability> abilities;
-    public List<bool> completedAnimation;
-
-    public AbilityWrapper(Ability parent)
-    {
-        parentAbility = parent;
-        abilities = new List<Ability>();
-        completedAnimation = new List<bool>();
-        afs = new List<AF>();
-    }
-
-    public AbilityWrapper(Ability[] values, Ability parent)
-    {
-        parentAbility = parent;
-        completedAnimation = new List<bool>();
-        afs = new List<AF>();
-        abilities = new List<Ability>();
-
-        for (int i = 0; i < values.Length; i++)
-        {
-            abilities.Add(values[i]);
-            completedAnimation.Add(false);
-        }
-    }
-    public AF GetAF(string name)
-    {
-        foreach (AF af in afs)
-            if (af.name == name)
-                return af;
-        throw new System.Exception($"Combat Additional Functionality ({name}) package Not Found");
-    }
-}
 
 
 public class ModeAttackFunctionality : ModeGeneralFunctionality
@@ -84,7 +44,6 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
         CombatEntityController.CombatEntityModeData attack = cf.Controls.Mode("Attack");
         Ability ability = attack.ability;
         ModeTriggerGroup usingTrigger = cf.AbilityTriggerEnableUse("Attack");
-        AbilityWrapper usingAbility = new AbilityWrapper(ability);
         bool hasAf = ability.hasAdditionalFunctionality;
 
         //Flags
@@ -108,17 +67,16 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
                 //Setup
 
                 //Mutations
-                usingAbility.abilities.Add(ability);
 
                 //Additional Functionality 
                 if (hasAf)
-                    AF_Attack(usingAbility);
+                    AF_Attack(ability);
 
                 //Trigger
-                usingTrigger.StartUsingAbilityTrigger(usingAbility, ability.InitialUseDelay[0]);
+                usingTrigger.StartabilityTrigger(ability, ability.InitialUseDelay[0]);
 
                 //Animation
-                cf.Controls.animController.AtkAnimation?.Invoke(ability_attack.Attacks, ability.InitialUseDelay[0]);
+                cf.Controls.animController.Play(typeof(AM.AtkAnims), (int)ability_attack.Attacks, CharacterAnimationController.UPPERBODY, false, false);
 
                 break;
             case AbilityAttack.Archetype.Multi_Choice:
@@ -132,28 +90,46 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
                 //Additional Functionality
                 if (hasAf)
                 {
-                    AF_Attack(usingAbility);
-                    AF_Choice(usingAbility, choice);
+                    AF_Attack(ability);
+                    AF_Choice(ability, choice);
                 }
 
                 //Trigger 
-                StartCoroutine(parentTrigger.MultiChoiceAttack(usingAbility, ability.InitialUseDelay[0], choice, usingAbility));
+                //StartCoroutine(parentTrigger.MultiChoiceAttack(ability, ability.InitialUseDelay[0], choice, ability));
 
                 //Animation
-                //AnimateAblity(usingAbility.abilities[0].AnimName.ToString(), usingAbility.abilities[0].InitialUseDelay[0], cf.Controls.animController);
+                //AnimateAblity(ability.abilities[0].AnimName.ToString(), ability.abilities[0].InitialUseDelay[0], cf.Controls.animController);
 
                 break;
             case AbilityAttack.Archetype.Multi_Followup:
-
                 print($"[{gameObject.name}] [ModeAttack] Archetype: Multi-Followup");
 
-                //Setup
-                usingAbility = new AbilityWrapper((ability as AbilityMulti).abilities, ability);
+                AbilityMulti multi_attack = (AbilityMulti)ability;
 
-                usingAbility.completedAnimation = usingTrigger.GetComponent<MAT_FollowupGroup>().triggerProgress;
+                //Functionality
+                usingTrigger.GetComponent<MAT_FollowupGroup>().StartabilityTrigger(ability, multi_attack.abilities[0].InitialUseDelay[0]);
+
+                System.Enum[] Enums = new System.Enum[multi_attack.abilities.Length];
+                for (int i = 0; i < multi_attack.abilities.Length; i++)
+                {
+                    AbilityAttack abilityi = ((AbilityAttack)multi_attack.abilities[i]);
+                    System.Enum _enum = abilityi.Attacks;
+                    Enums[i] = _enum;
+                }
 
                 //Animation
-                StartCoroutine(AnimateFollowUpAbilities(usingAbility, usingTrigger, cf.Controls.Mode("Attack"), cf.Controls.animController));
+                AM.FollowUpPackage FollowUpPackage = new AM.FollowUpPackage(
+                    usingTrigger,
+                    attack,
+                    Enums,
+                    typeof(AM.AtkAnims),
+                    typeof(AM.AtkAnims.Anims),
+                    CharacterAnimationController.UPPERBODY,
+                    false,
+                    false,
+                    0.2f
+                    );
+                StartCoroutine(FollowUpPackage.PlayFollowUp(cf.Controls.animController.Play));
 
                 //Special Functionality
                 if (hasAf)
@@ -187,30 +163,26 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
 
 
     #region Archetypes
-    void AF_Attack(AbilityWrapper usingAbility)
+    void AF_Attack(Ability ability)
     {
-        Ability ability = usingAbility.parentAbility;
-
         if (ability.af == CombatAdditionalFunctionalities.Function.MovementForward)
         {
             AF_movement afmove = new(ability.movementAmount);
-            usingAbility.afs.Add(afmove);
+            ability.m_af = afmove;
         }
         else if (ability.af == CombatAdditionalFunctionalities.Function.MovementLeftOrRight)
         {
             AF_movement afmove = new(ability.movementAmount);
-            usingAbility.afs.Add(afmove);
+            ability.m_af = afmove;
         }
     }
 
-    void AF_Choice(AbilityWrapper usingAbility, string choice)
+    void AF_Choice(Ability ability, string choice)
     {
-        Ability ability = usingAbility.parentAbility;
-
         if (ability.af == CombatAdditionalFunctionalities.Function.MovementLeftOrRight)
         {
             AF_choice afchoice = new(choice);
-            usingAbility.afs.Add(afchoice);
+            ability.m_af = afchoice;
         }
     }
 

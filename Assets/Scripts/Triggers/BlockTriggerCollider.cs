@@ -14,7 +14,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
     }
 
     public virtual bool blocking { get; set; }
-    public override bool usingTrigger
+    public override bool trigger
     {
         get => blocking;
         set => blocking = value;

@@ -29,7 +29,7 @@ MonoBehaviour:
   - rid: 3359079709578100824
   damage: 4
   flinchAmount: 1
-  Attacks: 3
+  Attack: 3
   triggerCollider: {fileID: 9152381543741592740, guid: 876364ef1f1b2f94ebb3893dea57a553, type: 3}
   references:
     version: 2

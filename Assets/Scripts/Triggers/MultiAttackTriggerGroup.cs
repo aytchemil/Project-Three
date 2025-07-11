@@ -14,12 +14,16 @@ public class MultiAttackTriggerGroup : GeneralAttackTriggerGroup
     }
 
     public List<ModeTriggerGroup> triggers;
-    public ModeTriggerGroup triggerBeingUsed;
+    public ModeTriggerGroup chosenChildTrigger;
     protected bool hasTriggers = false;
     protected bool initializedChildTriggers = false;
 
 
-
+    public virtual void Use(Ability ability, float delay, out ModeTriggerGroup _chosenChildTrigger)
+    {
+        base.Use(ability, delay);
+        _chosenChildTrigger = chosenChildTrigger;
+    }
 
 
 
@@ -105,7 +109,7 @@ public class MultiAttackTriggerGroup : GeneralAttackTriggerGroup
     {
         DisableAllChildTriggers();
 
-        triggerBeingUsed = null;
+        chosenChildTrigger = null;
     }
 
     #endregion

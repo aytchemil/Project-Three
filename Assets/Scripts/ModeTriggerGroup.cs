@@ -8,7 +8,7 @@ public abstract class ModeTriggerGroup : MonoBehaviour
 {
     public CombatFunctionality combatFunctionality;
     public virtual Ability myAbility { get; set; }
-    public virtual bool usingTrigger { get; set; }
+    public virtual bool trigger { get; set; }
     public virtual bool used { get; set; }
     public virtual bool unused { get; set; }
 
@@ -21,10 +21,10 @@ public abstract class ModeTriggerGroup : MonoBehaviour
     /// <param name="currentAbility"></param>
     /// <param name="delay"></param>
     /// <returns></returns>
-    public virtual void StartabilityTrigger(Ability ability, float delay)
+    public virtual void Use(Ability ability, float delay)
     {
         //Already Using it Check
-        if (usingTrigger) return;
+        if (trigger) return;
 
         //Mutations
         // + SETS using trigger TRUE
@@ -32,7 +32,7 @@ public abstract class ModeTriggerGroup : MonoBehaviour
         // + SETS did reattack FALSE
         // + METHOD -> Enables the Trigger
         // + INVOKE (SPEAKER) -> The initial delay is over -> Renable the trigger
-        usingTrigger = true;
+        trigger = true;
         unused = false;
         combatFunctionality.Controls.didReattack = false;
         EnableTrigger();
@@ -43,7 +43,7 @@ public abstract class ModeTriggerGroup : MonoBehaviour
 
 
     /// <summary>
-    /// PATHWAY FUNCTION from StartabilityTrigger() that moves into a VIRTUAL
+    /// PATHWAY FUNCTION from Use() that moves into a VIRTUAL
     /// + PATHWAY FUNCTION
     /// + SETS initial ability use delay over FALSE
     /// </summary>
@@ -107,7 +107,7 @@ public abstract class ModeTriggerGroup : MonoBehaviour
 
         //print("disabling trigger locally");
 
-        usingTrigger = false;
+        trigger = false;
         unused = false;
 
         gameObject.SetActive(false);

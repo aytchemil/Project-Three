@@ -43,7 +43,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
         //Setup
         CombatEntityController.CombatEntityModeData attack = cf.Controls.Mode("Attack");
         Ability ability = attack.ability;
-        ModeTriggerGroup usingTrigger = cf.AbilityTriggerEnableUse("Attack");
+        ModeTriggerGroup trigger = cf.AbilityTriggerEnableUse("Attack");
         bool hasAf = ability.hasAdditionalFunctionality;
 
         //Flags
@@ -53,94 +53,92 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
         // + SETS the curr ability
         // + SETS the curr Trigger
         attack.SetAbility(ability);
-        attack.trigger = usingTrigger;
+        attack.trigger = trigger;
 
-        if(hasAf)
-            ability.InitializeAFValues();
+        if(hasAf) ability.InitializeAFValues();
 
-        //Mutations
-        switch (ability.archetype)
+        if(ability.archetype == Ability.Archetype.Singular)
         {
-            case AbilityAttack.Archetype.Singular:
-                AbilityAttack ability_attack = (AbilityAttack)ability;
+            AbilityAttack ability_attack = (AbilityAttack)ability;
 
-                print($"[{gameObject.name}] ATTACK: Singular");
+            print($"[{gameObject.name}] ATTACK: Singular");
 
-                //Setup
+            //Setup
 
-                //Mutations
+            //Mutations
 
-                //Additional Functionality 
-                if (hasAf)
-                    AF_Attack(ability);
+            //Additional Functionality 
+            if (hasAf)
+                AF_Attack(ability);
 
-                //Trigger
-                usingTrigger.StartabilityTrigger(ability, ability.InitialUseDelay[0]);
+            //Trigger
+            trigger.Use(ability, ability.InitialUseDelay[0]);
 
-                //Animation
-                cf.Controls.animController.Play(typeof(AM.AtkAnims), (int)ability_attack.Attacks, CharacterAnimationController.UPPERBODY, false, false);
-
-                break;
-            case AbilityAttack.Archetype.Multi_Choice:
-
-                print($"[{gameObject.name}] ATTACK: MLTI-CHOICE");
-
-                //Setup
-                string choice = GetMultiChoiceAttack(ability); if (choice == "none") break;
-                MAT_ChoiceGroup parentTrigger = usingTrigger.GetComponent<MAT_ChoiceGroup>();
-
-                //Additional Functionality
-                if (hasAf)
-                {
-                    AF_Attack(ability);
-                    AF_Choice(ability, choice);
-                }
-
-
-                //Trigger 
-                StartCoroutine(parentTrigger.MultiChoiceAttack(ability, ability.InitialUseDelay[0], choice));
-
-                //Animation
-                //AnimateAblity(ability.abilities[0].AnimName.ToString(), ability.abilities[0].InitialUseDelay[0], cf.Controls.animController);
-
-                break;
-            case AbilityAttack.Archetype.Multi_Followup:
-                print($"[{gameObject.name}] ATTACK: Multi-Followup");
-
-                AbilityMulti multi_attack = (AbilityMulti)ability;
-
-                //Functionality
-                usingTrigger.GetComponent<MAT_FollowupGroup>().StartabilityTrigger(ability, multi_attack.abilities[0].InitialUseDelay[0]);
-
-                System.Enum[] Enums = new System.Enum[multi_attack.abilities.Length];
-                for (int i = 0; i < multi_attack.abilities.Length; i++)
-                {
-                    AbilityAttack abilityi = ((AbilityAttack)multi_attack.abilities[i]);
-                    System.Enum _enum = abilityi.Attacks;
-                    Enums[i] = _enum;
-                }
-
-                //Animation
-                AM.FollowUpPackage FollowUpPackage = new AM.FollowUpPackage(
-                    usingTrigger,
-                    attack,
-                    Enums,
-                    typeof(AM.AtkAnims),
-                    typeof(AM.AtkAnims.Anims),
-                    CharacterAnimationController.UPPERBODY,
-                    false,
-                    false,
-                    0.2f
-                    );
-                StartCoroutine(FollowUpPackage.PlayFollowUp(cf.Controls.animController.Play));
-
-                //Special Functionality
-                if (hasAf)
-                    Archetype_FollowUpAttack((AbilityMulti)ability);
-
-
-                break;
+            //Animation
+            IAbilityAnims anims = trigger.myAbility as IAbilityAnims;
+            cf.Controls.animController.Play(anims.type, anims.Enum, CharacterAnimationController.UPPERBODY, false, false);
         }
+        else if (ability.archetype == Ability.Archetype.Multi_Choice)
+        {
+
+            print($"[{gameObject.name}] ATTACK: MLTI-CHOICE");
+
+            //Setup
+            string choice = GetMultiChoiceAttack(ability); if (choice == "none") return;
+            MAT_ChoiceGroup mltiTrigger = trigger.GetComponent<MAT_ChoiceGroup>();
+
+            //Additional Functionality
+            if (hasAf)
+            {
+                AF_Attack(ability);
+                AF_Choice(ability, choice);
+            }
+
+            //Trigger 
+            mltiTrigger.Use(ability, ability.InitialUseDelay[0], out ModeTriggerGroup _chosenChildTrigger, choice);
+
+            //Animation
+            IAbilityAnims anims = _chosenChildTrigger.myAbility as IAbilityAnims;
+            cf.Controls.animController.Play(anims.type, anims.Enum, CharacterAnimationController.UPPERBODY, false, false);
+        }
+        else if(ability.archetype == Ability.Archetype.Multi_Followup)
+        {
+            print($"[{gameObject.name}] ATTACK: Multi-Followup");
+
+            AbilityMulti multi_attack = (AbilityMulti)ability;
+
+            //Functionality
+            trigger.GetComponent<MAT_FollowupGroup>().Use(ability, multi_attack.abilities[0].InitialUseDelay[0]);
+
+            System.Enum[] Enums = new System.Enum[multi_attack.abilities.Length];
+            for (int i = 0; i < multi_attack.abilities.Length; i++)
+            {
+                AbilityAttack abilityi = ((AbilityAttack)multi_attack.abilities[i]);
+                System.Enum _enum = abilityi.Attack;
+                Enums[i] = _enum;
+            }
+
+            //Animation
+            AM.FollowUpPackage FollowUpPackage = new AM.FollowUpPackage(
+                trigger,
+                attack,
+                Enums,
+                typeof(AM.AtkAnims),
+                typeof(AM.AtkAnims.Anims),
+                CharacterAnimationController.UPPERBODY,
+                false,
+                false,
+                0.2f
+                );
+            StartCoroutine(FollowUpPackage.PlayFollowUp(cf.Controls.animController.Play));
+
+            //Special Functionality
+            if (hasAf)
+                Archetype_FollowUpAttack((AbilityMulti)ability);
+
+
+        }
+
     }
 
     #region Flags

@@ -89,7 +89,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
         for (int i = 0; i < block.triggers.Length; i++)
             block.triggers[i].gameObject.SetActive(false);
         AbilityBlock ability = (AbilityBlock)cf.Controls.Mode("Block").ability;
-        ModeTriggerGroup usingTrigger = cf.WheelTriggerEnableUse("Block");
+        ModeTriggerGroup trigger = cf.WheelTriggerEnableUse("Block");
         CharacterAnimationController animCont = cf.Controls.animController;
 
         //Initial Mutations
@@ -99,14 +99,14 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
         // + COROUTINE to wait for an unblock input
         StartBlocking();
         block.SetAbility(ability);
-        block.trigger = usingTrigger;
+        block.trigger = trigger;
         StartCoroutine(WaitToStartBlockingToUnblock(ability));
 
 
         //Mutations
-        switch (ability.type)
+        switch (ability.collision)
         {
-            case AbilityBlock.Type.Regular:
+            case AbilityBlock.Collision.Regular:
 
                 //Setup
 
@@ -116,7 +116,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
 
 
                 //Trigger
-                usingTrigger.StartabilityTrigger(ability, ability.InitialUseDelay[0]);
+                trigger.Use(ability, ability.InitialUseDelay[0]);
 
                 //Additional Functionality 
                 AF_Regular(ability);

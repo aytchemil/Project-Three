@@ -22,50 +22,57 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
         return null;
     }
 
-    public virtual bool CheckChoiceForUpdates_AndContinue()
+    public virtual IEnumerator WaitForTriggerUpdates()
     {
-        bool _continue = true;
-
-        if (!gameObject.activeInHierarchy) return false;
-
-        //print(triggerBeingUsed);
-
-        //Hit
-        if (triggerBeingUsed.used)
+        while (gameObject.activeInHierarchy)
         {
-            print("combo");
-            StartCoroutine(SuccessfullyFinishedAttacked());
-            return false;
+            //CHECK IF THE CHOICE HAS FINISHED
+            if (!Check()) yield break;
+
+            yield return new WaitForEndOfFrame();
         }
 
-        //miss
-        if (triggerBeingUsed.unused)
+        bool Check()
         {
-            print("miss");
+            bool _continue = true;
 
-            MissAttackCuttoff();
-            return false;
+            if (!gameObject.activeInHierarchy) return false;
+
+            //print(chosenChildTrigger);
+
+            //Hit
+            if (chosenChildTrigger.used)
+            {
+                print("combo");
+                StartCoroutine(SuccessfullyFinishedAttacked());
+                return false;
+            }
+
+            //miss
+            if (chosenChildTrigger.unused)
+            {
+                print("miss");
+
+                MissAttackCuttoff();
+                return false;
+            }
+
+            return _continue;
         }
-
-        return _continue;
     }
 
-    public virtual IEnumerator MultiChoiceAttack(Ability _ability, float delay, string choice)
+    public virtual void Use(Ability ability, float delay, out ModeTriggerGroup _chosenChildTrigger, string choice)
     {
-        AbilityMultiChoice ability = (AbilityMultiChoice)_ability;
+        AbilityMultiChoice mltiAbility = (AbilityMultiChoice)ability;
         print($"[CHOICE] {choice}");
 
-        triggerBeingUsed = null;
-
-        //CHOSE THE TRIGGER
-        triggerBeingUsed = ChooseTrigger(choice);
-
-        if (triggerBeingUsed == null) { print("Chosen attack trigger choice unavaliable, returning"); yield break;  }
-
-        print("Child TRIGGER: " + triggerBeingUsed.name);
+        chosenChildTrigger = null;
+        chosenChildTrigger = ChooseTrigger(choice);
+        if (chosenChildTrigger == null) { print("Chosen attack trigger choice unavaliable, returning"); _chosenChildTrigger = null;  return; }
 
         // (PARENT TRIGGER) MultiChoice's Ability Trigger
-        StartabilityTrigger(ability, ability.InitialUseDelay[0]);
+        Use(ability, ability.InitialUseDelay[0], out chosenChildTrigger);
+        _chosenChildTrigger = chosenChildTrigger;
 
         if (!initializedChildTriggers)
             InitializeChildTriggers(myMultiAbility);
@@ -73,19 +80,11 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
         //(CHILD TRIGGER) The chosen Ability Trigger's Ability 
         // + SET child trigger ACTIVE
         // + Start using child trigger
-        triggerBeingUsed.gameObject.SetActive(true);
-        triggerBeingUsed.StartabilityTrigger(ability, triggerBeingUsed.myAbility.InitialUseDelay[0]);
+        chosenChildTrigger.gameObject.SetActive(true);
+        chosenChildTrigger.Use(ability, chosenChildTrigger.myAbility.InitialUseDelay[0]);
 
-        while (gameObject.activeInHierarchy)
-        {
-            //CHECK IF THE CHOICE HAS FINISHED
-            if (!CheckChoiceForUpdates_AndContinue()) yield break;
-
-            yield return new WaitForEndOfFrame();
-        }
-
+        StartCoroutine(WaitForTriggerUpdates());
     }
-
 
     protected override void InitializeChildTriggers(AbilityMulti multiAbility)
     {

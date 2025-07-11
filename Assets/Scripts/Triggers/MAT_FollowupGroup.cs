@@ -34,10 +34,10 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
 
 
     //Changed without knowing
-    public override void StartabilityTrigger(Ability ability, float delay)
+    public override void Use(Ability ability, float delay)
     {
         print("[MAT_FollowupGroup] started using this ability trigger");
-        base.StartabilityTrigger(ability, delay);
+        base.Use(ability, delay);
 
         StartCoroutine(FollowUpUse(ability));
     }
@@ -54,8 +54,8 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
             triggerProgress[currIndx] = true;
         else
         {
-            if (triggerBeingUsed.used) { HitAttack(); MissAttackCuttoff(); }
-            if ((triggerBeingUsed as GeneralAttackTriggerGroup).missedAttack) { MissAttackCuttoff(); }
+            if (chosenChildTrigger.used) { HitAttack(); MissAttackCuttoff(); }
+            if ((chosenChildTrigger as GeneralAttackTriggerGroup).missedAttack) { MissAttackCuttoff(); }
             return true;
         }
         return false;
@@ -80,14 +80,14 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
     /// </summary>
     /// <param name="currentAbility"></param>
     /// <param name="i"></param>
-    void TakeOnTriggerBeingUsed(Ability ability, int i)
+    void TakeOnchosenChildTrigger(Ability ability, int i)
     {
         //print($"FOLLOWUP Cur INDEX: {i} Ability GROUP: {currentAbility} ");
-        triggerBeingUsed = triggers[i];
-        triggerBeingUsed.gameObject.SetActive(true);
+        chosenChildTrigger = triggers[i];
+        chosenChildTrigger.gameObject.SetActive(true);
 
 
-        triggerBeingUsed.StartabilityTrigger(ability, ability.InitialUseDelay[i]);
+        chosenChildTrigger.Use(ability, ability.InitialUseDelay[i]);
     }
 
     /// <summary>
@@ -97,14 +97,14 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
     public virtual void CheckForTriggerUpdates_ReturnDelay(int i)
     {
         print("checking trigger for usage");
-        if (triggerBeingUsed.used)
+        if (chosenChildTrigger.used)
         { 
             print("following up... hit");
             triggerProgress[i] = true;
         }
 
         //miss
-        if (triggerBeingUsed.unused)
+        if (chosenChildTrigger.unused)
         {
             print("following up... miss");
             triggerProgress[i] = true;
@@ -133,11 +133,11 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
             foreach(var trigger in triggers)
                 trigger.gameObject.SetActive(false);
 
-            TakeOnTriggerBeingUsed(ability, i);
+            TakeOnchosenChildTrigger(ability, i);
 
 
 
-            //print($"FOLLOW UP TRIGGER LOOP {i} : " + triggerBeingUsed.name);
+            //print($"FOLLOW UP TRIGGER LOOP {i} : " + chosenChildTrigger.name);
 
 
             while (triggerProgress[i] == false)
@@ -155,8 +155,8 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
                 {
                     print("MLTI -> LAST");
 
-                    if (triggerBeingUsed.used) { HitAttack(); MissAttackCuttoff(); yield break; }
-                    if ((triggerBeingUsed as GeneralAttackTriggerGroup).missedAttack) { yield return new WaitForSeconds(DelayNextTrigger(i)); MissAttackCuttoff(); yield break; }
+                    if (chosenChildTrigger.used) { HitAttack(); MissAttackCuttoff(); yield break; }
+                    if ((chosenChildTrigger as GeneralAttackTriggerGroup).missedAttack) { yield return new WaitForSeconds(DelayNextTrigger(i)); MissAttackCuttoff(); yield break; }
                 }
 
                 yield return new WaitForEndOfFrame();
@@ -174,13 +174,13 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
     {
         float delay = 0f;
 
-        if (triggerBeingUsed.used)
+        if (chosenChildTrigger.used)
         {
             delay = myMultiAbility.successDelay[prog];
         }
 
         //miss
-        if (triggerBeingUsed.unused)
+        if (chosenChildTrigger.unused)
         {
             delay = myMultiAbility.unsuccessDelay[prog];
         }

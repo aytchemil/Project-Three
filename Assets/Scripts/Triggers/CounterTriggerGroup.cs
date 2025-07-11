@@ -12,7 +12,7 @@ public class CounterTriggerGroup : MAT_FollowupGroup
         set => myCounterAbility = value as AbilityCounter;
     }
 
-    //Wrapper for usingTrigger
+    //Wrapper for trigger
     public virtual bool countering { get; set; }
     public override bool attacking
     {
@@ -89,7 +89,7 @@ public class CounterTriggerGroup : MAT_FollowupGroup
     {
         base.CheckForTriggerUpdates_ReturnDelay(i);
 
-        if (triggerBeingUsed is BlockTriggerCollider block)
+        if (chosenChildTrigger is BlockTriggerCollider block)
             if (block.blocking)
             {
                 print("following up... Countering... counter");

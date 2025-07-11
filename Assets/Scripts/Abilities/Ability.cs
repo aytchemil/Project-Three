@@ -5,6 +5,11 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using UnityEditor;
 using UnityEngine;
+public interface IAbilityAnims
+{
+    public abstract System.Type type { get; }
+    public abstract int Enum { get; }
+}
 
 
 public class Ability : ScriptableObject
@@ -13,7 +18,6 @@ public class Ability : ScriptableObject
     public string abilityName = "";
 
     public Texture icon;
-    
     public virtual float[] InitialUseDelay
     {
         get => initialUseDelay;

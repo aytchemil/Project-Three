@@ -23,9 +23,12 @@ MonoBehaviour:
   modeBase: 0
   archetype: 0
   hasAdditionalFunctionality: 0
-  af: 0
-  movementAmount: 0
+  afTypes: []
+  afs: []
   damage: 1
   flinchAmount: 1
-  Attacks: 4
+  Attack: 4
   triggerCollider: {fileID: 8475917669229452261, guid: 54eaad126c9bcaa498c827fb9317d41d, type: 3}
+  references:
+    version: 2
+    RefIds: []

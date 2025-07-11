@@ -1,16 +1,21 @@
 using Sirenix.OdinInspector;
 using UnityEngine;
+using System;
 
 [CreateAssetMenu(fileName = "BlockAbility", menuName = "ScriptableObjects/Abilities/Block Ability")]
-public class AbilityBlock : Ability
+public class AbilityBlock : Ability, IAbilityAnims
 {
+    public Type type { get => typeof(AM.BlkAnims); }
+    public int Enum { get => (int)Block; }
+
     public AM.BlkAnims.Anims Block;
 
-    public enum Type
+    public enum Collision
     {
-        Regular = 0
+        Regular,
     }
-    public Type type;
+    public Collision collision;
+
 
     public GameObject blockTriggerCollider;
     public override GameObject prefab

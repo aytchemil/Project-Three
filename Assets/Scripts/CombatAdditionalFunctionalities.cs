@@ -45,7 +45,8 @@ public class CombatAdditionalFunctionalities : MonoBehaviour
 
         if(ability.AF_Dictionary.TryGetValue("movement", out AF afmove))
         {
-            print($"[AF] Movement");
+            print($"[AF] Movement {(afmove as AF_movement).movementAmount}");
+            
             StartCoroutine(MovementForwardAttack((afmove as AF_movement).movementAmount));
         }
         if (ability.AF_Dictionary.TryGetValue("choice", out AF afchoice))

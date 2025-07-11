@@ -3,9 +3,9 @@ using UnityEngine;
 
 public class GeneralAttackTriggerGroup : ModeTriggerGroup
 {
-    //Wrapper for usingTrigger
+    //Wrapper for trigger
     public virtual bool attacking { get; set; }
-    public override bool usingTrigger
+    public override bool trigger
     {
         get => attacking;
         set => attacking = value;

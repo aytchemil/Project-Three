@@ -40,32 +40,42 @@ public class CombatAdditionalFunctionalities : MonoBehaviour
         Controls.UseCombatAdditionalFunctionality -= UseCombatAdditionalFunctionality;
     }
 
-    void UseCombatAdditionalFunctionality(Ability ability)
+    void UseCombatAdditionalFunctionality(ModeTriggerGroup trigger)
     {
+        bool choice = false;
+        bool move = false;
 
-        if(ability.AF_Dictionary.TryGetValue("movement", out AF afmove))
+        print("[AF] TRIGGER: " + trigger + "ABILITY: " + trigger.Ability());
+
+        if (trigger.Ability().AF_Dictionary.TryGetValue("movement", out AF afmove))
         {
-            print($"[AF] Movement {(afmove as AF_movement).movementAmount}");
-            
-            StartCoroutine(MovementForwardAttack((afmove as AF_movement).movementAmount));
+            print($"[AF] Movement");
+            move = true;
         }
-        if (ability.AF_Dictionary.TryGetValue("choice", out AF afchoice))
+        if (trigger.Ability().AF_Dictionary.TryGetValue("choice", out AF afchoice))
         {
             print($"[AF] Choice");
-            StartCoroutine(MovementRightOrLeftAttack((afmove as AF_movement).movementAmount,
-                                                    (afchoice as AF_choice).choice));
+            choice = true;
         }
+
+        if(move && !choice)
+            StartCoroutine(MovementForwardAttack(trigger, (afmove as AF_movement).movementAmount));
+
+        if(move && choice)
+            StartCoroutine(MovementRightOrLeftAttack(trigger, (afmove as AF_movement).movementAmount,
+                                                              (afchoice as AF_choice).choice));
+
     }
 
 
 
-    IEnumerator MovementForwardAttack(float moveAmount)
+    IEnumerator MovementForwardAttack(ModeTriggerGroup trigger, float moveAmount)
     {
         print($"[{gameObject.name}] [ModeAttack] COROUTINE MovementForward STARTED...");
 
         //print("Waiting for attack to start, initialAttackDelayOver not over yet (its false)");
         //print("initial attack delay over?: " + initialAttackDelayOver);
-        while (!cf.initialAbilityUseDelayOver)
+        while (!trigger.initialUseDelayOver)
         {
             // print("waiting...");
             yield return new WaitForEndOfFrame();
@@ -79,7 +89,7 @@ public class CombatAdditionalFunctionalities : MonoBehaviour
     }
 
 
-    IEnumerator MovementRightOrLeftAttack(float moveAmount, string choice)
+    IEnumerator MovementRightOrLeftAttack(ModeTriggerGroup trigger, float moveAmount, string choice)
     {
         Debug.Log(gameObject.name + " | Combat Functionality: attacking w/ MovementLeftOrRight attack");
 
@@ -87,7 +97,7 @@ public class CombatAdditionalFunctionalities : MonoBehaviour
 
         print("multi attack trigger, movementatttackrightorleft : lunging in dir " + choice);
 
-        while (!cf.initialAbilityUseDelayOver)
+        while (!trigger.initialUseDelayOver)
         {
             // print("waiting...");
             yield return new WaitForEndOfFrame();

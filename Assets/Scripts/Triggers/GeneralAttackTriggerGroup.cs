@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class GeneralAttackTriggerGroup : ModeTriggerGroup
 {
+    public override Ability ability { get; set; }
+
     //Wrapper for trigger
     public virtual bool attacking { get; set; }
     public override bool trigger
@@ -26,7 +28,6 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
         get => missedAttack; 
         set => missedAttack = value;
     }
-
 
 
 
@@ -71,7 +72,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
     {
         //print(combatFunctionality.gameObject.name + " | ability trigger [" + gameObject.name + "] self initializing...");
 
-        myAbility = abilty;
+        ability = abilty;
         attacking = false;
         gameObject.SetActive(false);
     }
@@ -99,7 +100,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
             return;
         }
 
-        print("[GeneralAttackTrigger] " + combatFunctionality.gameObject.name + "'s Miss Attack Cuttoff Reached");
+        //print("[TRIGGER] [GEN] " + combatFunctionality.gameObject.name + "'s Miss Attack Cuttoff Reached");
         if (hitAttack)
         {
             //print("hit atack succesffull, calling combo");
@@ -107,21 +108,19 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
             return;
         }
 
-        print("[GeneralAttackTrigger] missed attack global");
+        //print("[TRIGGER] [GEN] missed attack global");
 
         MissAttackCuttoffLocal();
 
         MissedAttackCaller();
 
-        Invoke(nameof(DisableThisTrigger), myAbility.unsuccessDelay[myAbility.unsuccessDelay.Length-1]);
+        Invoke(nameof(DisableThisTrigger), ability.unsuccessDelay[ability.unsuccessDelay.Length-1]);
 
     }
 
     public virtual void MissAttackCuttoffLocal()
     {
         if (hitAttack) return;
-
-        //print("missed attack local");
         missedAttack = true;
         hitAttack = false;
     }
@@ -178,10 +177,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
 
     public virtual IEnumerator SuccessfullyFinishedAttacked()
     {
-        print($"{this.name} : Comboing, delay is: {myAbility.successDelay}");
-        print("ability is: " + myAbility);
-
-        yield return new WaitForSeconds(myAbility.successDelay);
+        yield return new WaitForSeconds(ability.successDelay[0]);
 
         DisableThisTrigger();
     }

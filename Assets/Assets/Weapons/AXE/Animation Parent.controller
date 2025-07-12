@@ -183,7 +183,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Atk_Uppercut_D
+  m_Name: Atk_Up_D
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -262,7 +262,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Atk_Uppercut_L
+  m_Name: Atk_Up_L
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []
@@ -289,7 +289,7 @@ AnimatorState:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Atk_Uppercut_R
+  m_Name: Atk_Up_R
   m_Speed: 1
   m_CycleOffset: 0
   m_Transitions: []

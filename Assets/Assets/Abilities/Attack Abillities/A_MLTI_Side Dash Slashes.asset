@@ -27,8 +27,9 @@ MonoBehaviour:
   - {fileID: 11500000, guid: 2902d43e1633dc5429ae4429144bc32d, type: 3}
   - {fileID: 11500000, guid: b0a7eb1f873993649a43d4a481abf0f9, type: 3}
   afs:
-  - rid: 3359079750645055571
-  - rid: 3359079750645055572
+  - rid: 3359079757352534083
+  - rid: 3359079757352534084
+  hasInitializedAfs: 1
   successDelay:
   - 0.3
   MultiAbilityGroupingPrefab: {fileID: 3607946116655452447, guid: 0b5f45e6afec5224fa98a9bc50f4713e, type: 3}
@@ -41,11 +42,11 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 3359079750645055571
+    - rid: 3359079757352534083
       type: {class: AF_movement, ns: , asm: Assembly-CSharp}
       data:
         movementAmount: 50
-    - rid: 3359079750645055572
+    - rid: 3359079757352534084
       type: {class: AF_choice, ns: , asm: Assembly-CSharp}
       data:
-        choice: right
+        choice: left

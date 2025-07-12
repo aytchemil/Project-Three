@@ -85,7 +85,7 @@ public class CombatEntityController : MonoBehaviour
     public Action<float> Flinch; //param: flinchTime
     public Func<string> getMoveDirection; //ret: moveDir
     public Action Init;
-    public Action<Ability> UseCombatAdditionalFunctionality;
+    public Action<ModeTriggerGroup> UseCombatAdditionalFunctionality;
     public Action Death;
 
 
@@ -366,7 +366,7 @@ public class CombatEntityController : MonoBehaviour
     }
     void ResetmyAttack()
     {
-        print("Didreattack: RESSETING ATTACKING VARIABLES");
+        //print("Reattack System: RESSETING ATTACKING VARIABLES");
         waitingToReattack = false;
         didReattack = false;
         reattackChecking = false;

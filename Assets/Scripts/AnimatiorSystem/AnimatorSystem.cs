@@ -100,13 +100,16 @@ public class AnimatorSystem : MonoBehaviour
             Debug.Log("[AS] PLAYING NONE ANIMATION");
             return;
         }
-        if (animEnum.ToString() == layers[layer].currAnimation?.ToString()) return;
-        if (layers[layer].locked && !bypassLock) return;
+        //print("[AS] p");
+        if (animEnum.ToString() == layers[layer].currAnimation?.ToString()) { return; }
+        if (layers[layer].locked && !bypassLock) { Debug.Log("[AS] Layer Locked, unable to bypass"); return; }
 
-        Debug.Log($"[AS] LAYER ({layer}) ({set.EnumsType?.Name}) PLAYING : {animEnum}");
+        //print("[AS] Attempting Crossfade");
 
         // Functionality
-        animator.CrossFade(set._anims[enumIndx], crossfade, layer);
+        int targetHash = set._anims[enumIndx];
+        animator.CrossFade(targetHash, crossfade, layer);
+
 
         // Mutations
         layers[layer].locked = lockLayer;

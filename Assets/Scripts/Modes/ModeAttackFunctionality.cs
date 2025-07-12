@@ -12,7 +12,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
 {
     private CombatFunctionality cf;
 
-    public override string MODE_NAME { get => "Attack"; }
+    public override string MODE { get => "Attack"; }
 
 
     void Awake()
@@ -41,9 +41,9 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
 
 
         //Setup
-        CombatEntityController.CombatEntityModeData attack = cf.Controls.Mode("Attack");
+        CombatEntityController.CombatEntityModeData attack = cf.Controls.Mode(MODE);
         Ability ability = attack.ability;
-        ModeTriggerGroup trigger = cf.AbilityTriggerEnableUse("Attack");
+        ModeTriggerGroup trigger = cf.AbilityTriggerEnableUse(MODE);
         bool hasAf = ability.hasAdditionalFunctionality;
 
         //Flags
@@ -55,7 +55,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
         attack.SetAbility(ability);
         attack.trigger = trigger;
 
-        if(hasAf) ability.InitializeAFValues();
+        if(hasAf && ability.hasInitializedAfs == false) ability.InitializeAFValues();
 
         if(ability.archetype == Ability.Archetype.Singular)
         {
@@ -67,15 +67,12 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
 
             //Mutations
 
-            //Additional Functionality 
-            if (hasAf)
-                AF_Attack(ability);
 
             //Trigger
-            trigger.Use(ability, ability.InitialUseDelay[0]);
+            trigger.Use(ability.InitialUseDelay[0]);
 
             //Animation
-            IAbilityAnims anims = trigger.myAbility as IAbilityAnims;
+            IAbilityAnims anims = trigger.ability as IAbilityAnims;
             cf.Controls.animController.Play(anims.type, anims.Enum, CharacterAnimationController.UPPERBODY, false, false);
         }
         else if (ability.archetype == Ability.Archetype.Multi_Choice)
@@ -87,18 +84,11 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
             string choice = GetMultiChoiceAttack(ability); if (choice == "none") return;
             MAT_ChoiceGroup mltiTrigger = trigger.GetComponent<MAT_ChoiceGroup>();
 
-            //Additional Functionality
-            if (hasAf)
-            {
-                AF_Attack(ability);
-                AF_Choice(ability, choice);
-            }
-
             //Trigger 
             mltiTrigger.Use(ability, ability.InitialUseDelay[0], out ModeTriggerGroup _chosenChildTrigger, choice);
 
             //Animation
-            IAbilityAnims anims = _chosenChildTrigger.myAbility as IAbilityAnims;
+            IAbilityAnims anims = _chosenChildTrigger.ability as IAbilityAnims;
             cf.Controls.animController.Play(anims.type, anims.Enum, CharacterAnimationController.UPPERBODY, false, false);
         }
         else if(ability.archetype == Ability.Archetype.Multi_Followup)
@@ -108,21 +98,14 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
             AbilityMulti multi_attack = (AbilityMulti)ability;
 
             //Functionality
-            trigger.GetComponent<MAT_FollowupGroup>().Use(ability, multi_attack.abilities[0].InitialUseDelay[0]);
+            trigger.GetComponent<MAT_FollowupGroup>().Use(multi_attack.abilities[0].InitialUseDelay[0]);
 
-            System.Enum[] Enums = new System.Enum[multi_attack.abilities.Length];
-            for (int i = 0; i < multi_attack.abilities.Length; i++)
-            {
-                AbilityAttack abilityi = ((AbilityAttack)multi_attack.abilities[i]);
-                System.Enum _enum = abilityi.Attack;
-                Enums[i] = _enum;
-            }
 
             //Animation
             AM.FollowUpPackage FollowUpPackage = new AM.FollowUpPackage(
                 trigger,
                 attack,
-                Enums,
+                GetAnimEnums(multi_attack),
                 typeof(AM.AtkAnims),
                 typeof(AM.AtkAnims.Anims),
                 CharacterAnimationController.UPPERBODY,
@@ -131,10 +114,6 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
                 0.2f
                 );
             StartCoroutine(FollowUpPackage.PlayFollowUp(cf.Controls.animController.Play));
-
-            //Special Functionality
-            if (hasAf)
-                Archetype_FollowUpAttack((AbilityMulti)ability);
 
 
         }
@@ -148,7 +127,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
     /// </summary>
     public void StartAttacking()
     {
-        cf.Controls.Mode("Attack").isUsing = true;
+        cf.Controls.Mode(MODE).isUsing = true;
     }
 
     /// <summary>
@@ -156,7 +135,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
     /// </summary>
     public void FinishAttacking()
     {
-        cf.Controls.Mode("Attack").isUsing = false;
+        cf.Controls.Mode(MODE).isUsing = false;
         cf.Controls.didReattack = false;
     }
     #endregion
@@ -164,26 +143,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
 
 
     #region Archetypes
-    void AF_Attack(Ability ability)
-    {
-        if (ability.AF_Dictionary.TryGetValue("movement", out AF af))
-        {
 
-        }
-    }
-
-    void AF_Choice(Ability ability, string choice)
-    {
-        if (ability.AF_Dictionary.TryGetValue("choice", out AF af))
-            (af as AF_choice).choice = choice;
-
-    }
-
-
-    void Archetype_FollowUpAttack(AbilityMulti mltiAbility)
-    {
-
-    }
 
     string GetMultiChoiceAttack(Ability _ability)
     {
@@ -198,14 +158,9 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
                 choice = cf.Controls.getMoveDirection?.Invoke();
 
                 for (int i = 0; i < ability.choices.Length; i++)
-                {
-                    print($"comparing: ({ability.choices[i]}) to ({choice})");
                     if (ability.choices[i] == choice)
-                    {
-                        print($"FOUND CHOICE : {choice}");
                         return choice;
-                    }
-                }
+
                 choice = "none";
                 FinishAttacking();
                 break;
@@ -232,7 +187,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
         if (ability.archetype == Ability.Archetype.Multi_Followup)
         {
             print("+didreattack: AbilityMulti blocked");
-            MAT_FollowupGroup trigger = cf.Controls.Mode("Attack").trigger.GetComponent<MAT_FollowupGroup>();
+            MAT_FollowupGroup trigger = cf.Controls.Mode(MODE).trigger.GetComponent<MAT_FollowupGroup>();
             if(trigger.IncrementTriggerProgress() == true)
             {
                 print("didreattack: final trigger prog");
@@ -243,7 +198,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
         if (ability.archetype == Ability.Archetype.Multi_Choice)
         {
             print("+didreattack: Ability_MultiChoice blocked");
-            MAT_ChoiceGroup trigger = cf.Controls.Mode("Attack").trigger.GetComponent<MAT_ChoiceGroup>();
+            MAT_ChoiceGroup trigger = cf.Controls.Mode(MODE).trigger.GetComponent<MAT_ChoiceGroup>();
 
             trigger.DisableThisTrigger();
         }

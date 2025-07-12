@@ -15,27 +15,31 @@ MonoBehaviour:
   abilityName: Barbaric Slices
   icon: {fileID: 2800000, guid: 7b6eebf1e94b32b448514e930e127d4b, type: 3}
   initialUseDelay:
-  - 0.368
-  - 0.82
-  - 0.375
+  - 0
+  - 0
+  - 0
   <successDelay>k__BackingField: 0
   unsuccessDelay:
-  - 0.3
-  - 0.3
-  - 0.3
-  movementAmount: 0
+  - 0
+  - 0
+  - 0.65
   modeBase: 2
   archetype: 0
-  trait: 0
-  animation_name: 
+  hasAdditionalFunctionality: 0
+  afTypes: []
+  afs: []
+  hasInitializedAfs: 0
   successDelay:
-  - 0.25
-  - 0.25
-  - 0.75
+  - 0
+  - 0
+  - 0.55
   MultiAbilityGroupingPrefab: {fileID: 1766159213802189594, guid: c3a13b68d2130dc408722a0ba5a0094d, type: 3}
   abilities:
   - {fileID: 11400000, guid: 57c8b27f3b1a8134b8e9c7edb069b681, type: 2}
   - {fileID: 11400000, guid: 585cc1ee8817ff74c82c4dcaa2d0609d, type: 2}
   - {fileID: 11400000, guid: 9ec6549366cc55d43937de819855f473, type: 2}
-  reattackTimeUntilReset: 1.2
+  reattackTimeUntilReset: 0.7
   comboType: 0
+  references:
+    version: 2
+    RefIds: []

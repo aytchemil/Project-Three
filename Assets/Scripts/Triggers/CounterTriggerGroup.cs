@@ -70,7 +70,7 @@ public class CounterTriggerGroup : MAT_FollowupGroup
     {
         base.InitializeSelfImplementation(combatFunctionality, abilty);
 
-        myAbility = (AbilityCounter)abilty;
+        ability = (AbilityCounter)abilty;
 
         //print(combatFunctionality.gameObject.name + " | ability initializing...");
     }

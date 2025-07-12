@@ -17,13 +17,33 @@ public class OnExit : StateMachineBehaviour
         IEnumerator Wait()
         {
             yield return new WaitForSeconds(stateInfo.length - crossfade);
+
             animatorSystem.SetLocked(false, layerIndex);
 
+            if (cec.Mode("Attack").isUsing)
+            {
+                animatorSystem.StartCoroutine(WaitUntilAttackClears());
+                yield break;
+            }
+
+            NextAnim();
+        }
+
+        IEnumerator WaitUntilAttackClears()
+        {
+            while (cec.Mode("Attack").isUsing)
+                yield return new WaitForEndOfFrame();
+
+             NextAnim();
+        }
+
+
+        void NextAnim()
+        {
             AM.BlkAnims.Anims desiredAnim = (cec.Mode("Block").ability as AbilityBlock).Block;
             animatorSystem.Play(typeof(AM.BlkAnims), (int)desiredAnim, layerIndex, false, false);
-
         }
-        Debug.Log("[AS] ANIMATION EXITING");
+        //Debug.Log("[AS] ANIMATION EXITING");
     }
 
 }

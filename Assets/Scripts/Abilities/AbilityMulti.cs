@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class AbilityMulti : Ability
 {
-    public float[] successDelay;
-
     public GameObject MultiAbilityGroupingPrefab;
     public override GameObject prefab
     {

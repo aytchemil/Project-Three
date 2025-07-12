@@ -71,19 +71,27 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
         if (chosenChildTrigger == null) { print("Chosen attack trigger choice unavaliable, returning"); _chosenChildTrigger = null;  return; }
 
         // (PARENT TRIGGER) MultiChoice's Ability Trigger
-        Use(ability, ability.InitialUseDelay[0], out chosenChildTrigger);
+        Use(ability.InitialUseDelay[0], out chosenChildTrigger);
         _chosenChildTrigger = chosenChildTrigger;
 
         if (!initializedChildTriggers)
             InitializeChildTriggers(myMultiAbility);
 
         //(CHILD TRIGGER) The chosen Ability Trigger's Ability 
+        // + AF
         // + SET child trigger ACTIVE
         // + Start using child trigger
+        if (ability.hasAdditionalFunctionality)
+            if (ability.AF_Dictionary.TryGetValue("choice", out AF afchoice))
+                (afchoice as AF_choice).choice = choice;
         chosenChildTrigger.gameObject.SetActive(true);
-        chosenChildTrigger.Use(ability, chosenChildTrigger.myAbility.InitialUseDelay[0]);
+        print("p");
+        chosenChildTrigger.Use(chosenChildTrigger.ability.InitialUseDelay[0]);
+        print("s");
 
         StartCoroutine(WaitForTriggerUpdates());
+        print("d");
+
     }
 
     protected override void InitializeChildTriggers(AbilityMulti multiAbility)

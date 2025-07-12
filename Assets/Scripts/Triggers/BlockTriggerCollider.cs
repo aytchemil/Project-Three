@@ -6,7 +6,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
     public bool blockUp;
 
     public virtual AbilityBlock myBlockAbility { get; set; }
-    public override Ability myAbility
+    public override Ability ability
     {
         get => myBlockAbility;
         set => myBlockAbility = value as AbilityBlock;
@@ -73,7 +73,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
 
     protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality, Ability abilty)
     {
-        myAbility = (AbilityBlock)abilty;
+        ability = (AbilityBlock)abilty;
     }
 
 
@@ -96,8 +96,9 @@ public class BlockTriggerCollider : ModeTriggerGroup
 
             //Setup
             Vector3 effectpos = other.ClosestPoint(transform.position);
-            string myBlocksDirection = myBlockAbility.dir.ToString();
-            string opponentAbilityDir = AT.myAbility.dir.ToString();
+            string myBlocksDirection = myBlockAbility.Dir.ToString();
+            IAbilityDirectional.Direction atkDir = (AT.ability as AbilityAttack).Dir;
+            string opponentAbilityDir = atkDir.ToString();
             bool sidePerspectivesHappened = IsLeftRightPerspectiveCheckHappened(myBlocksDirection, opponentAbilityDir);
             bool sideDirsTheSame = IsSideDirsTheSame(myBlocksDirection, opponentAbilityDir);
 
@@ -159,7 +160,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
     {
         blocking = true;
 
-        if (!DebugManager.instance.AttackCollisionDebugsOn)
+        if (DebugManager.instance.AttackCollisionDebugsOn)
             gameObject.GetComponent<MeshRenderer>().material.color = Color.green;
     }
 

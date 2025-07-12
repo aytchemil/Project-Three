@@ -6,7 +6,7 @@ using UnityEngine;
 public class MultiAttackTriggerGroup : GeneralAttackTriggerGroup
 {
     public virtual AbilityMulti myMultiAbility { get; set; }
-    public override Ability myAbility
+    public override Ability ability
     {
         get => myMultiAbility;
         set => myMultiAbility = value as AbilityMulti;
@@ -19,9 +19,8 @@ public class MultiAttackTriggerGroup : GeneralAttackTriggerGroup
     protected bool initializedChildTriggers = false;
 
 
-    public virtual void Use(Ability ability, float delay, out ModeTriggerGroup _chosenChildTrigger)
+    public virtual void Use(float delay, out ModeTriggerGroup _chosenChildTrigger)
     {
-        base.Use(ability, delay);
         _chosenChildTrigger = chosenChildTrigger;
     }
 
@@ -78,6 +77,7 @@ public class MultiAttackTriggerGroup : GeneralAttackTriggerGroup
             //print($"MLTI Ability: {ability} -> Creating CHILD prefab: " + ability.prefab);
             GameObject newChildPrefab = Instantiate(ability.prefab, transform, false) ?? throw new System.Exception("MTLI Child prefab not correctly created");
             newChildPrefab.GetComponent<ModeTriggerGroup>().isLocal = true;
+            newChildPrefab.GetComponent<ModeTriggerGroup>().parentTrigger = this;
         }
     }
 
@@ -112,12 +112,8 @@ public class MultiAttackTriggerGroup : GeneralAttackTriggerGroup
         chosenChildTrigger = null;
     }
 
+
     #endregion
-
-
-
-
-
 
 
 
@@ -135,6 +131,17 @@ public class MultiAttackTriggerGroup : GeneralAttackTriggerGroup
             trigger.DisableThisTriggerOnlyLocally();
         }
 
+    }
+
+
+    /// <summary>
+    /// Sets all Triggers to False
+    /// </summary>
+    public void SetAllTriggersToFalse()
+    {
+        //print($"[TRIGGER] [MAT] SET all triggers false ({triggers.Count} ct.)");
+        for (int i = 0; i < triggers.Count - 1; i++)
+            triggers[i].gameObject.SetActive(false);
     }
 
     #endregion

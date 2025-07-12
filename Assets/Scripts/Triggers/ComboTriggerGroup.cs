@@ -23,7 +23,7 @@ public class CombotTriggerGroup : MAT_FollowupGroup
     /// <param name="i"></param>
     public override void CheckForTriggerUpdates_ReturnDelay(int i)
     {
-        print("Combo checking for reattacks");
+        //print("[TRIGGER] [COMBO] Combo checking for reattacks");
 
         //Couroutine variable null checks/assignments for when the coroutine starts its no longer null, meaning were not spamming start coroutines
         if (!combatFunctionality.Controls.waitingToReattack && waitForContinuation == null)
@@ -40,7 +40,7 @@ public class CombotTriggerGroup : MAT_FollowupGroup
     /// <returns></returns>
     IEnumerator WaitForContinuationAttack(int i)
     {
-        print("Waiting for a contination");
+        //print("[TRIGGER] [COMBO] Waiting for a contination");
 
         //Setup flags,
         // -> is waiting for reattack  (waitingToReattack)
@@ -61,7 +61,7 @@ public class CombotTriggerGroup : MAT_FollowupGroup
         combatFunctionality.Controls.waitingToReattack = false;
         waitForContinuation = null;
 
-        print("FINISHED WAITING FOR CONT");
+        //print("[TRIGGER] [COMBO] FINISHED WAITING FOR CONT");
         //Check if we actually did reattack, or if the trigger progress continued by itself, we break out of tihs coroutine 
         //I dont think this is needed
         if (combatFunctionality.Controls.didReattack || triggerProgress[i] == true) yield break;
@@ -70,15 +70,15 @@ public class CombotTriggerGroup : MAT_FollowupGroup
 
     public void DidReattack(int i)
     {
-        print("Didreattack?");
+        //print("[TRIGGER] [COMBO] Didreattack?");
         if (i == triggerProgress.Length)
         {
-            print("didreattack: last ability in triggerproggress.. ignoring reattack check");
+            //print("[TRIGGER] [COMBO] didreattack: last ability in triggerproggress.. ignoring reattack check");
             return;
         }
         if (combatFunctionality.Controls.didReattack)
         {
-            print("YES");
+            //print("[TRIGGER] [COMBO] YES");
             triggerProgress[i] = true;
 
             //Reset reattack flags
@@ -94,7 +94,7 @@ public class CombotTriggerGroup : MAT_FollowupGroup
     /// <returns></returns>
     IEnumerator CountToReattackCuttoff(int i)
     {
-        print("Waiting for reattack cuttoff");
+        //print("Waiting for reattack cuttoff");
 
         //wait out the reattack time until reset attacking + the initial use delay (because the player isnt actually attacking yet)
         yield return new WaitForSeconds(myComboAbility.reattackTimeUntilReset + myComboAbility.InitialUseDelay[i]);
@@ -102,7 +102,7 @@ public class CombotTriggerGroup : MAT_FollowupGroup
         //If player has not gone on to reattack, Disable the combo parent trigger entirely
         if (triggerProgress[i] == false)
         {
-            print("No Reattack Found Disabling combo trigger");
+            //print("No Reattack Found Disabling combo trigger");
             DisableThisTrigger();
         }
         
@@ -138,7 +138,7 @@ public class CombotTriggerGroup : MAT_FollowupGroup
 
         void ResetComboTrigger()
         {
-            print("reset trigger: combo trigger");
+            //print("[TRIGGER] [COMBO] reset trigger: combo trigger");
             
             waitForContinuation = null;
             countToReattackCuttoff = null;

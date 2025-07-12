@@ -1,5 +1,8 @@
 using System.Collections;
 using UnityEngine;
+using System;
+using Unity.VisualScripting;
+using Sirenix.OdinInspector;
 
 /// <summary>
 /// Template Method Pattern
@@ -7,12 +10,17 @@ using UnityEngine;
 public abstract class ModeTriggerGroup : MonoBehaviour
 {
     public CombatFunctionality combatFunctionality;
-    public virtual Ability myAbility { get; set; }
+    public abstract Ability ability { get; set; }
+    public Ability Ability() { return ability; }
     public virtual bool trigger { get; set; }
     public virtual bool used { get; set; }
     public virtual bool unused { get; set; }
 
+    public bool initialUseDelayOver;
+
     public bool isLocal;
+    [ShowIf("isLocal")]
+    public ModeTriggerGroup parentTrigger;
 
     /// <summary>
     /// VIRTUAL PARENT FUNCTION 
@@ -21,10 +29,13 @@ public abstract class ModeTriggerGroup : MonoBehaviour
     /// <param name="currentAbility"></param>
     /// <param name="delay"></param>
     /// <returns></returns>
-    public virtual void Use(Ability ability, float delay)
+    public virtual void Use(float delay)
     {
+        //print("[AF] Using Ability: " + Ability());
         //Already Using it Check
         if (trigger) return;
+
+        //ability = ability;
 
         //Mutations
         // + SETS using trigger TRUE
@@ -37,8 +48,15 @@ public abstract class ModeTriggerGroup : MonoBehaviour
         combatFunctionality.Controls.didReattack = false;
         EnableTrigger();
         Invoke(nameof(InitialDelayOver_ReEnableTrigger), delay);
-        if(ability.hasAdditionalFunctionality)
-            combatFunctionality.Controls.UseCombatAdditionalFunctionality?.Invoke(ability);
+
+        //Individual Triggers (or Individual Abilities) with AF
+        if (!isLocal && ability.hasAdditionalFunctionality)
+            combatFunctionality.Controls.UseCombatAdditionalFunctionality?.Invoke(this);
+
+        //Child Triggers (child abilities) with Parent having an AF
+        if (isLocal && parentTrigger.ability.hasAdditionalFunctionality)
+            combatFunctionality.Controls.UseCombatAdditionalFunctionality?.Invoke(parentTrigger);
+
     }
 
 
@@ -51,7 +69,7 @@ public abstract class ModeTriggerGroup : MonoBehaviour
     {
         EnableTriggerImplementation();
 
-        combatFunctionality.initialAbilityUseDelayOver = false;
+        initialUseDelayOver = false;
     }
 
     protected abstract void EnableTriggerImplementation();
@@ -67,7 +85,7 @@ public abstract class ModeTriggerGroup : MonoBehaviour
         InitialDelayOver_ReEnableTriggerImplementation();
 
         // print("Initial Attack Delay over, reenbling trigger");
-        combatFunctionality.initialAbilityUseDelayOver = true;
+        initialUseDelayOver = true;
     }
 
     protected abstract void InitialDelayOver_ReEnableTriggerImplementation();
@@ -87,7 +105,7 @@ public abstract class ModeTriggerGroup : MonoBehaviour
         {
             DisableThisTriggerImplementation();
 
-            combatFunctionality.initialAbilityUseDelayOver = true;
+            initialUseDelayOver = true;
 
             DisableThisTriggerOnlyLocally();
         }
@@ -117,14 +135,13 @@ public abstract class ModeTriggerGroup : MonoBehaviour
 
 
 
-    public void InitializeSelf(CombatFunctionality combatFunctionality, Ability ability)
+    public void InitializeSelf(CombatFunctionality cf, Ability ability)
     {
-        //print(gameObject.name + " init self");
-        this.combatFunctionality = combatFunctionality;
-
-        InitializeSelfImplementation(combatFunctionality, ability);
-
-        //print($"initializing self: " + gameObject.name + $" myAbility value is now {myAbility.name}");
+        //print($"[{gameObject.name}] [TRIGGER] [INIT:SELF] Ability: {ability}");
+        this.combatFunctionality = cf;
+        this.ability = ability;
+        this.ability.hasInitializedAfs = false;
+        InitializeSelfImplementation(cf, ability);
     }
 
     protected abstract void InitializeSelfImplementation(CombatFunctionality combatFunctionality, Ability abilty);

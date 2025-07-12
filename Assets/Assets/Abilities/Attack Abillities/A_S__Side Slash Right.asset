@@ -25,6 +25,7 @@ MonoBehaviour:
   hasAdditionalFunctionality: 0
   afTypes: []
   afs: []
+  hasInitializedAfs: 0
   damage: 1
   flinchAmount: 1
   Attack: 7

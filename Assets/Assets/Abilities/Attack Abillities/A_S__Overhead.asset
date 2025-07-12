@@ -26,7 +26,8 @@ MonoBehaviour:
   afTypes:
   - {fileID: 11500000, guid: 2902d43e1633dc5429ae4429144bc32d, type: 3}
   afs:
-  - rid: 3359079709578100848
+  - rid: 3359079757352534096
+  hasInitializedAfs: 1
   damage: 0.5
   flinchAmount: 1
   Attack: 2
@@ -34,7 +35,7 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 3359079709578100848
+    - rid: 3359079757352534096
       type: {class: AF_movement, ns: , asm: Assembly-CSharp}
       data:
-        movementAmount: 0
+        movementAmount: 100

@@ -340,17 +340,17 @@ public class Movement : MonoBehaviour
 
         if (isGrounded)
         {
-            print($"[Movement] Grounded");
+            //print($"[Movement] Grounded");
             //If the player is not on a slope, dash regularly
             if (!onSlope)
             {
-                print($"[Movement] DASING {dir}");
+                //print($"[Movement] DASING {dir}");
                 rb.AddForce(dir.normalized * multiplier, ForceMode.VelocityChange);
 
             }
             else //if the player is on a slope, dash relative to the slope's move direction
             {
-                Debug.Log("[Movement] SLOPE DASH:  " + dir);
+                //Debug.Log("[Movement] SLOPE DASH:  " + dir);
                 rb.AddForce(GetSlopeMoveDirection(dir) * dashSpeedMultiplier, ForceMode.VelocityChange);
             }
 

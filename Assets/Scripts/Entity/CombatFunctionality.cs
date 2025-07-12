@@ -16,8 +16,6 @@ public class CombatFunctionality : MonoBehaviour
     bool initializedAttackTriggers;
     bool initializedBlockingTrigger;
 
-    public bool initialAbilityUseDelayOver;
-
     public ParticleSystem counteredEffect;
 
     protected virtual void Awake()

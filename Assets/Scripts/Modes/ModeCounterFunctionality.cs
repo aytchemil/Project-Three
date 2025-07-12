@@ -6,7 +6,7 @@ public class ModeCounterFunctionality : ModeGeneralFunctionality
 {
     private CombatFunctionality cf;
 
-    public override string MODE_NAME { get => "Counter"; }
+    public override string MODE { get => "Counter"; }
 
     public string stopBlockingBool = "stopBlocking";
 
@@ -41,12 +41,12 @@ public class ModeCounterFunctionality : ModeGeneralFunctionality
 
         //Setup
         StartCountering();
-        AbilityCounter ability = (AbilityCounter)cf.Controls.Mode("Counter").ability;
-        cf.Controls.Mode("Counter").SetAbility(ability);
+        AbilityCounter ability = (AbilityCounter)cf.Controls.Mode(MODE).ability;
+        cf.Controls.Mode(MODE).SetAbility(ability);
 
         //Trigger
-        ModeTriggerGroup trigger = cf.AbilityTriggerEnableUse("Counter");
-        cf.Controls.Mode("Counter").trigger = trigger;
+        ModeTriggerGroup trigger = cf.AbilityTriggerEnableUse(MODE);
+        cf.Controls.Mode(MODE).trigger = trigger;
 
         //Ability
 
@@ -61,7 +61,7 @@ public class ModeCounterFunctionality : ModeGeneralFunctionality
                 //StartCoroutine(AnimateFollowUpAbilities(ability, trigger, cf.Controls.Mode("Counter"), cf.Controls.animController));
 
                 //Trigger
-                trigger.Use(ability, ability.InitialUseDelay[0]);
+                trigger.Use(ability.InitialUseDelay[0]);
 
                 //Additional Functionality 
                 StandingRiposte(ability);
@@ -76,7 +76,7 @@ public class ModeCounterFunctionality : ModeGeneralFunctionality
     /// </summary>
     void StartCountering()
     {
-        cf.Controls.Mode("Counter").isUsing = true;
+        cf.Controls.Mode(MODE).isUsing = true;
     }
 
     /// <summary>
@@ -84,7 +84,7 @@ public class ModeCounterFunctionality : ModeGeneralFunctionality
     /// </summary>
     public void FinishCountering()
     {
-        cf.Controls.Mode("Counter").isUsing = false;
+        cf.Controls.Mode(MODE).isUsing = false;
     }
 
     void StandingRiposte(AbilityCounter ability)

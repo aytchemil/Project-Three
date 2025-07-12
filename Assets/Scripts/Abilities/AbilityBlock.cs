@@ -3,10 +3,13 @@ using UnityEngine;
 using System;
 
 [CreateAssetMenu(fileName = "BlockAbility", menuName = "ScriptableObjects/Abilities/Block Ability")]
-public class AbilityBlock : Ability, IAbilityAnims
+public class AbilityBlock : Ability, IAbilityAnims, IAbilityDirectional
 {
     public Type type { get => typeof(AM.BlkAnims); }
     public int Enum { get => (int)Block; }
+    public IAbilityDirectional.Direction Dir { get => dir; }
+
+    [SerializeField] private IAbilityDirectional.Direction dir;
 
     public AM.BlkAnims.Anims Block;
 
@@ -23,6 +26,7 @@ public class AbilityBlock : Ability, IAbilityAnims
         get => blockTriggerCollider;
         set => blockTriggerCollider = value;
     }
+
     public bool hasBlockUpTime = false;
     [ShowIf("hasBlockUpTime")]
     public float blockUpTime;

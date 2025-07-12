@@ -10,7 +10,7 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
 
 
     //Overriding base class Ability reference
-    public override Ability myAbility
+    public override Ability ability
     {
         get => myAttackAbility;
         set => myAttackAbility = value as AbilityAttack;
@@ -30,10 +30,13 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
     {
         base.EnableTriggerImplementation();
 
-        if (!DebugManager.instance.AttackCollisionDebugsOn)
-            DisableIndiviualCollider(Color.grey);
+        if (DebugManager.instance.AttackCollisionDebugsOn)
+        {
+            ColliderVisualActive(true);
+            ColliderVisualColor(Color.grey);
+        }
         else
-            EnableColliderVisual(false);
+            ColliderVisualActive(false);
 
         animator.SetBool("windupDone", false);
         animator.SetBool("missed", false);
@@ -45,12 +48,14 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
         hitAttack = false;
         col.enabled = true;
 
-        if (!DebugManager.instance.AttackCollisionDebugsOn)
+        if (DebugManager.instance.AttackCollisionDebugsOn)
         {
+            ColliderVisualActive(true);
+            gameObject.GetComponent<MeshRenderer>().enabled = true;
             gameObject.GetComponent<MeshRenderer>().material.color = Color.red;
         }
         else
-            EnableColliderVisual(false);
+            ColliderVisualActive(false);
 
         animator.SetBool("windupDone", true);
     }
@@ -83,7 +88,7 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
         if (other.GetComponent<CombatEntityController>() == combatFunctionality.Controls) return;
 
         float newEnemyHealth;
-        if (attacking && combatFunctionality.initialAbilityUseDelayOver)
+        if (attacking && initialUseDelayOver)
         {
             HitAttack();
             #region Death
@@ -129,10 +134,10 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
     {
         base.HitAttack();
 
-        if (!DebugManager.instance.AttackCollisionDebugsOn)
-            DisableIndiviualCollider(Color.green);
+        if (DebugManager.instance.AttackCollisionDebugsOn)
+            ColliderVisualColor(Color.green);
         else
-            EnableColliderVisual(false);
+            ColliderVisualActive(false);
     }
 
     public override void MissAttackCuttoffLocal()
@@ -141,10 +146,10 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
 
         base.MissAttackCuttoffLocal();
 
-        if (!DebugManager.instance.AttackCollisionDebugsOn)
-            DisableIndiviualCollider(Color.grey);
+        if (DebugManager.instance.AttackCollisionDebugsOn)
+            ColliderVisualColor(Color.grey);
         else
-            EnableColliderVisual(false);
+            ColliderVisualActive(false);
 
         col.enabled = false;
         animator.SetBool("missed", true);
@@ -158,13 +163,13 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
     // Methods
     ///=============================================================================================================================================================
 
-    public void DisableIndiviualCollider(Color color)
+    public void ColliderVisualColor(Color color)
     {
         gameObject.GetComponent<MeshRenderer>().enabled = true;
         gameObject.GetComponent<MeshRenderer>().material.color = color;
     }
 
-    public void EnableColliderVisual(bool enable)
+    public void ColliderVisualActive(bool enable)
     {
         gameObject.GetComponent<MeshRenderer>().enabled = enable;
     }

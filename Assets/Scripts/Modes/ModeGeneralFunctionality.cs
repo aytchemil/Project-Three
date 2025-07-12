@@ -7,7 +7,7 @@ public class ModeGeneralFunctionality : MonoBehaviour
     /// <summary>
     /// PARENT VIRTUAL STRING for all names of modes (Set in the child class)
     /// </summary>
-    public virtual string MODE_NAME { get; }
+    public virtual string MODE { get; }
 
     /// <summary>
     /// PARENT VIRTUAL FUNCTION for using all mode functionalities
@@ -38,11 +38,15 @@ public class ModeGeneralFunctionality : MonoBehaviour
         yield return new WaitForEndOfFrame();
     }
 
-    /// <summary>
-    /// Optional Functionality for starting an animation
-    /// </summary>
-    public virtual void AF_StartedAnAnimation()
+    public virtual System.Enum[] GetAnimEnums(AbilityMulti ability)
     {
-
+        System.Enum[] Enums = new System.Enum[ability.abilities.Length];
+        for (int i = 0; i < ability.abilities.Length; i++)
+        {
+            AbilityAttack abilityi = ((AbilityAttack)ability.abilities[i]);
+            System.Enum _enum = abilityi.Attack;
+            Enums[i] = _enum;
+        }
+        return Enums;
     }
 }

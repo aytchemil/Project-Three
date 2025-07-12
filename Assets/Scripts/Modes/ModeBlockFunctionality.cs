@@ -8,7 +8,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
 {
     private CombatFunctionality cf;
 
-    public override string MODE_NAME { get => "Block"; }
+    public override string MODE { get => "Block"; }
     bool readyToUnblock = false;
 
     void Awake()
@@ -110,13 +110,12 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
 
                 //Setup
 
-                print($"[AS] BLOCK Animating.. {ability.Block}");
-                //Animation //initial use delay this later
+                //Animation
                 animCont.Play(typeof(AM.BlkAnims), (int)ability.Block, CharacterAnimationController.UPPERBODY, false, false);
 
 
                 //Trigger
-                trigger.Use(ability, ability.InitialUseDelay[0]);
+                trigger.Use(ability.InitialUseDelay[0]);
 
                 //Additional Functionality 
                 AF_Regular(ability);

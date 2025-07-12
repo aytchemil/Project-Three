@@ -24,22 +24,19 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
     protected override void Reset()
     {
         base.Reset();
-
-        for (int i = 0; i <= triggers.Count - 1; i++)
-            triggerProgress[i] = false;
-
+        DisableAllChildTriggers();
     }
 
     #endregion
 
 
     //Changed without knowing
-    public override void Use(Ability ability, float delay)
+    public override void Use(float delay)
     {
-        print("[MAT_FollowupGroup] started using this ability trigger");
-        base.Use(ability, delay);
+        //print("[TRIGGER] [MLTI-ATK] Used");
+        base.Use(delay);
 
-        StartCoroutine(FollowUpUse(ability));
+        StartCoroutine(FollowUpUse());
     }
 
     /// <summary>
@@ -62,32 +59,21 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
 
     }
 
-    /// <summary>
-    /// Sets all Triggers to False
-    /// </summary>
-    public void SetAllTriggersToFalse()
-    {
-        print($"set all {triggers.Count} triggers to false");
-        for (int i = 0; i < triggers.Count - 1; i++)
-        {
-            triggerProgress[i] = false;
-            triggers[i].gameObject.SetActive(false);
-        }
-    }
+
 
     /// <summary>
     /// Uses the trigger at index i
     /// </summary>
     /// <param name="currentAbility"></param>
     /// <param name="i"></param>
-    void TakeOnchosenChildTrigger(Ability ability, int i)
+    void UseChildTrigger(int i)
     {
-        //print($"FOLLOWUP Cur INDEX: {i} Ability GROUP: {currentAbility} ");
+        print($"[TRIGGER] [MAT] Prog: {i} Initial Delay: {ability.InitialUseDelay[i]} ");
         chosenChildTrigger = triggers[i];
         chosenChildTrigger.gameObject.SetActive(true);
 
 
-        chosenChildTrigger.Use(ability, ability.InitialUseDelay[i]);
+        chosenChildTrigger.Use(ability.InitialUseDelay[i]);
     }
 
     /// <summary>
@@ -96,77 +82,58 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
     /// <param name="i"></param>
     public virtual void CheckForTriggerUpdates_ReturnDelay(int i)
     {
-        print("checking trigger for usage");
-        if (chosenChildTrigger.used)
-        { 
-            print("following up... hit");
-            triggerProgress[i] = true;
-        }
-
-        //miss
-        if (chosenChildTrigger.unused)
-        {
-            print("following up... miss");
-            triggerProgress[i] = true;
-        }
-
+        if (chosenChildTrigger.used || chosenChildTrigger.unused)
+            UpdateTriggerProgress(i);
     }
 
     #region Methods
     //Methods
     //=================================================================================================================================================
 
-    public virtual IEnumerator FollowUpUse(Ability ability)
+    public virtual IEnumerator FollowUpUse()
     {
-        //print("FollowUpAttack()");
-
-        //Set them all to false
-        SetAllTriggersToFalse();
-
+        ResetTriggerProg();
 
         for (int i = 0; i < triggerProgress.Length; i++)
         {
-            //print("starting to move through child triggers");
-            //Applies the trigger on whatever current index its on
-
-
-            foreach(var trigger in triggers)
-                trigger.gameObject.SetActive(false);
-
-            TakeOnchosenChildTrigger(ability, i);
-
-
-
-            //print($"FOLLOW UP TRIGGER LOOP {i} : " + chosenChildTrigger.name);
+            SetAllTriggersToFalse();
+            UseChildTrigger(i);
 
 
             while (triggerProgress[i] == false)
             {
-                //print($"Waiting for index: {i}");
-
                 if (!gameObject.activeSelf) {  print("This trigger has been disabled, breaking out of loop");   yield break;  }
 
-               // print("running trigger update check");
                 CheckForTriggerUpdates_ReturnDelay(i);
-                
-
-                //Last Ability in Combo 
-                if (i == triggerProgress.Length-1) 
-                {
-                    print("MLTI -> LAST");
-
-                    if (chosenChildTrigger.used) { HitAttack(); MissAttackCuttoff(); yield break; }
-                    if ((chosenChildTrigger as GeneralAttackTriggerGroup).missedAttack) { yield return new WaitForSeconds(DelayNextTrigger(i)); MissAttackCuttoff(); yield break; }
-                }
 
                 yield return new WaitForEndOfFrame();
             }
 
-            //print("after while loop");
-
             yield return new WaitForSeconds(DelayNextTrigger(i));
 
+            UpdateTriggerProgress(i);
+
+            //Last Ability in Combo 
+            if (i == triggerProgress.Length - 1)
+            {
+                print("[MAT] -> LAST");
+
+                if (chosenChildTrigger.used) { HitAttack(); MissAttackCuttoff(); yield break; }
+                if ((chosenChildTrigger as GeneralAttackTriggerGroup).missedAttack) { MissAttackCuttoff(); yield break; }
+            }
         }
+    }
+
+    protected virtual void UpdateTriggerProgress(int i)
+    {
+        //print($"[MAT] Updating Trigger Progress: {i} = TRUE");
+        triggerProgress[i] = true;
+    }
+
+    protected void ResetTriggerProg()
+    {
+        for (int i = 0; i < triggerProgress.Length; i++)
+            triggerProgress[i] = false;
     }
 
 
@@ -185,19 +152,9 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
             delay = myMultiAbility.unsuccessDelay[prog];
         }
 
+        print($"[MAT] Success/Unsuccess Delay {delay}");
+
         return delay;
-    }
-
-    public override IEnumerator SuccessfullyFinishedAttacked()
-    {
-        print("MultiFollowup: Succesfuly finished attack");
-        float delay = myMultiAbility.successDelay[triggerProgress.Length];
-        print($"{this.name} : Comboing, delay is: {delay}");
-        print("ability is: " + myAbility);
-
-        yield return new WaitForSeconds(delay);
-
-        DisableThisTrigger();
     }
 
     #endregion

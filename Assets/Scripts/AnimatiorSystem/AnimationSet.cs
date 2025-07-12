@@ -144,13 +144,19 @@ public static class AM
         {
             for (int i = 0; i < triggerProg.Length; i++)
             {
-                Debug.Log(EnumType + "  " + Enums[i]);
+                //Debug.Log($"[AS] Followup {i}");
                 int EnumsIndx = (int)Enum.ToObject(EnumType, Enums[i]);
 
                 Play?.Invoke(type, (int)AM.GetEnums(EnumType).GetValue(EnumsIndx), layer, locklayer, bypassLock, crossfade);
-                Debug.Log($"[AS] FollowupPackage PLAYING {AM.GetEnums(EnumType).GetValue(EnumsIndx)}");
+                //Debug.Log($"[AS] [FOLLOWUP] [PACKG] PLAYING {AM.GetEnums(EnumType).GetValue(EnumsIndx)}");
 
-                while (mode.isUsing && triggerProg[i] == false)
+                if (!mode.isUsing)
+                {
+                    i = triggerProg.Length;
+                    yield break;
+                }
+
+                while (triggerProg[i] == false)
                     yield return new WaitForEndOfFrame();
             }
         }
@@ -186,7 +192,7 @@ public static class AM
             Atk_Idle,
             Atk_Hit,
             Atk_Overhead_T,
-            Atk_Uppercut,
+            Atk_Up_D,
             Atk_Up_L,
             Atk_Up_R,
             Atk_Flat_L,

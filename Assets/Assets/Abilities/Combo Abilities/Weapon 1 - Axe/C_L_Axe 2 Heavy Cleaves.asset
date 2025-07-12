@@ -15,27 +15,31 @@ MonoBehaviour:
   abilityName: Heavy Cleaves
   icon: {fileID: 2800000, guid: c6b61406c4bde26458b26643b032586c, type: 3}
   initialUseDelay:
-  - 0.3
-  - 0.3
-  - 0.3
+  - 0
+  - 0
+  - 0
   <successDelay>k__BackingField: 0
   unsuccessDelay:
-  - 0.3
-  - 0.3
-  - 1
-  movementAmount: 0
+  - 0
+  - 0
+  - 0.65
   modeBase: 2
   archetype: 0
-  trait: 0
-  animation_name: 
+  hasAdditionalFunctionality: 0
+  afTypes: []
+  afs: []
+  hasInitializedAfs: 0
   successDelay:
-  - 0.25
-  - 0.25
-  - 0.75
+  - 0
+  - 0
+  - 0.55
   MultiAbilityGroupingPrefab: {fileID: 1766159213802189594, guid: c3a13b68d2130dc408722a0ba5a0094d, type: 3}
   abilities:
   - {fileID: 11400000, guid: cc188b88764ff3c478da26feea8ec6bc, type: 2}
   - {fileID: 11400000, guid: 90d73c4cb12b02a40bfbffb1eea894b8, type: 2}
   - {fileID: 11400000, guid: f70474e9dbc7cb74e9e11772d7ab18fc, type: 2}
-  reattackTimeUntilReset: 1.2
+  reattackTimeUntilReset: 0.7
   comboType: 0
+  references:
+    version: 2
+    RefIds: []

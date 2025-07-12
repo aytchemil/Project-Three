@@ -15,11 +15,11 @@ MonoBehaviour:
   abilityName: Overhead
   icon: {fileID: 2800000, guid: b99069f7d624ae3439f9671ef2397dde, type: 3}
   initialUseDelay:
-  - 0.3
-  <successDelay>k__BackingField: 0.3
+  - 0
+  successDelay:
+  - 0
   unsuccessDelay:
   - 0.3
-  dir: 3
   modeBase: 0
   archetype: 0
   hasAdditionalFunctionality: 1
@@ -27,7 +27,8 @@ MonoBehaviour:
   - {fileID: 11500000, guid: 2902d43e1633dc5429ae4429144bc32d, type: 3}
   afs:
   - rid: 3359079757352534096
-  hasInitializedAfs: 1
+  hasInitializedAfs: 0
+  dir: 3
   damage: 0.5
   flinchAmount: 1
   Attack: 2

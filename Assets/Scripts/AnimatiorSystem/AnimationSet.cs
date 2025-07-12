@@ -4,7 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using Unity.VisualScripting;
+
 using UnityEngine;
 using static CombatEntityController;
 
@@ -126,8 +126,9 @@ public static class AM
         bool locklayer;
         bool bypassLock;
         float crossfade;
+        float[] initialUseDelays;
 
-        public FollowUpPackage(ModeTriggerGroup trigger, CombatEntityModeData _mode, Enum[] _Enums, Type type, Type _EnumType, int layer, bool locklayer, bool bypassLock, float crossfade)
+        public FollowUpPackage(ModeTriggerGroup trigger, CombatEntityModeData _mode, Enum[] _Enums, Type type, Type _EnumType, int layer, bool locklayer, bool bypassLock, float crossfade, float[] _initialUseDelays)
         {
             triggerProg = trigger.GetComponent<MAT_FollowupGroup>().triggerProgress;
             mode = _mode ?? throw new ArgumentNullException(nameof(_mode));
@@ -138,16 +139,17 @@ public static class AM
             this.locklayer = locklayer;
             this.bypassLock = bypassLock;
             this.crossfade = crossfade;
+            this.initialUseDelays = _initialUseDelays;
         }
 
-        public IEnumerator PlayFollowUp(System.Action<Type, int, int, bool, bool, float> Play)
+        public IEnumerator PlayFollowUp(System.Action<Type, int, int, bool, bool, float, float> Play)
         {
             for (int i = 0; i < triggerProg.Length; i++)
             {
                 //Debug.Log($"[AS] Followup {i}");
                 int EnumsIndx = (int)Enum.ToObject(EnumType, Enums[i]);
 
-                Play?.Invoke(type, (int)AM.GetEnums(EnumType).GetValue(EnumsIndx), layer, locklayer, bypassLock, crossfade);
+                Play?.Invoke(type, (int)AM.GetEnums(EnumType).GetValue(EnumsIndx), layer, locklayer, bypassLock, crossfade, initialUseDelays[i]);
                 //Debug.Log($"[AS] [FOLLOWUP] [PACKG] PLAYING {AM.GetEnums(EnumType).GetValue(EnumsIndx)}");
 
                 if (!mode.isUsing)

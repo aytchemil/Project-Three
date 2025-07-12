@@ -1,11 +1,12 @@
-using NUnit.Framework;
+
 using Sirenix.OdinInspector;
 using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Rendering;
+
+
 
 [System.Serializable]
 public class AnimationLayer
@@ -61,8 +62,10 @@ public class AnimatorSystem : MonoBehaviour
             layers[layer].locked = true;
     }
 
-    public void Play(Type setType, int enumIndx, int layer, bool lockLayer, bool bypassLock, float crossfade = 0.2f)
+    public void Play(Type setType, int enumIndx, int layer, bool lockLayer, bool bypassLock, float crossfade = 0.2f, float delay = 0)
     {  
+        //wait here the delay, then continue
+
         //Setup 1
         // + New Animation Set
         // + Get the animation set's value from the dictionary
@@ -115,4 +118,5 @@ public class AnimatorSystem : MonoBehaviour
         layers[layer].locked = lockLayer;
         layers[layer].currAnimation = animEnum;
     }
+
 }

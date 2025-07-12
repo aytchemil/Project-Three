@@ -1,9 +1,6 @@
-using NUnit.Framework;
+
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using Unity.VisualScripting;
-using UnityEditor.Playables;
 using UnityEngine;
 
 
@@ -73,7 +70,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
 
             //Animation
             IAbilityAnims anims = trigger.ability as IAbilityAnims;
-            cf.Controls.animController.Play(anims.type, anims.Enum, CharacterAnimationController.UPPERBODY, false, false);
+            cf.Controls.animController.Play(anims.type, anims.Enum, CharacterAnimationController.UPPERBODY, false, false, ability.InitialUseDelay[0]);
         }
         else if (ability.archetype == Ability.Archetype.Multi_Choice)
         {
@@ -111,7 +108,8 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
                 CharacterAnimationController.UPPERBODY,
                 false,
                 false,
-                0.2f
+                0.2f,
+                multi_attack.InitialUseDelay
                 );
             StartCoroutine(FollowUpPackage.PlayFollowUp(cf.Controls.animController.Play));
 

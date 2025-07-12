@@ -1,6 +1,4 @@
 using System.Collections;
-using TMPro;
-using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]

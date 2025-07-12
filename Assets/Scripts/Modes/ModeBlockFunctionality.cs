@@ -1,6 +1,4 @@
 using System.Collections;
-using Unity.Burst.Intrinsics;
-using UnityEditor.Rendering.LookDev;
 using UnityEngine;
 using static CombatEntityController;
 

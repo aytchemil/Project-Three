@@ -79,7 +79,8 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
                     CharacterAnimationController.UPPERBODY,
                     false,
                     false,
-                    0.2f
+                    0.2f,
+                    ability.InitialUseDelay
                     );
                 StartCoroutine(FollowUpPackage.PlayFollowUp(cf.Controls.animController.Play));
                 break;

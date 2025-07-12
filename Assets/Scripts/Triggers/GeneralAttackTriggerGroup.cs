@@ -1,4 +1,5 @@
 using System.Collections;
+using UnityEditor.ShaderGraph.Internal;
 using UnityEngine;
 
 public class GeneralAttackTriggerGroup : ModeTriggerGroup
@@ -91,31 +92,29 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
         //Debug.Log(gameObject.name + " | Attack hit registered");
         hitAttack = true;
     }
-
-    public virtual void MissAttackCuttoff()
+    
+    /// <summary>
+    /// The Animation Event For When the miss attack cuttoff point is reached
+    /// </summary>
+    public virtual void FinishSingleAttack()
     {
-        if (isLocal)
-        {
-            MissAttackCuttoffLocal();
-            return;
-        }
-
         //print("[TRIGGER] [GEN] " + combatFunctionality.gameObject.name + "'s Miss Attack Cuttoff Reached");
-        if (hitAttack)
-        {
-            //print("hit atack succesffull, calling combo");
-            StartCoroutine(SuccessfullyFinishedAttacked());
-            return;
-        }
-
-        //print("[TRIGGER] [GEN] missed attack global");
-
         MissAttackCuttoffLocal();
 
-        MissedAttackCaller();
+        if (isLocal)
+            return;
 
-        Invoke(nameof(DisableThisTrigger), ability.unsuccessDelay[ability.unsuccessDelay.Length-1]);
 
+        float delay;
+        if (hitAttack)
+            delay = ability.successDelay[0];
+        else
+        {
+            combatFunctionality.Controls.MissedAttack?.Invoke();
+            delay = ability.unsuccessDelay[0];
+        }
+
+        Invoke(nameof(DisableThisTrigger), delay);
     }
 
     public virtual void MissAttackCuttoffLocal()
@@ -169,11 +168,6 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
         combatFunctionality.Controls.ResetAttack?.Invoke();
     }
 
-
-    public void MissedAttackCaller()
-    {
-        combatFunctionality.Controls.MissedAttack?.Invoke();
-    }
 
     public virtual IEnumerator SuccessfullyFinishedAttacked()
     {

@@ -13,10 +13,10 @@ GameObject:
   - component: {fileID: 8094267911779122675}
   - component: {fileID: 377499401562837398}
   - component: {fileID: -6728555465575122298}
-  - component: {fileID: 2820157755071105457}
-  - component: {fileID: -6494930247469252101}
+  - component: {fileID: 7571868750791908547}
+  - component: {fileID: 4172418506098455790}
   m_Layer: 9
-  m_Name: ATCS_Sweep
+  m_Name: AT_Overhead_T
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,13 +30,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8475917669229452261}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.017757814, z: 0, w: 0.99984235}
-  m_LocalPosition: {x: 6.78, y: -0.82, z: 3.69}
-  m_LocalScale: {x: 21.766077, y: 0.40963915, z: 3.4681587}
+  m_LocalRotation: {x: 0.48599216, y: 0.513626, z: 0.48599216, w: 0.513626}
+  m_LocalPosition: {x: 0, y: 9.68, z: 4.25}
+  m_LocalScale: {x: 17.03987, y: 0.8120092, z: 4.078391}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 2.035, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 86.833}
 --- !u!33 &3882042209303593599
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -133,7 +133,7 @@ MonoBehaviour:
     m_Bits: 768
   col: {fileID: 0}
   animator: {fileID: 0}
---- !u!95 &2820157755071105457
+--- !u!95 &7571868750791908547
 Animator:
   serializedVersion: 7
   m_ObjectHideFlags: 0
@@ -143,7 +143,7 @@ Animator:
   m_GameObject: {fileID: 8475917669229452261}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 63470ec7728794d49a74162c33f8dde5, type: 2}
+  m_Controller: {fileID: 9100000, guid: 5d3ee9f72bb550c4baf3f738292f96dc, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -155,7 +155,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!54 &-6494930247469252101
+--- !u!54 &4172418506098455790
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}

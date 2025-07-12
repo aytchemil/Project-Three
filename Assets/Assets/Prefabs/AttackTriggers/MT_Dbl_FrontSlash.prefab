@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1682359718940559012}
   - component: {fileID: 5282422186388973685}
   m_Layer: 8
-  m_Name: GP_DoubleFrontSlash
+  m_Name: MT_Dbl_FrontSlash
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

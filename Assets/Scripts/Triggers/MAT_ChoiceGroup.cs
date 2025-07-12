@@ -53,7 +53,7 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
             {
                 print("miss");
 
-                MissAttackCuttoff();
+                FinishSingleAttack();
                 return false;
             }
 

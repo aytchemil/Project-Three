@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 109189360815829415}
   - component: {fileID: 1548927854974007668}
   m_Layer: 8
-  m_Name: GP_MovementLeftOrRight
+  m_Name: MCT_MoveLeftRight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

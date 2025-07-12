@@ -13,10 +13,10 @@ GameObject:
   - component: {fileID: 8094267911779122675}
   - component: {fileID: 377499401562837398}
   - component: {fileID: -6728555465575122298}
-  - component: {fileID: 4080184577027888689}
-  - component: {fileID: 2413338597982526854}
+  - component: {fileID: 69104736768070694}
+  - component: {fileID: 8936296225162849835}
   m_Layer: 9
-  m_Name: ATCS_Pierce
+  m_Name: AT_Diag_R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,13 +30,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8475917669229452261}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -1.1, z: 7.71}
-  m_LocalScale: {x: 4.0428443, y: 3.7363112, z: 15.063222}
+  m_LocalRotation: {x: -0.021417765, y: -0.004496254, z: -0.2054034, w: 0.97843266}
+  m_LocalPosition: {x: 4.57, y: 3.08, z: 2.34}
+  m_LocalScale: {x: 2.0061278, y: 14.946859, z: 2.5215795}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -2.508, y: 0, z: -23.712}
 --- !u!33 &3882042209303593599
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -133,29 +133,7 @@ MonoBehaviour:
     m_Bits: 768
   col: {fileID: 0}
   animator: {fileID: 0}
---- !u!95 &4080184577027888689
-Animator:
-  serializedVersion: 7
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8475917669229452261}
-  m_Enabled: 1
-  m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 5fa19c60b2dbccf4083f1a8081776faf, type: 2}
-  m_CullingMode: 0
-  m_UpdateMode: 0
-  m_ApplyRootMotion: 0
-  m_LinearVelocityBlending: 0
-  m_StabilizeFeet: 0
-  m_AnimatePhysics: 0
-  m_WarningMessage: 
-  m_HasTransformHierarchy: 1
-  m_AllowConstantClipSamplingOptimization: 1
-  m_KeepAnimatorStateOnDisable: 0
-  m_WriteDefaultValuesOnDisable: 0
---- !u!54 &2413338597982526854
+--- !u!54 &69104736768070694
 Rigidbody:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -182,3 +160,25 @@ Rigidbody:
   m_Interpolate: 1
   m_Constraints: 0
   m_CollisionDetection: 2
+--- !u!95 &8936296225162849835
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8475917669229452261}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 646575eaefa241c43999aed29d46fba0, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0

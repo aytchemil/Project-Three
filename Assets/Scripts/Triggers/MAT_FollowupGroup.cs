@@ -51,8 +51,8 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
             triggerProgress[currIndx] = true;
         else
         {
-            if (chosenChildTrigger.used) { HitAttack(); MissAttackCuttoff(); }
-            if ((chosenChildTrigger as GeneralAttackTriggerGroup).missedAttack) { MissAttackCuttoff(); }
+            if (chosenChildTrigger.used) { HitAttack(); FinishSingleAttack(); }
+            if ((chosenChildTrigger as GeneralAttackTriggerGroup).missedAttack) { FinishSingleAttack(); }
             return true;
         }
         return false;
@@ -118,8 +118,8 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
             {
                 print("[MAT] -> LAST");
 
-                if (chosenChildTrigger.used) { HitAttack(); MissAttackCuttoff(); yield break; }
-                if ((chosenChildTrigger as GeneralAttackTriggerGroup).missedAttack) { MissAttackCuttoff(); yield break; }
+                if (chosenChildTrigger.used) { HitAttack(); FinishSingleAttack(); yield break; }
+                if ((chosenChildTrigger as GeneralAttackTriggerGroup).missedAttack) { FinishSingleAttack(); yield break; }
             }
         }
     }

@@ -16,10 +16,10 @@ MonoBehaviour:
   icon: {fileID: 2800000, guid: 5d648196f53723d499590b1df6cf38a9, type: 3}
   initialUseDelay:
   - 0.4
-  <successDelay>k__BackingField: 0.3
+  successDelay:
+  - 0
   unsuccessDelay:
   - 0.3
-  dir: 1
   modeBase: 0
   archetype: 0
   hasAdditionalFunctionality: 1
@@ -27,6 +27,8 @@ MonoBehaviour:
   - {fileID: 11500000, guid: 2902d43e1633dc5429ae4429144bc32d, type: 3}
   afs:
   - rid: 3359079709578100823
+  hasInitializedAfs: 0
+  dir: 1
   damage: 1
   flinchAmount: 1
   Attack: 9

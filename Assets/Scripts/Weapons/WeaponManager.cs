@@ -4,11 +4,11 @@ using static CombatEntityController;
 
 public class WeaponManager : MonoBehaviour
 {
-    public CombatEntityModeData comboMode;
+    CombatEntityModeData comboMode;
 
-    public GameObject characterAnimationParent;
-    public GameObject weaponParent;
-    public GameObject currentWeaponObject;
+    GameObject characterAnimationParent;
+    GameObject weaponParent;
+    GameObject currentWeaponObject;
 
     public virtual CombatEntityController Controls { get; set; }
 
@@ -31,6 +31,8 @@ public class WeaponManager : MonoBehaviour
     {
         if (gameObject.GetComponent<CombatEntityController>().Mode("Combo") != null)
             comboMode = gameObject.GetComponent<CombatEntityController>().Mode("Combo");
+
+        characterAnimationParent = Controls.animController.gameObject;
 
         SetAbilitySet();
         AssignWeaponParent();

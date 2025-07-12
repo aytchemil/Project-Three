@@ -14,6 +14,7 @@ public class CombatLock : MonoBehaviour
     bool tryingToLock;
 
     //Cache
+    [HideInInspector]
     public ColliderDetector myColliderDetector;
 
     //Asset References

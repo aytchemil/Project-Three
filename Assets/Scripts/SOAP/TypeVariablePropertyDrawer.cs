@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 using UnityEngine.UIElements;
@@ -46,3 +47,5 @@ public class TypeVariablePropertyDrawer : PropertyDrawer
         return container;
     }
 }
+
+#endif

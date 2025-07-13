@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
-using UnityEditor.SceneManagement;
+
 /// <summary>
 /// Centralized Controller and controls for every combat entity.
 /// </summary>

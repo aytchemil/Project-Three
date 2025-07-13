@@ -6,7 +6,7 @@ using static AM;
 public class CharacterAnimationController : AnimatorSystem
 {
     public float crossFade = 0.4f;
-    public CombatEntityController CEC;
+    public EntityController CEC;
     public Weapon wpn;
 
     public Action<AtkAnims.Anims, float> AtkAnimation;
@@ -28,7 +28,7 @@ public class CharacterAnimationController : AnimatorSystem
 
     private void Awake()
     {
-        CEC = GetComponentInParent<CombatEntityController>();
+        CEC = GetComponentInParent<EntityController>();
         CEC.animController = this;
         if (GetComponent<Animator>() == null)
             gameObject.AddComponent<Animator>();
@@ -84,7 +84,7 @@ public class CharacterAnimationController : AnimatorSystem
 
     public void Flinch(float time)
     {
-        print($"[AnimatorController] [{CEC.gameObject.name}] FlinchAnim");
+        //print($"[AnimatorController] [{CEC.gameObject.name}] FlinchAnim");
         animator.Play("Idle");
         //Fix
     }

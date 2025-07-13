@@ -100,13 +100,13 @@ public class Movement : MonoBehaviour
     //Cached Component Refernces
     protected Transform orientation;
     public Rigidbody rb { get; protected set; }
-    public virtual CombatEntityController Controls { get; set; }
+    public virtual EntityController Controls { get; set; }
 
 
     protected virtual void Awake()
     {
         //Cache
-        Controls = gameObject.GetComponent<CombatEntityController>();
+        Controls = gameObject.GetComponent<EntityController>();
         rb = GetComponent<Rigidbody>();
         orientation = transform;
     }

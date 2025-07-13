@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : CombatEntityController
+public class PlayerController : EntityController
 {
     //Rule of thumb : Keep these such that they are always set on the outside, never during gameplay
     public PlayerInputActions controls;
@@ -22,6 +22,7 @@ public class PlayerController : CombatEntityController
 
     protected override void Awake()
     {
+        base.Awake();
         ia_abilityUse = new InputAction[AMOUNT_OF_ABIL_SLOTS];
         controls = new PlayerInputActions();
 

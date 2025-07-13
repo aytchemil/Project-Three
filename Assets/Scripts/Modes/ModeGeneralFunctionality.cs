@@ -1,6 +1,6 @@
 using System.Collections;
 using UnityEngine;
-using static CombatEntityController;
+using static EntityController;
 
 public class ModeGeneralFunctionality : MonoBehaviour
 {

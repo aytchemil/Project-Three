@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class CombatLock : MonoBehaviour
 {
-    public virtual CombatEntityController Controls { get; set; }
+    public virtual EntityController Controls { get; set; }
 
     //Component References
     public bool combatEntityInLockedZone;
@@ -23,7 +23,7 @@ public class CombatLock : MonoBehaviour
     protected virtual void Awake()
     {
         //Cache
-        Controls = GetComponent<CombatEntityController>();
+        Controls = GetComponent<EntityController>();
     }
     protected virtual void Start()
     {
@@ -80,6 +80,8 @@ public class CombatLock : MonoBehaviour
     /// </summary>
     public virtual void ExitCombatCaller()
     {
+        if (!Controls.isLockedOn) return;
+
         //EXIT COMBAT:
         CombatLockExitCombatInternalMethod();
 
@@ -127,7 +129,7 @@ public class CombatLock : MonoBehaviour
             Debug.LogError("EnterCombat subscribers are null, please check subscribers to ensure they are subscribed for : " + gameObject.name);
         Controls.EnterCombat?.Invoke();
 
-        Controls.GetTarget = () => myColliderDetector.closestCombatEntity.GetComponent<CombatEntityController>();
+        Controls.GetTarget = () => myColliderDetector.closestCombatEntity.GetComponent<EntityController>();
         //print("Locked onto target: " + Controls.GetTarget?.Invoke());
     }
 
@@ -172,7 +174,7 @@ public class CombatLock : MonoBehaviour
     /// <summary>
     /// Locks on and looks at the target's location, restricted to Y and Z
     /// </summary>
-    public virtual void ColliderLockOntoTarget(CombatEntityController target)
+    public virtual void ColliderLockOntoTarget(EntityController target)
     {
         Transform transform = myColliderDetector.gameObject.transform;
 
@@ -189,7 +191,7 @@ public class CombatLock : MonoBehaviour
     /// Tells the collider detector that the target who is now dead must leave the TriggerStay bounds
     /// </summary>
     /// <param name="target"></param>
-    void TargetDeath(CombatEntityController target)
+    void TargetDeath(EntityController target)
     {
         print("Combat lock: TargetDeath Reciever method called for newly dead target: " + target.name + " Now calling OnTriggerExit for killer " + gameObject.name);
         myColliderDetector.OnTriggerExit(target.gameObject.GetComponent<Collider>());

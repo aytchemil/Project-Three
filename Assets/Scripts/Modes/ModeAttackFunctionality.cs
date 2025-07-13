@@ -38,7 +38,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
 
 
         //Setup
-        CombatEntityController.CombatEntityModeData attack = cf.Controls.Mode(MODE);
+        EntityController.RuntimeModeData attack = cf.Controls.Mode(MODE);
         Ability ability = attack.ability;
         ModeTriggerGroup trigger = cf.AbilityTriggerEnableUse(MODE);
         bool hasAf = ability.hasAdditionalFunctionality;

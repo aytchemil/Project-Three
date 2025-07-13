@@ -36,10 +36,10 @@ public class ColliderDetector : MonoBehaviour
     /// <param name="other"></param>
     private void OnTriggerEnter(Collider other)
     {
-        if(!other.GetComponent<CombatEntityController>())
-            Debug.LogError($"Object came into contact with Combat Collision Detection Zone thats tagged as 'Combat Entity', Yet it doesnt have a the CombatEntityController script: [{other.gameObject.name}]");
+        if(!other.GetComponent<EntityController>())
+            Debug.LogError($"Object came into contact with Combat Collision Detection Zone thats tagged as 'Combat Entity', Yet it doesnt have a the EntityController script: [{other.gameObject.name}]");
 
-        if (other.GetComponent<CombatEntityController>().isAlive)
+        if (other.GetComponent<EntityController>().isAlive)
         {
             if (collidedWithCombatEntities.Count <= 0)
             {
@@ -66,10 +66,10 @@ public class ColliderDetector : MonoBehaviour
 
         //CollideWithNewCombatEntity(other);
         //Sets the flag in CombatLock for if there is an entity in this zone
-        if(other.GetComponent<CombatEntityController>().isAlive)
+        if(other.GetComponent<EntityController>().isAlive)
             combatLock.combatEntityInLockedZone = true;
 
-        if(!combatLock.Controls.isLockedOn && other.GetComponent<CombatEntityController>().isAlive && !combatLock.Controls.currentlyRetargetting)
+        if(!combatLock.Controls.isLockedOn && other.GetComponent<EntityController>().isAlive && !combatLock.Controls.currentlyRetargetting)
         {
             closestCombatEntity = DetermineWhichCombatEntityIsClosest();
             //previousClosestCombatEntity = null;
@@ -77,7 +77,7 @@ public class ColliderDetector : MonoBehaviour
 
         //If the CombatLock says we need to lock onto something, and we havn't already locked onto anything (targetDesisiconMade) and the target we are checking for (other) is alive
         // - Then lock onto it
-        if (combatLock.Controls.isLockedOn && other.GetComponent<CombatEntityController>().isAlive)
+        if (combatLock.Controls.isLockedOn && other.GetComponent<EntityController>().isAlive)
         {
             //Debug.Log("I am locked on, to a target that is alive");
             //Tells combatLock that the collisonDectector (this script) is to lock onto it
@@ -131,7 +131,7 @@ public class ColliderDetector : MonoBehaviour
     void CombatFollowTargetCaller(Collider other)
     {
         //print("combat follow target()");
-        combatLock.Controls.CombatFollowTarget?.Invoke(other.gameObject.GetComponent<CombatEntityController>());
+        combatLock.Controls.CombatFollowTarget?.Invoke(other.gameObject.GetComponent<EntityController>());
     }
 
     /// <summary>
@@ -202,7 +202,7 @@ public class ColliderDetector : MonoBehaviour
         closestCombatEntity = DetermineWhichCombatEntityIsClosest();
         //Debug.Log("Making the closest combat entity: " + closestCombatEntity.gameObject.name);
 
-        if (closestCombatEntity.GetComponent<CombatEntityController>() == null)
+        if (closestCombatEntity.GetComponent<EntityController>() == null)
             Debug.LogError("Error: Combat entity controller script not given to a combat entity : " + other.name);
     }
 
@@ -265,7 +265,7 @@ public class ColliderDetector : MonoBehaviour
         closestCombatEntity = newTarget;
         previousClosestCombatEntity = newTarget;
 
-        //combatLock.Controls.CombatFollowTarget?.Invoke(newTarget.GetComponent<CombatEntityController>());
+        //combatLock.Controls.CombatFollowTarget?.Invoke(newTarget.GetComponent<EntityController>());
 
         targetDescisionMade = true;
     }

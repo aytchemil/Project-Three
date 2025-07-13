@@ -7,7 +7,7 @@ public class Look : MonoBehaviour
     public float lockOnVerticalOffset = 1f;
 
     //Cached Component References
-    protected CombatEntityController controls;
+    protected EntityController controls;
 
     [Header("Look : Adjustable Component Referehces")]
     public Transform cameraPosition;
@@ -16,7 +16,7 @@ public class Look : MonoBehaviour
     public virtual void Awake()
     {
         //Cache
-        controls = GetComponent<CombatEntityController>();
+        controls = GetComponent<EntityController>();
     }
 
     public virtual void OnEnable()
@@ -30,7 +30,7 @@ public class Look : MonoBehaviour
         controls.CombatFollowTarget -= InCombatFollowingTarget;
     }
 
-    public virtual void InCombatFollowingTarget(CombatEntityController target)
+    public virtual void InCombatFollowingTarget(EntityController target)
     {
         //print(gameObject.name + " following target : " + target.name);
 

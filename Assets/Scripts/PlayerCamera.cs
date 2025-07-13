@@ -201,7 +201,7 @@ public class PlayerCamera : Look
     /// Observer Method for the player camera to enter combat
     /// </summary>
     /// <param name="target"></param>
-    public override void InCombatFollowingTarget(CombatEntityController target)
+    public override void InCombatFollowingTarget(EntityController target)
     {
         base.InCombatFollowingTarget(target);
         UpdateNewXY();

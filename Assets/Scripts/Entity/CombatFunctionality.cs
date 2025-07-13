@@ -3,38 +3,37 @@ using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
 using System;
-using static CombatEntityController;
+using static EntityController;
 
 
-[RequireComponent(typeof(CombatEntityController))]
+[RequireComponent(typeof(EntityController))]
 public class CombatFunctionality : MonoBehaviour
 {
     int cur_Ability = 0;
     // Virtual property for 'Controls'
-    public virtual CombatEntityController Controls { get; set; }
+    public virtual EntityController Controls { get; set; }
 
     bool initializedAttackTriggers;
     bool initializedBlockingTrigger;
 
-    public ParticleSystem counteredEffect;
-
     protected virtual void Awake()
     {
-        Controls = GetComponent<CombatEntityController>();
+        Controls = GetComponent<EntityController>();
     }
 
     #region Enable/Disable
 
     protected virtual void OnEnable()
     {
-        counteredEffect.gameObject.SetActive(false);
 
         //Adding methods to Action Delegates
         //Debug.Log("Combat functionaly enable");
         //UI
 
-        for (int i = 0; i < CombatEntityController.AMOUNT_OF_ABIL_SLOTS; i++)
+        for (int i = 0; i < EntityController.AMOUNT_OF_ABIL_SLOTS; i++)
             Controls.abilitySlots[i] += EnableAbility;
+
+        Controls.TargetDeath += TargetDeath;
 
         //Attacking
         Controls.EnterCombat += InCombat;
@@ -44,6 +43,7 @@ public class CombatFunctionality : MonoBehaviour
         Controls.useAbility += UseAbility;
 
         Controls.switchAbilityMode += SwitchAbilityMode;
+
 
         //Controls.blockStart += Block;
         //Controls.blockStop += StopBlock;
@@ -64,6 +64,7 @@ public class CombatFunctionality : MonoBehaviour
         for(int i = 0; i < Controls.abilitySlots.Length-1; i++)
             Controls.abilitySlots[i] -= EnableAbility;
 
+        Controls.TargetDeath -= TargetDeath;
 
         //Attacking
         Controls.EnterCombat -= InCombat;
@@ -100,7 +101,7 @@ public class CombatFunctionality : MonoBehaviour
         //Auto Set the current ability (in this case right is 0)
         SetDefaultAbilityForAllModes();
 
-        foreach (CombatEntityModeData mode in Controls.modes)
+        foreach (RuntimeModeData mode in Controls.modes)
             if (!mode.data.initializedTriggers)
             {
                 //print($"[{gameObject.name}] Initializing mode [{mode.name}]...");
@@ -140,14 +141,14 @@ public class CombatFunctionality : MonoBehaviour
     /// Makes the attack triggers lock on to the target, restricted to X and Z (no Y)
     /// </summary>
     /// <param name="target"></param>
-    public virtual void CombatFunctionalityElementsLockOntoTarget(CombatEntityController target)
+    public virtual void CombatFunctionalityElementsLockOntoTarget(EntityController target)
     {
         // Debug.Log("locking onto target");
         CombatFunctionalityElementLockOntoTarget(target, Controls.Mode(Controls.mode).parent);
         CombatFunctionalityElementLockOntoTarget(target, Controls.Mode(Controls.mode).parent);
     }
 
-    public void CombatFunctionalityElementLockOntoTarget(CombatEntityController target, Transform elementTransform)
+    public void CombatFunctionalityElementLockOntoTarget(EntityController target, Transform elementTransform)
     {
         if (target != null)
         {
@@ -189,12 +190,12 @@ public class CombatFunctionality : MonoBehaviour
     /// <summary>
     /// Disables all the attack triggers
     /// </summary>
-    public void DisableTriggers(bool local, CombatEntityModeData mode)
+    public void DisableTriggers(bool local, RuntimeModeData mode)
     {
         //Debug.Log(gameObject.name + " | Disabling Attack All Triggers");
         if (!Controls.Mode(mode.data.modeName).triggers.Any() || Controls.Mode(mode.data.modeName).parent.childCount == 0)
         {
-            print("triggers not setup or already disabled, not disabling something that isnt there");
+            //print($"{gameObject.name} triggers not setup or already disabled, not disabling something that isnt there");
             return;
         }
 
@@ -275,19 +276,19 @@ public class CombatFunctionality : MonoBehaviour
         }
 
         if (ability is AbilityAttack attackAbility && ability is not AbilityCounter)
-            trigger = Instantiate(attackAbility.prefab, parent, false).GetComponent<GeneralAttackTriggerGroup>();
+            trigger = Instantiate(attackAbility.ColliderPrefab, parent, false).GetComponent<GeneralAttackTriggerGroup>();
 
         else if (ability is AbilityMulti multiAbility && ability is not AbilityCounter)
-            trigger = Instantiate(multiAbility.prefab, parent, false).GetComponent<MultiAttackTriggerGroup>();
+            trigger = Instantiate(multiAbility.ColliderPrefab, parent, false).GetComponent<MultiAttackTriggerGroup>();
 
         else if (ability is AbilityCounter counterAbility)
-            trigger = Instantiate(counterAbility.prefab, parent, false).GetComponent<CounterTriggerGroup>();
+            trigger = Instantiate(counterAbility.ColliderPrefab, parent, false).GetComponent<CounterTriggerGroup>();
 
         else if (ability is AbilityBlock blockAbility)
-            trigger = Instantiate(blockAbility.prefab, parent, false).GetComponent<BlockTriggerCollider>();
+            trigger = Instantiate(blockAbility.ColliderPrefab, parent, false).GetComponent<BlockTriggerCollider>();
 
         else if (ability is AbilityCombo comboAbility)
-            trigger = Instantiate(comboAbility.prefab, parent, false).GetComponent<CombotTriggerGroup>();
+            trigger = Instantiate(comboAbility.ColliderPrefab, parent, false).GetComponent<CombotTriggerGroup>();
 
         else
             Debug.LogError($"Unsupported Ability type for {direction}: {ability}");
@@ -319,7 +320,7 @@ public class CombatFunctionality : MonoBehaviour
         //print("enabling ability in dir: " + dir);
 
         //Reset the current ability for all the modes
-        //foreach (CombatEntityModeData mode in Controls.modes)
+        //foreach (RuntimeModeData mode in Controls.modes)
         //    if (mode.name != "Combo")
          //       mode.ability = null;
 
@@ -348,7 +349,7 @@ public class CombatFunctionality : MonoBehaviour
 
     void SetDefaultAbilityForAllModes()
     {
-        foreach (CombatEntityModeData mode in Controls.modes)
+        foreach (RuntimeModeData mode in Controls.modes)
         {
             //print($"[{gameObject.name}] [Combat Functionality] Mode [{mode.name}] Ability [{Controls.AbilitySet(mode.name).right}] is new default ability");
             mode.ability = Controls.AbilitySet(mode.name).right;
@@ -393,7 +394,7 @@ public class CombatFunctionality : MonoBehaviour
     public ModeTriggerGroup AbilityTriggerEnableUse(string modeName)
     {
         ModeTriggerGroup usingThisTriggerGroup = null;
-        CombatEntityModeData mode = Controls.Mode(modeName);
+        RuntimeModeData mode = Controls.Mode(modeName);
 
         //Set all triggers of this mode to false
         for (int i = 0; i < mode.triggers.Length; i++)
@@ -415,7 +416,7 @@ public class CombatFunctionality : MonoBehaviour
     {
         //print("Using Wheel Trigger... Enabling it");
         ModeTriggerGroup usingThisTriggerGroup = null;
-        CombatEntityModeData m = Controls.Mode(modeName);
+        RuntimeModeData m = Controls.Mode(modeName);
         int triggerIndx = GetDirIndex(Controls.lookDir);
 
         for (int i = 0; i < m.triggers.Length - 1; i++)
@@ -475,24 +476,15 @@ public class CombatFunctionality : MonoBehaviour
     /// Caller for the Target's death Action Delegate on the controls
     /// </summary>
     /// <param name="target"></param>
-    public void TargetDeathCaller(CombatEntityController target)
+    public void TargetDeath(EntityController target)
     {
-        Debug.Log("Target Death Caller called for by : " + gameObject.name);
-        if (Controls.TargetDeath == null)
-            Debug.LogError("Target death caller null, please check subscribers to ensure theyre are some for : " + gameObject.name);
-        else
-        {
-            //Debug.Log(gameObject.name + "'s target (" + target.name + ") has died, now calling TargetDeathCaller functionality for " + gameObject.name);
-        }
-
         DisableAllAttackTriggers();
-        Controls.TargetDeath?.Invoke(target);
     }
 
     public void DisableAllAttackTriggers()
     {
-        print("Disabling all attack triggers");
-        foreach (CombatEntityModeData mode in Controls.modes)
+        //print("Disabling all attack triggers");
+        foreach (RuntimeModeData mode in Controls.modes)
             DisableTriggers(false, Controls.Mode(mode.name));
 
     }
@@ -504,7 +496,7 @@ public class CombatFunctionality : MonoBehaviour
 
     public void Flinch(float flinchTime)
     {
-        print(this.gameObject.name + " has flinched");
+        //print(this.gameObject.name + " has flinched");
         DisableAllAttackTriggers();
     }
 
@@ -519,17 +511,9 @@ public class CombatFunctionality : MonoBehaviour
 
         DisableTriggers(false, Controls.Mode(Controls.mode));
         Controls.Countered?.Invoke();
-        StartCoroutine(CounteredEffect(effectPos));
     }
 
 
-    IEnumerator CounteredEffect(Vector3 effectPos)
-    {
-        counteredEffect.gameObject.transform.position = effectPos;
-        counteredEffect.gameObject.SetActive(true);
-        yield return new WaitForSeconds(1);
-        counteredEffect.gameObject.SetActive(false);
-    }
 
     #endregion
 

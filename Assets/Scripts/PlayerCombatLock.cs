@@ -8,7 +8,7 @@ public class PlayerCombatLock : CombatLock
 {
     PlayerController playerController;
 
-    public override CombatEntityController Controls 
+    public override EntityController Controls 
     {
         get => playerController;
         set => playerController = value as PlayerController;
@@ -16,7 +16,7 @@ public class PlayerCombatLock : CombatLock
 
     protected override void Awake()
     {
-        //Dont use base, because we want the player controller not the CombatEntityController
+        //Dont use base, because we want the player controller not the EntityController
 
         playerController = GetComponent<PlayerController>();
     }

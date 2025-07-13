@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using static Ability;
-using static CombatEntityController;
+using static EntityController;
 
 public class ModeComboFunctionality : ModeGeneralFunctionality
 {
@@ -41,7 +41,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
             return;
 
         //Setup
-        CombatEntityModeData combo = cf.Controls.Mode(MODE);
+        RuntimeModeData combo = cf.Controls.Mode(MODE);
         AbilityCombo ability = (AbilityCombo)combo.ability;
         ModeTriggerGroup trigger = cf.WheelTriggerEnableUse(MODE);
 
@@ -102,7 +102,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
         string dir = cf.Controls.lookDir;
         //print($"[MODE] [COMBO] : Direction Chosen ({dir})");
 
-        CombatEntityModeData combo = cf.Controls.Mode(MODE);
+        RuntimeModeData combo = cf.Controls.Mode(MODE);
         int trigerIndx = cf.GetDirIndex(dir);
 
         //Errors

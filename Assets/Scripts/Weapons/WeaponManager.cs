@@ -1,20 +1,20 @@
 using System.Collections.Generic;
 using UnityEngine;
-using static CombatEntityController;
+using static EntityController;
 
 public class WeaponManager : MonoBehaviour
 {
-    CombatEntityModeData comboMode;
+    RuntimeModeData comboMode;
 
     GameObject characterAnimationParent;
     GameObject weaponParent;
     GameObject currentWeaponObject;
 
-    public virtual CombatEntityController Controls { get; set; }
+    public virtual EntityController Controls { get; set; }
 
     protected virtual void Awake()
     {
-        Controls = GetComponent<CombatEntityController>();
+        Controls = GetComponent<EntityController>();
     }
 
     private void OnEnable()
@@ -29,8 +29,8 @@ public class WeaponManager : MonoBehaviour
 
     private void Init()
     {
-        if (gameObject.GetComponent<CombatEntityController>().Mode("Combo") != null)
-            comboMode = gameObject.GetComponent<CombatEntityController>().Mode("Combo");
+        if (gameObject.GetComponent<EntityController>().Mode("Combo") != null)
+            comboMode = gameObject.GetComponent<EntityController>().Mode("Combo");
 
         characterAnimationParent = Controls.animController.gameObject;
 

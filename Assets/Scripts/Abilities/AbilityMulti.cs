@@ -5,7 +5,7 @@ using UnityEngine;
 public class AbilityMulti : Ability
 {
     public GameObject MultiAbilityGroupingPrefab;
-    public override GameObject prefab
+    public override GameObject ColliderPrefab
     {
         get => MultiAbilityGroupingPrefab;
         set => MultiAbilityGroupingPrefab = value;

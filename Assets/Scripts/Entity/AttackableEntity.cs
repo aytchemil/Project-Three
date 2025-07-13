@@ -1,11 +1,13 @@
 using Sirenix.OdinInspector;
+using System;
 using System.Collections;
 using UnityEngine;
+using ImprovedTimers;
 
 [RequireComponent(typeof(Animator))]
 public class AttackbleEntity : MonoBehaviour
 {
-    public CombatEntityController controls;
+    public EntityController controls;
 
     [SerializeField] private float _health;
     public float health
@@ -21,14 +23,13 @@ public class AttackbleEntity : MonoBehaviour
     private void Awake()
     {
         health = maxHealth;
-        controls = GetComponent<CombatEntityController>();
+        controls = GetComponent<EntityController>();
         if(animator == null)
             animator = GetComponent<Animator>();
     }
 
     public float maxHealth;
 
-    public GameObject attackedEffect;
     public Animator animator;
     public bool invincibility;
     public float invincibiliyTime;
@@ -36,94 +37,54 @@ public class AttackbleEntity : MonoBehaviour
     public float corpseDeathTime;
 
 
-    public virtual float Attacked(AbilityAttack atkedWithAbility, string dir)
+    public void Attacked(float amount)
     {
-        if (WasBlocked(dir))
+        invincibility = true;
+        this.Wait(invincibiliyTime, () => StopAttacked());
+        health -= amount;
+        CheckDeath();
+
+
+
+        void CheckDeath()
         {
-            print($"[AttackableEntity] [{gameObject.name}] blocked an attack");
-            return _health;
-        }
+            if (health > 0) return;
 
-
-        float newHealth;
-        if (!invincibility)
-        {
-            invincibility = true;
-
-            print(gameObject.name + " - I was attacked by : " + atkedWithAbility);
-            attackedEffect.GetComponent<ParticleSystem>().Play();
-            Invoke("StopAttacked", invincibiliyTime);
-            FlinchCaller(atkedWithAbility.flinchAmount);
-
-            //print(atkedWithAbility);
-           // print(atkedWithAbility.damage);
-
-            newHealth = TakeDamage(atkedWithAbility.damage);
-        }
-        else
-        {
-            //print("Attacked while invincible, or already taken damage");
-            newHealth = health;
-        }
-
-        if (health < 0)
-        {
             animator.SetBool("Die", true);
             controls.isAlive = false;
-            Invoke("Die", deathTime);
-            //For right now invoke death at a delay, later do a death animation, and have the animation event on finish call death
+            Invoke(nameof(Die), deathTime);
         }
 
-        return newHealth;
-
-    }
-
-    void StopAttacked()
-    {
-        invincibility = false;
-    }
-
-    float TakeDamage(float dmg)
-    {
-        health -= dmg;
-
-        return health;
-    }
-
-    [Button]
-    void TestTakeDamage(float dmg)
-    {
-        TakeDamage(dmg);
-        if (health <= 0)
+        void Die()
         {
-            animator.SetBool("Die", true);
-            controls.isAlive = false;
-            controls.Death?.Invoke();
-            Invoke("Die", deathTime);
-            //For right now invoke death at a delay, later do a death animation, and have the animation event on finish call death
+            Destroy(gameObject);
+        }
+
+        void StopAttacked()
+        {
+            invincibility = false;
+        }
+
+
+    }
+
+    public void Flinch(float duration)
+    {
+        FlinchCaller(duration);
+
+        void FlinchCaller(float flinchTime)
+        {
+            controls.Flinch?.Invoke(flinchTime);
+            controls.isFlinching = true;
+            this.Wait(flinchTime, () => StopFlinching());
+        }
+
+        void StopFlinching()
+        {
+            controls.isFlinching = false;
         }
     }
 
-    void Die()
-    {
-        Destroy(gameObject);
-    }
-
-    #region Flinching
-
-    void FlinchCaller(float flinchTime)
-    {
-        controls.Flinch?.Invoke(flinchTime);
-        controls.isFlinching = true;
-        Invoke(nameof(StopFlinching), flinchTime);
-    }
-    void StopFlinching()
-    {
-        //print(gameObject.name +  " | Stopped flinching");
-        controls.isFlinching = false;
-    }
-
-    #endregion
 
     public void Heal(float amount)
     {
@@ -132,23 +93,10 @@ public class AttackbleEntity : MonoBehaviour
             health = maxHealth;
     }
 
-    bool WasBlocked(string dir)
+    private void OnDestroy()
     {
-        bool ret = false;
-        if (!controls.Mode("Block").isUsing) return ret;
-
-        if (dir == "right" && controls.lookDir == "right")
-            ret = true;
-        else if (dir == "left" && controls.lookDir == "left")
-            ret = true;
-        else if (dir == "up" && controls.lookDir == "up")
-            ret = true;
-        else if (dir == "right" && controls.lookDir == "right")
-            ret = true;
-
-        return ret;
-
-
+        
     }
+
 
 }

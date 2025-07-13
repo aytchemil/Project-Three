@@ -16,12 +16,12 @@ public class AF
 public class CombatAdditionalFunctionalities : MonoBehaviour
 {
     CombatFunctionality cf;
-    CombatEntityController Controls;
+    EntityController Controls;
 
     private void Awake()
     {
         cf = GetComponent<CombatFunctionality>();
-        Controls = GetComponent<CombatEntityController>();
+        Controls = GetComponent<EntityController>();
     }
     public enum Function
     {

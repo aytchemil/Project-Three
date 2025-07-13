@@ -7,10 +7,9 @@ using Random = UnityEngine.Random;
 
 public class AttackingAI : MonoBehaviour
 {
-    CombatEntityController Controls;
+    EntityController Controls;
     CombatLock combatLock;
     CombatFunctionality combatFunctionality;
-    EntityLook entityLook;
 
     string[] lookDirs = { "right", "left", "up", "down" };
 
@@ -31,20 +30,20 @@ public class AttackingAI : MonoBehaviour
 
     public class AIInputs
     {
-        public static Action<CombatEntityController> input_UseCombo = (Controls) =>
+        public static Action<EntityController> input_UseCombo = (Controls) =>
         {
             print($"[AttackingAI] [{Controls.gameObject.name}] input: Use Combo");
             Controls.usedCombo = true;
             Controls.useAbility?.Invoke("Combo");
         };
 
-        public static Action<CombatEntityController , string> input_changeLookDir = (Controls, s) =>
+        public static Action<EntityController , string> input_changeLookDir = (Controls, s) =>
         {
             print($"[AttackingAI] [{Controls.gameObject.name}] input: Change look direction");
             Controls.lookDir = s;
         };
 
-        public static Action<CombatEntityController> input_UseBlock = (Controls) =>
+        public static Action<EntityController> input_UseBlock = (Controls) =>
         {
             print($"[AttackingAI] [{Controls.gameObject.name}] input: Block");
             Controls.blockStart?.Invoke();
@@ -58,10 +57,9 @@ public class AttackingAI : MonoBehaviour
 
     private void Awake()
     {
-        Controls = GetComponent<CombatEntityController>();
+        Controls = GetComponent<EntityController>();
         combatLock = GetComponent<CombatLock>();
         combatFunctionality = GetComponent<CombatFunctionality>();
-        entityLook = GetComponent<EntityLook>();
     }
 
     protected void OnEnable()
@@ -109,7 +107,7 @@ public class AttackingAI : MonoBehaviour
         {
             if (!Controls.targetIsDodging)
             {
-                Controls.CombatFollowTarget?.Invoke(combatLock.myColliderDetector.closestCombatEntity.GetComponent<CombatEntityController>());
+                Controls.CombatFollowTarget?.Invoke(combatLock.myColliderDetector.closestCombatEntity.GetComponent<EntityController>());
             }
             else
             {
@@ -117,7 +115,7 @@ public class AttackingAI : MonoBehaviour
             }
 
             //Analyzing
-            CombatEntityController target = Controls.GetTarget?.Invoke();
+            EntityController target = Controls.GetTarget?.Invoke();
 
             //Dashing
             Controls.targetIsDodging = target.dashing;

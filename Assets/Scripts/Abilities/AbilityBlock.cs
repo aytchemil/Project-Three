@@ -21,7 +21,7 @@ public class AbilityBlock : Ability, IAbilityAnims, IAbilityDirectional
 
 
     public GameObject blockTriggerCollider;
-    public override GameObject prefab
+    public override GameObject ColliderPrefab
     {
         get => blockTriggerCollider;
         set => blockTriggerCollider = value;

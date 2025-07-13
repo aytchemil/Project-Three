@@ -1,3 +1,4 @@
+using Sirenix.OdinInspector;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
@@ -10,16 +11,17 @@ public class AbilityAttack : Ability, IAbilityAnims, IAbilityDirectional
     public int Enum { get => (int)Attack; }
     public IAbilityDirectional.Direction Dir { get => dir; }
 
-    [SerializeField] private IAbilityDirectional.Direction dir;
+    [BoxGroup("Attack Ability")] [SerializeField] private IAbilityDirectional.Direction dir;
+    [BoxGroup("Attack Ability")] public float damage;
+    [BoxGroup("Attack Ability")] public float flinchAmount = 1f;
+    [BoxGroup("Attack Ability")] public AM.AtkAnims.Anims Attack;
+    [BoxGroup("Attack Ability")] [SerializeField] private GameObject triggerCollider;
+    [BoxGroup("Attack Ability")] [SerializeField] private GameObject attackedEffect;
 
-    public float damage;
-    public float flinchAmount = 1f;
-    public AM.AtkAnims.Anims Attack;
-    public GameObject triggerCollider;
-
-    public override GameObject prefab
+    public override GameObject ColliderPrefab 
     {
         get => triggerCollider;
         set => triggerCollider = value;
     }
+
 }

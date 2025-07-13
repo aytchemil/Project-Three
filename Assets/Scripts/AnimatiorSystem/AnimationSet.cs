@@ -6,7 +6,7 @@ using System.Linq;
 using System.Reflection;
 
 using UnityEngine;
-using static CombatEntityController;
+using static EntityController;
 
 public class AnimationSet
 {
@@ -119,7 +119,7 @@ public static class AM
     {
         public bool[] triggerProg;
         public Enum[] Enums;
-        CombatEntityModeData mode;
+        RuntimeModeData mode;
         Type type;
         Type EnumType;
         int layer;
@@ -128,7 +128,7 @@ public static class AM
         float crossfade;
         float[] initialUseDelays;
 
-        public FollowUpPackage(ModeTriggerGroup trigger, CombatEntityModeData _mode, Enum[] _Enums, Type type, Type _EnumType, int layer, bool locklayer, bool bypassLock, float crossfade, float[] _initialUseDelays)
+        public FollowUpPackage(ModeTriggerGroup trigger, RuntimeModeData _mode, Enum[] _Enums, Type type, Type _EnumType, int layer, bool locklayer, bool bypassLock, float crossfade, float[] _initialUseDelays)
         {
             triggerProg = trigger.GetComponent<MAT_FollowupGroup>().triggerProgress;
             mode = _mode ?? throw new ArgumentNullException(nameof(_mode));

@@ -66,7 +66,7 @@ public class CombatUI : MonoBehaviour
 
         Controls.switchAbilityMode += SwitchAbilityMode;
         
-        for (int i = 0; i < CombatEntityController.AMOUNT_OF_ABIL_SLOTS; i++)
+        for (int i = 0; i < EntityController.AMOUNT_OF_ABIL_SLOTS; i++)
         {
             Controls.abilitySlots[i] += AbilityChoose;
             Controls.abilitySlots[i] += UpdateCurrentAbilityText;
@@ -81,7 +81,7 @@ public class CombatUI : MonoBehaviour
 
         Controls.switchAbilityMode -= SwitchAbilityMode;
 
-        for (int i = 0; i < CombatEntityController.AMOUNT_OF_ABIL_SLOTS; i++)
+        for (int i = 0; i < EntityController.AMOUNT_OF_ABIL_SLOTS; i++)
         {
             Controls.abilitySlots[i] -= AbilityChoose;
             Controls.abilitySlots[i] -= UpdateCurrentAbilityText;

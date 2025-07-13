@@ -3,14 +3,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using static CombatEntityController;
+using static EntityController;
 
 [RequireComponent(typeof(PlayerController))]
 public class PlayerMovement : Movement
 {
     PlayerController playerControls;
 
-    public override CombatEntityController Controls 
+    public override EntityController Controls 
     { 
         get => playerControls; 
         set => playerControls = value as PlayerController;

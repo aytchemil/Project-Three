@@ -1,6 +1,6 @@
 using System.Collections;
 using UnityEngine;
-using static CombatEntityController;
+using static EntityController;
 
 public class ModeBlockFunctionality : ModeGeneralFunctionality
 {
@@ -54,7 +54,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
     {
         //print($"[{gameObject.name}] Blocking {dir}");
         //Setup
-        CombatEntityModeData d = cf.Controls.Mode("Block");
+        RuntimeModeData d = cf.Controls.Mode("Block");
 
 
         //Mutations
@@ -82,7 +82,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
     void Block()
     {
         //Setup
-        CombatEntityModeData block = cf.Controls.Mode("Block");
+        RuntimeModeData block = cf.Controls.Mode("Block");
         // + SETS all triggers to false
         for (int i = 0; i < block.triggers.Length; i++)
             block.triggers[i].gameObject.SetActive(false);

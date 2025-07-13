@@ -14,21 +14,41 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilityName: Reverse Slash
   icon: {fileID: 2800000, guid: c61f6c6efd54b134a9b3964c2f580679, type: 3}
+  effects:
+  - rid: 3359079801414746200
+  - rid: 3359079801414746208
+  - rid: 3359079801414746251
   initialUseDelay:
   - 0.3
-  <successDelay>k__BackingField: 0.3
+  successDelay:
+  - 0
   unsuccessDelay:
   - 0.3
-  dir: 2
   modeBase: 0
   archetype: 0
   hasAdditionalFunctionality: 0
   afTypes: []
   afs: []
+  hasInitializedAfs: 0
+  dir: 2
   damage: 1
   flinchAmount: 1
   Attack: 8
   triggerCollider: {fileID: 8475917669229452261, guid: d1ee7cca869ec7a4fa31c7f8d2d2f7b0, type: 3}
+  attackedEffect: {fileID: 5238538877814813142, guid: 47096eff328e11a418ace7db2d72aa97, type: 3}
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 3359079801414746200
+      type: {class: DamageEffect, ns: , asm: Assembly-CSharp}
+      data:
+        amount: 1
+    - rid: 3359079801414746208
+      type: {class: FlinchEffect, ns: , asm: Assembly-CSharp}
+      data:
+        duration: 1
+    - rid: 3359079801414746251
+      type: {class: HitVFX, ns: , asm: Assembly-CSharp}
+      data:
+        hitVFXPrefab: {fileID: 1758473627833946668, guid: 9b21333b068a5084ba09535839bee3c8, type: 3}
+        duration: 1

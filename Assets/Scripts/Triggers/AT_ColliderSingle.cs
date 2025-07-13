@@ -80,48 +80,19 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
     /// Where the actual attack takes place
     /// </summary>
     /// <param name="other"></param>
-    public virtual void OnTriggerStay(Collider other)
+    public virtual void OnTriggerEnter(Collider other)
     {
         if (other.GetComponent<ModeTriggerGroup>()) return;
-        if (other.GetComponent<CombatEntityController>() == combatFunctionality.Controls) return;
+        if (other.GetComponent<EntityController>() == combatFunctionality.Controls) return;
 
-        float newEnemyHealth;
         if (attacking && initialUseDelayOver)
         {
+            print($"AT Collider hit {other.gameObject.name}");
             HitAttack();
-            #region Death
-
-            //print("attacking with ability: " + myAttackAbility);
-
-            ///If the Entity being attacked's health reaches less than 0, tell OUR Controller to call the target death delegate action
-            newEnemyHealth = other.GetComponent<AttackbleEntity>().Attacked(myAttackAbility, combatFunctionality.Controls.lookDir);
-
-
-            if (newEnemyHealth < 0)
-            {
-                //Debug.Log("Enemy health 0, killed enemy, now calling TargetDeath to signal an enemy death");
-                //Debug.Log("Enemy that died was: " + other.gameObject.name + " by " + combatFunctionality.gameObject.name);
-                combatFunctionality.TargetDeathCaller(other.GetComponent<CombatEntityController>());
-                if (gameObject.GetComponent<CombatLock>() != null)
-                {
-                    gameObject.GetComponent<CombatLock>().ExitCombatCaller();
-                }
-
-
-                //Enemy exits combat when dieing
-                if (other.gameObject.GetComponent<CombatLock>() != null)
-                {
-                    other.gameObject.GetComponent<CombatLock>().ExitCombatCaller();
-                    // print("enemy dead, delocking caller called");
-                }
-            }
-
-            #endregion
-
-
-            //Debug.Log("Collider attacking");
+            AbilityExecutor.ExecuteAbility(ability, combatFunctionality.gameObject, other.gameObject);
         }
     }
+
 
 
     #region Overrides

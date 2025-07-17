@@ -16,9 +16,7 @@ public class ModeManager : MonoBehaviour
         Defend = 5,
     }
 
-    public ModeFunctionalityReferenceSO[] ModeFunctionalities;
-
-    public List<ModeTemplate> modes = new List<ModeTemplate>();
+    public List<ModeData> modes = new List<ModeData>();
     private void Awake()
     {
         //print("initializing mode manager");
@@ -27,10 +25,10 @@ public class ModeManager : MonoBehaviour
 
     public Type ReturnModeFunctionality(string mode)
     {
-        for (int i = 0; i < ModeFunctionalities.Length; i++)
+        for (int i = 0; i < modes.Count; i++)
         {
-            if (ModeFunctionalities[i].ModeName == mode)
-                return ModeFunctionalities[i].GetModeType();
+            if (modes[i].name == mode)
+                return modes[i].GetModeType();
         }
 
         Debug.LogError($"[ModeManager] No mode found with the name of [{mode}], please check input");

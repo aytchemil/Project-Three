@@ -9,10 +9,17 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9bd46f1d1bbce034da43f526ede546df, type: 3}
-  m_Name: Attack
+  m_Script: {fileID: 11500000, guid: 34d466d8055e9a546ae44018215b3481, type: 3}
+  m_Name: Mode Data Template - Attacking Stance
   m_EditorClassIdentifier: 
-  modeName: Attack
+  name: Attack
+  abilitySet: {fileID: 0}
+  modeFunctionality: {fileID: 0}
+  isStance: 1
+  abilityIndividualSelection: 0
+  initializedTriggers: 0
+  UIIndicator: {fileID: 2800000, guid: 7bd93364406dab54f843e929e2301476, type: 3}
+  modeTextDesc: Attacking
   modeTypeName: ModeAttackFunctionality, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
     PublicKeyToken=null
   modeScript: {fileID: 11500000, guid: d9143121c89dce04aaf8499043ca90e6, type: 3}

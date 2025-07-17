@@ -40,14 +40,11 @@ public class EntityController : MonoBehaviour
     public string lookDir
     {
         get => _lookDir;
-
         set
         {
             if(_lookDir != value)
                 StartCoroutine(Wait(value));
         }
-
-
     }
 
     IEnumerator Wait(string value)
@@ -85,42 +82,6 @@ public class EntityController : MonoBehaviour
     public Action Init;
     public Action<ModeTriggerGroup> UseCombatAdditionalFunctionality;
     public Action Death;
-
-
-    [System.Serializable]
-    public class RuntimeModeData
-    {
-        public static int AMOUNT_OF_TRIGGERS = 4;
-
-        public Ability ability;
-        public ModeTriggerGroup trigger;
-        public string name;
-        public bool isUsing;
-        public ModeTemplate data;
-        public Transform parent;
-        public GameObject[] triggers = new GameObject[AMOUNT_OF_TRIGGERS];
-
-        void AssignMyData(ModeTemplate data)
-        {
-            this.data = data;
-        }
-
-        public RuntimeModeData(string _mode)
-        {
-            ability = null;
-            name = _mode.Replace("Mode: ", "");
-        }
-
-        public void SetAbility(Ability _ability)
-        {
-            ability = _ability;
-        }
-
-        public string GetMode()
-        {
-            return name;
-        }
-    }
 
 
 
@@ -214,47 +175,20 @@ public class EntityController : MonoBehaviour
 
         int i = 0;
 
-        //print(ModeManager.instance);
-        //print(ModeManager.instance.modes);
-
-        //Take in all the modes
-        foreach (ModeTemplate info in ModeManager.instance.modes)
+        foreach (ModeData templateData in ModeManager.instance.modes)
         {
-            //print("Copying template " + template.modeName + " on iteration " + i);
-
-            //Create new SO Template with inputted data from the ModeManager (External)
-            ModeTemplate template = ScriptableObject.CreateInstance<ModeTemplate>();
-            template.modeName = info.modeName;
-            template.UIIndicator = info.UIIndicator;
-            template.modeTextDesc = info.modeTextDesc;
-            template.isStance = info.isStance;
-
-            //Create new ModeData, insert template data into new mode
-            RuntimeModeData newMode = new RuntimeModeData(template.modeName);
-            newMode.data = template;
-
-            //Create a GameObject under the mode parent to organize all modes
-            newMode.parent = Instantiate(new GameObject(), modeParent, false).transform;
-            newMode.parent.gameObject.name = newMode.name;
-
-
-            //ModeFunctionality System
-            ModeGeneralFunctionality modeFunctionality = gameObject.AddComponent(ModeManager.instance.ReturnModeFunctionality(template.modeName)) as ModeGeneralFunctionality;
-            newMode.data.modeFunctionality = modeFunctionality;
-
-            //print($"newmode modeName is {newMode.data.name}");
+            RuntimeModeData newMode = new RuntimeModeBuilder()
+                .WithData(templateData)
+                .WithModeName(templateData.name)
+                .WithIndividualParent(modeParent)
+                .WithIndividualParentNamed(templateData.name)
+                .WithComponentAddedToEntityController(gameObject)
+                .Build();
 
             modes.Add(newMode);
 
-
             i++;
         }
-
-        //Current Ability Being Used For Each Mode System
-        //currentModeData = new RuntimeModeData[modes.Count];
-        //for (int j = 0; j < modes.Count; j++)
-        //    currentModeData[j] = new RuntimeModeData(modes[j].name, false);
-
 
 
         AssignAbilitySetsToModeData();
@@ -265,22 +199,96 @@ public class EntityController : MonoBehaviour
     }
 
 
+    class RuntimeModeBuilder
+    {
+        ModeData data;
+        Transform individualParent;
+
+        public RuntimeModeBuilder WithData(ModeData data)
+        {
+            ModeData newData = ScriptableObject.CreateInstance<ModeData>();
+            newData = data;
+            this.data = newData;
+            return this;
+        }
+
+        public RuntimeModeBuilder WithModeName(string _name)
+        {
+            data.name = _name; return this;
+        }
+
+        public RuntimeModeBuilder WithIndividualParent(Transform modeParent)
+        {
+            this.individualParent = Instantiate(new GameObject(), modeParent, false).transform;
+            return this;
+        }
+
+        public RuntimeModeBuilder WithIndividualParentNamed(string _name)
+        {
+            individualParent.gameObject.name = _name;
+            return this;
+        }
+
+        public RuntimeModeBuilder WithComponentAddedToEntityController(GameObject entity)
+        {
+            ModeGeneralFunctionality modeFunctionality = entity.AddComponent(ModeManager.instance.ReturnModeFunctionality(data.name)) as ModeGeneralFunctionality;
+            data.modeFunctionality = modeFunctionality;
+            return this;
+        }
+
+        public RuntimeModeData Build()
+        {
+            RuntimeModeData newData = new RuntimeModeData(data.name);
+            newData.data = data;
+            newData.individualParent = individualParent;
+            return newData;
+        }
+    }
+
+    [System.Serializable]
+    public class RuntimeModeData
+    {
+        public static int AMOUNT_OF_TRIGGERS = 4;
+
+        public string name;
+        public Ability ability;
+        public ModeTriggerGroup trigger;
+        public bool isUsing;
+        public ModeData data;
+        public Transform individualParent;
+        public GameObject[] triggers = new GameObject[AMOUNT_OF_TRIGGERS];
+
+        public RuntimeModeData(string _mode)
+        {
+            ability = null;
+            name = _mode.Replace("Mode: ", "");
+        }
+
+        public void SetAbility(Ability _ability)
+        {
+            ability = _ability;
+        }
+    }
+
+
+
+
     void AssignAbilitySetsToModeData()
     {
         foreach (RuntimeModeData myMode in modes)
-            myMode.data.abilitySet = AbilitySet(myMode.data.modeName);
+            myMode.data.abilitySet = AbilitySet(myMode.data.name);
 
     }
 
     void InstantiateModeParents()
     {
         foreach (RuntimeModeData mode in modes)
-            if (mode.parent == null)
+            if (mode.individualParent == null)
             {
                // print($"Assigning parent for {mode.data.modeName} ");
-                mode.parent = Instantiate(new GameObject(), transform, false).transform;
-                mode.parent.rotation = Quaternion.identity;
-                mode.parent.name = mode.data.modeName + " Triggers Parent";
+                mode.individualParent = Instantiate(new GameObject(), transform, false).transform;
+                mode.individualParent.rotation = Quaternion.identity;
+                mode.individualParent.name = mode.data.name + " Triggers Parent";
             }
     }
 

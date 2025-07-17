@@ -10,12 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 34d466d8055e9a546ae44018215b3481, type: 3}
-  m_Name: Mode Template - Comboing
+  m_Name: Mode Data Template - Defensive Stance
   m_EditorClassIdentifier: 
-  modeName: Combo
+  name: Defend
   abilitySet: {fileID: 0}
-  currentAbility: {fileID: 0}
-  solo: 1
+  modeFunctionality: {fileID: 0}
+  isStance: 1
+  abilityIndividualSelection: 0
   initializedTriggers: 0
-  UIIndicator: {fileID: 2800000, guid: fa250db11f2af574592ed7fe68179ab2, type: 3}
-  modeTextDesc: Combo
+  UIIndicator: {fileID: 2800000, guid: e9a6572f89c61b643accd09e2c484913, type: 3}
+  modeTextDesc: Defensive
+  modeTypeName: 
+  modeScript: {fileID: 0}

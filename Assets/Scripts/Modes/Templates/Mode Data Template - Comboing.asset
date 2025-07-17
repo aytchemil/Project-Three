@@ -10,13 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 34d466d8055e9a546ae44018215b3481, type: 3}
-  m_Name: Mode Template - Evasive Stance
+  m_Name: Mode Data Template - Comboing
   m_EditorClassIdentifier: 
-  modeName: Evasive
+  name: Combo
   abilitySet: {fileID: 0}
   modeFunctionality: {fileID: 0}
-  isStance: 1
+  isStance: 0
   abilityIndividualSelection: 0
   initializedTriggers: 0
-  UIIndicator: {fileID: 2800000, guid: cfc38c2c7a794874c8a60f6c1dd5603e, type: 3}
-  modeTextDesc: Evasive
+  UIIndicator: {fileID: 2800000, guid: fa250db11f2af574592ed7fe68179ab2, type: 3}
+  modeTextDesc: Combo
+  modeTypeName: ModeComboFunctionality, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
+    PublicKeyToken=null
+  modeScript: {fileID: 11500000, guid: 567fcf235343b104c87a3fb940303d41, type: 3}

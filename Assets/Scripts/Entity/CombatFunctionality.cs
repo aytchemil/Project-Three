@@ -105,8 +105,8 @@ public class CombatFunctionality : MonoBehaviour
             if (!mode.data.initializedTriggers)
             {
                 //print($"[{gameObject.name}] Initializing mode [{mode.name}]...");
-                InstantiateTriggersForMode(mode.data.abilitySet, mode.parent);
-                CacheParentTriggers(mode.triggers, mode.parent);
+                InstantiateTriggersForMode(mode.data.abilitySet, mode.individualParent);
+                CacheParentTriggers(mode.triggers, mode.individualParent);
                 mode.data.initializedTriggers = true;
                 DisableTriggers(true, mode);
                 //print($"[{gameObject.name}] Initialized mode [{mode.name}] COMPLETE");
@@ -144,8 +144,8 @@ public class CombatFunctionality : MonoBehaviour
     public virtual void CombatFunctionalityElementsLockOntoTarget(EntityController target)
     {
         // Debug.Log("locking onto target");
-        CombatFunctionalityElementLockOntoTarget(target, Controls.Mode(Controls.mode).parent);
-        CombatFunctionalityElementLockOntoTarget(target, Controls.Mode(Controls.mode).parent);
+        CombatFunctionalityElementLockOntoTarget(target, Controls.Mode(Controls.mode).individualParent);
+        CombatFunctionalityElementLockOntoTarget(target, Controls.Mode(Controls.mode).individualParent);
     }
 
     public void CombatFunctionalityElementLockOntoTarget(EntityController target, Transform elementTransform)
@@ -193,7 +193,7 @@ public class CombatFunctionality : MonoBehaviour
     public void DisableTriggers(bool local, RuntimeModeData mode)
     {
         //Debug.Log(gameObject.name + " | Disabling Attack All Triggers");
-        if (!Controls.Mode(mode.data.modeName).triggers.Any() || Controls.Mode(mode.data.modeName).parent.childCount == 0)
+        if (!Controls.Mode(mode.data.name).triggers.Any() || Controls.Mode(mode.data.name).individualParent.childCount == 0)
         {
             //print($"{gameObject.name} triggers not setup or already disabled, not disabling something that isnt there");
             return;
@@ -537,7 +537,7 @@ public class CombatFunctionality : MonoBehaviour
                 currIndex++;
         }
 
-        Controls.mode = Controls.modes[currIndex].data.modeName;
+        Controls.mode = Controls.modes[currIndex].data.name;
 
 
         print($"Switching Mode to {Controls.Mode(Controls.mode)}");

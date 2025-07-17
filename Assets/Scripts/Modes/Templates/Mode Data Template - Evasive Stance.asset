@@ -10,13 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 34d466d8055e9a546ae44018215b3481, type: 3}
-  m_Name: Mode Template - Attacking Stance
+  m_Name: Mode Data Template - Evasive Stance
   m_EditorClassIdentifier: 
-  modeName: Attack
+  name: Evade
   abilitySet: {fileID: 0}
   modeFunctionality: {fileID: 0}
   isStance: 1
   abilityIndividualSelection: 0
   initializedTriggers: 0
-  UIIndicator: {fileID: 2800000, guid: 7bd93364406dab54f843e929e2301476, type: 3}
-  modeTextDesc: Attacking
+  UIIndicator: {fileID: 2800000, guid: cfc38c2c7a794874c8a60f6c1dd5603e, type: 3}
+  modeTextDesc: Evasive
+  modeTypeName: 
+  modeScript: {fileID: 0}

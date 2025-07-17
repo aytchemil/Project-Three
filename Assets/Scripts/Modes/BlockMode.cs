@@ -2,10 +2,9 @@ using System.Collections;
 using UnityEngine;
 using static EntityController;
 
-public class ModeBlockFunctionality : MonoBehaviour, ICombatMode
+public class BlockMode : MonoBehaviour, ICombatMode
 {
-    private CombatFunctionality cf;
-
+    public CombatFunctionality cf { get; set; }
     public string MODE { get => "Block"; }
     bool readyToUnblock = false;
 
@@ -151,7 +150,7 @@ public class ModeBlockFunctionality : MonoBehaviour, ICombatMode
     /// <param name="ability"></param>
     void AF_Regular(AbilityBlock ability)
     {
-        //print("[ModeBlockFunctionality] AF Regular");
+        //print("[BlockMode] AF Regular");
     }
 
 

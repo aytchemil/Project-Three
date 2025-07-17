@@ -2,11 +2,10 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class ModeCounterFunctionality : MonoBehaviour, ICombatMode
+public class CounterMode : MonoBehaviour, ICombatMode
 {
-    private CombatFunctionality cf;
-
     public string MODE { get => "Counter"; }
+    public CombatFunctionality cf { get; set; }
 
     public string stopBlockingBool = "stopBlocking";
 

@@ -5,9 +5,9 @@ using UnityEngine;
 
 
 
-public class ModeAttackFunctionality : MonoBehaviour, ICombatMode
+public class AttackMode : MonoBehaviour, ICombatMode
 {
-    private CombatFunctionality cf;
+    public CombatFunctionality cf { get; set; }
 
     public string MODE { get => "Attack"; }
 

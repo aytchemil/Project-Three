@@ -5,9 +5,9 @@ using UnityEngine;
 using static Ability;
 using static EntityController;
 
-public class ModeComboFunctionality : MonoBehaviour, ICombatMode
+public class ComboMode : MonoBehaviour, ICombatMode
 {
-    private CombatFunctionality cf;
+    public CombatFunctionality cf { get; set; }
     public string MODE { get => "Combo"; }
 
     bool waiting = false;
@@ -47,7 +47,7 @@ public class ModeComboFunctionality : MonoBehaviour, ICombatMode
 
         //Flags
         combo.isUsing = true;
-        (cf.Controls.Mode("Attack").data.modeFunctionality as ModeAttackFunctionality).StartAttacking();
+        (cf.Controls.Mode("Attack").data.modeFunctionality as AttackMode).StartAttacking();
 
         //Initial Mutations
         //+Set all Triggers to False

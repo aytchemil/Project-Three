@@ -509,8 +509,8 @@ public class CombatFunctionality : MonoBehaviour
 
     public void GetCountered(Vector3 effectPos)
     {
-        (Controls.Mode("Attack").data.modeFunctionality as ModeAttackFunctionality).FinishAttacking();
-        (Controls.Mode("Counter").data.modeFunctionality as ModeCounterFunctionality).FinishCountering();
+        (Controls.Mode("Attack").data.modeFunctionality as AttackMode).FinishAttacking();
+        (Controls.Mode("Counter").data.modeFunctionality as CounterMode).FinishCountering();
 
         DisableTriggers(false, Controls.Mode(Controls.mode));
         Controls.Countered?.Invoke();

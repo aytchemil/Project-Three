@@ -4,9 +4,7 @@ using static EntityController;
 
 public interface ICombatMode 
 {
-    /// <summary>
-    /// PARENT VIRTUAL STRING for all names of modes (Set in the child class)
-    /// </summary>
+    public abstract CombatFunctionality cf { get; set; }
     public abstract string MODE { get; }
 
     /// <summary>

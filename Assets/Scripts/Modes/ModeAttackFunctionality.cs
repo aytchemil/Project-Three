@@ -5,11 +5,11 @@ using UnityEngine;
 
 
 
-public class ModeAttackFunctionality : ModeGeneralFunctionality
+public class ModeAttackFunctionality : MonoBehaviour, ICombatMode
 {
     private CombatFunctionality cf;
 
-    public override string MODE { get => "Attack"; }
+    public string MODE { get => "Attack"; }
 
 
     void Awake()
@@ -27,7 +27,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
         cf.Controls.MyAttackWasBlocked -= AttackBlocked;
     }
 
-    public override void UseModeFunctionality() => Attack();
+    public void UseModeFunctionality() => Attack();
     
     /// <summary>
     /// Attack Functionality
@@ -102,7 +102,7 @@ public class ModeAttackFunctionality : ModeGeneralFunctionality
             AM.FollowUpPackage FollowUpPackage = new AM.FollowUpPackage(
                 trigger,
                 attack,
-                GetAnimEnums(multi_attack),
+                cf.GetAnimEnums(multi_attack),
                 typeof(AM.AtkAnims),
                 typeof(AM.AtkAnims.Anims),
                 CharacterAnimationController.UPPERBODY,

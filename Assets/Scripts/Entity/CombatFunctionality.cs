@@ -102,15 +102,18 @@ public class CombatFunctionality : MonoBehaviour
         SetDefaultAbilityForAllModes();
 
         foreach (RuntimeModeData mode in Controls.modes)
-            if (!mode.data.initializedTriggers)
+        {
+            print($"[{gameObject.name}] Initializing mode [{mode.name}]...");
+            if (!mode.initializedTriggers)
             {
-                //print($"[{gameObject.name}] Initializing mode [{mode.name}]...");
                 InstantiateTriggersForMode(mode.data.abilitySet, mode.individualParent);
                 CacheParentTriggers(mode.triggers, mode.individualParent);
-                mode.data.initializedTriggers = true;
+                mode.initializedTriggers = true;
                 DisableTriggers(true, mode);
-                //print($"[{gameObject.name}] Initialized mode [{mode.name}] COMPLETE");
+                print($"[{gameObject.name}] Initialized mode [{mode.name}] COMPLETE");
             }
+        }
+
         print($"[{gameObject.name}] Initialized Modes COMPLETE");
 
         //BlockSys: Has to be after The initialization of triggers
@@ -548,6 +551,17 @@ public class CombatFunctionality : MonoBehaviour
 
     }
 
+    public virtual System.Enum[] GetAnimEnums(AbilityMulti ability)
+    {
+        System.Enum[] Enums = new System.Enum[ability.abilities.Length];
+        for (int i = 0; i < ability.abilities.Length; i++)
+        {
+            AbilityAttack abilityi = ((AbilityAttack)ability.abilities[i]);
+            System.Enum _enum = abilityi.Attack;
+            Enums[i] = _enum;
+        }
+        return Enums;
+    }
 
 
 }

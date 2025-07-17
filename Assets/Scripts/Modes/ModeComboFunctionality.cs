@@ -5,10 +5,10 @@ using UnityEngine;
 using static Ability;
 using static EntityController;
 
-public class ModeComboFunctionality : ModeGeneralFunctionality
+public class ModeComboFunctionality : MonoBehaviour, ICombatMode
 {
     private CombatFunctionality cf;
-    public override string MODE { get => "Combo"; }
+    public string MODE { get => "Combo"; }
 
     bool waiting = false;
 
@@ -30,7 +30,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
 
     }
 
-    public override void UseModeFunctionality() => Combo();
+    public void UseModeFunctionality() => Combo();
 
     void Combo()
     {
@@ -73,7 +73,7 @@ public class ModeComboFunctionality : ModeGeneralFunctionality
                 AM.FollowUpPackage FollowUpPackage = new AM.FollowUpPackage(
                     trigger,
                     combo,
-                    GetAnimEnums(ability),
+                    cf.GetAnimEnums(ability),
                     typeof(AM.AtkAnims),
                     typeof(AM.AtkAnims.Anims),
                     CharacterAnimationController.UPPERBODY,

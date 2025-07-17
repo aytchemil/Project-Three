@@ -9,14 +9,14 @@ public class ModeData : ScriptableObject
 {
     public string name;
     public AbilitySet abilitySet;
-    public ModeGeneralFunctionality modeFunctionality;
+    [HideInInspector]
+    public ICombatMode modeFunctionality;
     public bool isStance;
     [ShowIf("isStance")]
     public bool abilityIndividualSelection;
-    public bool initializedTriggers;
     public Texture UIIndicator;
     public string modeTextDesc;
-    [SerializeField] private string modeTypeName; // Store the type name as a string for runtime
+    private string modeTypeName; // Store the type name as a string for runtime
 #if UNITY_EDITOR
     [SerializeField] private MonoScript modeScript; // Editor-only field for selecting the script
 #endif
@@ -31,7 +31,8 @@ public class ModeData : ScriptableObject
         }
 
         Type type = Type.GetType(modeTypeName);
-        if (type != null && typeof(ModeGeneralFunctionality).IsAssignableFrom(type) && type.IsSubclassOf(typeof(MonoBehaviour)))
+
+        if (type != null && typeof(ICombatMode).IsAssignableFrom(type) && type.IsSubclassOf(typeof(MonoBehaviour)))
         {
             return type;
         }
@@ -47,7 +48,7 @@ public class ModeData : ScriptableObject
         if (modeScript != null)
         {
             Type type = modeScript.GetClass();
-            if (type == null || !typeof(ModeGeneralFunctionality).IsAssignableFrom(type) || !type.IsSubclassOf(typeof(MonoBehaviour)))
+            if (type == null || !typeof(ICombatMode).IsAssignableFrom(type) || !type.IsSubclassOf(typeof(MonoBehaviour)))
             {
                 Debug.LogError($"[ModeDataSO] Assigned script {modeScript.name} is not a valid ModeGeneralFunctionality type in {name}");
                 modeScript = null;

@@ -168,12 +168,7 @@ public class EntityController : MonoBehaviour
         if (modesInitialized) return;
 
         modes.Clear();
-
-        if (modeParent == null)
-            modeParent = Instantiate(new GameObject(), transform, false).transform;
-        modeParent.name = "Mode Parent";
-
-        int i = 0;
+        CreateAssignModeParent();
 
         foreach (ModeData templateData in ModeManager.instance.modes)
         {
@@ -186,16 +181,40 @@ public class EntityController : MonoBehaviour
                 .Build();
 
             modes.Add(newMode);
-
-            i++;
         }
 
-
-        AssignAbilitySetsToModeData();
-        InstantiateModeParents();
+        AssignAbilitySets();
+        CreateModeParents();
 
         modesInitialized = true;
+
         print($"[{gameObject.name}] Copied Modes from ModeManager COMPLETED");
+
+        void CreateAssignModeParent()
+        {
+            if (modeParent == null)
+                modeParent = Instantiate(new GameObject(), transform, false).transform;
+            modeParent.name = "Mode Parent";
+        }
+
+        void AssignAbilitySets()
+        {
+            foreach (RuntimeModeData myMode in modes)
+                myMode.data.abilitySet = AbilitySet(myMode.data.name);
+        }
+
+        void CreateModeParents()
+        {
+            foreach (RuntimeModeData mode in modes)
+                if (mode.individualParent == null)
+                {
+                    // print($"Assigning parent for {mode.data.modeName} ");
+                    mode.individualParent = Instantiate(new GameObject(), transform, false).transform;
+                    mode.individualParent.rotation = Quaternion.identity;
+                    mode.individualParent.name = mode.data.name + " Triggers Parent";
+                }
+        }
+
     }
 
 
@@ -231,7 +250,7 @@ public class EntityController : MonoBehaviour
 
         public RuntimeModeBuilder WithComponentAddedToEntityController(GameObject entity)
         {
-            ModeGeneralFunctionality modeFunctionality = entity.AddComponent(ModeManager.instance.ReturnModeFunctionality(data.name)) as ModeGeneralFunctionality;
+            ICombatMode modeFunctionality = entity.AddComponent(ModeManager.instance.ReturnModeFunctionality(data.name)) as ICombatMode;
             data.modeFunctionality = modeFunctionality;
             return this;
         }
@@ -257,6 +276,7 @@ public class EntityController : MonoBehaviour
         public ModeData data;
         public Transform individualParent;
         public GameObject[] triggers = new GameObject[AMOUNT_OF_TRIGGERS];
+        public bool initializedTriggers;
 
         public RuntimeModeData(string _mode)
         {
@@ -271,26 +291,6 @@ public class EntityController : MonoBehaviour
     }
 
 
-
-
-    void AssignAbilitySetsToModeData()
-    {
-        foreach (RuntimeModeData myMode in modes)
-            myMode.data.abilitySet = AbilitySet(myMode.data.name);
-
-    }
-
-    void InstantiateModeParents()
-    {
-        foreach (RuntimeModeData mode in modes)
-            if (mode.individualParent == null)
-            {
-               // print($"Assigning parent for {mode.data.modeName} ");
-                mode.individualParent = Instantiate(new GameObject(), transform, false).transform;
-                mode.individualParent.rotation = Quaternion.identity;
-                mode.individualParent.name = mode.data.name + " Triggers Parent";
-            }
-    }
 
     public RuntimeModeData Mode(string mode)
     {

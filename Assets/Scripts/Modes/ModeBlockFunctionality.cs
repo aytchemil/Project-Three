@@ -2,11 +2,11 @@ using System.Collections;
 using UnityEngine;
 using static EntityController;
 
-public class ModeBlockFunctionality : ModeGeneralFunctionality
+public class ModeBlockFunctionality : MonoBehaviour, ICombatMode
 {
     private CombatFunctionality cf;
 
-    public override string MODE { get => "Block"; }
+    public string MODE { get => "Block"; }
     bool readyToUnblock = false;
 
     void Awake()
@@ -68,7 +68,7 @@ public class ModeBlockFunctionality : ModeGeneralFunctionality
             d.ability = d.data.abilitySet.down;
     }
 
-    public override void UseModeFunctionality()
+    public void UseModeFunctionality()
     {
         //print($"[{gameObject.name}] BLOCK used");
         Block();

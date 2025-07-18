@@ -9,16 +9,17 @@ public class ComboMode : MonoBehaviour, ICombatMode
 {
     public CombatFunctionality cf { get; set; }
     public string MODE { get => "Combo"; }
+    public RuntimeModeData Mode { get => cf.Controls.Mode(MODE); }
+    public RuntimeModeData AtkMode { get => cf.Controls.Mode("Attack"); }
+
 
     bool waiting = false;
 
-    void Awake()
-    {
-        cf = gameObject.GetComponent<CombatFunctionality>();
-    }
-
     private void OnEnable()
     {
+
+        if (cf == null)
+            cf = gameObject.GetComponent<CombatFunctionality>();
         cf.Controls.CombatWheelSelectDirection += SwitchToCombo;
         cf.Controls.MyAttackWasBlocked += MyComboWasBlocked;
     }
@@ -41,13 +42,13 @@ public class ComboMode : MonoBehaviour, ICombatMode
             return;
 
         //Setup
-        RuntimeModeData combo = cf.Controls.Mode(MODE);
+        RuntimeModeData combo = Mode;
         AbilityCombo ability = (AbilityCombo)combo.ability;
         ModeTriggerGroup trigger = cf.WheelTriggerEnableUse(MODE);
 
         //Flags
         combo.isUsing = true;
-        (cf.Controls.Mode("Attack").data.modeFunctionality as AttackMode).StartAttacking();
+        AtkMode.functionality.Starting();
 
         //Initial Mutations
         //+Set all Triggers to False
@@ -102,7 +103,7 @@ public class ComboMode : MonoBehaviour, ICombatMode
         string dir = cf.Controls.lookDir;
         //print($"[MODE] [COMBO] : Direction Chosen ({dir})");
 
-        RuntimeModeData combo = cf.Controls.Mode(MODE);
+        RuntimeModeData combo = Mode;
         int trigerIndx = cf.GetDirIndex(dir);
 
         //Errors
@@ -124,7 +125,7 @@ public class ComboMode : MonoBehaviour, ICombatMode
     {
         //print($"[{gameObject.name}] COMBO Direction ({dir})");
 
-        if (cf.Controls.Mode("Attack").isUsing)
+        if (AtkMode.isUsing)
         {
             if (waiting == true)
                 StopCoroutine(WaitForComboingToFinishToSwitchToAnother(dir));
@@ -133,16 +134,16 @@ public class ComboMode : MonoBehaviour, ICombatMode
             StartCoroutine(WaitForComboingToFinishToSwitchToAnother(dir));
         }
 
-        cf.Controls.Mode(MODE).ability = cf.ChooseCurrentWheelAbility(dir, MODE);
+        Mode.ability = cf.ChooseCurrentWheelAbility(dir, MODE);
 
         ///Waits until the player stops attacking to switch to another combo
         IEnumerator WaitForComboingToFinishToSwitchToAnother(string dir)
         {
-            while (cf.Controls.Mode("Attack").isUsing)
+            while (AtkMode.isUsing)
             {
                 yield return new WaitForEndOfFrame();
             }
-            cf.Controls.Mode(MODE).ability = cf.ChooseCurrentWheelAbility(dir, MODE);
+            Mode.ability = cf.ChooseCurrentWheelAbility(dir, MODE);
             waiting = false;
         }
     }
@@ -156,13 +157,13 @@ public class ComboMode : MonoBehaviour, ICombatMode
     {
         CombotTriggerGroup comboTrigger = trigger.GetComponent<CombotTriggerGroup>();
 
-        while (cf.Controls.Mode(MODE).isUsing == true)
+        while (Mode.isUsing == true)
         {
             //print($"[MODE] [COMBO] waiting for combo to finish");
             yield return new WaitForEndOfFrame();
 
-            if (comboTrigger.triggerProgress[comboTrigger.triggerProgress.Length-1] == true || cf.Controls.Mode("Attack").isUsing == false)
-                cf.Controls.Mode(MODE).isUsing = false;
+            if (comboTrigger.triggerProgress[comboTrigger.triggerProgress.Length-1] == true || AtkMode.isUsing == false)
+                Mode.isUsing = false;
         }
     }
 

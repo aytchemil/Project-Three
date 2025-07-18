@@ -3,58 +3,36 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 
-public class GameManager : MonoBehaviour
+public class GameManager 
 {
-    public static GameManager instance;
-
     //Just for now
     public GameObject player;
-    PlayerController controlls;
     public GameObject menu;
+    PlayerController PCE;
 
-    public DropdownMenu dd;
 
-    private void Awake()
+    public GameManager(GameObject menu, GameObject player)
     {
-        controlls = player.GetComponent<PlayerController>();
+        this.player = player;
+        this.menu = menu;
+        PCE = player.GetComponent<PlayerController>();
     }
 
-    private void Start()
+    public void Init(GameObject playerObject)
     {
-        StartCoroutine(DisablePlayer());
+        Debug.Log($"init player {playerObject}");
+        player = playerObject;
+        playerObject.GetComponent<MonoBehaviour>().StartCoroutine(DisablePlayer());
         menu.SetActive(true);
 
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
-
-
     }
 
     public void StartGame()
     {
         player.SetActive(true);
         menu.SetActive(false);
-    }
-
-    void UpdateAbility(string dir)
-    {
-        switch (dir)
-        {
-            case "right":
-
-                break;
-            case "left":
-
-                break;
-            case "up":
-
-                break;
-            case "down":
-
-                break;
-
-
-        }
     }
 
 

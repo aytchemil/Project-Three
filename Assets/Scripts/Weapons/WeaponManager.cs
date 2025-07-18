@@ -4,65 +4,39 @@ using static EntityController;
 
 public class WeaponManager : MonoBehaviour
 {
-    RuntimeModeData comboMode;
 
-    GameObject characterAnimationParent;
+    public Weapon weapon;
+
     GameObject weaponParent;
     GameObject currentWeaponObject;
 
     public virtual EntityController Controls { get; set; }
 
-    protected virtual void Awake()
+    public void Init(Weapon wpn, Transform animParent)
     {
         Controls = GetComponent<EntityController>();
-    }
+        weapon = wpn;
 
-    private void OnEnable()
-    {
-        Controls.Init += Init;
-    }
-
-    private void OnDisable()
-    {
-        Controls.Init -= Init;
-    }
-
-    private void Init()
-    {
-        if (gameObject.GetComponent<EntityController>().Mode("Combo") != null)
-            comboMode = gameObject.GetComponent<EntityController>().Mode("Combo");
-
-        characterAnimationParent = Controls.animController.gameObject;
-
-        SetAbilitySet();
-        AssignWeaponParent();
+        AssignWeaponParent(animParent);
         InstantiateChosenWeapon();
-    }
-
-    void SetAbilitySet()
-    {
-        //print(Controls.AbilitySet("Combo").name);
-
-        int index = Controls.abilitySetInputs.FindIndex(x => x == Controls.AbilitySet("Combo"));
-
-        if (index != -1) // Check if the item was found
-        {
-            Controls.abilitySetInputs[index] = Controls.currentWeapon.chosenAbilitySet;
-        }
-        else
-            Debug.LogError("AbilitySet 'Combo' not found!");
 
     }
 
-    void AssignWeaponParent()
+
+    void AssignWeaponParent(Transform animParent)
     {
-        weaponParent = Instantiate(new GameObject(), characterAnimationParent.transform, false);
+        weaponParent = Instantiate(new GameObject(), animParent, false);
         weaponParent.name = "Weapon Parent";
+
+        print("Assigned Wpn Parent");
+
     }
 
     void InstantiateChosenWeapon()
     {
-        currentWeaponObject = Instantiate(Controls.currentWeapon.prefab, weaponParent.transform, false);
+        currentWeaponObject = Instantiate(weapon.prefab, weaponParent.transform, false);
+
+        print("Instantiated Weapon");
     }
 
 

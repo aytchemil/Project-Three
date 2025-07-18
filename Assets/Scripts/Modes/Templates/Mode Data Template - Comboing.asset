@@ -13,13 +13,9 @@ MonoBehaviour:
   m_Name: Mode Data Template - Comboing
   m_EditorClassIdentifier: 
   name: Combo
-  abilitySet: {fileID: 0}
-  modeFunctionality: {fileID: 0}
+  abilitySet: {fileID: 11400000, guid: ab53fcad2a4821443b0c37741e8bc8b1, type: 2}
   isStance: 0
   abilityIndividualSelection: 0
-  initializedTriggers: 0
   UIIndicator: {fileID: 2800000, guid: fa250db11f2af574592ed7fe68179ab2, type: 3}
   modeTextDesc: Combo
-  modeTypeName: ModeComboFunctionality, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-    PublicKeyToken=null
   modeScript: {fileID: 11500000, guid: 567fcf235343b104c87a3fb940303d41, type: 3}

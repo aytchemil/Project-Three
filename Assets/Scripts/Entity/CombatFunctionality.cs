@@ -9,6 +9,7 @@ using static EntityController;
 [RequireComponent(typeof(EntityController))]
 public class CombatFunctionality : MonoBehaviour
 {
+    public bool debug;
     int cur_Ability = 0;
     // Virtual property for 'Controls'
     public virtual EntityController Controls { get; set; }
@@ -16,19 +17,13 @@ public class CombatFunctionality : MonoBehaviour
     bool initializedAttackTriggers;
     bool initializedBlockingTrigger;
 
-    protected virtual void Awake()
-    {
-        Controls = GetComponent<EntityController>();
-    }
 
     #region Enable/Disable
 
     protected virtual void OnEnable()
     {
-
-        //Adding methods to Action Delegates
-        //Debug.Log("Combat functionaly enable");
-        //UI
+        Controls = gameObject.GetComponent<EntityController>();
+        Debug.Log($"Enabling CF for ({gameObject.name}), currnet controls are ({Controls})");
 
         for (int i = 0; i < EntityController.AMOUNT_OF_ABIL_SLOTS; i++)
             Controls.abilitySlots[i] += EnableAbility;
@@ -96,10 +91,7 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     void InCombat()
     {
-        //print("combatFunctionality: in combat");
-
-        //Auto Set the current ability (in this case right is 0)
-        SetDefaultAbilityForAllModes();
+         if(debug) print("combatFunctionality: in combat");
 
         foreach (RuntimeModeData mode in Controls.modes)
         {
@@ -108,6 +100,7 @@ public class CombatFunctionality : MonoBehaviour
             {
                 InstantiateTriggersForMode(mode.data.abilitySet, mode.individualParent);
                 CacheParentTriggers(mode.triggers, mode.individualParent);
+                mode.trigger = mode.triggers[0].GetComponent<ModeTriggerGroup>();
                 mode.initializedTriggers = true;
                 DisableTriggers(true, mode);
                 print($"[{gameObject.name}] Initialized mode [{mode.name}] COMPLETE");
@@ -174,17 +167,19 @@ public class CombatFunctionality : MonoBehaviour
 
     void CacheParentTriggers(GameObject[] triggers, Transform parent)
     {
-        //print("Caching triggers for " + parent.name);
+        if (debug) print($"Caching triggers for ({parent.name}) ({parent.childCount}) times");
 
-        //Debug.Log("Caching attack triggers of childcount: " + attackTriggerParent.childCount);
         for (int i = 0; i < parent.childCount; i++)
+        {
             triggers[i] = parent.GetChild(i).gameObject;
+            if (debug) print($"Trigger ({triggers[i].name}) cached");
+        }
 
 
         if (triggers.Any(item => item == null)) //Checks if any item just put into that list are null, if one is, then error
             Debug.LogError("Items in attack trigger not properly cached, please look");
-        //else
-        //print("Successfully Cached triggers for mode " + parent.name);
+        else if (debug)
+            print("Successfully Cached triggers for mode " + parent.name);
 
     }
 
@@ -195,7 +190,7 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     public void DisableTriggers(bool local, RuntimeModeData mode)
     {
-        //Debug.Log(gameObject.name + " | Disabling Attack All Triggers");
+        if (debug) Debug.Log(gameObject.name + " | Disabling Attack All Triggers");
         if (!Controls.Mode(mode.data.name).triggers.Any() || Controls.Mode(mode.data.name).individualParent.childCount == 0)
         {
             //print($"{gameObject.name} triggers not setup or already disabled, not disabling something that isnt there");
@@ -216,7 +211,7 @@ public class CombatFunctionality : MonoBehaviour
                     trigger.GetComponent<ModeTriggerGroup>().DisableThisTrigger();
 
 
-        //print("Successfully Disabled triggers for mode: " + mode.data.modeName);
+        if (debug) print("Successfully Disabled triggers for mode: " + mode.data.name);
 
     }
 
@@ -235,7 +230,7 @@ public class CombatFunctionality : MonoBehaviour
     /// <param name="down"></param>
     public void InstantiateTriggersForMode(AbilitySet abilitySet, Transform parent)
     {
-        //print("Instantiating triggers");
+        if (debug) print("Instantiating triggers");
 
         if (abilitySet == null)
             Debug.LogError("Mode AbilitiesSO null");
@@ -260,14 +255,14 @@ public class CombatFunctionality : MonoBehaviour
         if (one == null || two == null || three == null || four == null)
             Debug.LogError("Trigger group triggers not iniailized corectly, check");
 
-        //print("Successfully Instantiating triggers for mode " + parent.name);
+        if (debug) print("Successfully Instantiating triggers for mode " + parent.name);
 
     }
 
 
     private ModeTriggerGroup InitializeTrigger(Ability ability, Transform parent, string direction)
     {
-        //print($"Initializing trigger {ability}...");
+        if (debug) print($"Initializing trigger for ability ({ability})...");
 
         ModeTriggerGroup trigger = null;
 
@@ -294,11 +289,11 @@ public class CombatFunctionality : MonoBehaviour
             trigger = Instantiate(comboAbility.ColliderPrefab, parent, false).GetComponent<CombotTriggerGroup>();
 
         else
-            Debug.LogError($"Unsupported Ability type for {direction}: {ability}");
+            Debug.LogError($"Unsupported Ability type for ({direction}): ({ability})");
 
         trigger.InitializeSelf(this, ability);
 
-        //print($"Compeleted initialization for {ability} ! ");
+        if (debug) print($"Compeleted initialization for ({ability}) ! ");
 
         return trigger;
     }
@@ -320,13 +315,7 @@ public class CombatFunctionality : MonoBehaviour
     {
         cur_Ability = num;
         string m = Controls.mode;
-        //print("enabling ability in dir: " + dir);
-
-        //Reset the current ability for all the modes
-        //foreach (RuntimeModeData mode in Controls.modes)
-        //    if (mode.name != "Combo")
-         //       mode.ability = null;
-
+        if (debug) print("enabling ability in dir: " + num);
 
         switch (cur_Ability)
         {
@@ -350,15 +339,6 @@ public class CombatFunctionality : MonoBehaviour
     }
 
 
-    void SetDefaultAbilityForAllModes()
-    {
-        foreach (RuntimeModeData mode in Controls.modes)
-        {
-            //print($"[{gameObject.name}] [Combat Functionality] Mode [{mode.name}] Ability [{Controls.AbilitySet(mode.name).right}] is new default ability");
-            mode.ability = Controls.AbilitySet(mode.name).right;
-        }
-    }
-
     void SetDefaultDir()
     {
         Controls.lookDir = "right";
@@ -370,15 +350,18 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     public virtual void UseAbility(string mode)
     {
-        //print($"[{gameObject.name}] [Combat Functionality]: Attempting To Use an Ability from mode [{mode}]");
+        if (debug) print($"[{gameObject.name}] [Combat Functionality]: Attempting To Use an Ability from mode [{mode}]");
         if (Controls.cantUseAbility)
         {
             print($"[{gameObject.name}] [CF] : CANT USE ABILITY ");
             return;
         }
+        print($"[{gameObject.name}]");
+        print($"[{Controls.gameObject.name}]");
+        print($"[{Controls.Mode(mode).data}]");
+        print($"[{Controls.Mode(mode).functionality.cf.gameObject.name}]");
 
-        //print($"[{gameObject.name}] [CF] : Ability ({mode}) used.");
-        Controls.Mode(mode).data.modeFunctionality.UseModeFunctionality();
+        Controls.Mode(mode).functionality.UseModeFunctionality();
 
         if (Controls.Mode(mode) == null)
             Debug.LogError("There is currently no selected ability (currentAttackAbility) that this combat functionality script can use.");
@@ -399,12 +382,22 @@ public class CombatFunctionality : MonoBehaviour
         ModeTriggerGroup usingThisTriggerGroup = null;
         RuntimeModeData mode = Controls.Mode(modeName);
 
+        print(gameObject.name);
+        Debug.Log($"{Controls.gameObject.name} Using Mode {mode.name}'s Trigger, On Triggers {mode.triggers})");
+        print(mode.triggers[0]);
+
         //Set all triggers of this mode to false
         for (int i = 0; i < mode.triggers.Length; i++)
-            mode.triggers[i].gameObject.SetActive(false);;
+        {
+            print($"index {i}: Disabling trigger {mode.triggers[i]}");
+
+            //if (mode.triggers[i] == null) Debug.LogError("Error: Trying to Enable Ability's Trigger, But no trigger was found on Controls.mode");
+            mode.triggers[i].SetActive(false);
+            
+        }
 
         //Enable the trigger we are using
-        mode.triggers[cur_Ability].gameObject.SetActive(true);
+        mode.triggers[cur_Ability].SetActive(true);
 
         //Set this as the return
         usingThisTriggerGroup = mode.triggers[cur_Ability].GetComponent<ModeTriggerGroup>();
@@ -509,8 +502,8 @@ public class CombatFunctionality : MonoBehaviour
 
     public void GetCountered(Vector3 effectPos)
     {
-        (Controls.Mode("Attack").data.modeFunctionality as AttackMode).FinishAttacking();
-        (Controls.Mode("Counter").data.modeFunctionality as CounterMode).FinishCountering();
+        Controls.Mode("Attack").functionality.Finish();
+        Controls.Mode("Counter").functionality.Finish();
 
         DisableTriggers(false, Controls.Mode(Controls.mode));
         Controls.Countered?.Invoke();

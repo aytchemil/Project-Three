@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using static AM;
 
 
 
@@ -29,10 +30,15 @@ public class AnimatorSystem : MonoBehaviour
     [SerializeField] public AnimationLayer[] layers;
     public Action<int> DefaultAnimation;
     private readonly Dictionary<Type, AnimationSet> _animationSetsDictionary = new Dictionary<Type, AnimationSet>();
+    public Dictionary<string, CyclePackage> CyclePackages = new Dictionary<string, CyclePackage>();
 
-    public void InitializeAnimationSystem(int amountOfLayers, Animator animator)
+
+    public void InitializeAnimationSystem(int layerCount, Animator animator, RuntimeAnimatorController wpnAnims)
     {
         this.animator = animator ?? throw new ArgumentNullException(nameof(animator));
+        animator.runtimeAnimatorController = wpnAnims;
+        print($"{gameObject.name} Initalized Layer count to be: ({layerCount})");
+
 
         // Initialize animationSets
         // + Clear Dictionary
@@ -46,14 +52,17 @@ public class AnimatorSystem : MonoBehaviour
                 Debug.LogError($"Invalid or missing Anims enum in animation type at index {i}: {animations[i]?.Name}");
                 continue;}
             _animationSetsDictionary.Add(animations[i], new AnimationSet(animations[i]));
+            print($"Initializing Animation System Anims enum : ({animations[i]})");
         }
 
         // Initialize layers
         // + initialize layers list
         // + foreach layer, set its value to a new animation layer value
-        layers = new AnimationLayer[amountOfLayers];
-        for (int i = 0; i < amountOfLayers; i++)
+        layers = new AnimationLayer[layerCount];
+        for (int i = 0; i < layerCount; i++)
             layers[i] = new AnimationLayer();
+
+        print($"{gameObject.name} Animation System Initialized");
     }
 
     public void SetLocked(bool lockLayer, int layer)
@@ -88,9 +97,15 @@ public class AnimatorSystem : MonoBehaviour
         // + CHECK for NONE animation
         // + CHECK if the current animation is the same
         // + CHECK if layer is locked, and can't bypass lock
-        if (layer < 0 || layer >= layers.Length || layers[layer] == null) 
+
+        if (layer < 0 || layer >= layers.Length)
         {
-            Debug.LogError($"Invalid layer index: {layer}");
+            Debug.LogError($"Layer Out of Bounds, on Index: {layer}, layers.length = {layers.Length}");
+            return;
+        }
+        if (layers[layer] == null)
+        {
+            Debug.LogError($"Layer index: {layer} is null : layers[layer]");
             return;
         }
         if (enumIndx < 0 || enumIndx >= set._anims.Length)

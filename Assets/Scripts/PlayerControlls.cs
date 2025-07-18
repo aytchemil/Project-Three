@@ -1,4 +1,6 @@
+using Sirenix.OdinInspector;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -7,22 +9,23 @@ public class PlayerController : EntityController
     //Rule of thumb : Keep these such that they are always set on the outside, never during gameplay
     public PlayerInputActions controls;
 
-    [Header("Input Actions")]
+    [BoxGroup("Player Inputs")] [Header("Input Actions")]
     //Input Actions
-    public InputAction ia_look;
-    public InputAction ia_move;
-    public InputAction ia_sprint;
-    public InputAction ia_lockOn;
-    public InputAction ia_dash;
-    public InputAction ia_useCombo;
-    public InputAction ia_block;
-    public InputAction ia_switchAttackMode;
+    [BoxGroup("Player Inputs")] public InputAction ia_look;
+    [BoxGroup("Player Inputs")] public InputAction ia_move;
+    [BoxGroup("Player Inputs")] public InputAction ia_sprint;
+    [BoxGroup("Player Inputs")] public InputAction ia_lockOn;
+    [BoxGroup("Player Inputs")] public InputAction ia_dash;
+    [BoxGroup("Player Inputs")] public InputAction ia_useCombo;
+    [BoxGroup("Player Inputs")] public InputAction ia_block;
+    [BoxGroup("Player Inputs")] public InputAction ia_switchAttackMode;
     [Space]
-    public InputAction[] ia_abilityUse;
+    [BoxGroup("Player Inputs")] public InputAction[] ia_abilityUse;
 
-    protected override void Awake()
+    public override void Init(List<ModeData> _modes)
     {
-        base.Awake();
+        base.Init(_modes);
+
         ia_abilityUse = new InputAction[AMOUNT_OF_ABIL_SLOTS];
         controls = new PlayerInputActions();
 
@@ -41,6 +44,7 @@ public class PlayerController : EntityController
         ia_abilityUse[2] = controls.Player.Ability3;
         ia_abilityUse[3] = controls.Player.Ability4;
     }
+
 
 
     #region enable/disable
@@ -92,31 +96,31 @@ public class PlayerController : EntityController
 
         for(int i = 0; i < AMOUNT_OF_ABIL_SLOTS; i++)
         {
-            // print($"[PlayerControls] Enabled Ability Slot [{i}]");
+             print($"[PlayerControls] Enabled Ability Slot [{i}]");
             ia_abilityUse[i].Enable();
         }
 
         ia_abilityUse[0].performed += ctx =>
         {
-           // print($"[PlayerControlls] pressed ability [{0}]");
+            print($"[PlayerControlls] pressed ability [{0}]");
             abilitySlots[0]?.Invoke(0);
             useAbility?.Invoke(CurMode().name);
         };
         ia_abilityUse[1].performed += ctx =>
         {
-           // print($"[PlayerControlls] pressed ability [{1}]");
+            print($"[PlayerControlls] pressed ability [{1}]");
             abilitySlots[1]?.Invoke(1);
             useAbility?.Invoke(CurMode().name);
         };
         ia_abilityUse[2].performed += ctx =>
         {
-            //print($"[PlayerControlls] pressed ability [{2}]");
+            print($"[PlayerControlls] pressed ability [{2}]");
             abilitySlots[2]?.Invoke(2);
             useAbility?.Invoke(CurMode().name);
         };
         ia_abilityUse[3].performed += ctx =>
         {
-           // print($"[PlayerControlls] pressed ability [{3}]");
+            print($"[PlayerControlls] pressed ability [{3}]");
             abilitySlots[3]?.Invoke(3);
             useAbility?.Invoke(CurMode().name);
         };

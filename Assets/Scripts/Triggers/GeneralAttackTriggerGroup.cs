@@ -50,7 +50,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
         //print(gameObject.name + " | Disabling trigger implementation");
 
         CompleteAttackCaller();
-        (combatFunctionality.Controls.Mode("Attack").data.modeFunctionality as AttackMode).FinishAttacking();
+        combatFunctionality.Controls.Mode("Attack").functionality.Finish();
 
         if (combatFunctionality.Controls.GetTarget?.Invoke() != null)
         {

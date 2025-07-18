@@ -5,9 +5,9 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "New Weapon", menuName = "ScriptableObjects/Weapon")]
 public class Weapon : ScriptableObject
 {
-    public AbilitySet chosenAbilitySet;
     public GameObject prefab;
     public RuntimeAnimatorController animationController;
+    public int layerCount;
 
     public List<AbilitySet> allAbilitySets;
 

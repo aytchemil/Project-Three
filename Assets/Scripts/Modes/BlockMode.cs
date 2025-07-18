@@ -6,17 +6,16 @@ public class BlockMode : MonoBehaviour, ICombatMode
 {
     public CombatFunctionality cf { get; set; }
     public string MODE { get => "Block"; }
+    public RuntimeModeData Mode { get => cf.Controls.Mode(MODE); }
+
     bool readyToUnblock = false;
-
-    void Awake()
-    {
-        cf = gameObject.GetComponent<CombatFunctionality>();
-    }
-
     private void OnEnable()
     {
+
+        if (cf == null)
+            cf = gameObject.GetComponent<CombatFunctionality>();
         cf.Controls.CombatWheelSelectDirection += ChangeBlock;
-        cf.Controls.blockStop += StopBlocking;
+        cf.Controls.blockStop += Mode.functionality.Finish;
 
         cf.Controls.EnterCombat += EnterCombatAutoBlock;
     }
@@ -24,7 +23,7 @@ public class BlockMode : MonoBehaviour, ICombatMode
     private void OnDisable()
     {
         cf.Controls.CombatWheelSelectDirection -= ChangeBlock;
-        cf.Controls.blockStop -= StopBlocking;
+        cf.Controls.blockStop -= Mode.functionality.Finish;
 
         cf.Controls.EnterCombat -= EnterCombatAutoBlock;
 
@@ -82,6 +81,8 @@ public class BlockMode : MonoBehaviour, ICombatMode
     {
         //Setup
         RuntimeModeData block = cf.Controls.Mode("Block");
+        if (block.initializedTriggers == false) return;
+
         // + SETS all triggers to false
         for (int i = 0; i < block.triggers.Length; i++)
             block.triggers[i].gameObject.SetActive(false);
@@ -94,7 +95,7 @@ public class BlockMode : MonoBehaviour, ICombatMode
         // + SETS the ability in modedata
         // + SETS the trigger as the one we chose
         // + COROUTINE to wait for an unblock input
-        StartBlocking();
+        Mode.functionality.Starting();
         block.SetAbility(ability);
         block.trigger = trigger;
         StartCoroutine(WaitToStartBlockingToUnblock(ability));
@@ -119,23 +120,6 @@ public class BlockMode : MonoBehaviour, ICombatMode
 
                 break;
         }
-    }
-
-    /// <summary>
-    /// SETS the modes using flag to TRUE
-    /// </summary>
-    void StartBlocking()
-    {
-        cf.Controls.Mode("Block").isUsing = true;
-    }
-
-    /// <summary>
-    /// SETS the modes using flag to FALSE
-    /// </summary>
-    void StopBlocking()
-    {
-        print("stopping block");
-        cf.Controls.Mode("Block").isUsing = false;
     }
 
 

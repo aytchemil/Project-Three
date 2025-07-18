@@ -14,10 +14,8 @@ public class PlayerCombatLock : CombatLock
         set => playerController = value as PlayerController;
     }
 
-    protected override void Awake()
+    public override void InternalInit()
     {
-        //Dont use base, because we want the player controller not the EntityController
-
         playerController = GetComponent<PlayerController>();
     }
 

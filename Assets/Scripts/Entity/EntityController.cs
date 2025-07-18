@@ -3,6 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using Sirenix.OdinInspector;
+using UnityEngine.Scripting.APIUpdating;
 
 /// <summary>
 /// Centralized Controller and controls for every combat entity.
@@ -12,11 +14,6 @@ public class EntityController : MonoBehaviour
 {
     //Rule of thumb : Keep these such that they are always set on the outside, never during gameplay
     public static int AMOUNT_OF_ABIL_SLOTS = 4;
-
-    [Header("Controls")]
-    public Func<Vector2> look;
-    public Func<Vector2> move;
-    public Action<Vector2> moveDirInput;
     public enum MoveDirections
     {
         NONE = 0,
@@ -27,41 +24,25 @@ public class EntityController : MonoBehaviour
         JUMP = 5
     }
     public Action<MoveDirections, int> MoveDirection;
+
+    [BoxGroup("Mutatable Variables")] public string mode = "Attack";
+    [BoxGroup("Mutatable Variables")] public bool waitingToReattack;
+    [BoxGroup("Mutatable Variables")] public bool didReattack = false;
+    [BoxGroup("Mutatable Variables")] public bool reattackChecking = false;
+
+    #region Controls and Event Publishers
+    //Controls
+    public Func<Vector2> look;
+    public Func<Vector2> move;
+    public Action<Vector2> moveDirInput;
     public Action sprintStart;
     public Action sprintStop;
     public Action lockOn;
     public Action dash;
     public Action<string> useAbility; //param: ?
-    public bool usedCombo;
     public Action switchAbilityMode;
-    public string mode = "Attack";
-    [SerializeField] private string _lookDir;
-    public string lookDir
-    {
-        get => _lookDir;
-        set
-        {
-            if(_lookDir != value)
-                StartCoroutine(Wait(value));
-        }
-    }
 
-    IEnumerator Wait(string value)
-    {
-        while(cantUseAbility)
-            yield return new WaitForEndOfFrame();
-
-        _lookDir = value;
-        CombatWheelSelectDirection?.Invoke(lookDir);
-    }
-
-    //Combo Reattacking
-    public Action<float> comboReattackDelay;
-    public bool waitingToReattack;
-    public bool didReattack = false;
-    public bool reattackChecking = false;
-
-    [Header("Observer Events")]
+    //Event Publishers
     public Func<EntityController> GetTarget;
     public Action EnterCombat;
     public Action ExitCombat;
@@ -78,56 +59,57 @@ public class EntityController : MonoBehaviour
     public Action Countered;
     public Action<float> Flinch; //param: flinchTime
     public Func<string> getMoveDirection; //ret: moveDir
-    public Action Init;
+    public Action Initialize;
     public Action<ModeTriggerGroup> UseCombatAdditionalFunctionality;
     public Action Death;
-
-
-
-    [Header("Modes and Data")]
-    public List<RuntimeModeData> modes;
-
-    [Header("Mode Inputted Ability Sets")]
-    public List<AbilitySet> abilitySetInputs;
-
-    [Header("Ability Choice")]
-    public ModeRuntimeData comboMode;
     public Action<int>[] abilitySlots = new Action<int>[AMOUNT_OF_ABIL_SLOTS];
 
-    [Header("Weapon System")]
-    public Weapon currentWeapon;
+    #endregion
 
-    [Header("Animation System")]
-    public CharacterAnimationController animController;
+    [BoxGroup("Dependancy Injection Variables")] public Transform animControllerParent;
+    [BoxGroup("Dependancy Injection Variables")] public List<RuntimeModeData> modes;
+    [BoxGroup("Dependancy Injection Variables")] public List<AbilitySet> abilitySetInputs;
+    [BoxGroup("Dependancy Injection Variables")] public CharacterAnimationController animController;
 
-
-    [Header("Central Flags")]
     [SerializeField]
-    public bool cantUseAbility => (!isLockedOn || Mode("Attack").isUsing || isFlinching || Mode("Counter").isUsing);
-    public bool dashing;
-    public bool dashOnCooldown;
-    public bool isLockedOn;
-    public bool currentlyRetargetting;
-    public bool isAlive = true;
-    public bool isFlinching = false;
+    [BoxGroup("Flags")] public bool cantUseAbility => (!isLockedOn || Mode("Attack").isUsing || isFlinching || Mode("Counter").isUsing);
+    [BoxGroup("Flags")] public bool dashing;
+    [BoxGroup("Flags")] public bool dashOnCooldown;
+    [BoxGroup("Flags")] public bool isLockedOn;
+    [BoxGroup("Flags")] public bool currentlyRetargetting;
+    [BoxGroup("Flags")] public bool isAlive = true;
+    [BoxGroup("Flags")] public bool isFlinching = false;
+    [BoxGroup("Flags")] public bool usedCombo;
+    [BoxGroup("Flags")] public bool targetIsDodging;
 
+    [BoxGroup("Mutatable Variables")][SerializeField] private string _lookDir;
+    public string lookDir
+    {
+        get => _lookDir;
+        set
+        {
+            if (_lookDir != value)
+                StartCoroutine(Wait(value));
+        }
+    }
 
-    [Header("Combat Flags")]
-    public bool targetIsDodging;
+    IEnumerator Wait(string value)
+    {
+        while (cantUseAbility)
+            yield return new WaitForEndOfFrame();
+
+        _lookDir = value;
+        CombatWheelSelectDirection?.Invoke(lookDir);
+    }
 
     Transform modeParent;
     bool modesInitialized = false;
 
-    protected virtual void Awake()
+    public virtual void Init(List<ModeData> _modes)
     {
-    }
-
-    protected virtual void Start()
-    {
-        //print($"{gameObject.name} onEnable()");
-        CreateMyOwnModeInstances();
+        CreateMyOwnModeInstances(_modes);
+        isAlive = true;
         ResetAttack += ResetmyAttack;
-        Init?.Invoke();
     }
 
     protected virtual void OnEnable()
@@ -142,8 +124,6 @@ public class EntityController : MonoBehaviour
         };
 
         Flinch += BaseFlinch;
-        UpdateAnimationManagersWeapon();
-
     }
 
     protected virtual void OnDisable()
@@ -162,14 +142,14 @@ public class EntityController : MonoBehaviour
         Flinch -= BaseFlinch;
     }
 
-    void CreateMyOwnModeInstances()
+    void CreateMyOwnModeInstances(List<ModeData> _modes)
     {
         if (modesInitialized) return;
 
         modes.Clear();
         CreateAssignModeParent();
 
-        foreach (ModeData templateData in ModeManager.instance.modes)
+        foreach (ModeData templateData in _modes)
         {
             RuntimeModeData newMode = new RuntimeModeBuilder()
                 .WithData(templateData)
@@ -199,7 +179,15 @@ public class EntityController : MonoBehaviour
         void AssignAbilitySets()
         {
             foreach (RuntimeModeData myMode in modes)
-                myMode.data.abilitySet = AbilitySet(myMode.data.name);
+            {
+                print(myMode);
+                print(myMode.data);
+                print(myMode.data.abilitySet);
+                print(AbilitySet(myMode.data.name));
+
+                myMode.data.abilitySet = AbilitySet(myMode.data.name);   //set abilit sets
+                myMode.ability = myMode.data.abilitySet.right;           //Default Setting the ability in the mode
+            }
         }
 
         void CreateModeParents()
@@ -219,47 +207,46 @@ public class EntityController : MonoBehaviour
 
     class RuntimeModeBuilder
     {
-        ModeData data;
-        Transform individualParent;
+        RuntimeModeData runtimeData;
 
         public RuntimeModeBuilder WithData(ModeData data)
         {
-            ModeData newData = ScriptableObject.CreateInstance<ModeData>();
-            newData = data;
-            this.data = newData;
+            runtimeData = new RuntimeModeData(data.name);
+            runtimeData.data = data;
             return this;
         }
 
         public RuntimeModeBuilder WithModeName(string _name)
         {
-            data.name = _name; return this;
+            runtimeData.name = _name;
+            return this;
         }
 
         public RuntimeModeBuilder WithIndividualParent(Transform modeParent)
         {
-            this.individualParent = Instantiate(new GameObject(), modeParent, false).transform;
+            runtimeData.individualParent = Instantiate(new GameObject(), modeParent, false).transform;
             return this;
         }
 
         public RuntimeModeBuilder WithIndividualParentNamed(string _name)
         {
-            individualParent.gameObject.name = _name;
+            runtimeData.individualParent.gameObject.name = _name;
             return this;
         }
 
         public RuntimeModeBuilder WithComponentAddedToEntityController(GameObject entity)
         {
-            ICombatMode modeFunctionality = entity.AddComponent(ModeManager.instance.ReturnModeFunctionality(data.name)) as ICombatMode;
-            data.modeFunctionality = modeFunctionality;
+            ICombatMode mode = (ICombatMode)entity.AddComponent(ServiceLocator.Get<ModeManager>().ReturnModeFunctionality(runtimeData.name));
+            print("BIG CF (entity)" + entity.name + " cf: " + entity.GetComponent<CombatFunctionality>());
+            mode.Init(entity.GetComponent<CombatFunctionality>());
+
+            runtimeData.functionality = mode;
             return this;
         }
 
         public RuntimeModeData Build()
         {
-            RuntimeModeData newData = new RuntimeModeData(data.name);
-            newData.data = data;
-            newData.individualParent = individualParent;
-            return newData;
+            return runtimeData;
         }
     }
 
@@ -273,6 +260,7 @@ public class EntityController : MonoBehaviour
         public ModeTriggerGroup trigger;
         public bool isUsing;
         public ModeData data;
+        public ICombatMode functionality;
         public Transform individualParent;
         public GameObject[] triggers = new GameObject[AMOUNT_OF_TRIGGERS];
         public bool initializedTriggers;
@@ -301,7 +289,7 @@ public class EntityController : MonoBehaviour
             Debug.LogError($"[{gameObject.name}] No modes detected ");
 
 
-        Debug.LogError($"[EntityController : {gameObject.name}] Could not find a mode of the name [{mode}] in currentModeData");
+        Debug.LogError($"[{gameObject.name}] Could not find a mode of the name [{mode}] in currentModeData");
         throw new InvalidOperationException("Cannot return a ref to a new struct instance.");
     }
 
@@ -353,12 +341,6 @@ public class EntityController : MonoBehaviour
             didReattack = true;
         else
             didReattack = false;
-    }
-
-    void UpdateAnimationManagersWeapon()
-    {
-        if(animController != null)
-            animController.wpn = currentWeapon;
     }
 
     void BaseFlinch(float flinchTime)

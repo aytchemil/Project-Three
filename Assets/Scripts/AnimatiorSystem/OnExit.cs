@@ -10,7 +10,7 @@ public class OnExit : StateMachineBehaviour
     override public void OnStateEnter(Animator animator, AnimatorStateInfo stateInfo, int layerIndex)
     {
         animatorSystem = animator.gameObject.GetComponent<AnimatorSystem>() ?? throw new System.ArgumentNullException("Animator system not set");
-        EntityController cec = animatorSystem.GetComponent<CharacterAnimationController>().CEC ?? throw new System.ArgumentNullException("CEC not set");
+        EntityController cec = animatorSystem.GetComponent<CharacterAnimationController>().EC ?? throw new System.ArgumentNullException("EC not set");
 
         animatorSystem.StartCoroutine(Wait());
 

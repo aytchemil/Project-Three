@@ -89,7 +89,6 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
         {
             print($"AT Collider hit {other.gameObject.name}");
             HitAttack();
-            AbilityExecutor.ExecuteAbility(ability, combatFunctionality.gameObject, other.gameObject);
         }
     }
 

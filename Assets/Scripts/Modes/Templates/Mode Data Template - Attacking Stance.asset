@@ -13,13 +13,9 @@ MonoBehaviour:
   m_Name: Mode Data Template - Attacking Stance
   m_EditorClassIdentifier: 
   name: Attack
-  abilitySet: {fileID: 0}
-  modeFunctionality: {fileID: 0}
+  abilitySet: {fileID: 11400000, guid: d10f0e2d610114d4d845d86acba0f2a5, type: 2}
   isStance: 1
   abilityIndividualSelection: 0
-  initializedTriggers: 0
   UIIndicator: {fileID: 2800000, guid: 7bd93364406dab54f843e929e2301476, type: 3}
   modeTextDesc: Attacking
-  modeTypeName: ModeAttackFunctionality, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-    PublicKeyToken=null
   modeScript: {fileID: 11500000, guid: d9143121c89dce04aaf8499043ca90e6, type: 3}

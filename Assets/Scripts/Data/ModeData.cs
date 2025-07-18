@@ -9,8 +9,6 @@ public class ModeData : ScriptableObject
 {
     public string name;
     public AbilitySet abilitySet;
-    [HideInInspector]
-    public ICombatMode modeFunctionality;
     public bool isStance;
     [ShowIf("isStance")]
     public bool abilityIndividualSelection;

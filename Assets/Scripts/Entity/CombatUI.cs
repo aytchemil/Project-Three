@@ -49,16 +49,14 @@ public class CombatUI : MonoBehaviour
 
     #endregion
 
-    private void Awake()
+    public virtual void InternalInit()
     {
-
-        //Cache
         Controls = GetComponent<PlayerController>();
-
     }
 
     private void OnEnable()
     {
+        InternalInit();
         //Input Action Observers
         Controls.EnterCombat += EnableUI;
         Controls.ExitCombat += DisableUI;

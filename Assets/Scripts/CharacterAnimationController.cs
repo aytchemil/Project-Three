@@ -1,13 +1,13 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using static AM;
 
 public class CharacterAnimationController : AnimatorSystem
 {
     public float crossFade = 0.4f;
-    public EntityController CEC;
-    public Weapon wpn;
+    public EntityController EC;
 
     public Action<AtkAnims.Anims, float> AtkAnimation;
     public Action<BlkAnims.Anims, float> BlckAnimation;
@@ -16,53 +16,38 @@ public class CharacterAnimationController : AnimatorSystem
     public bool cantAnimateUpperBody => CantAnimateUpperBody();
     public const int LOWERBODY = 1;
 
-    [SerializeField]
-    public AM.CyclePackage idleCycle = new CyclePackage(
-        (int)MoveAnims.Anims.IDLE1,
-        2f,
-        MoveAnims.idles.Length
-    );
-
 
     Vector2 moveDirInput;
-
-    private void Awake()
-    {
-        CEC = GetComponentInParent<EntityController>();
-        CEC.animController = this;
-        if (GetComponent<Animator>() == null)
-            gameObject.AddComponent<Animator>();
-        animator = GetComponent<Animator>();
-
-        animations = new Type[] {
-            typeof(MoveAnims),
-            typeof(AtkAnims),
-            typeof(BlkAnims)
-        };
-    }
 
 
     public void OnEnable()
     {
-        CEC.Flinch += Flinch;
-        CEC.Init += Init;
-        CEC.moveDirInput += SetMoveDirInput;
-        CEC.Death += DeathAnimation;
-
+        WaitExtension.WaitAFrame(this, () =>
+        {
+            EC.Flinch += Flinch;
+            EC.moveDirInput += SetMoveDirInput;
+            EC.Death += DeathAnimation;
+        });
     }
 
     public void OnDisable()
     {
-        CEC.Flinch -= Flinch;
-        CEC.Init -= Init;
-        CEC.moveDirInput -= SetMoveDirInput;
-        CEC.Death -= DeathAnimation;
+        EC.Flinch -= Flinch;
+        EC.moveDirInput -= SetMoveDirInput;
+        EC.Death -= DeathAnimation;
     }
 
-    void Init()
+    public void Init(int layerCount, EntityController entity, RuntimeAnimatorController wpnAnims)
     {
-        string defaultAnim = MoveAnims.Anims.IDLE1.ToString();
-        InitializeAnimationSystem(animator.layerCount, animator);
+        EC = entity;
+        EC.animController = this;
+
+        if (GetComponent<Animator>() == null)
+            gameObject.AddComponent<Animator>();
+        animator = GetComponent<Animator>();
+
+        InitializeAnimationSystem(layerCount, animator, wpnAnims);
+
         animator.Rebind();
     }
 
@@ -84,7 +69,7 @@ public class CharacterAnimationController : AnimatorSystem
 
     public void Flinch(float time)
     {
-        //print($"[AnimatorController] [{CEC.gameObject.name}] FlinchAnim");
+        //print($"[AnimatorController] [{EC.gameObject.name}] FlinchAnim");
         animator.Play("Idle");
         //Fix
     }
@@ -98,7 +83,7 @@ public class CharacterAnimationController : AnimatorSystem
 
     void CheckInputsLAYER_UPPERBODY(Vector2 moveInput)
     {
-        //print("cant use ability?" + CEC.cantUseAbility);
+        //print("cant use ability?" + EC.cantUseAbility);
         if (!cantAnimateUpperBody)
             MoveAnimationsInvoker(UPPERBODY, moveInput);
     }
@@ -107,8 +92,8 @@ public class CharacterAnimationController : AnimatorSystem
     {
         bool ret = false;
 
-        if (!CEC.cantUseAbility) ret = true;
-        if (CEC.Mode("Attack").isUsing) ret = true;
+        if (!EC.cantUseAbility) ret = true;
+        if (EC.Mode("Attack").isUsing) ret = true;
 
 
         return ret;
@@ -131,7 +116,7 @@ public class CharacterAnimationController : AnimatorSystem
             Play(typeof(MoveAnims), (int)MoveAnims.Anims.LEFT, layer, false, false);
         else
         {
-            if (!idleCycle.cycling)
+            if (CyclePackages.TryGetValue("idle", out var idleCycle) && !idleCycle.cycling)
                 StartCoroutine(idleCycle.Cycle());
 
             Play(typeof(MoveAnims), (int)MoveAnims.idles[idleCycle.curr], layer, false, false);

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static EntityController;
 
 
 
@@ -11,18 +12,18 @@ public class AttackMode : MonoBehaviour, ICombatMode
 
     public string MODE { get => "Attack"; }
 
+    public RuntimeModeData Mode { get => cf.Controls.Mode(MODE); }
 
-    void Awake()
+    protected void OnEnable()
     {
-        cf = gameObject.GetComponent<CombatFunctionality>();
-    }
-
-    private void OnEnable()
-    {
+        //print("CF" + cf);
+        //print(gameObject.GetComponent<CombatFunctionality>());
+        if (cf == null)
+            cf = gameObject.GetComponent<CombatFunctionality>();
         cf.Controls.MyAttackWasBlocked += AttackBlocked;
     }
 
-    private void OnDisable()
+    protected void OnDisable()
     {
         cf.Controls.MyAttackWasBlocked -= AttackBlocked;
     }
@@ -38,25 +39,24 @@ public class AttackMode : MonoBehaviour, ICombatMode
 
 
         //Setup
-        EntityController.RuntimeModeData attack = cf.Controls.Mode(MODE);
-        Ability ability = attack.ability;
+        Ability ability = Mode.ability;
         ModeTriggerGroup trigger = cf.AbilityTriggerEnableUse(MODE);
         bool hasAf = ability.hasAdditionalFunctionality;
 
         //Flags
-        StartAttacking();
+        Mode.functionality.Starting();
 
         //Initial Mutations
         // + SETS the curr ability
         // + SETS the curr Trigger
-        attack.SetAbility(ability);
-        attack.trigger = trigger;
+        Mode.SetAbility(ability);
+        Mode.trigger = trigger;
 
         if(hasAf && ability.hasInitializedAfs == false) ability.InitializeAFValues();
 
         if(ability.archetype == Ability.Archetype.Singular)
         {
-            AbilityAttack ability_attack = (AbilityAttack)ability;
+            AbilityAttack ability_Mode = (AbilityAttack)ability;
 
             print($"[{gameObject.name}] ATTACK: Singular");
 
@@ -92,24 +92,24 @@ public class AttackMode : MonoBehaviour, ICombatMode
         {
             print($"[{gameObject.name}] ATTACK: Multi-Followup");
 
-            AbilityMulti multi_attack = (AbilityMulti)ability;
+            AbilityMulti multi_Mode = (AbilityMulti)ability;
 
             //Functionality
-            trigger.GetComponent<MAT_FollowupGroup>().Use(multi_attack.abilities[0].InitialUseDelay[0]);
+            trigger.GetComponent<MAT_FollowupGroup>().Use(multi_Mode.abilities[0].InitialUseDelay[0]);
 
 
             //Animation
             AM.FollowUpPackage FollowUpPackage = new AM.FollowUpPackage(
                 trigger,
-                attack,
-                cf.GetAnimEnums(multi_attack),
+                Mode,
+                cf.GetAnimEnums(multi_Mode),
                 typeof(AM.AtkAnims),
                 typeof(AM.AtkAnims.Anims),
                 CharacterAnimationController.UPPERBODY,
                 false,
                 false,
                 0.2f,
-                multi_attack.InitialUseDelay
+                multi_Mode.InitialUseDelay
                 );
             StartCoroutine(FollowUpPackage.PlayFollowUp(cf.Controls.animController.Play));
 
@@ -118,25 +118,11 @@ public class AttackMode : MonoBehaviour, ICombatMode
 
     }
 
-    #region Flags
-
-    /// <summary>
-    /// Sets Control's alreadyAttacking flag to TRUE
-    /// </summary>
-    public void StartAttacking()
+    void ICombatMode.Finish()
     {
-        cf.Controls.Mode(MODE).isUsing = true;
-    }
-
-    /// <summary>
-    /// Sets Control's alreadyAttacking flag to FALSE
-    /// </summary>
-    public void FinishAttacking()
-    {
-        cf.Controls.Mode(MODE).isUsing = false;
+        (this as ICombatMode).FinishImplementation();
         cf.Controls.didReattack = false;
     }
-    #endregion
 
 
 
@@ -160,7 +146,7 @@ public class AttackMode : MonoBehaviour, ICombatMode
                         return choice;
 
                 choice = "none";
-                FinishAttacking();
+                Mode.functionality.Finish();
                 break;
         }
 
@@ -185,7 +171,7 @@ public class AttackMode : MonoBehaviour, ICombatMode
         if (ability.archetype == Ability.Archetype.Multi_Followup)
         {
             print("+didreattack: AbilityMulti blocked");
-            MAT_FollowupGroup trigger = cf.Controls.Mode(MODE).trigger.GetComponent<MAT_FollowupGroup>();
+            MAT_FollowupGroup trigger = Mode.trigger.GetComponent<MAT_FollowupGroup>();
             if(trigger.IncrementTriggerProgress() == true)
             {
                 print("didreattack: final trigger prog");
@@ -196,7 +182,7 @@ public class AttackMode : MonoBehaviour, ICombatMode
         if (ability.archetype == Ability.Archetype.Multi_Choice)
         {
             print("+didreattack: Ability_MultiChoice blocked");
-            MAT_ChoiceGroup trigger = cf.Controls.Mode(MODE).trigger.GetComponent<MAT_ChoiceGroup>();
+            MAT_ChoiceGroup trigger = Mode.trigger.GetComponent<MAT_ChoiceGroup>();
 
             trigger.DisableThisTrigger();
         }

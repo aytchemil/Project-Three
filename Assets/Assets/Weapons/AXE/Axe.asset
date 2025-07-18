@@ -12,9 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98418e1ad6f1d57408e12e6ecb655322, type: 3}
   m_Name: Axe
   m_EditorClassIdentifier: 
-  chosenAbilitySet: {fileID: 11400000, guid: dc83521a70f03e34882fc8a47d491497, type: 2}
   prefab: {fileID: 3540297643039045933, guid: 44bbc75683f02b44e8cf22311f58d258, type: 3}
   animationController: {fileID: 9100000, guid: 69ad8c6d1775d41489dd5c30c579a69f, type: 2}
+  layerCount: 2
   allAbilitySets:
   - {fileID: 11400000, guid: dc83521a70f03e34882fc8a47d491497, type: 2}
   - {fileID: 0}

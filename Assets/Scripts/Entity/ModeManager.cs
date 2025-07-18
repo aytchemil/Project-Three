@@ -2,10 +2,8 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ModeManager : MonoBehaviour
+public class ModeManager
 {
-    public static ModeManager instance;
-
     public enum Modes
     { 
         Attack = 0,
@@ -17,10 +15,10 @@ public class ModeManager : MonoBehaviour
     }
 
     public List<ModeData> modes = new List<ModeData>();
-    private void Awake()
+
+    public ModeManager(List<ModeData> modes)
     {
-        //print("initializing mode manager");
-        instance = this;
+        this.modes = modes;
     }
 
     public Type ReturnModeFunctionality(string mode)

@@ -13,13 +13,9 @@ MonoBehaviour:
   m_Name: Mode Data Template - Countering
   m_EditorClassIdentifier: 
   name: Counter
-  abilitySet: {fileID: 0}
-  modeFunctionality: {fileID: 0}
+  abilitySet: {fileID: 11400000, guid: 55bc22a1dd3113542a3da86813e81b96, type: 2}
   isStance: 0
   abilityIndividualSelection: 0
-  initializedTriggers: 0
   UIIndicator: {fileID: 2800000, guid: b8932754fd94d85448b737126a113997, type: 3}
   modeTextDesc: Countering
-  modeTypeName: ModeCounterFunctionality, Assembly-CSharp, Version=0.0.0.0, Culture=neutral,
-    PublicKeyToken=null
   modeScript: {fileID: 11500000, guid: ac495132591dbaa4590688b99403cf72, type: 3}

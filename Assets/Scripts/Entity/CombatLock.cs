@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class CombatLock : MonoBehaviour
 {
+    public bool debug;
     public virtual EntityController Controls { get; set; }
 
     //Component References
@@ -20,22 +21,20 @@ public class CombatLock : MonoBehaviour
     //Asset References
     public GameObject colliderDetecterAsset;
 
-    protected virtual void Awake()
-    {
-        //Cache
-        Controls = GetComponent<EntityController>();
-    }
-    protected virtual void Start()
-    {
-        Respawn();
-    }
 
     #region EnableDisable
     protected virtual void OnEnable()
     {
+        InternalInit();
         Controls.TargetDeath += TargetDeath;
         Controls.CombatFollowTarget += ColliderLockOntoTarget;
         Controls.lockOn += AttemptLock;
+
+
+    }
+    public virtual void InternalInit()
+    {
+        Controls = GetComponent<EntityController>();
     }
 
     protected virtual void OnDisable()
@@ -45,6 +44,10 @@ public class CombatLock : MonoBehaviour
         Controls.lockOn -= AttemptLock;
     }
     #endregion
+    protected virtual void Start()
+    {
+        Respawn();
+    }
 
 
     /// <summary>
@@ -94,7 +97,7 @@ public class CombatLock : MonoBehaviour
 
     void CombatLockExitCombatInternalMethod()
     {
-        //Debug.Log(gameObject.name + " | Combat lock : ExitCombatCaller Caller Executed");
+        if(debug) Debug.Log(gameObject.name + " | Combat lock : ExitCombatCaller Caller Executed");
 
         Controls.isLockedOn = false;
         StartCoroutine(myColliderDetector.ReturnToPreLockedUnlockedState());
@@ -113,10 +116,10 @@ public class CombatLock : MonoBehaviour
     /// </summary>
     protected virtual void EnterCombatCaller()
     {
-        //Debug.Log("Combat Lock: EnterCombatCaller called");
+        if (debug) Debug.Log("Combat Lock: EnterCombatCaller called");
         //ENTER COMBAT: 
         Controls.isLockedOn = true;
-        //print("is now locked on");
+        if (debug) print("is now locked on");
 
         //CALLER : SELECT CERTAIN ABILITY CALLER (DEFAULT INPUT)
         if (Controls.abilitySlots == null)
@@ -130,7 +133,7 @@ public class CombatLock : MonoBehaviour
         Controls.EnterCombat?.Invoke();
 
         Controls.GetTarget = () => myColliderDetector.closestCombatEntity.GetComponent<EntityController>();
-        //print("Locked onto target: " + Controls.GetTarget?.Invoke());
+        if (debug) print("Locked onto target: " + Controls.GetTarget?.Invoke());
     }
 
     /// <summary>
@@ -142,15 +145,14 @@ public class CombatLock : MonoBehaviour
     /// </summary>
     public virtual void AttemptLock()
     {
-        //Debug.Log(gameObject.name + " | attemping lock");
+        if (debug) Debug.Log(gameObject.name + " | attemping lock");
 
         if (lockUnlockDelayInEffect || !Controls.isAlive || Controls.dashing) return;
-        
-        //Debug.Log(gameObject.name + " | lock successfull, applying..");
+
+        if (debug) Debug.Log(gameObject.name + " | lock successfull, applying..");
 
         LockUnlockDelay();
 
-        // Debug.Log(gameObject.name + " | Attempting a lock");
         //print("Are we locked on already? " + Controls.isLockedOn);
         if (!Controls.isLockedOn)
         {
@@ -159,14 +161,14 @@ public class CombatLock : MonoBehaviour
             if (combatEntityInLockedZone)
             {
                // Debug.Log(gameObject.name + " | Found something to lock onto");
-               // Debug.Log(gameObject.name + " | Locking On");
+               if (debug) Debug.Log(gameObject.name + " | Locking On");
 
                 EnterCombatCaller();
             }
         }
         else
         {
-          //  Debug.Log(gameObject.name + " | Is already locked onto, will delock");
+            if (debug) Debug.Log(gameObject.name + " | Is already locked onto, will delock");
             UnlockWhileNotAttacking();
         }
     }
@@ -208,7 +210,7 @@ public class CombatLock : MonoBehaviour
         //print(Controls.isLockedOn);
         if (!GetComponent<CombatFunctionality>().Controls.Mode("Attack").isUsing)
         {
-          //  print("unlocking while not attacking succeeded");
+            if (debug) print("unlocking while not attacking succeeded");
             ExitCombatCaller();
         }
     }

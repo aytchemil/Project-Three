@@ -35,6 +35,7 @@ public class WeaponManager : MonoBehaviour
     void InstantiateChosenWeapon()
     {
         currentWeaponObject = Instantiate(weapon.prefab, weaponParent.transform, false);
+        currentWeaponObject.name = weapon.name;
 
         print("Instantiated Weapon");
     }

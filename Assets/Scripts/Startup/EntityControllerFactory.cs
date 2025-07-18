@@ -30,7 +30,7 @@ public static class EntityControllerFactory
 
         CyclePackage idleCycle = new(
                (int)MoveAnims.Anims.IDLE1,
-               2f,
+               12f,
                MoveAnims.idles.Length
         );
 

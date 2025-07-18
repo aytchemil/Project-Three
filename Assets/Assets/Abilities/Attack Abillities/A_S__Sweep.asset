@@ -15,9 +15,7 @@ MonoBehaviour:
   abilityName: Sweep
   icon: {fileID: 2800000, guid: 716455f41f856fa4aa69d5d332444551, type: 3}
   effects:
-  - rid: 3359079801414746204
-  - rid: 3359079801414746212
-  - rid: 3359079801414746255
+  - rid: 3359079900535325054
   initialUseDelay:
   - 0.3
   successDelay:
@@ -39,16 +37,23 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 3359079801414746204
-      type: {class: DamageEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3359079900535325054
+      type: {class: DirectionalOnHitEffects, ns: , asm: Three}
+      data:
+        directionals:
+        - rid: 3359079900535325073
+        - rid: 3359079900535325082
+        - rid: 3359079900535325091
+    - rid: 3359079900535325073
+      type: {class: DamageEffect, ns: , asm: Three}
       data:
         amount: 1
-    - rid: 3359079801414746212
-      type: {class: FlinchEffect, ns: , asm: Assembly-CSharp}
+    - rid: 3359079900535325082
+      type: {class: FlinchEffect, ns: , asm: Three}
       data:
         duration: 1
-    - rid: 3359079801414746255
-      type: {class: HitVFX, ns: , asm: Assembly-CSharp}
+    - rid: 3359079900535325091
+      type: {class: HitVFX, ns: , asm: Three}
       data:
         hitVFXPrefab: {fileID: 1758473627833946668, guid: 9b21333b068a5084ba09535839bee3c8, type: 3}
         duration: 1

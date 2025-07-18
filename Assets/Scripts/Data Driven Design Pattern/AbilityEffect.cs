@@ -1,14 +1,33 @@
+using NUnit.Framework;
 using System;
+using System.Collections.Generic;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
+
+
+
 
 [Serializable]
 public abstract class AbilityEffect
 {
-    public abstract void Execute(GameObject caster, GameObject target);
+    public virtual void Execute(GameObject attacker) { }
 }
 
+public interface IAEffectDirectional
+{
+    public virtual void Execute(GameObject attacker) { }
+}
+
+public interface IAEffectOnHit
+{
+    public abstract void OnHit(GameObject attacker, GameObject target);
+}
+
+
+
+
 [Serializable]
-public abstract class DirectionalEffect : AbilityEffect
+public class DirectionalOnHitEffects : AbilityEffect, IAEffectOnHit
 {
     public static bool CanExecute(GameObject attacker, GameObject target)
     {
@@ -31,17 +50,28 @@ public abstract class DirectionalEffect : AbilityEffect
             return true;
         return false;
     }
-}
 
-[Serializable]
-class DamageEffect : DirectionalEffect
-{
-    public float amount;
-
-    public override void Execute(GameObject attacker, GameObject target)
+    public void OnHit(GameObject attacker, GameObject target)
     {
         if (CanExecute(attacker, target) == false) return;
 
+        foreach(IAEffectOnHit effect in directionals)
+            effect.OnHit(attacker, target);
+    }
+
+    [SerializeReference] public List<IAEffectDirectional> directionals;
+
+
+
+}
+
+[Serializable]
+class DamageEffect : IAEffectDirectional, IAEffectOnHit
+{
+    public float amount;
+
+    public void OnHit(GameObject attacker, GameObject target)
+    {
         target.GetComponent<AttackbleEntity>().Attacked(amount);
         Debug.Log($"{attacker.name} dealt {amount} damage to {target.name}");
 
@@ -62,11 +92,11 @@ class DamageEffect : DirectionalEffect
 }
 
 [Serializable]
-class FlinchEffect : DirectionalEffect
+class FlinchEffect : IAEffectDirectional, IAEffectOnHit
 {
     public float duration;
 
-    public override void Execute(GameObject attacker, GameObject target)
+    public void OnHit(GameObject attacker, GameObject target)
     {
         target.GetComponent<AttackbleEntity>().Flinch(duration);
         Debug.Log($"{attacker.name} made {target.name} flinch for {duration} seconds");
@@ -74,11 +104,11 @@ class FlinchEffect : DirectionalEffect
 }
 
 [Serializable]
-class HitVFX : AbilityEffect
+class HitVFX : IAEffectDirectional, IAEffectOnHit
 {
     public GameObject hitVFXPrefab;
     public float duration;
-    public override void Execute(GameObject attacker, GameObject target)
+    public void OnHit(GameObject attacker, GameObject target)
     {
         if (hitVFXPrefab == null) return;
         AttackHit(attacker, target);

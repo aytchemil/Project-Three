@@ -38,7 +38,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
         blockMissed = false;
 
 
-        //print($"[{combatFunctionality.gameObject.name}] Block Collider ENABLED");
+        //print($"[{cf.gameObject.name}] Block Collider ENABLED");
     }
 
     protected override void InitialDelayOver_ReEnableTriggerImplementation()
@@ -51,13 +51,13 @@ public class BlockTriggerCollider : ModeTriggerGroup
         else
             StartCoroutine(WaitForBlockToStop());
 
-        //print($"[{combatFunctionality.gameObject.name}] Block Delay COMPLETE");
+        //print($"[{cf.gameObject.name}] Block Delay COMPLETE");
 
     }
 
     protected override void DisableThisTriggerImplementation()
     {
-        combatFunctionality.Controls.BlockedAttack?.Invoke(combatFunctionality.Controls.lookDir);
+        cf.Controls.BlockedAttack?.Invoke(cf.Controls.lookDir);
 
         print("Disabling this Block Trigger, Not locally");
         StopAllCoroutines();
@@ -71,7 +71,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
 
     }
 
-    protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality, Ability abilty)
+    protected override void InitializeSelfImplementation(CombatFunctionality cf, Ability abilty)
     {
         ability = (AbilityBlock)abilty;
     }
@@ -84,7 +84,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
 
         //Null Check
         if (AT == null) return;
-        if (other.GetComponent<AT_ColliderSingle>().combatFunctionality == combatFunctionality) return;
+        if (other.GetComponent<AT_ColliderSingle>().cf == cf) return;
 
         // + Block up TRUE
         // + countering FLASE
@@ -153,7 +153,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
 
     void BlockAttack()
     {
-        combatFunctionality.Controls.Mode("Counter");
+        cf.Controls.Mode("Counter");
     }
 
     void CounterAttack()
@@ -171,7 +171,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
     }
     IEnumerator WaitForBlockToStop()
     {
-        while(combatFunctionality.Controls.Mode("Block").isUsing)
+        while(cf.Controls.Mode("Block").isUsing)
         {
             gameObject.transform.localPosition = Vector3.zero;
             gameObject.transform.localEulerAngles = Vector3.zero;

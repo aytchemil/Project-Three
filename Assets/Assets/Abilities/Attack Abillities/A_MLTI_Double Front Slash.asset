@@ -14,9 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilityName: Double Front Slash
   icon: {fileID: 2800000, guid: 2ab6f80254bfbef4dba567efd9b63ad1, type: 3}
+  effects: []
   initialUseDelay:
-  - 0
-  - 0
+  - 0.25
+  - 0.25
   successDelay:
   - 0
   - 0

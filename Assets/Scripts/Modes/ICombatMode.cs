@@ -23,7 +23,7 @@ public interface ICombatMode
 
         Mode.functionality.Starting();
         Mode.SetAbility(Mode.ability);
-        if (Mode.ability.isStance)
+        if (Mode.data.isStance)
             Mode.trigger = cf.AbilityTriggerEnableUse(Mode);
         else
             Mode.trigger = cf.WheelTriggerUse(Mode);

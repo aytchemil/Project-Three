@@ -42,9 +42,9 @@ public class MultiAttackTriggerGroup : GeneralAttackTriggerGroup
         base.DisableThisTriggerImplementation();
     }
 
-    protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality, Ability abilty)
+    protected override void InitializeSelfImplementation(CombatFunctionality cf, Ability abilty)
     {
-        base.InitializeSelfImplementation(combatFunctionality, abilty);
+        base.InitializeSelfImplementation(cf, abilty);
 
         CreateChildrenTriggers(myMultiAbility.abilities);
 
@@ -99,7 +99,7 @@ public class MultiAttackTriggerGroup : GeneralAttackTriggerGroup
         for (int i = 0; i < triggers.Count; i++)
         {
             //print("multi: initialiing trigger: " + triggers[i].name);
-            triggers[i].InitializeSelf(combatFunctionality, multiAbility.abilities[i]);
+            triggers[i].InitializeSelf(cf, multiAbility.abilities[i]);
         }
 
         initializedChildTriggers = true;

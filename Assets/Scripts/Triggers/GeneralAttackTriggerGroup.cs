@@ -50,9 +50,9 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
         //print(gameObject.name + " | Disabling trigger implementation");
 
         CompleteAttackCaller();
-        combatFunctionality.Controls.Mode("Attack").functionality.Finish();
+        cf.Controls.Mode("Attack").functionality.Finish();
 
-        if (combatFunctionality.Controls.GetTarget?.Invoke() != null)
+        if (cf.Controls.GetTarget?.Invoke() != null)
         {
             //print("going to reset attack caller");
             ResetAttackCaller();
@@ -68,9 +68,9 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
 
     #endregion
 
-    protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality, Ability abilty)
+    protected override void InitializeSelfImplementation(CombatFunctionality cf, Ability abilty)
     {
-        //print(combatFunctionality.gameObject.name + " | ability trigger [" + gameObject.name + "] self initializing...");
+        //print(cf.gameObject.name + " | ability trigger [" + gameObject.name + "] self initializing...");
 
         ability = abilty;
         attacking = false;
@@ -97,7 +97,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
     /// </summary>
     public virtual void FinishSingleAttack()
     {
-        //print("[TRIGGER] [GEN] " + combatFunctionality.gameObject.name + "'s Miss Attack Cuttoff Reached");
+        //print("[TRIGGER] [GEN] " + cf.gameObject.name + "'s Miss Attack Cuttoff Reached");
         MissAttackCuttoffLocal();
 
         if (isLocal)
@@ -109,7 +109,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
             delay = ability.successDelay[0];
         else
         {
-            combatFunctionality.Controls.MissedAttack?.Invoke();
+            cf.Controls.MissedAttack?.Invoke();
             delay = ability.unsuccessDelay[0];
         }
 
@@ -140,7 +140,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
     public void CompleteAttackCaller()
     {
        // print(gameObject.name + " | Compeleted Attack Caller Called");
-        combatFunctionality.Controls.CompletedAttack?.Invoke();
+        cf.Controls.CompletedAttack?.Invoke();
     }
 
     public void ResetAttackCaller()
@@ -148,9 +148,9 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
         //print(gameObject.name + ": ResetAttackCaller()");
 
         #region debug check for resetattack
-        if (combatFunctionality.Controls.ResetAttack != null)
+        if (cf.Controls.ResetAttack != null)
         {
-            foreach (var subscriber in combatFunctionality.Controls.ResetAttack.GetInvocationList())
+            foreach (var subscriber in cf.Controls.ResetAttack.GetInvocationList())
                 if (subscriber != null)
                 {
                     //print(subscriber);
@@ -164,7 +164,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
         }
         #endregion
 
-        combatFunctionality.Controls.ResetAttack?.Invoke();
+        cf.Controls.ResetAttack?.Invoke();
     }
 
 
@@ -181,16 +181,16 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
 
         Ability ability = null;
 
-        if (combatFunctionality.Controls.Mode("Combo").isUsing)
-            ability = combatFunctionality.Controls.Mode("Combo").ability;
-        else if (combatFunctionality.Controls.Mode("Attack").isUsing)
-            ability = combatFunctionality.Controls.Mode("Attack").ability;
+        if (cf.Controls.Mode("Combo").isUsing)
+            ability = cf.Controls.Mode("Combo").ability;
+        else if (cf.Controls.Mode("Attack").isUsing)
+            ability = cf.Controls.Mode("Attack").ability;
         else
             throw new System.Exception("AT Collider Single: Block Completed Sequence: ability not found to sent to CF");
 
         print($"didreattack: ability is {ability}");
 
-        combatFunctionality.Controls.MyAttackWasBlocked?.Invoke(myLookdir, ability);
+        cf.Controls.MyAttackWasBlocked?.Invoke(myLookdir, ability);
     }
 
     protected override void DisableThisTriggerOnDelayImplementation()

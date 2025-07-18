@@ -8,7 +8,7 @@ public class AttackingAI : MonoBehaviour
 {
     EntityController Controls;
     CombatLock combatLock;
-    CombatFunctionality combatFunctionality;
+    CombatFunctionality cf;
 
     string[] lookDirs = { "right", "left", "up", "down" };
 
@@ -58,7 +58,7 @@ public class AttackingAI : MonoBehaviour
     {
         Controls = GetComponent<EntityController>();
         combatLock = GetComponent<CombatLock>();
-        combatFunctionality = GetComponent<CombatFunctionality>();
+        cf = GetComponent<CombatFunctionality>();
     }
 
     protected void OnEnable()

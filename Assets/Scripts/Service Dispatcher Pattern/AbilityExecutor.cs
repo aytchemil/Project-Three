@@ -10,27 +10,16 @@ using UnityEngine;
 // from any context, promoting separation of concerns and modular design.
 public static class AbilityExecutor
 {
-    public static void ExecuteAbility(Ability ability, GameObject attacker, GameObject target)
+    public static void ExecuteAbility(Ability ability, GameObject attacker)
     {
-        bool canExecuteDirectional = CheckForDirectionalExecution(attacker, target);
-
         foreach (var effect in ability.effects)
-        {
-            if (effect is DirectionalEffect && !canExecuteDirectional)
-                continue; // skip this directional effect only
+            effect.Execute(attacker);
+    }
 
-            effect.Execute(attacker, target);
-        }
-
-
-        bool CheckForDirectionalExecution(GameObject attacker, GameObject target)
-        {
-            bool hasDirectional = ability.effects.Any(e => e is DirectionalEffect);
-
-            if (hasDirectional)
-                return DirectionalEffect.CanExecute(attacker, target);
-
-            return true;
-        }
+    public static void OnHit(Ability ability, GameObject attacker, GameObject target)
+    {
+        foreach (var effect in ability.effects) 
+            if(effect is IAEffectOnHit hitEffect)
+                hitEffect.OnHit(attacker, target);
     }
 }

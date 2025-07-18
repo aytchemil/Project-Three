@@ -8,7 +8,7 @@ using Sirenix.OdinInspector;
 /// </summary>
 public abstract class ModeTriggerGroup : MonoBehaviour
 {
-    public CombatFunctionality combatFunctionality;
+    public CombatFunctionality cf;
     public abstract Ability ability { get; set; }
     public Ability Ability() { return ability; }
     public virtual bool trigger { get; set; }
@@ -44,17 +44,13 @@ public abstract class ModeTriggerGroup : MonoBehaviour
         // + INVOKE (SPEAKER) -> The initial delay is over -> Renable the trigger
         trigger = true;
         unused = false;
-        combatFunctionality.Controls.didReattack = false;
+        cf.Controls.didReattack = false;
         EnableTrigger();
         Invoke(nameof(InitialDelayOver_ReEnableTrigger), delay);
 
         //Individual Triggers (or Individual Abilities) with AF
-        if (!isLocal && ability.hasAdditionalFunctionality)
-            combatFunctionality.Controls.UseCombatAdditionalFunctionality?.Invoke(this);
-
-        //Child Triggers (child abilities) with Parent having an AF
-        if (isLocal && parentTrigger.ability.hasAdditionalFunctionality)
-            combatFunctionality.Controls.UseCombatAdditionalFunctionality?.Invoke(parentTrigger);
+        if (ability.hasAdditionalFunctionality)
+            AbilityExecutor.ExecuteAbility(ability, cf.gameObject);
 
     }
 
@@ -137,13 +133,13 @@ public abstract class ModeTriggerGroup : MonoBehaviour
     public void InitializeSelf(CombatFunctionality cf, Ability ability)
     {
         //print($"[{gameObject.name}] [TRIGGER] [INIT:SELF] Ability: {ability}");
-        this.combatFunctionality = cf;
+        this.cf = cf;
         this.ability = ability;
         this.ability.hasInitializedAfs = false;
         InitializeSelfImplementation(cf, ability);
     }
 
-    protected abstract void InitializeSelfImplementation(CombatFunctionality combatFunctionality, Ability abilty);
+    protected abstract void InitializeSelfImplementation(CombatFunctionality cf, Ability abilty);
 
 
     protected IEnumerator DisableThisTriggerOnDelay(float delay)

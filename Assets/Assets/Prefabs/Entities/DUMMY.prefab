@@ -7323,6 +7323,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fcc276fcab5390e4abc6ddfbcb09f2ff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debug: 0
   combatEntityInLockedZone: 0
   lockUnlockDelayInEffect: 0
   lockUnlockDelay: 0.5
@@ -7345,7 +7346,7 @@ MonoBehaviour:
   maxHealth: 88888
   animator: {fileID: 4086029440076312279}
   invincibility: 0
-  invincibiliyTime: 0.5
+  invincibiliyTime: 0.25
   deathTime: 2
   corpseDeathTime: 0
 --- !u!1 &8149103926445004341

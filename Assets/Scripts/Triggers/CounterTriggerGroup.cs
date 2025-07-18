@@ -50,7 +50,7 @@ public class CounterTriggerGroup : MAT_FollowupGroup
 
     protected override void DisableThisTriggerImplementation()
     {
-        combatFunctionality.Controls.Mode("Counter").functionality.Finish();
+        cf.Controls.Mode("Counter").functionality.Finish();
 
         print("Disabling this Counter Attack Trigger, Not locally");
         StopAllCoroutines();
@@ -66,13 +66,13 @@ public class CounterTriggerGroup : MAT_FollowupGroup
         base.DisableThisTriggerImplementation();
     }
 
-    protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality, Ability abilty)
+    protected override void InitializeSelfImplementation(CombatFunctionality cf, Ability abilty)
     {
-        base.InitializeSelfImplementation(combatFunctionality, abilty);
+        base.InitializeSelfImplementation(cf, abilty);
 
         ability = (AbilityCounter)abilty;
 
-        //print(combatFunctionality.gameObject.name + " | ability initializing...");
+        //print(cf.gameObject.name + " | ability initializing...");
     }
 
     IEnumerator CounterDown()

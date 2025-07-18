@@ -58,9 +58,9 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
         animator.SetBool("windupDone", true);
     }
 
-    protected override void InitializeSelfImplementation(CombatFunctionality combatFunctionality, Ability abilty)
+    protected override void InitializeSelfImplementation(CombatFunctionality cf, Ability abilty)
     {
-        base.InitializeSelfImplementation(combatFunctionality, abilty);
+        base.InitializeSelfImplementation(cf, abilty);
 
         col = GetComponent<Collider>();
         if (animator == null)
@@ -83,12 +83,13 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
     public virtual void OnTriggerEnter(Collider other)
     {
         if (other.GetComponent<ModeTriggerGroup>()) return;
-        if (other.GetComponent<EntityController>() == combatFunctionality.Controls) return;
+        if (other.GetComponent<EntityController>() == cf.Controls) return;
 
         if (attacking && initialUseDelayOver)
         {
             print($"AT Collider hit {other.gameObject.name}");
             HitAttack();
+            AbilityExecutor.OnHit(ability, cf.gameObject, other.gameObject);
         }
     }
 
@@ -106,6 +107,8 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
             ColliderVisualColor(Color.green);
         else
             ColliderVisualActive(false);
+
+        
     }
 
     public override void MissAttackCuttoffLocal()
@@ -159,15 +162,15 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
     {
         //print("Freezing attack");
         float prevSpeed = animator.speed;
-        float prevanimContSpeed = combatFunctionality.Controls.animController.animator.speed;
+        float prevanimContSpeed = cf.Controls.animController.animator.speed;
 
         animator.speed = 0;
-        combatFunctionality.Controls.animController.animator.speed = 0;
+        cf.Controls.animController.animator.speed = 0;
 
         yield return new WaitForSeconds(time);
 
         animator.speed = prevSpeed;
-        combatFunctionality.Controls.animController.animator.speed = prevanimContSpeed;
+        cf.Controls.animController.animator.speed = prevanimContSpeed;
         BlockedCompleteSequence(l, e);
     }
 
@@ -177,7 +180,7 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
         base.AttackTriggerBlocked(l, e);
         DisableThisTrigger();
 
-        //combatFunctionality.Controls.Mode("Attack").isUsing = false;
+        //cf.Controls.Mode("Attack").isUsing = false;
     }
 
     #endregion

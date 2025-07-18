@@ -97,7 +97,7 @@ public class CombatFunctionality : MonoBehaviour
     /// </summary>
     void InCombat()
     {
-         if(debug) print("combatFunctionality: in combat");
+         if(debug) print("cf: in combat");
 
         foreach (RuntimeModeData mode in Controls.modes)
         {

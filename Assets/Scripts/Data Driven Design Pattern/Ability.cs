@@ -2,6 +2,7 @@ using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
+using static EntityController;
 public interface IAbilityAnims
 {
     public abstract System.Type type { get; }
@@ -22,7 +23,7 @@ public interface IAbilityDirectional
 }
 
 
-public class Ability : ScriptableObject
+public abstract class Ability : ScriptableObject
 {
     public static float MAX_INITIAL_USE_DELAY = 10;
     bool isSinglar { get => (archetype == Archetype.Singular); }
@@ -31,6 +32,7 @@ public class Ability : ScriptableObject
     [BoxGroup("Ability")] public string abilityName = "";
     [BoxGroup("Ability")] public Texture icon;
     [BoxGroup("Ability")][ShowIf("isSinglar")][SerializeReference] public List<AbilityEffect> effects;
+    [BoxGroup("Ability")] public bool isStance = false;
 
     [BoxGroup("Delays")][SerializeField][PropertyRange(0, "maxInitialUseDelay")] private float[] initialUseDelay = { 0.3f };
     [BoxGroup("Delays")] public float[] successDelay = { 0f };
@@ -99,6 +101,9 @@ public class Ability : ScriptableObject
 
         hasInitializedAfs = true;
     }
+
+
+    public abstract void Use(ICombatMode mode, CombatFunctionality cf, RuntimeModeData Mode);
 
 
 }

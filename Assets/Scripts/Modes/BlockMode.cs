@@ -8,7 +8,7 @@ public class BlockMode : MonoBehaviour, ICombatMode
     public string MODE { get => "Block"; }
     public RuntimeModeData Mode { get => cf.Controls.Mode(MODE); }
 
-    bool readyToUnblock = false;
+    public bool readyToUnblock = false;
     private void OnEnable()
     {
 
@@ -66,66 +66,16 @@ public class BlockMode : MonoBehaviour, ICombatMode
             d.ability = d.data.abilitySet.down;
     }
 
-    public void UseModeFunctionality()
+    public void UseModeImplementation()
     {
-        //print($"[{gameObject.name}] BLOCK used");
-        Block();
-    }
-
-    /// <summary>
-    /// Attempt to block an incoming attack in the direction it comes in
-    /// + Start to block
-    /// + 
-    /// </summary>
-    void Block()
-    {
-        //Setup
-        RuntimeModeData block = cf.Controls.Mode("Block");
-        if (block.initializedTriggers == false) return;
-
-        // + SETS all triggers to false
-        for (int i = 0; i < block.triggers.Length; i++)
-            block.triggers[i].gameObject.SetActive(false);
-        AbilityBlock ability = (AbilityBlock)cf.Controls.Mode("Block").ability;
-        ModeTriggerGroup trigger = cf.WheelTriggerEnableUse("Block");
-        CharacterAnimationController animCont = cf.Controls.animController;
-
-        //Initial Mutations
-        // + SETS flag value for start blocking
-        // + SETS the ability in modedata
-        // + SETS the trigger as the one we chose
-        // + COROUTINE to wait for an unblock input
-        Mode.functionality.Starting();
-        block.SetAbility(ability);
-        block.trigger = trigger;
-        StartCoroutine(WaitToStartBlockingToUnblock(ability));
-
-
-        //Mutations
-        switch (ability.collision)
-        {
-            case AbilityBlock.Collision.Regular:
-
-                //Setup
-
-                //Animation
-                animCont.Play(typeof(AM.BlkAnims), (int)ability.Block, CharacterAnimationController.UPPERBODY, false, false);
-
-
-                //Trigger
-                trigger.Use(ability.InitialUseDelay[0]);
-
-                //Additional Functionality 
-                AF_Regular(ability);
-
-                break;
-        }
+        AbilityBlock ability = (AbilityBlock)Mode.ability;
+        ability.Use(this, cf, Mode);
     }
 
 
     void EnterCombatAutoBlock()
     {
-        UseModeFunctionality();
+        Mode.functionality.UseMode();
     }
 
     /// <summary>

@@ -35,7 +35,10 @@ public class CombatFunctionality : MonoBehaviour
         Controls.ExitCombat += ExitCombat;
         Controls.CombatFollowTarget += CombatFunctionalityElementsLockOntoTarget;
 
-        Controls.useAbility += UseAbility;
+        Controls.useAbility += (string mode) =>
+        {
+            Controls.Mode(mode).functionality.UseMode();
+        };
 
         Controls.switchAbilityMode += SwitchAbilityMode;
 
@@ -66,7 +69,10 @@ public class CombatFunctionality : MonoBehaviour
         Controls.ExitCombat -= ExitCombat;
         Controls.CombatFollowTarget -= CombatFunctionalityElementsLockOntoTarget;
 
-        Controls.useAbility -= UseAbility;
+        Controls.useAbility -= (string mode) =>
+        {
+            Controls.Mode(mode).functionality.UseMode();
+        };
 
         Controls.switchAbilityMode -= SwitchAbilityMode;
 
@@ -345,31 +351,6 @@ public class CombatFunctionality : MonoBehaviour
     }
 
 
-    /// <summary>
-    /// Uses the currently selected ability
-    /// </summary>
-    public virtual void UseAbility(string mode)
-    {
-        if (debug) print($"[{gameObject.name}] [Combat Functionality]: Attempting To Use an Ability from mode [{mode}]");
-        if (Controls.cantUseAbility)
-        {
-            print($"[{gameObject.name}] [CF] : CANT USE ABILITY ");
-            return;
-        }
-        print($"[{gameObject.name}]");
-        print($"[{Controls.gameObject.name}]");
-        print($"[{Controls.Mode(mode).data}]");
-        print($"[{Controls.Mode(mode).functionality.cf.gameObject.name}]");
-
-        Controls.Mode(mode).functionality.UseModeFunctionality();
-
-        if (Controls.Mode(mode) == null)
-            Debug.LogError("There is currently no selected ability (currentAttackAbility) that this combat functionality script can use.");
-
-
-    }
-
-
 
 
 
@@ -377,30 +358,29 @@ public class CombatFunctionality : MonoBehaviour
     /// Enables the selected direction's attack trigger and uses that attack trigger's attacktriggerattack method call with the current ability
     /// </summary>
     /// 
-    public ModeTriggerGroup AbilityTriggerEnableUse(string modeName)
+    public ModeTriggerGroup AbilityTriggerEnableUse(RuntimeModeData Mode)
     {
         ModeTriggerGroup usingThisTriggerGroup = null;
-        RuntimeModeData mode = Controls.Mode(modeName);
 
         print(gameObject.name);
-        Debug.Log($"{Controls.gameObject.name} Using Mode {mode.name}'s Trigger, On Triggers {mode.triggers})");
-        print(mode.triggers[0]);
+        Debug.Log($"{Controls.gameObject.name} Using Mode {Mode.name}'s Trigger, On Triggers {Mode.triggers})");
+        print(Mode.triggers[0]);
 
-        //Set all triggers of this mode to false
-        for (int i = 0; i < mode.triggers.Length; i++)
+        //Set all triggers of this Mode to false
+        for (int i = 0; i < Mode.triggers.Length; i++)
         {
-            print($"index {i}: Disabling trigger {mode.triggers[i]}");
+            print($"index {i}: Disabling trigger {Mode.triggers[i]}");
 
-            //if (mode.triggers[i] == null) Debug.LogError("Error: Trying to Enable Ability's Trigger, But no trigger was found on Controls.mode");
-            mode.triggers[i].SetActive(false);
+            //if (Mode.triggers[i] == null) Debug.LogError("Error: Trying to Enable Ability's Trigger, But no trigger was found on Controls.Mode");
+            Mode.triggers[i].SetActive(false);
             
         }
 
         //Enable the trigger we are using
-        mode.triggers[cur_Ability].SetActive(true);
+        Mode.triggers[cur_Ability].SetActive(true);
 
         //Set this as the return
-        usingThisTriggerGroup = mode.triggers[cur_Ability].GetComponent<ModeTriggerGroup>();
+        usingThisTriggerGroup = Mode.triggers[cur_Ability].GetComponent<ModeTriggerGroup>();
 
 
         //print($"[Combat Functionality] Trigger Enabled to use: {usingThisTriggerGroup.name}");
@@ -408,18 +388,21 @@ public class CombatFunctionality : MonoBehaviour
         return usingThisTriggerGroup;
     }
 
-    public ModeTriggerGroup WheelTriggerEnableUse(string modeName)
+    public ModeTriggerGroup WheelTriggerUse(RuntimeModeData Mode)
     {
-        //print("Using Wheel Trigger... Enabling it");
+        // + Crates new Trigger Instance
+        // + Gets the directional index
         ModeTriggerGroup usingThisTriggerGroup = null;
-        RuntimeModeData m = Controls.Mode(modeName);
         int triggerIndx = GetDirIndex(Controls.lookDir);
 
-        for (int i = 0; i < m.triggers.Length - 1; i++)
-            m.triggers[i].gameObject.SetActive(false);
+        // + Sets all triggers to false
+        for (int i = 0; i < Mode.triggers.Length; i++)
+            Mode.triggers[i].gameObject.SetActive(false);
 
-        m.triggers[triggerIndx].gameObject.SetActive(true);
-        usingThisTriggerGroup = m.triggers[triggerIndx].gameObject.GetComponent<ModeTriggerGroup>();
+        // + Sets chosen trigger (the look dir) active
+        // + sets the return to that trigger
+        Mode.triggers[triggerIndx].gameObject.SetActive(true);
+        usingThisTriggerGroup = Mode.triggers[triggerIndx].gameObject.GetComponent<ModeTriggerGroup>();
 
         return usingThisTriggerGroup;
     }

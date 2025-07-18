@@ -63,7 +63,11 @@ public class AttackingAI : MonoBehaviour
 
     protected void OnEnable()
     {
-        Controls.useAbility += combatFunctionality.UseAbility;
+        Controls.useAbility += (string mode) =>
+        {
+            Controls.Mode(mode).functionality.UseMode();
+        };
+
         Controls.lockOn += combatLock.AttemptLock;
 
         Controls.Flinch += Flinch;
@@ -72,7 +76,11 @@ public class AttackingAI : MonoBehaviour
 
     protected void OnDisable()
     {
-        Controls.useAbility -= combatFunctionality.UseAbility;
+        Controls.useAbility -= (string mode) =>
+        {
+            Controls.Mode(mode).functionality.UseMode();
+        };
+
         Controls.lockOn -= combatLock.AttemptLock;
 
         Controls.Flinch -= Flinch;

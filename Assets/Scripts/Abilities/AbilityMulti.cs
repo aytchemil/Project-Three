@@ -13,4 +13,8 @@ public class AbilityMulti : Ability
 
     public Ability[] abilities;
 
+    public override void Use(ICombatMode mode, CombatFunctionality cf, EntityController.RuntimeModeData Mode)
+    {
+
+    }
 }

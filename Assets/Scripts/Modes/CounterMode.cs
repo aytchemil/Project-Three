@@ -39,13 +39,10 @@ public class CounterMode : MonoBehaviour, ICombatMode
         print("countering");
 
         //Setup
-        Mode.functionality.Starting();
         AbilityCounter ability = (AbilityCounter)Mode.ability;
-        Mode.SetAbility(ability);
 
         //Trigger
-        ModeTriggerGroup trigger = cf.AbilityTriggerEnableUse(MODE);
-        Mode.trigger = trigger;
+        ModeTriggerGroup trigger = cf.AbilityTriggerEnableUse(Mode);
 
         //Ability
 
@@ -76,4 +73,8 @@ public class CounterMode : MonoBehaviour, ICombatMode
 
     }
 
+    public void UseModeImplementation()
+    {
+        throw new NotImplementedException();
+    }
 }

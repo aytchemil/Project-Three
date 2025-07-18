@@ -1,4 +1,6 @@
+using Codice.Client.BaseCommands;
 using System.Collections;
+using UnityEditor.Playables;
 using UnityEngine;
 using static EntityController;
 
@@ -13,10 +15,23 @@ public interface ICombatMode
         this.cf = cf;
     }
 
-    /// <summary>
-    /// PARENT VIRTUAL FUNCTION for using all mode functionalities
-    /// </summary>
-    public abstract void UseModeFunctionality();
+    public void UseMode()
+    {
+        //Guard Clauses for Every Ability
+        if (cf.Controls.cantUseAbility) return;
+        if (Mode.initializedTriggers == false) return;
+
+        Mode.functionality.Starting();
+        Mode.SetAbility(Mode.ability);
+        if (Mode.ability.isStance)
+            Mode.trigger = cf.AbilityTriggerEnableUse(Mode);
+        else
+            Mode.trigger = cf.WheelTriggerUse(Mode);
+
+        UseModeImplementation();
+    }
+
+    public abstract void UseModeImplementation();
 
     public void Starting()
     {

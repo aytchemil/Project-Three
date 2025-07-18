@@ -12,6 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 98418e1ad6f1d57408e12e6ecb655322, type: 3}
   m_Name: Sword
   m_EditorClassIdentifier: 
+  icon: {fileID: 21300000, guid: 0c4bffd4768ee874e89374fee0e8e902, type: 3}
+  name: Sword
+  animHeirarchName: Sword
   prefab: {fileID: 645347422373777696, guid: 7748f102b34be0b4b994be06a255e497, type: 3}
   animationController: {fileID: 9100000, guid: 350e2a14546e9b14ebb4314c7af13080, type: 2}
   layerCount: 2

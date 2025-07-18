@@ -14,7 +14,7 @@ public class Bootstrapper : MonoBehaviour
     [SerializeField] GameObject enemyPrefab;
     [SerializeField] Transform enemySpawnLoc;
     [SerializeField] List<ModeData> modes = new List<ModeData>();
-    [SerializeField] Weapon wpn;
+    public Weapon wpn;
     [SerializeField] List<AbilitySet> abilitySets;
     [SerializeField] GameObject menu;
     [SerializeField] Button StartGameButton;
@@ -26,9 +26,7 @@ public class Bootstrapper : MonoBehaviour
 
         ServiceLocator.Register(new ModeManager(modes));
 
-        if (spawnPlayers) SpawnPlayers();
-
-        if (spawnEnemies) SpawnEnemies();
+        ServiceLocator.Register(new GameManager(menu, this));
 
         print("Boostrap Complete");
 
@@ -42,7 +40,7 @@ public class Bootstrapper : MonoBehaviour
             ServiceLocator.Get<GameManager>().StartGame();
         });
     }
-    void SpawnPlayers()
+    public void SpawnPlayers()
     {
         Debug.Log("Spawning Players");
 
@@ -50,12 +48,12 @@ public class Bootstrapper : MonoBehaviour
         {
             GameObject newPlayer = EntityControllerFactory.SpawnEntityPremade(playerPrefab, modes, wpn, abilitySets, playerSpawnLoc.position, Quaternion.identity);
             print($"Successfully Created New Player {newPlayer.name}");
-            ServiceLocator.Register(new GameManager(menu, newPlayer));
+            ServiceLocator.Get<GameManager>().Init(newPlayer);
             newPlayer.SetActive(false);
         }
     }
 
-    void SpawnEnemies()
+    public void SpawnEnemies()
     {
         Debug.Log("Spawning Enemies");
 

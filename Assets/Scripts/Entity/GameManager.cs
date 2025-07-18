@@ -8,15 +8,13 @@ public class GameManager
     //Just for now
     public GameObject player;
     public GameObject menu;
-    PlayerController PCE;
+    public Bootstrapper bootstrapper;
 
 
-    public GameManager(GameObject menu, GameObject player)
+    public GameManager(GameObject menu, Bootstrapper bs)
     {
-        this.player = player;
         this.menu = menu;
-        PCE = player.GetComponent<PlayerController>();
-        Init(player);
+        bootstrapper = bs;
     }
 
     public void Init(GameObject playerObject)
@@ -32,8 +30,13 @@ public class GameManager
 
     public void StartGame()
     {
+        SpawnPlayers(1);
+        SpawnEnemies(1);
+
         player.SetActive(true);
         menu.SetActive(false);
+
+        player.GetComponent<EntityController>().animController.animator.Rebind();
     }
 
 
@@ -41,6 +44,16 @@ public class GameManager
     {
         yield return new WaitForEndOfFrame();
         player.SetActive(false);
+    }
+
+    public void SpawnPlayers(int count)
+    {
+        bootstrapper.SpawnPlayers();
+    }
+
+    public void SpawnEnemies(int count)
+    {
+        bootstrapper.SpawnEnemies();
     }
 
 }

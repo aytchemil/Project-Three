@@ -13,19 +13,19 @@ MonoBehaviour:
   m_Name: B_S_Top Block
   m_EditorClassIdentifier: 
   abilityName: Top Block
-  icon: {fileID: 2800000, guid: b64fae9976beb4f4399a955bcb6b6d3e, type: 3}
+  icon: {fileID: 21300000, guid: e01eb23e4cf473248808ee651e4c7710, type: 3}
+  hasAdditionalFunctionality: 0
+  effects: []
   initialUseDelay:
   - 0
-  <successDelay>k__BackingField: 0
+  successDelay:
+  - 0
   unsuccessDelay: []
-  dir: 3
   modeBase: 1
   archetype: 0
-  hasAdditionalFunctionality: 0
-  af: 0
-  movementAmount: 0
+  dir: 3
   Block: 1
-  type: 0
+  collision: 0
   blockTriggerCollider: {fileID: 5678498679238792639, guid: 833abaa7fc3b68740a1f050b96067633, type: 3}
   hasBlockUpTime: 0
   blockUpTime: 1
@@ -33,3 +33,6 @@ MonoBehaviour:
   slowdownMovementPercentage: 0
   animationUnblock: Block_Top_Stop
   defaultBlockTimeToBlocking: 0.5
+  references:
+    version: 2
+    RefIds: []

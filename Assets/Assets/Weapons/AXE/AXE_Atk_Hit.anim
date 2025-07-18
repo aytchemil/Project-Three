@@ -169,7 +169,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Weapon Parent/Axe(Clone)/axe2
+    path: Weapon Parent/Axe/axe2
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -212,7 +212,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Weapon Parent/Axe(Clone)
+    path: Weapon Parent/Axe
   m_PositionCurves:
   - curve:
       serializedVersion: 2
@@ -405,7 +405,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Weapon Parent/Axe(Clone)/axe2
+    path: Weapon Parent/Axe/axe2
   - curve:
       serializedVersion: 2
       m_Curve:
@@ -448,7 +448,7 @@ AnimationClip:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    path: Weapon Parent/Axe(Clone)
+    path: Weapon Parent/Axe
   m_ScaleCurves: []
   m_FloatCurves: []
   m_PPtrCurves: []
@@ -478,7 +478,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 4240373170
+      path: 1002654561
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -487,7 +487,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 2528210957
+      path: 935904153
       attribute: 1
       script: {fileID: 0}
       typeID: 4
@@ -514,7 +514,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 4240373170
+      path: 1002654561
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -523,7 +523,7 @@ AnimationClip:
       isIntCurve: 0
       isSerializeReferenceCurve: 0
     - serializedVersion: 2
-      path: 2528210957
+      path: 935904153
       attribute: 4
       script: {fileID: 0}
       typeID: 4
@@ -1434,7 +1434,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: Weapon Parent/Axe(Clone)/axe2
+    path: Weapon Parent/Axe/axe2
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -1500,7 +1500,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: Weapon Parent/Axe(Clone)/axe2
+    path: Weapon Parent/Axe/axe2
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -1566,7 +1566,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: Weapon Parent/Axe(Clone)/axe2
+    path: Weapon Parent/Axe/axe2
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -1605,10 +1605,10 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: Weapon Parent/Axe(Clone)/axe2
+    path: Weapon Parent/Axe/axe2
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1644,10 +1644,10 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: Weapon Parent/Axe(Clone)/axe2
+    path: Weapon Parent/Axe/axe2
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1683,10 +1683,10 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
-    path: Weapon Parent/Axe(Clone)/axe2
+    path: Weapon Parent/Axe/axe2
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1731,7 +1731,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.x
-    path: Weapon Parent/Axe(Clone)
+    path: Weapon Parent/Axe
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -1779,7 +1779,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.y
-    path: Weapon Parent/Axe(Clone)
+    path: Weapon Parent/Axe
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -1827,7 +1827,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalPosition.z
-    path: Weapon Parent/Axe(Clone)
+    path: Weapon Parent/Axe
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -1875,10 +1875,10 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.x
-    path: Weapon Parent/Axe(Clone)
+    path: Weapon Parent/Axe
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1923,10 +1923,10 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.y
-    path: Weapon Parent/Axe(Clone)
+    path: Weapon Parent/Axe
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   - serializedVersion: 2
     curve:
       serializedVersion: 2
@@ -1971,10 +1971,10 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: localEulerAnglesRaw.z
-    path: Weapon Parent/Axe(Clone)
+    path: Weapon Parent/Axe
     classID: 4
     script: {fileID: 0}
-    flags: 16
+    flags: 0
   m_EulerEditorCurves:
   - serializedVersion: 2
     curve:
@@ -1984,7 +1984,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Weapon Parent/Axe(Clone)/axe2
+    path: Torso/Arms/Left Arm
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -1996,7 +1996,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Weapon Parent/Axe(Clone)/axe2
+    path: Torso/Arms/Left Arm
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2008,7 +2008,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Weapon Parent/Axe(Clone)/axe2
+    path: Torso/Arms/Left Arm
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2020,7 +2020,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Weapon Parent/Axe(Clone)
+    path: Weapon Parent/Axe/axe2
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2032,7 +2032,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Weapon Parent/Axe(Clone)
+    path: Weapon Parent/Axe/axe2
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2044,7 +2044,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Weapon Parent/Axe(Clone)
+    path: Weapon Parent/Axe/axe2
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2092,7 +2092,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.x
-    path: Torso/Arms/Left Arm
+    path: Weapon Parent/Axe
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2104,7 +2104,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.y
-    path: Torso/Arms/Left Arm
+    path: Weapon Parent/Axe
     classID: 4
     script: {fileID: 0}
     flags: 0
@@ -2116,7 +2116,7 @@ AnimationClip:
       m_PostInfinity: 2
       m_RotationOrder: 4
     attribute: m_LocalEulerAngles.z
-    path: Torso/Arms/Left Arm
+    path: Weapon Parent/Axe
     classID: 4
     script: {fileID: 0}
     flags: 0

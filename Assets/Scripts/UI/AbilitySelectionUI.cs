@@ -1,33 +1,58 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 using System.Collections.Generic;
-using TMPro; // for TextMeshProUGUI
-
 
 public class AbilitySelectionUI : MonoBehaviour
 {
-    [Header("Setup")]
+    [Header("Ability Grid Setup")]
     public GameObject allAbilitySetsGO;
-    public GridLayoutGroup gridLayoutGroup;
+    public GridLayoutGroup abilityGridLayout;
     public GameObject abilityPanelPrefab;
     public AllAbilitiesInModeSO allAbilitiesSO;
 
-    // ✅ Track who opened the selector
+    [Header("Weapon Grid Setup")]
+    public GameObject weaponPanelGO;                // weapon panel container
+    public GridLayoutGroup weaponGridLayout;        // weapon grid layout
+    public GameObject weaponPanelPrefab;            // prefab for weapon entries
+    public AllWeaponSO allWeaponsSO;               // list of all weapons
+
+    [Header("Weapon Select Button UI")]
+    public Button weaponSelectButton;         // the button you click to open weapon grid
+    public Image weaponButtonImage;           // the image on that button
+    public TextMeshProUGUI weaponButtonText;  // the TMP text on that button
+
+    // currently selected weapon
+    private Weapon currentSelectedWeapon;
+
+    // ✅ Track who opened the selector for abilities
     private Button currentSlotButton;
     private Image currentSlotImage;
     private System.Action<Ability> onAbilityChosenCallback;
 
-    private readonly List<GameObject> spawnedPanels = new List<GameObject>();
+    private readonly List<GameObject> spawnedAbilityPanels = new List<GameObject>();
+    private readonly List<GameObject> spawnedWeaponPanels = new List<GameObject>();
 
     private void Awake()
     {
-        if (!gridLayoutGroup)
-            gridLayoutGroup = GetComponent<GridLayoutGroup>();
+        if (!abilityGridLayout)
+            abilityGridLayout = allAbilitySetsGO.GetComponentInChildren<GridLayoutGroup>();
+        if (!weaponGridLayout && weaponPanelGO)
+            weaponGridLayout = weaponPanelGO.GetComponentInChildren<GridLayoutGroup>();
+
+        if (weaponButtonText != null)
+            weaponButtonText.text = string.Empty;
     }
 
-    /// <summary>
-    /// Open the selector for a specific slot button
-    /// </summary>
+    private void Start()
+    {
+        HookWeaponButton();
+    }
+
+    // ========================
+    // ABILITY GRID FUNCTIONS
+    // ========================
+
     public void OpenForSlot(Button slotButton, System.Action<Ability> callback = null)
     {
         currentSlotButton = slotButton;
@@ -35,14 +60,16 @@ public class AbilitySelectionUI : MonoBehaviour
         onAbilityChosenCallback = callback;
 
         allAbilitySetsGO.SetActive(true);
-        PopulateGrid();
+        weaponPanelGO?.SetActive(false); // make sure weapon panel is hidden
+        PopulateAbilityGrid();
     }
 
     public void Close()
     {
-        foreach (var go in spawnedPanels)
+        // Clear ability grid
+        foreach (var go in spawnedAbilityPanels)
             if (go) Destroy(go);
-        spawnedPanels.Clear();
+        spawnedAbilityPanels.Clear();
 
         allAbilitySetsGO.SetActive(false);
 
@@ -52,7 +79,7 @@ public class AbilitySelectionUI : MonoBehaviour
         onAbilityChosenCallback = null;
     }
 
-    private void PopulateGrid()
+    private void PopulateAbilityGrid()
     {
         if (!abilityPanelPrefab)
         {
@@ -67,16 +94,16 @@ public class AbilitySelectionUI : MonoBehaviour
         }
 
         // Clear existing
-        foreach (var go in spawnedPanels)
+        foreach (var go in spawnedAbilityPanels)
             if (go) Destroy(go);
-        spawnedPanels.Clear();
+        spawnedAbilityPanels.Clear();
 
         foreach (var ability in allAbilitiesSO.abilities)
         {
             if (!ability) continue;
 
-            GameObject panelGO = Instantiate(abilityPanelPrefab, gridLayoutGroup.transform);
-            spawnedPanels.Add(panelGO);
+            GameObject panelGO = Instantiate(abilityPanelPrefab, abilityGridLayout.transform);
+            spawnedAbilityPanels.Add(panelGO);
 
             // ✅ Get Button child
             Button abilityButton = panelGO.GetComponentInChildren<Button>();
@@ -86,10 +113,9 @@ public class AbilitySelectionUI : MonoBehaviour
             Image abilityIconImage = abilityButton.GetComponent<Image>();
             if (abilityIconImage) abilityIconImage.sprite = ability.icon;
 
-            // ✅ Find TMP Text sibling under prefab and set name
+            // ✅ Set TMP Text
             TextMeshProUGUI nameLabel = panelGO.GetComponentInChildren<TextMeshProUGUI>(true);
-            if (nameLabel)
-                nameLabel.text = ability.abilityName;
+            if (nameLabel) nameLabel.text = ability.abilityName;
 
             // ✅ Hook click
             Ability captured = ability;
@@ -97,12 +123,9 @@ public class AbilitySelectionUI : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// When an ability from grid is selected
-    /// </summary>
     private void OnAbilitySelected(Ability selectedAbility)
     {
-        Debug.Log($"[AbilitySelectionUI] Selected: {selectedAbility.name}");
+        Debug.Log($"[AbilitySelectionUI] Selected Ability: {selectedAbility.abilityName}");
 
         // ✅ Update the slot button image
         if (currentSlotImage && selectedAbility.icon)
@@ -111,7 +134,110 @@ public class AbilitySelectionUI : MonoBehaviour
         // ✅ Callback for storing ability in logic
         onAbilityChosenCallback?.Invoke(selectedAbility);
 
-        // Close selector
+        // ✅ Also ensure weapon panel is closed
+        CloseWeaponPanel();
+
+        // ✅ Close selector
         Close();
+    }
+
+    public void ChangeAllAbilitiesListSO(AllAbilitiesInModeSO newAbilities)
+    {
+        allAbilitiesSO = newAbilities;
+    }
+
+    // ========================
+    // WEAPON GRID FUNCTIONS
+    // ========================
+
+    public void OpenWeaponPanel()
+    {
+        // ✅ Hide ability panel and show weapon panel
+        allAbilitySetsGO.SetActive(false);
+        if (weaponPanelGO != null)
+        {
+            weaponPanelGO.SetActive(true);
+            PopulateWeaponGrid();
+        }
+    }
+
+    public void CloseWeaponPanel()
+    {
+        if (weaponPanelGO == null) return;
+
+        foreach (var go in spawnedWeaponPanels)
+            if (go) Destroy(go);
+        spawnedWeaponPanels.Clear();
+
+        weaponPanelGO.SetActive(false);
+    }
+
+    private void PopulateWeaponGrid()
+    {
+        if (!weaponPanelPrefab)
+        {
+            Debug.LogError("[AbilitySelectionUI] Missing weaponPanelPrefab!");
+            return;
+        }
+
+        if (!allWeaponsSO || allWeaponsSO.weapons.Count == 0)
+        {
+            Debug.LogWarning("[AbilitySelectionUI] No weapons found in SO.");
+            return;
+        }
+
+        foreach (var go in spawnedWeaponPanels)
+            if (go) Destroy(go);
+        spawnedWeaponPanels.Clear();
+
+        foreach (var weapon in allWeaponsSO.weapons)
+        {
+            if (!weapon) continue;
+
+            GameObject panelGO = Instantiate(weaponPanelPrefab, weaponGridLayout.transform);
+            spawnedWeaponPanels.Add(panelGO);
+
+            Button weaponButton = panelGO.GetComponentInChildren<Button>();
+            if (!weaponButton) continue;
+
+            Image weaponIconImage = weaponButton.GetComponent<Image>();
+            if (weaponIconImage) weaponIconImage.sprite = weapon.icon;
+
+            TextMeshProUGUI weaponName = panelGO.GetComponentInChildren<TextMeshProUGUI>(true);
+            if (weaponName) weaponName.text = weapon.name;
+
+            Weapon capturedWeapon = weapon;
+            weaponButton.onClick.AddListener(() => OnWeaponSelected(capturedWeapon));
+        }
+    }
+    private void OnWeaponSelected(Weapon selectedWeapon)
+    {
+        Debug.Log($"[AbilitySelectionUI] Selected Weapon: {selectedWeapon.name}");
+
+        currentSelectedWeapon = selectedWeapon;
+
+        // ✅ Update weapon button icon/text
+        if (weaponButtonImage && selectedWeapon.icon)
+            weaponButtonImage.sprite = selectedWeapon.icon;
+
+        if (weaponButtonText)
+            weaponButtonText.text = selectedWeapon.name;
+
+        // ✅ Update weapon handler
+        if (weaponSelectButton.gameObject.GetComponent<WeaponHandler>() != null)
+            weaponSelectButton.gameObject.GetComponent<WeaponHandler>().SetWeapon(selectedWeapon);
+
+        // ✅ Close weapon panel & return to ability panel
+        CloseWeaponPanel();
+        allAbilitySetsGO.SetActive(true);
+    }
+
+    public void HookWeaponButton()
+    {
+        if (weaponSelectButton != null)
+        {
+            weaponSelectButton.onClick.RemoveAllListeners();
+            weaponSelectButton.onClick.AddListener(OpenWeaponPanel);
+        }
     }
 }

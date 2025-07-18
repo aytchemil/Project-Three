@@ -9,7 +9,7 @@ public class DropdownHandler : MonoBehaviour
     [SerializeField] private TMP_Dropdown dropdown;
 
     // Unity Events for each option
-    [SerializeField] private List<UnityEvent> onOptionSelected;
+    public List<UnityEvent> onOptionSelected;
 
 
     void Start()

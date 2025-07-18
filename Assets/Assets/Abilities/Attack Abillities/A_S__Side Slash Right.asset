@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: A_S__Side Slash Right
   m_EditorClassIdentifier: 
   abilityName: Right Side Slash
-  icon: {fileID: 2800000, guid: 0b242c75d5aed21408c45930eac40490, type: 3}
+  icon: {fileID: 21300000, guid: 33d5822ea28647e47b40890ae6c7971a, type: 3}
+  hasAdditionalFunctionality: 0
   effects:
   - rid: 3359079900535325053
   initialUseDelay:
@@ -24,10 +25,6 @@ MonoBehaviour:
   - 0.3
   modeBase: 0
   archetype: 0
-  hasAdditionalFunctionality: 0
-  afTypes: []
-  afs: []
-  hasInitializedAfs: 0
   dir: 1
   damage: 1
   flinchAmount: 1

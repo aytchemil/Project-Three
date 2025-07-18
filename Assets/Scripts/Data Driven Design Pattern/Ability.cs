@@ -31,7 +31,7 @@ public abstract class Ability : ScriptableObject
 
 
     [BoxGroup("Ability")] public string abilityName = "";
-    [BoxGroup("Ability")] public Texture icon;
+    [BoxGroup("Ability")] public Sprite icon;
     [BoxGroup("Ability")] public bool hasAdditionalFunctionality = false;
     [BoxGroup("Ability")] [ShowIf("canHaveAfs")][ShowIf("hasAdditionalFunctionality")][SerializeReference] public List<AbilityEffect> effects;
 

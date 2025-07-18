@@ -51,6 +51,7 @@ public class Bootstrapper : MonoBehaviour
             GameObject newPlayer = EntityControllerFactory.SpawnEntityPremade(playerPrefab, modes, wpn, abilitySets, playerSpawnLoc.position, Quaternion.identity);
             print($"Successfully Created New Player {newPlayer.name}");
             ServiceLocator.Register(new GameManager(menu, newPlayer));
+            newPlayer.SetActive(false);
         }
     }
 
@@ -63,5 +64,10 @@ public class Bootstrapper : MonoBehaviour
             GameObject newPlayer = EntityControllerFactory.SpawnEntityPremade(enemyPrefab, modes, wpn, abilitySets, playerSpawnLoc.position, Quaternion.identity);
             print($"Successfully Created New Enemy {newPlayer.name}");
         }
+    }
+
+    public void SetAbilitySet(ModeManager.Modes mode)
+    {
+
     }
 }

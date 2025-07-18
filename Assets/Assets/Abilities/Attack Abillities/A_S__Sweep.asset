@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: A_S__Sweep
   m_EditorClassIdentifier: 
   abilityName: Sweep
-  icon: {fileID: 2800000, guid: 716455f41f856fa4aa69d5d332444551, type: 3}
+  icon: {fileID: 21300000, guid: e5ac6fdcf9c82524897fa10250956b89, type: 3}
+  hasAdditionalFunctionality: 0
   effects:
   - rid: 3359079900535325054
   initialUseDelay:
@@ -24,10 +25,6 @@ MonoBehaviour:
   - 0.3
   modeBase: 0
   archetype: 0
-  hasAdditionalFunctionality: 0
-  afTypes: []
-  afs: []
-  hasInitializedAfs: 0
   dir: 1
   damage: 3
   flinchAmount: 1

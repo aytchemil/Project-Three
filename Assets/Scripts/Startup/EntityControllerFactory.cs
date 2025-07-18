@@ -34,6 +34,7 @@ public static class EntityControllerFactory
                MoveAnims.idles.Length
         );
 
+        Debug.Log("Spawning Entity...");
 
         GameObject newEntity = new EntityControllerBuilder(entityPrefab)
             .WithCombatFunctionality()

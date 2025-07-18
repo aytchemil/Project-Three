@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: A_MLTI_Side Dash Slashes
   m_EditorClassIdentifier: 
   abilityName: Side Dash Slashes
-  icon: {fileID: 2800000, guid: 425525ddd64d86f4dbf7660d76b88019, type: 3}
+  icon: {fileID: 21300000, guid: ff4214e3b373ed94c992e74ee694f37e, type: 3}
+  hasAdditionalFunctionality: 1
   effects:
   - rid: 3359079900535325118
   initialUseDelay:
@@ -24,14 +25,6 @@ MonoBehaviour:
   - 0.3
   modeBase: 0
   archetype: 1
-  hasAdditionalFunctionality: 1
-  afTypes:
-  - {fileID: 11400000, guid: cb2cf77dc75029140acdd2c671ac1c48, type: 2}
-  - {fileID: 11400000, guid: 01e8a653277eed64c91c36ccdf188b57, type: 2}
-  afs:
-  - rid: 3359079900535325115
-  - rid: 3359079900535325116
-  hasInitializedAfs: 1
   MultiAbilityGroupingPrefab: {fileID: 3607946116655452447, guid: 0b5f45e6afec5224fa98a9bc50f4713e, type: 3}
   abilities:
   - {fileID: 11400000, guid: 90d73c4cb12b02a40bfbffb1eea894b8, type: 2}
@@ -42,14 +35,6 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 3359079900535325115
-      type: {class: AF_movement, ns: , asm: Three}
-      data:
-        movementAmount: 0
-    - rid: 3359079900535325116
-      type: {class: AF_choice, ns: , asm: Three}
-      data:
-        choice: 
     - rid: 3359079900535325118
       type: {class: RuntimeMoveAttackerEffect, ns: , asm: Three}
       data:

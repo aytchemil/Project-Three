@@ -16,6 +16,7 @@ public class GameManager
         this.player = player;
         this.menu = menu;
         PCE = player.GetComponent<PlayerController>();
+        Init(player);
     }
 
     public void Init(GameObject playerObject)

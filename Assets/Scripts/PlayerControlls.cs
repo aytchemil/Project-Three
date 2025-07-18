@@ -43,6 +43,8 @@ public class PlayerController : EntityController
         ia_abilityUse[1] = controls.Player.Ability2;
         ia_abilityUse[2] = controls.Player.Ability3;
         ia_abilityUse[3] = controls.Player.Ability4;
+
+        print("Player Init, IA Abilityuses set up");
     }
 
 
@@ -51,79 +53,85 @@ public class PlayerController : EntityController
 
     protected override void OnEnable()
     {
-        base.OnEnable();
+        WaitExtension.WaitAFrame(this, Enable);
 
-        ia_look.Enable();
-        look = () => ia_look.ReadValue<Vector2>();
-        //print("e");
-        ia_move.Enable();
-        move = () => ia_move.ReadValue<Vector2>();
-
-        ia_sprint.Enable();
-        ia_sprint.started += ctx => sprintStart?.Invoke();
-        ia_sprint.canceled += ctx => sprintStop?.Invoke();
-
-        ia_lockOn.Enable();
-        ia_lockOn.performed += ctx => lockOn?.Invoke();
-
-        ia_dash.Enable();
-        ia_dash.performed += ctx => dash?.Invoke();
-
-        ia_useCombo.Enable();
-        ia_useCombo.performed += ctx =>
+        void Enable()
         {
-            usedCombo = true;
-            useAbility?.Invoke("Combo");
-        };
+            base.OnEnable();
 
-        ia_block.Enable();
-        ia_block.started += ctx =>
-        {
-            blockStart?.Invoke();
-            useAbility?.Invoke("Block");
-        };
-        ia_block.canceled += ctx =>
-        {
-            blockStop?.Invoke();
-        };
+            ia_look.Enable();
+            look = () => ia_look.ReadValue<Vector2>();
+            //print("e");
+            ia_move.Enable();
+            move = () => ia_move.ReadValue<Vector2>();
 
-        ia_switchAttackMode.Enable();
-        ia_switchAttackMode.performed += ctx =>
-        {
-            switchAbilityMode?.Invoke();
-        };
+            ia_sprint.Enable();
+            ia_sprint.started += ctx => sprintStart?.Invoke();
+            ia_sprint.canceled += ctx => sprintStop?.Invoke();
+
+            ia_lockOn.Enable();
+            ia_lockOn.performed += ctx => lockOn?.Invoke();
+
+            ia_dash.Enable();
+            ia_dash.performed += ctx => dash?.Invoke();
+
+            ia_useCombo.Enable();
+            ia_useCombo.performed += ctx =>
+            {
+                usedCombo = true;
+                useAbility?.Invoke("Combo");
+            };
+
+            ia_block.Enable();
+            ia_block.started += ctx =>
+            {
+                blockStart?.Invoke();
+                useAbility?.Invoke("Block");
+            };
+            ia_block.canceled += ctx =>
+            {
+                blockStop?.Invoke();
+            };
+
+            ia_switchAttackMode.Enable();
+            ia_switchAttackMode.performed += ctx =>
+            {
+                switchAbilityMode?.Invoke();
+            };
 
 
-        for(int i = 0; i < AMOUNT_OF_ABIL_SLOTS; i++)
-        {
-             print($"[PlayerControls] Enabled Ability Slot [{i}]");
-            ia_abilityUse[i].Enable();
+            for (int i = 0; i < AMOUNT_OF_ABIL_SLOTS; i++)
+            {
+                print($"[PlayerControls] Enabled Ability Slot [{i}]");
+                ia_abilityUse[i].Enable();
+            }
+
+            ia_abilityUse[0].performed += ctx =>
+            {
+                print($"[PlayerControlls] pressed ability [{0}]");
+                abilitySlots[0]?.Invoke(0);
+                useAbility?.Invoke(CurMode().name);
+            };
+            ia_abilityUse[1].performed += ctx =>
+            {
+                print($"[PlayerControlls] pressed ability [{1}]");
+                abilitySlots[1]?.Invoke(1);
+                useAbility?.Invoke(CurMode().name);
+            };
+            ia_abilityUse[2].performed += ctx =>
+            {
+                print($"[PlayerControlls] pressed ability [{2}]");
+                abilitySlots[2]?.Invoke(2);
+                useAbility?.Invoke(CurMode().name);
+            };
+            ia_abilityUse[3].performed += ctx =>
+            {
+                print($"[PlayerControlls] pressed ability [{3}]");
+                abilitySlots[3]?.Invoke(3);
+                useAbility?.Invoke(CurMode().name);
+            };
         }
 
-        ia_abilityUse[0].performed += ctx =>
-        {
-            print($"[PlayerControlls] pressed ability [{0}]");
-            abilitySlots[0]?.Invoke(0);
-            useAbility?.Invoke(CurMode().name);
-        };
-        ia_abilityUse[1].performed += ctx =>
-        {
-            print($"[PlayerControlls] pressed ability [{1}]");
-            abilitySlots[1]?.Invoke(1);
-            useAbility?.Invoke(CurMode().name);
-        };
-        ia_abilityUse[2].performed += ctx =>
-        {
-            print($"[PlayerControlls] pressed ability [{2}]");
-            abilitySlots[2]?.Invoke(2);
-            useAbility?.Invoke(CurMode().name);
-        };
-        ia_abilityUse[3].performed += ctx =>
-        {
-            print($"[PlayerControlls] pressed ability [{3}]");
-            abilitySlots[3]?.Invoke(3);
-            useAbility?.Invoke(CurMode().name);
-        };
 
     }
 

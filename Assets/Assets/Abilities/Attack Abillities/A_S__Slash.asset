@@ -13,7 +13,8 @@ MonoBehaviour:
   m_Name: A_S__Slash
   m_EditorClassIdentifier: 
   abilityName: Slash
-  icon: {fileID: 2800000, guid: 5d648196f53723d499590b1df6cf38a9, type: 3}
+  icon: {fileID: 21300000, guid: 14bbc0e056b0d884a9138fb5aae99238, type: 3}
+  hasAdditionalFunctionality: 1
   effects:
   - rid: 3359079900535325050
   initialUseDelay:
@@ -24,12 +25,6 @@ MonoBehaviour:
   - 0.3
   modeBase: 0
   archetype: 0
-  hasAdditionalFunctionality: 1
-  afTypes:
-  - {fileID: 11400000, guid: cb2cf77dc75029140acdd2c671ac1c48, type: 2}
-  afs:
-  - rid: 3359079789718667347
-  hasInitializedAfs: 0
   dir: 1
   damage: 1
   flinchAmount: 1
@@ -39,12 +34,6 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
-    - rid: 3359079789718667347
-      type: {class: AF_movement, ns: , asm: Assembly-CSharp}
-      data:
-        movementAmount: 50
     - rid: 3359079900535325050
       type: {class: DirectionalOnHitEffects, ns: , asm: Three}
       data:

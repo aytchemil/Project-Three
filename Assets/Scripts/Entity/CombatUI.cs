@@ -34,16 +34,16 @@ public class CombatUI : MonoBehaviour
     [SerializeField] private GameObject left;
     [SerializeField] private GameObject right;
 
-    [SerializeField] private RawImage upImgRef;
-    [SerializeField] private RawImage downImgRef;
-    [SerializeField] private RawImage leftImgRef;
-    [SerializeField] private RawImage rightImgRef;
+    [SerializeField] private Image upImgRef;
+    [SerializeField] private Image downImgRef;
+    [SerializeField] private Image leftImgRef;
+    [SerializeField] private Image rightImgRef;
     [SerializeField] private TextMeshProUGUI text;
 
     [SerializeField] private TextMeshProUGUI modeText;
     [SerializeField] private TextMeshProUGUI comboText;
 
-    [SerializeField] private RawImage[] abilityImgs;
+    [SerializeField] private Image[] abilityImgs;
 
 
 
@@ -68,6 +68,8 @@ public class CombatUI : MonoBehaviour
             Controls.abilitySlots[i] += AbilityChoose;
             Controls.abilitySlots[i] += UpdateCurrentAbilityText;
         }
+
+        DisableUI();
     }
 
     private void OnDisable()
@@ -189,7 +191,7 @@ public class CombatUI : MonoBehaviour
         }
     }
 
-    void ChangeOpacityImage(RawImage img, float opacity)
+    void ChangeOpacityImage(Image img, float opacity)
     {
         Color color = img.color;
         color.a = opacity;
@@ -293,10 +295,10 @@ public class CombatUI : MonoBehaviour
 
     void SetWheelIcons()  
     {
-        rightImgRef.texture = Controls.Mode("Combo").data.abilitySet.right.icon;
-        leftImgRef.texture = Controls.Mode("Combo").data.abilitySet.left.icon;
-        upImgRef.texture = Controls.Mode("Combo").data.abilitySet.up.icon;
-        downImgRef.texture = Controls.Mode("Combo").data.abilitySet.down.icon;
+        rightImgRef.sprite = Controls.Mode("Combo").data.abilitySet.right.icon;
+        leftImgRef.sprite = Controls.Mode("Combo").data.abilitySet.left.icon;
+        upImgRef.sprite = Controls.Mode("Combo").data.abilitySet.up.icon;
+        downImgRef.sprite = Controls.Mode("Combo").data.abilitySet.down.icon;
     }
 
     void SetModeInfo()
@@ -328,10 +330,10 @@ public class CombatUI : MonoBehaviour
         Color less = new Color(1, 1, 1, 0.2f);
         Color more = new Color(1, 1, 1, 1);
 
-        rightImgRef.texture = Controls.Mode("Combo").data.abilitySet.right.icon;
-        leftImgRef.texture = Controls.Mode("Combo").data.abilitySet.left.icon;
-        upImgRef.texture = Controls.Mode("Combo").data.abilitySet.up.icon;
-        downImgRef.texture = Controls.Mode("Combo").data.abilitySet.down.icon;
+        rightImgRef.sprite = Controls.Mode("Combo").data.abilitySet.right.icon;
+        leftImgRef.sprite = Controls.Mode("Combo").data.abilitySet.left.icon;
+        upImgRef.sprite = Controls.Mode("Combo").data.abilitySet.up.icon;
+        downImgRef.sprite = Controls.Mode("Combo").data.abilitySet.down.icon;
 
         rightImgRef.color = more;
         leftImgRef.color = less;
@@ -342,10 +344,10 @@ public class CombatUI : MonoBehaviour
     void SetAbilityImgs()
     {
         //print("Current mode:" + Controls.mode);
-        abilityImgs[0].texture = Controls.Mode(Controls.mode).data.abilitySet.right.icon;
-        abilityImgs[1].texture = Controls.Mode(Controls.mode).data.abilitySet.left.icon;
-        abilityImgs[2].texture = Controls.Mode(Controls.mode).data.abilitySet.up.icon;
-        abilityImgs[3].texture = Controls.Mode(Controls.mode).data.abilitySet.down.icon;
+        abilityImgs[0].sprite = Controls.Mode(Controls.mode).data.abilitySet.right.icon;
+        abilityImgs[1].sprite = Controls.Mode(Controls.mode).data.abilitySet.left.icon;
+        abilityImgs[2].sprite = Controls.Mode(Controls.mode).data.abilitySet.up.icon;
+        abilityImgs[3].sprite = Controls.Mode(Controls.mode).data.abilitySet.down.icon;
     }
 
     void AbilityChoose(int choice)
@@ -357,13 +359,13 @@ public class CombatUI : MonoBehaviour
         if (Controls.CurMode().data.abilityIndividualSelection == true)
         {
             //print($"[CombatUI] Chosen ability is [{choice}]");
-            foreach (RawImage img in abilityImgs)
+            foreach (Image img in abilityImgs)
                 img.color = less;
 
             abilityImgs[choice].color = more;
         }
         else
-            foreach (RawImage img in abilityImgs)
+            foreach (Image img in abilityImgs)
                 img.color = more;
         //TODO LATER: Denote its used, mabye cooldowns idk
 

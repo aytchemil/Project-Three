@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
+[System.Serializable]
 public class ModeManager
 {
+    public static ModeManager inst;
     public enum Modes
     { 
         Attack = 0,
@@ -19,18 +22,35 @@ public class ModeManager
     public ModeManager(List<ModeData> modes)
     {
         this.modes = modes;
+        inst = this;
     }
 
-    public Type ReturnModeFunctionality(string mode)
+    private static GameObject debugTextObj;
+    private static TextMesh debugTextMesh;
+
+    private static void DebugStepMarker(int step)
     {
-        for (int i = 0; i < modes.Count; i++)
+        // Create it only once
+        if (debugTextObj == null)
         {
-            if (modes[i].name == mode)
-                return modes[i].GetModeType();
+            debugTextObj = new GameObject("DebugStepText");
+            debugTextMesh = debugTextObj.AddComponent<TextMesh>();
+
+            // Transform
+            debugTextObj.transform.position = new Vector3(25f, 22f, -25f);
+            debugTextObj.transform.rotation = Quaternion.identity;
+            debugTextObj.transform.localScale = new Vector3(6f, 6f, 6f);
+
+            // Style
+            debugTextMesh.characterSize = 0.5f;
+            debugTextMesh.fontStyle = FontStyle.Bold;
+            debugTextMesh.anchor = TextAnchor.MiddleCenter;
+            debugTextMesh.alignment = TextAlignment.Center;
+            debugTextMesh.color = Color.cyan;
         }
 
-        Debug.LogError($"[ModeManager] No mode found with the name of [{mode}], please check input");
-        return null;
+        // Just update the text
+        debugTextMesh.text = $"STEP {step}";
     }
 
     public static int FindFirstIndex<T>(List<T> list, T value, int startIndex = 0)

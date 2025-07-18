@@ -26,7 +26,7 @@ public class AnimationLayer
 public class AnimatorSystem : MonoBehaviour
 {
     public Animator animator;
-    public System.Type[] animations = { };
+    [SerializeReference] public Type[] animations = { };
     [SerializeField] public AnimationLayer[] layers;
     public Action<int> DefaultAnimation;
     private readonly Dictionary<Type, AnimationSet> _animationSetsDictionary = new Dictionary<Type, AnimationSet>();

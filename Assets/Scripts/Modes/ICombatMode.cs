@@ -1,9 +1,6 @@
-using Codice.Client.BaseCommands;
-using System.Collections;
-using UnityEditor.Playables;
-using UnityEngine;
 using static EntityController;
 
+[UnityEngine.Scripting.Preserve]
 public interface ICombatMode 
 {
     public abstract CombatFunctionality cf { get; set; }

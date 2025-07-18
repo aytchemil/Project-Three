@@ -8,52 +8,40 @@ public class GameManager
     //Just for now
     public GameObject player;
     public GameObject menu;
-    public Bootstrapper bootstrapper;
+    PlayerController PCE;
 
 
-    public GameManager(GameObject menu, Bootstrapper bs)
+    public GameManager(GameObject menu, GameObject player)
     {
+        this.player = player;
         this.menu = menu;
-        bootstrapper = bs;
+        PCE = player.GetComponent<PlayerController>();
+        Init(player);
     }
 
     public void Init(GameObject playerObject)
     {
         Debug.Log($"init player {playerObject}");
         player = playerObject;
-        playerObject.GetComponent<MonoBehaviour>().StartCoroutine(DisablePlayer());
         menu.SetActive(true);
+        player.SetActive(false);
 
         UnityEngine.Cursor.lockState = CursorLockMode.None;
         UnityEngine.Cursor.visible = true;
+
+        Debug.Log($"Registered Game Manager. player is {player}");
+
     }
 
     public void StartGame()
     {
-        SpawnPlayers(1);
-        SpawnEnemies(1);
-
+        Debug.Log($"Setting player {player} active");
         player.SetActive(true);
         menu.SetActive(false);
 
-        player.GetComponent<EntityController>().animController.animator.Rebind();
+        UnityEngine.Cursor.lockState = CursorLockMode.Locked;
+        UnityEngine.Cursor.visible = false;
     }
 
-
-    IEnumerator DisablePlayer()
-    {
-        yield return new WaitForEndOfFrame();
-        player.SetActive(false);
-    }
-
-    public void SpawnPlayers(int count)
-    {
-        bootstrapper.SpawnPlayers();
-    }
-
-    public void SpawnEnemies(int count)
-    {
-        bootstrapper.SpawnEnemies();
-    }
 
 }

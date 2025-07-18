@@ -1,10 +1,13 @@
-﻿using UnityEngine;
+﻿#if UNITY_EDITOR
+
+using UnityEngine;
 using UnityEditor;
 using UnityEditor.Animations;
 using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using static AM;
+
 
 public class WeaponClipRenameAndReplace : EditorWindow
 {
@@ -209,3 +212,5 @@ public class DebugAnimatorClips : EditorWindow
         }
     }
 }
+
+#endif

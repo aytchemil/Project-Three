@@ -142,32 +142,70 @@ public class EntityController : MonoBehaviour
         Flinch -= BaseFlinch;
     }
 
+    private static GameObject debugTextObj;
+    private static TextMesh debugTextMesh;
+
+    private static void DebugStepMarker(int step)
+    {
+        // Create it only once
+        if (debugTextObj == null)
+        {
+            debugTextObj = new GameObject("DebugStepText");
+            debugTextMesh = debugTextObj.AddComponent<TextMesh>();
+
+            // Transform
+            debugTextObj.transform.position = new Vector3(25f, 19f, -25f);
+            debugTextObj.transform.rotation = Quaternion.identity;
+            debugTextObj.transform.localScale = new Vector3(6f, 6f, 6f);
+
+            // Style
+            debugTextMesh.characterSize = 0.5f;
+            debugTextMesh.fontStyle = FontStyle.Bold;
+            debugTextMesh.anchor = TextAnchor.MiddleCenter;
+            debugTextMesh.alignment = TextAlignment.Center;
+            debugTextMesh.color = Color.cyan;
+        }
+
+        // Just update the text
+        debugTextMesh.text = $"STEP {step}";
+    }
+
     void CreateMyOwnModeInstances(List<ModeData> _modes)
     {
+        DebugStepMarker(40); // entered CreateMyOwnModeInstances
+
         if (modesInitialized) return;
 
         modes.Clear();
+        DebugStepMarker(41);
+
         CreateAssignModeParent();
+        DebugStepMarker(42);
 
         foreach (ModeData templateData in _modes)
         {
+            DebugStepMarker(43);
+
             RuntimeModeData newMode = new RuntimeModeBuilder()
                 .WithData(templateData)
                 .WithModeName(templateData.name)
                 .WithIndividualParent(modeParent)
                 .WithIndividualParentNamed(templateData.name)
-                .WithComponentAddedToEntityController(gameObject)
+                .WithComponentAddedToEntityController(gameObject) // <-- LIKELY FAILS HERE
                 .Build();
 
             modes.Add(newMode);
+            DebugStepMarker(44);
         }
 
         AssignAbilitySets();
+        DebugStepMarker(45);
+
         CreateModeParents();
+        DebugStepMarker(46);
 
         modesInitialized = true;
-
-        print($"[{gameObject.name}] Copied Modes from ModeManager COMPLETED");
+        Debug.Log($"[{gameObject.name}] Copied Modes from ModeManager COMPLETED");
 
         void CreateAssignModeParent()
         {
@@ -213,32 +251,45 @@ public class EntityController : MonoBehaviour
         {
             runtimeData = new RuntimeModeData(data.name);
             runtimeData.data = data;
+            DebugStepMarker(2);
+
             return this;
         }
 
         public RuntimeModeBuilder WithModeName(string _name)
         {
             runtimeData.name = _name;
+            DebugStepMarker(3);
+
             return this;
         }
 
         public RuntimeModeBuilder WithIndividualParent(Transform modeParent)
         {
             runtimeData.individualParent = Instantiate(new GameObject(), modeParent, false).transform;
+            DebugStepMarker(4);
+
             return this;
         }
 
         public RuntimeModeBuilder WithIndividualParentNamed(string _name)
         {
             runtimeData.individualParent.gameObject.name = _name;
+            DebugStepMarker(5);
+
             return this;
         }
 
         public RuntimeModeBuilder WithComponentAddedToEntityController(GameObject entity)
         {
-            ICombatMode mode = (ICombatMode)entity.AddComponent(ServiceLocator.Get<ModeManager>().ReturnModeFunctionality(runtimeData.name));
+            DebugStepMarker(6);
+
+            ICombatMode mode = (ICombatMode)entity.AddComponent(ModesRegistery.modes[(int)runtimeData.data.mode]);
+            DebugStepMarker(7);
+
             print("BIG CF (entity)" + entity.name + " cf: " + entity.GetComponent<CombatFunctionality>());
             mode.Init(entity.GetComponent<CombatFunctionality>());
+            DebugStepMarker(8);
 
             runtimeData.functionality = mode;
             return this;
@@ -289,8 +340,9 @@ public class EntityController : MonoBehaviour
             Debug.LogError($"[{gameObject.name}] No modes detected ");
 
 
-        Debug.LogError($"[{gameObject.name}] Could not find a mode of the name [{mode}] in currentModeData");
-        throw new InvalidOperationException("Cannot return a ref to a new struct instance.");
+        //Debug.LogError($"[{gameObject.name}] Could not find a mode of the name [{mode}] in currentModeData");
+        //throw new InvalidOperationException("Cannot return a ref to a new struct instance.");
+        return null;
     }
 
     public RuntimeModeData CurMode()

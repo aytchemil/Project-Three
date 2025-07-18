@@ -164,6 +164,7 @@ public static class AM
         }
     }
 
+    [UnityEngine.Scripting.Preserve] 
     public static class MoveAnims
     {
         public enum Anims
@@ -187,6 +188,7 @@ public static class AM
         };
     }
 
+    [UnityEngine.Scripting.Preserve]
     public static class AtkAnims
     {
         public enum Anims
@@ -205,6 +207,7 @@ public static class AM
         }
     }
 
+    [UnityEngine.Scripting.Preserve]
     public static class BlkAnims
     {
         public enum Anims
@@ -215,5 +218,19 @@ public static class AM
             Block_R,
             NONE
         }
+    }
+}
+
+
+public static class ModeTypeRegistry
+{
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    private static void PreserveModeTypes()
+    {
+        // Forces IL2CPP to include these classes
+        _ = typeof(AttackMode);
+        _ = typeof(BlockMode);
+        _ = typeof(ComboMode);
+        _ = typeof(CounterMode);
     }
 }

@@ -16,6 +16,6 @@ MonoBehaviour:
   abilitySet: {fileID: 11400000, guid: 8d8cad5d751a68c43842a96d80991d7c, type: 2}
   isStance: 0
   abilityIndividualSelection: 0
+  mode: 1
   UIIndicator: {fileID: 2800000, guid: 55bd9092dc7bf064f96d029e1dff0db2, type: 3}
   modeTextDesc: Blocking
-  modeScript: {fileID: 11500000, guid: 24c997e8fac425643b86564523e13d00, type: 3}

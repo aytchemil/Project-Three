@@ -12,56 +12,35 @@ public class ModeData : ScriptableObject
     public bool isStance;
     [ShowIf("isStance")]
     public bool abilityIndividualSelection;
+    public enum Modes
+    {
+        Attack = 0,
+        Block = 1,
+        Combo = 2,
+        Counter = 3
+    }
+
+    [SerializeField] public Modes mode;
     public Texture UIIndicator;
     public string modeTextDesc;
     private string modeTypeName; // Store the type name as a string for runtime
-#if UNITY_EDITOR
-    [SerializeField] private MonoScript modeScript; // Editor-only field for selecting the script
-#endif
 
-    // Get the Type at runtime
-    public Type GetModeType()
-    {
-        if (string.IsNullOrEmpty(modeTypeName))
-        {
-            Debug.LogError($"[ModeDataSO] No type name assigned in {name}");
-            return null;
-        }
-
-        Type type = Type.GetType(modeTypeName);
-
-        if (type != null && typeof(ICombatMode).IsAssignableFrom(type) && type.IsSubclassOf(typeof(MonoBehaviour)))
-        {
-            return type;
-        }
-
-        Debug.LogError($"[ModeDataSO] Type {modeTypeName} is not a valid ModeGeneralFunctionality type in {name}");
-        return null;
-    }
-
-#if UNITY_EDITOR
-    // Validate in Editor and update modeTypeName
-    private void OnValidate()
-    {
-        if (modeScript != null)
-        {
-            Type type = modeScript.GetClass();
-            if (type == null || !typeof(ICombatMode).IsAssignableFrom(type) || !type.IsSubclassOf(typeof(MonoBehaviour)))
-            {
-                Debug.LogError($"[ModeDataSO] Assigned script {modeScript.name} is not a valid ModeGeneralFunctionality type in {name}");
-                modeScript = null;
-                modeTypeName = null;
-            }
-            else
-            {
-                // Store the fully qualified type name (namespace + class) for runtime
-                modeTypeName = type.AssemblyQualifiedName;
-            }
-        }
-        else
-        {
-            modeTypeName = null;
-        }
-    }
-#endif
 }
+
+public static class ModesRegistery
+{
+    public static List<Type> modes;
+
+    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+    public static void RegisterModes()
+    {
+        modes = new List<Type>();
+        modes.Add(typeof(AttackMode));
+        modes.Add(typeof(BlockMode));
+        modes.Add(typeof(ComboMode));
+        modes.Add(typeof(CounterMode));
+
+    }
+
+}
+

@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Mode Data Template - Comboing
   m_EditorClassIdentifier: 
   name: Combo
-  abilitySet: {fileID: 11400000, guid: ab53fcad2a4821443b0c37741e8bc8b1, type: 2}
+  abilitySet: {fileID: 11400000, guid: 1cb7c58b09a4bb941b70af6ed7dc89cc, type: 2}
   isStance: 0
   abilityIndividualSelection: 0
+  mode: 2
   UIIndicator: {fileID: 2800000, guid: fa250db11f2af574592ed7fe68179ab2, type: 3}
   modeTextDesc: Combo
-  modeScript: {fileID: 11500000, guid: 567fcf235343b104c87a3fb940303d41, type: 3}

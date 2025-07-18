@@ -11,17 +11,25 @@ public class BlockMode : MonoBehaviour, ICombatMode
     public bool readyToUnblock = false;
     private void OnEnable()
     {
-
         if (cf == null)
             cf = gameObject.GetComponent<CombatFunctionality>();
+        if (cf.Controls == null)
+            cf.Controls = cf.gameObject.GetComponent<EntityController>();
+
+        print(cf.Controls);
         cf.Controls.CombatWheelSelectDirection += ChangeBlock;
+        print(cf.Controls.CombatWheelSelectDirection);
+
         cf.Controls.blockStop += Mode.functionality.Finish;
+        print(cf.Controls.blockStop);
 
         cf.Controls.EnterCombat += EnterCombatAutoBlock;
     }
 
     private void OnDisable()
     {
+        if (cf == null)
+            cf = gameObject.GetComponent<CombatFunctionality>();
         cf.Controls.CombatWheelSelectDirection -= ChangeBlock;
         cf.Controls.blockStop -= Mode.functionality.Finish;
 

@@ -1,7 +1,10 @@
+using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using static AM;
 
 public class Bootstrapper : MonoBehaviour
 {
@@ -14,58 +17,63 @@ public class Bootstrapper : MonoBehaviour
     [SerializeField] GameObject enemyPrefab;
     [SerializeField] Transform enemySpawnLoc;
     [SerializeField] List<ModeData> modes = new List<ModeData>();
+    [SerializeReference] Type[] AnimTypes;
     public Weapon wpn;
     [SerializeField] List<AbilitySet> abilitySets;
     [SerializeField] GameObject menu;
+    public bool startGame;
     [SerializeField] Button StartGameButton;
+    public ModeManager mm;
+    public GameManager gm;
 
+    public void StartGame()
+    {
+        startGame = true;
+    }
 
     void Awake()
     {
-        DontDestroyOnLoad(gameObject);
+        mm = new ModeManager(modes);
 
-        ServiceLocator.Register(new ModeManager(modes));
-
-        ServiceLocator.Register(new GameManager(menu, this));
-
-        print("Boostrap Complete");
+        AnimTypes = new Type[]
+        {
+            typeof(MoveAnims),
+            typeof(AtkAnims),
+            typeof(BlkAnims)
+        };
 
         SetupUI();
     }
 
+
+
     public void SetupUI()
     {
-        StartGameButton.GetComponent<Button>().onClick.AddListener(() =>
-        {
-            ServiceLocator.Get<GameManager>().StartGame();
-        });
+        StartGameButton.GetComponent<Button>().onClick.AddListener(StartTheGame);
     }
     public void SpawnPlayers()
     {
         Debug.Log("Spawning Players");
 
-        for (int i = 0; i < playerCount; i++)
-        {
-            GameObject newPlayer = EntityControllerFactory.SpawnEntityPremade(playerPrefab, modes, wpn, abilitySets, playerSpawnLoc.position, Quaternion.identity);
-            print($"Successfully Created New Player {newPlayer.name}");
-            ServiceLocator.Get<GameManager>().Init(newPlayer);
-            newPlayer.SetActive(false);
-        }
+        GameObject newPlayer = EntityControllerFactory.SpawnEntityPremade(playerPrefab, modes, AnimTypes, wpn, abilitySets, playerSpawnLoc.position, Quaternion.identity);
+        print($"Successfully Created New Player {newPlayer.name}");
+        gm = new GameManager(menu, newPlayer);
+
     }
 
     public void SpawnEnemies()
     {
         Debug.Log("Spawning Enemies");
 
-        for (int i = 0; i < enemyCount; i++)
-        {
-            GameObject newPlayer = EntityControllerFactory.SpawnEntityPremade(enemyPrefab, modes, wpn, abilitySets, playerSpawnLoc.position, Quaternion.identity);
-            print($"Successfully Created New Enemy {newPlayer.name}");
-        }
+        GameObject newPlayer = EntityControllerFactory.SpawnEntityPremade(enemyPrefab, modes, AnimTypes, wpn, abilitySets, playerSpawnLoc.position, Quaternion.identity);
+        print($"Successfully Created New Enemy {newPlayer.name}");
     }
 
-    public void SetAbilitySet(ModeManager.Modes mode)
+    void StartTheGame()
     {
+        SpawnPlayers();
+        SpawnEnemies();
 
+        gm.StartGame();
     }
 }

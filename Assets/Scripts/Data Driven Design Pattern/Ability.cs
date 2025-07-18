@@ -26,12 +26,14 @@ public interface IAbilityDirectional
 public abstract class Ability : ScriptableObject
 {
     public static float MAX_INITIAL_USE_DELAY = 10;
-    bool isSinglar { get => (archetype == Archetype.Singular); }
+    bool canHaveAfs { get => (archetype == Archetype.Singular) ||
+                            (archetype == Archetype.Multi_Choice); }
 
 
     [BoxGroup("Ability")] public string abilityName = "";
     [BoxGroup("Ability")] public Texture icon;
-    [BoxGroup("Ability")][ShowIf("isSinglar")][SerializeReference] public List<AbilityEffect> effects;
+    [BoxGroup("Ability")] public bool hasAdditionalFunctionality = false;
+    [BoxGroup("Ability")] [ShowIf("canHaveAfs")][ShowIf("hasAdditionalFunctionality")][SerializeReference] public List<AbilityEffect> effects;
 
     [BoxGroup("Delays")][SerializeField][PropertyRange(0, "maxInitialUseDelay")] private float[] initialUseDelay = { 0.3f };
     [BoxGroup("Delays")] public float[] successDelay = { 0f };
@@ -63,42 +65,12 @@ public abstract class Ability : ScriptableObject
 
     public virtual GameObject ColliderPrefab { get; set; }
 
-    [BoxGroup("Additional Functionality (AF)")] public bool hasAdditionalFunctionality = false;
-    [BoxGroup("Additional Functionality (AF)")] [ShowIf("hasAdditionalFunctionality")]
-    public TypeVariable[] afTypes;
-    [BoxGroup("Additional Functionality (AF)")] [ShowIf("hasAdditionalFunctionality")]
-    [SerializeReference] public AF[] afs;
-    public Dictionary<string, AF> AF_Dictionary;
-    [BoxGroup("Additional Functionality (AF)")] [ShowIf("hasAdditionalFunctionality")]
-    public bool hasInitializedAfs = false;
 
 
     void OnEnable()
     {
         if (string.IsNullOrEmpty(abilityName)) abilityName = name;
         if (effects == null) effects = new List<AbilityEffect>();
-    }
-
-    [Button]
-    public void InitializeAFValues()
-    {
-        if (afs == null || afs.Length != afTypes.Length)
-            afs = new AF[afTypes.Length];
-
-        AF_Dictionary = new Dictionary<string, AF>();
-        AF_Dictionary.Clear();
-
-        for (int i = 0; i < afs.Length; i++)
-        {
-            if (afs[i] == null)
-            {
-                Type t = afTypes[i].Value;
-                afs[i] = (AF)Activator.CreateInstance(t);
-            }
-            AF_Dictionary.Add(afs[i].afname, afs[i]);
-        }
-
-        hasInitializedAfs = true;
     }
 
 

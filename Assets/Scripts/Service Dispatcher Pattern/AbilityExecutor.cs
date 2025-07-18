@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 
 
@@ -14,6 +16,23 @@ public static class AbilityExecutor
     {
         foreach (var effect in ability.effects)
             effect.Execute(attacker);
+    }
+
+    public static void ExecuteRuntimeAbility<T>(
+        Ability ability,
+        GameObject attacker,
+        Type chosenInterface,
+        T data)
+    {
+        foreach (var effect in ability.effects)
+            foreach (var Interface in effect.GetType().GetInterfaces())
+                if (Interface == chosenInterface)
+                {
+                    var method = Interface.GetMethod("Execute") ?? throw new Exception($"Interface {Interface} cannot find method Execute");
+
+                    method.Invoke(effect, new object[] { attacker, data });
+                    Debug.Log("Invoking Execute On Runtime Ability");
+                }
     }
 
     public static void OnHit(Ability ability, GameObject attacker, GameObject target)

@@ -362,28 +362,18 @@ public class CombatFunctionality : MonoBehaviour
     {
         ModeTriggerGroup usingThisTriggerGroup = null;
 
-        print(gameObject.name);
-        Debug.Log($"{Controls.gameObject.name} Using Mode {Mode.name}'s Trigger, On Triggers {Mode.triggers})");
-        print(Mode.triggers[0]);
+        if(debug) Debug.Log($"{Controls.gameObject.name} Using Mode {Mode.name}'s Trigger, On Triggers {Mode.triggers})");
 
         //Set all triggers of this Mode to false
         for (int i = 0; i < Mode.triggers.Length; i++)
-        {
-            print($"index {i}: Disabling trigger {Mode.triggers[i]}");
-
-            //if (Mode.triggers[i] == null) Debug.LogError("Error: Trying to Enable Ability's Trigger, But no trigger was found on Controls.Mode");
             Mode.triggers[i].SetActive(false);
-            
-        }
+
 
         //Enable the trigger we are using
         Mode.triggers[cur_Ability].SetActive(true);
 
         //Set this as the return
         usingThisTriggerGroup = Mode.triggers[cur_Ability].GetComponent<ModeTriggerGroup>();
-
-
-        //print($"[Combat Functionality] Trigger Enabled to use: {usingThisTriggerGroup.name}");
 
         return usingThisTriggerGroup;
     }
@@ -428,7 +418,7 @@ public class CombatFunctionality : MonoBehaviour
 
     public int GetDirIndex(string dir)
     {
-        //print($"[{gameObject.name}] Get Dir: [{dir}]");
+        if (debug) print($"[{gameObject.name}] Get Dir: [{dir}]");
         if (dir == "right")
             return 0;
         else if (dir == "left")
@@ -462,7 +452,7 @@ public class CombatFunctionality : MonoBehaviour
 
     public void DisableAllAttackTriggers()
     {
-        //print("Disabling all attack triggers");
+        if (debug) print("Disabling all attack triggers");
         foreach (RuntimeModeData mode in Controls.modes)
             DisableTriggers(false, Controls.Mode(mode.name));
 
@@ -509,7 +499,7 @@ public class CombatFunctionality : MonoBehaviour
 
         while (!Controls.modes[currIndex].data.isStance)
         {
-            print("SOLO MODE DETECTED");
+            if (debug) print("SOLO MODE DETECTED");
             if (currIndex >= Controls.modes.Count - 1)
                 currIndex = 0;
             else
@@ -519,12 +509,9 @@ public class CombatFunctionality : MonoBehaviour
         Controls.mode = Controls.modes[currIndex].data.name;
 
 
-        print($"Switching Mode to {Controls.Mode(Controls.mode)}");
+        if (debug) print($"Switching Mode to {Controls.Mode(Controls.mode)}");
 
         Controls.abilitySlots[currIndex]?.Invoke(0);
-        //print(Controls.lookDir);
-
-
     }
 
     public virtual System.Enum[] GetAnimEnums(AbilityMulti ability)

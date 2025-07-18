@@ -78,16 +78,13 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
         // + AF
         // + SET child trigger ACTIVE
         // + Start using child trigger
+        print("Using Child Trigger");
         if (ability.hasAdditionalFunctionality)
-            if (ability.AF_Dictionary.TryGetValue("choice", out AF afchoice))
-                (afchoice as AF_choice).choice = choice;
+            AbilityExecutor.ExecuteRuntimeAbility(ability, cf.gameObject, typeof(IAEffectRuntime<string>), choice);
         chosenChildTrigger.gameObject.SetActive(true);
-        print("p");
         chosenChildTrigger.Use(chosenChildTrigger.ability.InitialUseDelay[0]);
-        print("s");
 
         StartCoroutine(WaitForTriggerUpdates());
-        print("d");
 
     }
 

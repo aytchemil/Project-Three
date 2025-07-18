@@ -321,11 +321,11 @@ public class Movement : MonoBehaviour
                 break;
             case "right":
                 dir = transform.TransformDirection(Vector3.right);
-                dir += transform.TransformDirection(Vector3.forward) * 2;
+                dir += transform.TransformDirection(Vector3.forward) * 1.1f;
                 break;
             case "left":
                 dir = transform.TransformDirection(Vector3.left);
-                dir += transform.TransformDirection(Vector3.forward) * 2;
+                dir += transform.TransformDirection(Vector3.forward) * 1.1f;
                 break;
             case "none":
                 dir = transform.TransformDirection(Vector3.forward);

@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilityName: Forward Lunge
   icon: {fileID: 2800000, guid: c7f1ce3715d640c46b11327dd7472006, type: 3}
+  hasAdditionalFunctionality: 1
   effects:
   - rid: 3359079900535325051
+  - rid: 3359079900535325105
   initialUseDelay:
   - 0.3
   successDelay:
@@ -24,12 +26,6 @@ MonoBehaviour:
   - 0.3
   modeBase: 0
   archetype: 0
-  hasAdditionalFunctionality: 1
-  afTypes:
-  - {fileID: 11400000, guid: cb2cf77dc75029140acdd2c671ac1c48, type: 2}
-  afs:
-  - rid: 3359079789718667348
-  hasInitializedAfs: 0
   dir: 4
   damage: 4
   flinchAmount: 1
@@ -39,12 +35,6 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: -2
-      type: {class: , ns: , asm: }
-    - rid: 3359079789718667348
-      type: {class: AF_movement, ns: , asm: Assembly-CSharp}
-      data:
-        movementAmount: 110
     - rid: 3359079900535325051
       type: {class: DirectionalOnHitEffects, ns: , asm: Three}
       data:
@@ -65,3 +55,8 @@ MonoBehaviour:
       data:
         hitVFXPrefab: {fileID: 1758473627833946668, guid: 9b21333b068a5084ba09535839bee3c8, type: 3}
         duration: 1
+    - rid: 3359079900535325105
+      type: {class: MoveAttackerEffect, ns: , asm: Three}
+      data:
+        direction: up
+        amount: 40

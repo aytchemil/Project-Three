@@ -1,5 +1,7 @@
 using NUnit.Framework;
+using Sirenix.OdinInspector;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEditor.Experimental.GraphView;
 using UnityEngine;
@@ -21,6 +23,13 @@ public interface IAEffectDirectional
 public interface IAEffectOnHit
 {
     public abstract void OnHit(GameObject attacker, GameObject target);
+}
+
+public interface IAEffectRuntime<T>
+{
+    public T data { get; set; }
+
+    public abstract void Execute(GameObject attacker, T type);
 }
 
 
@@ -64,6 +73,47 @@ public class DirectionalOnHitEffects : AbilityEffect, IAEffectOnHit
 
 
 }
+
+[Serializable]
+class MoveAttackerEffect : AbilityEffect
+{
+    public string direction;
+
+    public float amount;
+
+    public override void Execute(GameObject attacker)
+    {
+        attacker.GetComponent<Movement>().Lunge(direction, amount);
+        attacker.GetComponent<Movement>().DisableMovement();
+        WaitExtension.Wait(attacker.GetComponent<EntityController>(), attacker.GetComponent<Movement>().entityStates.dashTime, () =>
+        {
+            attacker.GetComponent<Movement>().EnableMovement();
+        });
+    }
+}
+
+[Serializable]
+class RuntimeMoveAttackerEffect : AbilityEffect, IAEffectRuntime<string>
+{
+    public string direction;
+
+    public float amount;
+
+    public string data { get => direction; set => direction = value; }
+
+    public void Execute(GameObject attacker, string direction)
+    {
+        data = direction;
+
+        attacker.GetComponent<Movement>().Lunge(direction, amount);
+        attacker.GetComponent<Movement>().DisableMovement();
+        WaitExtension.Wait(attacker.GetComponent<EntityController>(), attacker.GetComponent<Movement>().entityStates.dashTime, () =>
+        {
+            attacker.GetComponent<Movement>().EnableMovement();
+        });
+    }
+}
+
 
 [Serializable]
 class DamageEffect : IAEffectDirectional, IAEffectOnHit

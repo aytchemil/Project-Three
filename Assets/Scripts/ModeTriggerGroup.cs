@@ -135,7 +135,6 @@ public abstract class ModeTriggerGroup : MonoBehaviour
         //print($"[{gameObject.name}] [TRIGGER] [INIT:SELF] Ability: {ability}");
         this.cf = cf;
         this.ability = ability;
-        this.ability.hasInitializedAfs = false;
         InitializeSelfImplementation(cf, ability);
     }
 

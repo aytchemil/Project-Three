@@ -14,8 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilityName: Overhead
   icon: {fileID: 2800000, guid: b99069f7d624ae3439f9671ef2397dde, type: 3}
+  hasAdditionalFunctionality: 1
   effects:
   - rid: 3359079900535325052
+  - rid: 3359079900535325109
   initialUseDelay:
   - 0
   successDelay:
@@ -24,12 +26,6 @@ MonoBehaviour:
   - 0.3
   modeBase: 0
   archetype: 0
-  hasAdditionalFunctionality: 1
-  afTypes:
-  - {fileID: 11400000, guid: cb2cf77dc75029140acdd2c671ac1c48, type: 2}
-  afs:
-  - rid: 3359079900535325029
-  hasInitializedAfs: 0
   dir: 3
   damage: 0.5
   flinchAmount: 1
@@ -39,10 +35,6 @@ MonoBehaviour:
   references:
     version: 2
     RefIds:
-    - rid: 3359079900535325029
-      type: {class: AF_movement, ns: , asm: Three}
-      data:
-        movementAmount: 0
     - rid: 3359079900535325052
       type: {class: DirectionalOnHitEffects, ns: , asm: Three}
       data:
@@ -63,3 +55,8 @@ MonoBehaviour:
       data:
         hitVFXPrefab: {fileID: 1758473627833946668, guid: 9b21333b068a5084ba09535839bee3c8, type: 3}
         duration: 1
+    - rid: 3359079900535325109
+      type: {class: MoveAttackerEffect, ns: , asm: Three}
+      data:
+        direction: up
+        amount: 90

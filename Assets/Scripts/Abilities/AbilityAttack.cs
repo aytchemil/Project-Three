@@ -34,9 +34,6 @@ public class AbilityAttack : Ability, IAbilityAnims, IAbilityDirectional
         Mode.functionality.Starting();
         Mode.SetAbility(ability);
         Mode.trigger = trigger;
-        bool hasAf = ability.hasAdditionalFunctionality;
-
-        if (hasAf && ability.hasInitializedAfs == false) ability.InitializeAFValues();
 
         if(ability.archetype == Ability.Archetype.Singular)
         {

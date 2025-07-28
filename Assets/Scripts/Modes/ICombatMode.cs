@@ -1,3 +1,5 @@
+using UnityEngine;
+using UnityEngine.Events;
 using static EntityController;
 
 [UnityEngine.Scripting.Preserve]
@@ -7,10 +9,12 @@ public interface ICombatMode
     public abstract string MODE { get; }
     public abstract RuntimeModeData Mode { get; }
 
-    public virtual void Init(CombatFunctionality cf)
+    public virtual void SetCF(CombatFunctionality cf)
     {
         this.cf = cf;
     }
+
+    public abstract void InitializeFunctionalityAfterOnEnable();
 
     public void UseMode()
     {

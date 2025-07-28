@@ -14,9 +14,32 @@ public class CounterMode : MonoBehaviour, ICombatMode
 
     private void OnEnable()
     {
-
         if (cf == null)
             cf = gameObject.GetComponent<CombatFunctionality>();
+        if (cf.Controls == null)
+            cf.Controls = cf.gameObject.GetComponent<EntityController>();
+
+        //Waiting for EntityController to initialize
+        if (cf.Controls.initialized == false)
+        {
+            WaitExtension.WaitAFrame(this, OnEnable);
+            return;
+        }
+
+        //Null Guards
+        if (cf == null)
+            Debug.LogError($"[{gameObject.name}] CF not properly set");
+        if (cf.Controls == null)
+            Debug.LogError($"[{gameObject.name}] Controls not properly set");
+        if (Mode == null)
+            Debug.LogError($"[{gameObject.name}] Mode Reference not getting");
+
+        InitializeFunctionalityAfterOnEnable();
+    }
+
+
+    public void InitializeFunctionalityAfterOnEnable()
+    {
         // cf.Controls.blockStart += BlockStart;
         // cf.Controls.blockStop += BlockStop;
     }

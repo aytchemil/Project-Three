@@ -16,11 +16,33 @@ public class BlockMode : MonoBehaviour, ICombatMode
         if (cf.Controls == null)
             cf.Controls = cf.gameObject.GetComponent<EntityController>();
 
+        //Waiting for EntityController to initialize
+        if (cf.Controls.initialized == false)
+        {
+            WaitExtension.WaitAFrame(this, OnEnable);
+            return;
+        }
+
+        //Null Guards
+        if (cf == null)
+            Debug.LogError($"[{gameObject.name}] CF not properly set");
+        if (cf.Controls == null)
+            Debug.LogError($"[{gameObject.name}] Controls not properly set");
+        if (Mode == null)
+            Debug.LogError($"[{gameObject.name}] Mode Reference not getting");
+
+        InitializeFunctionalityAfterOnEnable();
+    }
+
+
+    public void InitializeFunctionalityAfterOnEnable()
+    {
         print(cf.Controls);
         cf.Controls.CombatWheelSelectDirection += ChangeBlock;
         print(cf.Controls.CombatWheelSelectDirection);
 
-        cf.Controls.blockStop += Mode.functionality.Finish;
+        if (Mode != null && Mode.functionality != null)
+            cf.Controls.blockStop += Mode.functionality.Finish;
         print(cf.Controls.blockStop);
 
         cf.Controls.EnterCombat += EnterCombatAutoBlock;
@@ -94,8 +116,4 @@ public class BlockMode : MonoBehaviour, ICombatMode
     {
         //print("[BlockMode] AF Regular");
     }
-
-
-
-
 }

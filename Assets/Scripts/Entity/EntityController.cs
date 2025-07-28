@@ -81,6 +81,8 @@ public class EntityController : MonoBehaviour
     [BoxGroup("Flags")] public bool isFlinching = false;
     [BoxGroup("Flags")] public bool usedCombo;
     [BoxGroup("Flags")] public bool targetIsDodging;
+    [BoxGroup("Flags")] public bool initialized = false;
+
 
     [BoxGroup("Mutatable Variables")][SerializeField] private string _lookDir;
     public string lookDir
@@ -110,10 +112,12 @@ public class EntityController : MonoBehaviour
         CreateMyOwnModeInstances(_modes);
         isAlive = true;
         ResetAttack += ResetmyAttack;
+        initialized = true;
     }
 
     protected virtual void OnEnable()
     {
+        initialized = false;
         useAbility += (input) => 
         {
             if (usedCombo)
@@ -288,7 +292,7 @@ public class EntityController : MonoBehaviour
             DebugStepMarker(7);
 
             print("BIG CF (entity)" + entity.name + " cf: " + entity.GetComponent<CombatFunctionality>());
-            mode.Init(entity.GetComponent<CombatFunctionality>());
+            mode.SetCF(entity.GetComponent<CombatFunctionality>());
             DebugStepMarker(8);
 
             runtimeData.functionality = mode;

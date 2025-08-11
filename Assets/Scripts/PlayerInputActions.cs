@@ -181,7 +181,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""OpenMenu"",
+                    ""name"": ""Pause"",
                     ""type"": ""Button"",
                     ""id"": ""328cd686-ce3b-48bb-b424-94a2a3642cba"",
                     ""expectedControlType"": """",
@@ -649,7 +649,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""OpenMenu"",
+                    ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1282,7 +1282,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Ability2 = m_Player.FindAction("Ability2", throwIfNotFound: true);
         m_Player_Ability3 = m_Player.FindAction("Ability3", throwIfNotFound: true);
         m_Player_Ability4 = m_Player.FindAction("Ability4", throwIfNotFound: true);
-        m_Player_OpenMenu = m_Player.FindAction("OpenMenu", throwIfNotFound: true);
+        m_Player_Pause = m_Player.FindAction("Pause", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -1383,7 +1383,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Ability2;
     private readonly InputAction m_Player_Ability3;
     private readonly InputAction m_Player_Ability4;
-    private readonly InputAction m_Player_OpenMenu;
+    private readonly InputAction m_Player_Pause;
     public struct PlayerActions
     {
         private @PlayerInputActions m_Wrapper;
@@ -1405,7 +1405,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         public InputAction @Ability2 => m_Wrapper.m_Player_Ability2;
         public InputAction @Ability3 => m_Wrapper.m_Player_Ability3;
         public InputAction @Ability4 => m_Wrapper.m_Player_Ability4;
-        public InputAction @OpenMenu => m_Wrapper.m_Player_OpenMenu;
+        public InputAction @Pause => m_Wrapper.m_Player_Pause;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -1466,9 +1466,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Ability4.started += instance.OnAbility4;
             @Ability4.performed += instance.OnAbility4;
             @Ability4.canceled += instance.OnAbility4;
-            @OpenMenu.started += instance.OnOpenMenu;
-            @OpenMenu.performed += instance.OnOpenMenu;
-            @OpenMenu.canceled += instance.OnOpenMenu;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -1524,9 +1524,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Ability4.started -= instance.OnAbility4;
             @Ability4.performed -= instance.OnAbility4;
             @Ability4.canceled -= instance.OnAbility4;
-            @OpenMenu.started -= instance.OnOpenMenu;
-            @OpenMenu.performed -= instance.OnOpenMenu;
-            @OpenMenu.canceled -= instance.OnOpenMenu;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1772,7 +1772,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnAbility2(InputAction.CallbackContext context);
         void OnAbility3(InputAction.CallbackContext context);
         void OnAbility4(InputAction.CallbackContext context);
-        void OnOpenMenu(InputAction.CallbackContext context);
+        void OnPause(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

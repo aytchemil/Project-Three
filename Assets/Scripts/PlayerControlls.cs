@@ -19,6 +19,7 @@ public class PlayerController : EntityController
     [BoxGroup("Player Inputs")] public InputAction ia_useCombo;
     [BoxGroup("Player Inputs")] public InputAction ia_block;
     [BoxGroup("Player Inputs")] public InputAction ia_switchAttackMode;
+
     [Space]
     [BoxGroup("Player Inputs")] public InputAction[] ia_abilityUse;
 
@@ -59,22 +60,27 @@ public class PlayerController : EntityController
         {
             base.OnEnable();
 
+            //Mouse Looking
             ia_look.Enable();
             look = () => ia_look.ReadValue<Vector2>();
-            //print("e");
+            
             ia_move.Enable();
             move = () => ia_move.ReadValue<Vector2>();
 
+            //Sprinting
             ia_sprint.Enable();
             ia_sprint.started += ctx => sprintStart?.Invoke();
             ia_sprint.canceled += ctx => sprintStop?.Invoke();
 
+            //Combat-Lock System
             ia_lockOn.Enable();
             ia_lockOn.performed += ctx => lockOn?.Invoke();
 
+            //Dashing
             ia_dash.Enable();
             ia_dash.performed += ctx => dash?.Invoke();
 
+            //Using Combo
             ia_useCombo.Enable();
             ia_useCombo.performed += ctx =>
             {
@@ -82,6 +88,7 @@ public class PlayerController : EntityController
                 useAbility?.Invoke("Combo");
             };
 
+            //Using Block
             ia_block.Enable();
             ia_block.started += ctx =>
             {
@@ -93,6 +100,7 @@ public class PlayerController : EntityController
                 blockStop?.Invoke();
             };
 
+            //Switch Stance Mode
             ia_switchAttackMode.Enable();
             ia_switchAttackMode.performed += ctx =>
             {
@@ -100,12 +108,14 @@ public class PlayerController : EntityController
             };
 
 
+            //Abilities Amount
             for (int i = 0; i < AMOUNT_OF_ABIL_SLOTS; i++)
             {
                 print($"[PlayerControls] Enabled Ability Slot [{i}]");
                 ia_abilityUse[i].Enable();
             }
 
+            //Each Ability
             ia_abilityUse[0].performed += ctx =>
             {
                 print($"[PlayerControlls] pressed ability [{0}]");
@@ -194,6 +204,7 @@ public class PlayerController : EntityController
             //print($"[PlayerControlls] pressed ability [{3}]");
             abilitySlots[3]?.Invoke(3);
         };
+
 
         base.OnDisable();
     }

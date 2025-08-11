@@ -159,7 +159,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "OpenMenu",
+                    "name": "Pause",
                     "type": "Button",
                     "id": "328cd686-ce3b-48bb-b424-94a2a3642cba",
                     "expectedControlType": "",
@@ -627,7 +627,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "OpenMenu",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

@@ -26,9 +26,12 @@ public interface IAbilityDirectional
 public abstract class Ability : ScriptableObject
 {
     public static float MAX_INITIAL_USE_DELAY = 10;
-    bool canHaveAfs { get => (archetype == Archetype.Singular) ||
-                            (archetype == Archetype.Multi_Choice); }
 
+    [SerializeField]
+    public virtual float maxInitialUseDelay
+    {
+        get => MAX_INITIAL_USE_DELAY;
+    }
 
     [BoxGroup("Ability")] public string abilityName = "";
     [BoxGroup("Ability")] public Sprite icon;
@@ -58,10 +61,7 @@ public abstract class Ability : ScriptableObject
         get => initialUseDelay;
         set => initialUseDelay = value;
     }
-    [SerializeField] public virtual float maxInitialUseDelay
-    {
-        get => MAX_INITIAL_USE_DELAY;
-    }
+
 
     public virtual GameObject ColliderPrefab { get; set; }
 

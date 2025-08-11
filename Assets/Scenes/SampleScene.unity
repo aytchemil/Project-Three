@@ -1984,7 +1984,7 @@ MonoBehaviour:
   playerCount: 1
   enemyCount: 1
   playerSpawnLoc: {fileID: 2086292260}
-  playerPrefab: {fileID: 5631351950350643437, guid: 715c4074133bd6b47981782ca4c28d90, type: 3}
+  playerPrefab: {fileID: 6121598940007079717, guid: 715c4074133bd6b47981782ca4c28d90, type: 3}
   enemyPrefab: {fileID: 7186683645502453023, guid: adb175802ff83a24ebb65c6941c7d9e1, type: 3}
   enemySpawnLoc: {fileID: 1774646836}
   modes:

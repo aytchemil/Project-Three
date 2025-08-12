@@ -32,7 +32,7 @@ public class AbilityMulti : Ability
             MAT_ChoiceGroup mltiTrigger = trigger.GetComponent<MAT_ChoiceGroup>();
 
             //Trigger 
-            mltiTrigger.Use(ability, ability.InitialUseDelay[0], out ModeTriggerGroup _chosenChildTrigger, choice);
+            mltiTrigger.Use(ability, ability.initialUseDelay[0], out ModeTriggerGroup _chosenChildTrigger, choice);
 
             //Animation
             IAbilityAnims anims = _chosenChildTrigger.ability as IAbilityAnims;
@@ -45,7 +45,7 @@ public class AbilityMulti : Ability
             AbilityMulti multi_Mode = (AbilityMulti)ability;
 
             //Functionality
-            trigger.GetComponent<MAT_FollowupGroup>().Use(multi_Mode.abilities[0].InitialUseDelay[0]);
+            trigger.GetComponent<MAT_FollowupGroup>().Use(multi_Mode.abilities[0].initialUseDelay[0]);
 
 
             //Animation
@@ -59,7 +59,7 @@ public class AbilityMulti : Ability
                 false,
                 false,
                 0.2f,
-                multi_Mode.InitialUseDelay
+                multi_Mode.initialUseDelay
                 );
             cf.StartCoroutine(FollowUpPackage.PlayFollowUp(cf.Controls.animController.Play));
 

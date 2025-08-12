@@ -97,7 +97,7 @@ public class CombotTriggerGroup : MAT_FollowupGroup
         //print("Waiting for reattack cuttoff");
 
         //wait out the reattack time until reset attacking + the initial use delay (because the player isnt actually attacking yet)
-        yield return new WaitForSeconds(myComboAbility.reattackTimeUntilReset + myComboAbility.InitialUseDelay[i]);
+        yield return new WaitForSeconds(myComboAbility.reattackTimeUntilReset + myComboAbility.initialUseDelay[i]);
 
         //If player has not gone on to reattack, Disable the combo parent trigger entirely
         if (triggerProgress[i] == false)

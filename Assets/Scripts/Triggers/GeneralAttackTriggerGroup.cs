@@ -5,7 +5,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
 {
     public override Ability ability { get; set; }
 
-    //Wrapper for trigger
+    //Wraps trigger
     public virtual bool attacking { get; set; }
     public override bool trigger
     {
@@ -113,7 +113,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
             delay = ability.unsuccessDelay[0];
         }
 
-        Invoke(nameof(DisableThisTrigger), delay);
+        WaitExtension.Wait(cf, delay, DisableThisTrigger);
     }
 
     public virtual void MissAttackCuttoffLocal()

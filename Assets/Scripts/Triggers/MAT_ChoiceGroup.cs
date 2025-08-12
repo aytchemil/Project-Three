@@ -68,7 +68,7 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
         if (chosenChildTrigger == null) { print("Chosen attack trigger choice unavaliable, returning"); _chosenChildTrigger = null;  return; }
 
         // (PARENT TRIGGER) MultiChoice's Ability Trigger
-        Use(ability.InitialUseDelay[0], out chosenChildTrigger);
+        Use(ability.initialUseDelay[0], out chosenChildTrigger);
         _chosenChildTrigger = chosenChildTrigger;
 
         if (!initializedChildTriggers)
@@ -82,7 +82,7 @@ public class MAT_ChoiceGroup : MultiAttackTriggerGroup
         if (ability.hasAdditionalFunctionality)
             AbilityExecutor.ExecuteRuntimeAbility(ability, cf.gameObject, typeof(IAEffectRuntime<string>), choice);
         chosenChildTrigger.gameObject.SetActive(true);
-        chosenChildTrigger.Use(chosenChildTrigger.ability.InitialUseDelay[0]);
+        chosenChildTrigger.Use(chosenChildTrigger.ability.initialUseDelay[0]);
 
         StartCoroutine(WaitForTriggerUpdates());
 

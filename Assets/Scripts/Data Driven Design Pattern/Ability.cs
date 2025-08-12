@@ -36,9 +36,9 @@ public abstract class Ability : ScriptableObject
     [BoxGroup("Ability")] public string abilityName = "";
     [BoxGroup("Ability")] public Sprite icon;
     [BoxGroup("Ability")] public bool hasAdditionalFunctionality = false;
-    [BoxGroup("Ability")] [ShowIf("canHaveAfs")][ShowIf("hasAdditionalFunctionality")][SerializeReference] public List<AbilityEffect> effects;
+    [BoxGroup("Ability")] [ShowIf("hasAdditionalFunctionality")][SerializeReference] public List<AbilityEffect> effects;
 
-    [BoxGroup("Delays")][SerializeField][PropertyRange(0, "maxInitialUseDelay")] private float[] initialUseDelay = { 0.3f };
+    [BoxGroup("Delays")][SerializeField][PropertyRange(0, "maxInitialUseDelay")] public float[] initialUseDelay = { 0.3f };
     [BoxGroup("Delays")] public float[] successDelay = { 0f };
     [BoxGroup("Delays")] public float[] unsuccessDelay = { 0.3f };
 
@@ -55,11 +55,6 @@ public abstract class Ability : ScriptableObject
         AttackBased = 0,
         BlockBased = 1,
         ComboBased = 2
-    }
-    public virtual float[] InitialUseDelay
-    {
-        get => initialUseDelay;
-        set => initialUseDelay = value;
     }
 
 

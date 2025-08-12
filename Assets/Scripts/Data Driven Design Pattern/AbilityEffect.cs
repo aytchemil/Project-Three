@@ -18,7 +18,9 @@ public interface IAEffectDirectional
 
 public interface IAEffectOnHit
 {
-    public abstract void OnHit(GameObject attacker, GameObject target);
+    public virtual void OnHit(GameObject attacker, string attackingDirection, GameObject target) { }
+    public virtual void OnHit(GameObject attacker, GameObject target) { }
+
 }
 
 public interface IAEffectRuntime<T>
@@ -34,18 +36,26 @@ public interface IAEffectRuntime<T>
 [Serializable]
 public class DirectionalOnHitEffects : AbilityEffect, IAEffectOnHit
 {
-    public static bool CanExecute(GameObject attacker, GameObject target)
+    public static bool CanExecute(string attackingDirection, GameObject target)
     {
-        if (TargetBlockedAttacker(attacker, target)) return false;
+        Debug.Log("Determing if directionals can execute");
+        if (TargetBlockedAttacker(attackingDirection, target)) return false;
+        Debug.Log("target didnt block attacker");
         if (TargetInvicincible(target)) return false;
+        Debug.Log("target not invincable");
 
         return true;
     }
 
-    static bool TargetBlockedAttacker(GameObject attacker, GameObject target)
+    static bool TargetBlockedAttacker(string attackingDirection, GameObject target)
     {
-        if (attacker.GetComponent<EntityController>().lookDir == target.GetComponent<EntityController>().lookDir)
+        string targDir = target.GetComponent<EntityController>().lookDir;
+        
+        Debug.Log($"Determining... attackingDir is {attackingDirection}, target look dir is {targDir}");
+
+        if (BlockTriggerCollider.DidAttackGetBlocked(attackingDirection, targDir))
             return true;
+
         return false;
     }
 
@@ -56,12 +66,16 @@ public class DirectionalOnHitEffects : AbilityEffect, IAEffectOnHit
         return false;
     }
 
-    public void OnHit(GameObject attacker, GameObject target)
+    public void OnHit(GameObject attacker, string attackingDirection, GameObject target)
     {
-        if (CanExecute(attacker, target) == false) return;
+        Debug.Log("AFs : APLLYING Directionals");
+
+        if (CanExecute(attackingDirection, target) == false) return;
 
         foreach(IAEffectOnHit effect in directionals)
             effect.OnHit(attacker, target);
+
+        Debug.Log("AFs : Applied Directionals");
     }
 
     [SerializeReference] public List<IAEffectDirectional> directionals;

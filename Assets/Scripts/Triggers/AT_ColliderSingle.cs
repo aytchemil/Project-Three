@@ -87,9 +87,9 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
 
         if (attacking && initialUseDelayOver)
         {
-            print($"AT Collider hit {other.gameObject.name}");
+            print($"AT [{ability.name}] hit {other.gameObject.name}");
             HitAttack();
-            AbilityExecutor.OnHit(ability, cf.gameObject, other.gameObject);
+            AbilityExecutor.OnHit(ability, myAttackAbility.Dir.ToString(), cf.gameObject, other.gameObject);
         }
     }
 
@@ -154,11 +154,11 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
         //print(effectPos + " " + myLookDir);
 
         //print("AT Collider being frozen");
-        StartCoroutine(FreezeAttack(0, myLookDir, effectPos));
+        StartCoroutine(FreezeAttack(0.15f, myLookDir, effectPos));
     }
     
 
-    IEnumerator FreezeAttack(float time, string l, Vector3 e)
+    IEnumerator FreezeAttack(float time, string l, Vector3 effectpos)
     {
         //print("Freezing attack");
         float prevSpeed = animator.speed;
@@ -171,13 +171,13 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
 
         animator.speed = prevSpeed;
         cf.Controls.animController.animator.speed = prevanimContSpeed;
-        BlockedCompleteSequence(l, e);
+        BlockedCompleteSequence(l, effectpos);
     }
 
-    void BlockedCompleteSequence(string l, Vector3 e)
+    void BlockedCompleteSequence(string l, Vector3 effectpos)
     {
         print("didreattack: block sequence complete");
-        base.AttackTriggerBlocked(l, e);
+        base.AttackTriggerBlocked(l, effectpos);
         DisableThisTrigger();
 
         //cf.Controls.Mode("Attack").isUsing = false;

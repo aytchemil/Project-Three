@@ -33,7 +33,10 @@ public class BlockTriggerCollider : ModeTriggerGroup
 
     protected override void EnableTriggerImplementation()
     {
-        blockUp = false;
+        if (myBlockAbility.hasBlockUpTime)
+            blockUp = false;
+        else
+            blockUp = true;
         blocking = false;
         blockMissed = false;
 
@@ -65,6 +68,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
 
     protected override void DisableThisTriggerLocallyImplementation()
     {
+        print("BlockSys: Disabled Block");
         blockUp = false;
         blocking = false;
         blockMissed = false;
@@ -78,60 +82,83 @@ public class BlockTriggerCollider : ModeTriggerGroup
 
 
 
-    public virtual void OnTriggerEnter(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
-        GeneralAttackTriggerGroup AT = other.gameObject.GetComponent<GeneralAttackTriggerGroup>();
+        //Debug.Log("BlockSys");
 
-        //Null Check
-        if (AT == null) return;
-        if (other.GetComponent<AT_ColliderSingle>().cf == cf) return;
+        // Find the attack trigger component on this collider, its parent, or children
+        var AT = other.GetComponent<AT_ColliderSingle>();
 
-        // + Block up TRUE
-        // + countering FLASE
-        // + Attack Trigger attacking TRUE
-        if (blockUp && !blocking && AT.attacking)
+        if (AT.cf == cf) return;
+
+        if (AT == null)
         {
-            //print("BlockSys: Potential Block Detected");
-
-
-            //Setup
-            Vector3 effectpos = other.ClosestPoint(transform.position);
-            string myBlocksDirection = myBlockAbility.Dir.ToString();
-            IAbilityDirectional.Direction atkDir = (AT.ability as AbilityAttack).Dir;
-            string opponentAbilityDir = atkDir.ToString();
-            bool sidePerspectivesHappened = IsLeftRightPerspectiveCheckHappened(myBlocksDirection, opponentAbilityDir);
-            bool sideDirsTheSame = IsSideDirsTheSame(myBlocksDirection, opponentAbilityDir);
-
-            //Mutations
-            if ((myBlocksDirection == opponentAbilityDir || sidePerspectivesHappened) && !sideDirsTheSame)
-            {
-                AT.AttackTriggerBlocked(myBlocksDirection, effectpos);
-                //print($"BlockSys: YES Match -> BLOCKED : ({myBlocksDirection}) and ({opponentAbilityDir})");
-            }
-            else
-            {
-                //print($"BlockSys: NO Match -> HIT : ({myBlocksDirection}) and ({opponentAbilityDir})");
-            }
-
-            //TODO: If in defensive mode counter
-            //CounterAttack();
+            Debug.Log($"BlockSys: No AT Detected on {other.gameObject.name}");
+            return;
         }
+
+        if (!blockUp && AT.attacking)
+        {
+            Debug.Log("BlockSys: Can't block");
+            return;
+        }
+
+        //Debug.Log("BlockSys: Potential Block Detected");
+       // Debug.Log($"BlockSys : New AT Is {AT.name}");
+
+        // Closest contact point from the incoming trigger to me
+        Vector3 effectpos = other.ClosestPoint(transform.position);
+
+        // Safely get the attack direction
+        if (AT.ability is not AbilityAttack attack)
+        {
+            Debug.LogWarning("BlockSys: AT has no AbilityAttack");
+            return;
+        }
+
+        string myBlocksDirection = cf.Controls.lookDir;
+        string opponentAbilityDir = attack.Dir.ToString();
+
+        //Debug.Log($"BlockSys: CHECKING ({myBlocksDirection}) and ({opponentAbilityDir})");
+
+        if (DidAttackGetBlocked(myBlocksDirection, opponentAbilityDir))
+        {
+            AT.AttackTriggerBlocked(myBlocksDirection, effectpos);
+
+            // --- spawn block effect ---
+            if (myBlockAbility.blockEffectPrefab != null)
+            {
+                // face the effect toward the attacker (nice for sparks/shields)
+                Vector3 dir = (transform.position - AT.transform.position).normalized;
+                Quaternion rot = dir.sqrMagnitude > 0.0001f ? Quaternion.LookRotation(dir) : Quaternion.identity;
+
+                GameObject fx = Instantiate(myBlockAbility.blockEffectPrefab, effectpos, rot /*, optional parent: transform */);
+                if (myBlockAbility.blockEffectLifetime > 0f) Destroy(fx, myBlockAbility.blockEffectLifetime);
+            }
+            // --------------------------
+
+            Debug.Log($"BlockSys: BLOCKED : (blocker: {myBlocksDirection}) and ( opp {opponentAbilityDir})");
+        }
+        else
+        {
+            Debug.Log($"BlockSys: NO MATCH -> HIT : (blocker: {myBlocksDirection}) and ( opp {opponentAbilityDir})");
+        }
+
+        //Debug.Log("BlockSys: end");
     }
 
-    /// <summary>
-    /// Checks the perspective of two (string) directions that if left and right is given they are same dir
-    /// </summary>
-    /// <param name="my"></param>
-    /// <param name="opp"></param>
-    /// <returns></returns>
-    bool IsLeftRightPerspectiveCheckHappened(string my, string opp)
+
+    public static bool DidAttackGetBlocked(string my, string opp)
     {
-        bool ret = false;
-        if (my == "right" && opp == "left")
-            ret = true;
-        else if (my == "left" && opp == "right")
-            ret = true;
-        return ret;
+        bool sideDirsTheSame = IsSideDirsTheSame(my, opp);
+        bool upAndDownTheSame = IsUpAndDownDirTheSame(my, opp);
+
+        //Debug.Log($"BlockSys: CHECKING ({myBlocksDirection}) and ({opponentAbilityDir})");
+
+        if (sideDirsTheSame || upAndDownTheSame)
+            return true;
+        else
+            return false;
     }
 
     /// <summary>
@@ -140,13 +167,25 @@ public class BlockTriggerCollider : ModeTriggerGroup
     /// <param name="my"></param>
     /// <param name="opp"></param>
     /// <returns></returns>
-    bool IsSideDirsTheSame(string my, string opp)
+    public static bool IsSideDirsTheSame(string my, string opp)
     {
         bool ret = false;
 
-        if(my == "left" ||  my == "right" && opp == "left" || opp == "right")
-            if (my == opp)
-                ret = true;
+        if (my == "left" && opp == "right")
+            ret = true;
+        else if (my == "right" && opp == "left")
+            ret = true;
+
+        return ret;
+    }
+
+    public static bool IsUpAndDownDirTheSame(string my, string opp)
+    {
+        bool ret = false;
+        if (my == "up" && opp == "up")
+            ret = true;
+        if (my == "down" && opp == "down")
+            ret = true;
 
         return ret;
     }
@@ -182,13 +221,12 @@ public class BlockTriggerCollider : ModeTriggerGroup
 
     void CounterDown()
     {
-        print("counter collider is down");
+        print("BlockSys: counter collider is down");
         unused = true;
         DisableThisTriggerOnlyLocally();
     }
 
     protected override void DisableThisTriggerOnDelayImplementation()
     {
-        throw new System.NotImplementedException();
     }
 }

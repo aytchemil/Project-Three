@@ -19,7 +19,7 @@ MonoBehaviour:
   - rid: 3359079900535325052
   - rid: 3359079900535325109
   initialUseDelay:
-  - 0
+  - 0.44
   successDelay:
   - 0
   unsuccessDelay:

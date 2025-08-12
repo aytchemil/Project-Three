@@ -30,7 +30,7 @@ public abstract class ModeTriggerGroup : MonoBehaviour
     /// <returns></returns>
     public virtual void Use(float delay)
     {
-        //print("[AF] Using Ability: " + Ability());
+        //print("Using Ability: " + Ability());
         //Already Using it Check
         if (trigger) return;
 
@@ -116,6 +116,7 @@ public abstract class ModeTriggerGroup : MonoBehaviour
     /// </summary>
     public void DisableThisTriggerOnlyLocally()
     {
+        print("BlockSys: Disbaling locally");
         DisableThisTriggerLocallyImplementation();
 
         //print("disabling trigger locally");

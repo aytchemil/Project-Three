@@ -25,7 +25,7 @@ MonoBehaviour:
   - 0.3
   modeBase: 0
   archetype: 0
-  dir: 2
+  dir: 3
   damage: 1
   flinchAmount: 1
   Attack: 4

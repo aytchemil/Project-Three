@@ -23,6 +23,9 @@ public class AbilityBlock : Ability, IAbilityAnims, IAbilityDirectional
 
 
     public GameObject blockTriggerCollider;
+    public GameObject blockEffectPrefab;
+    public float blockEffectLifetime = 2f;
+
     public override GameObject ColliderPrefab
     {
         get => blockTriggerCollider;
@@ -57,7 +60,7 @@ public class AbilityBlock : Ability, IAbilityAnims, IAbilityDirectional
         animCont.Play(typeof(AM.BlkAnims), (int)ability.Block, CharacterAnimationController.UPPERBODY, false, false);
 
         //Trigger
-        trigger.Use(ability.InitialUseDelay[0]);
+        trigger.Use(ability.initialUseDelay[0]);
 
 
         IEnumerator WaitToStartBlockingToUnblock(AbilityBlock ability)

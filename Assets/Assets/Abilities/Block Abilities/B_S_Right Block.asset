@@ -19,15 +19,17 @@ MonoBehaviour:
   initialUseDelay:
   - 0
   successDelay:
-  - 0
+  - 0.5
   unsuccessDelay:
-  - 0.3
+  - 0.5
   modeBase: 1
   archetype: 0
   dir: 1
   Block: 3
   collision: 0
   blockTriggerCollider: {fileID: 5678498679238792639, guid: 833abaa7fc3b68740a1f050b96067633, type: 3}
+  blockEffectPrefab: {fileID: 5238538877814813142, guid: 47096eff328e11a418ace7db2d72aa97, type: 3}
+  blockEffectLifetime: 2
   hasBlockUpTime: 0
   blockUpTime: 1
   damagePercentageBlocked: 100

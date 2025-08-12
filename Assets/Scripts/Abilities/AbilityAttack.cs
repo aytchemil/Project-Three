@@ -43,13 +43,12 @@ public class AbilityAttack : Ability, IAbilityAnims, IAbilityDirectional
 
             //Mutations
 
-
             //Trigger
-            trigger.Use(ability.InitialUseDelay[0]);
+            trigger.Use(ability_Mode.initialUseDelay[0]);
 
             //Animation
             IAbilityAnims anims = trigger.ability as IAbilityAnims;
-            cf.Controls.animController.Play(anims.type, anims.Enum, CharacterAnimationController.UPPERBODY, false, false, ability.InitialUseDelay[0]);
+            cf.Controls.animController.Play(anims.type, anims.Enum, CharacterAnimationController.UPPERBODY, false, false, ability.initialUseDelay[0]);
         }
     }
 

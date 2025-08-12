@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 5597820506988704251}
   - component: {fileID: 2885016948535501439}
   - component: {fileID: 2506643702771557409}
-  m_Layer: 9
+  m_Layer: 13
   m_Name: B_Right
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -50,7 +50,7 @@ BoxCollider:
     m_Bits: 0
   m_LayerOverridePriority: 0
   m_IsTrigger: 1
-  m_ProvidesContacts: 0
+  m_ProvidesContacts: 1
   m_Enabled: 1
   serializedVersion: 3
   m_Size: {x: 1, y: 1, z: 1}
@@ -71,10 +71,10 @@ Rigidbody:
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 512
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 15863
   m_ImplicitCom: 1
   m_ImplicitTensor: 1
   m_UseGravity: 0
@@ -94,8 +94,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b447d315a8920d14caa1a3b4e9ab2a3d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  combatFunctionality: {fileID: 0}
+  cf: {fileID: 0}
+  initialUseDelayOver: 0
   isLocal: 0
+  parentTrigger: {fileID: 0}
   blockUp: 0
   blockCollisionWith:
     serializedVersion: 2

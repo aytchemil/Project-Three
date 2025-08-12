@@ -7133,6 +7133,7 @@ GameObject:
   - component: {fileID: 5675122564617097759}
   - component: {fileID: 4116201883129057277}
   - component: {fileID: 396550144979644484}
+  - component: {fileID: 3787632432284510447}
   m_Layer: 8
   m_Name: DUMMY
   m_TagString: Untagged
@@ -7260,6 +7261,7 @@ MonoBehaviour:
   isFlinching: 0
   usedCombo: 0
   targetIsDodging: 0
+  initialized: 0
   _lookDir: 
 --- !u!114 &2648877751364598138
 MonoBehaviour:
@@ -7349,6 +7351,28 @@ MonoBehaviour:
   invincibiliyTime: 0.25
   deathTime: 2
   corpseDeathTime: 0
+--- !u!114 &3787632432284510447
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7186683645502453023}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3179adc5982ad04498f507a9f3411489, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blockUp: 1
+  blockDown: 0
+  blockLeft: 0
+  blockRight: 0
+  thinking: 0
+  stats:
+    thinkDelay: 0
+    resetAttacksThinkTime: 0
+    attackingSpeedDelays: []
+  blockOnly: 1
 --- !u!1 &8149103926445004341
 GameObject:
   m_ObjectHideFlags: 0

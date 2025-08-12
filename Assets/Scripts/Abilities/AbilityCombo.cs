@@ -36,7 +36,7 @@ public class AbilityCombo : AbilityMulti
                 cf.StartCoroutine(WaitForComboToFinish(trigger));
 
                 //Actuall Attack
-                UseCurrentCombo().Use(ability.InitialUseDelay[0]);
+                UseCurrentCombo().Use(ability.initialUseDelay[0]);
 
                 //Animation
                 AM.FollowUpPackage FollowUpPackage = new AM.FollowUpPackage(
@@ -49,7 +49,7 @@ public class AbilityCombo : AbilityMulti
                     false,
                     false,
                     0.2f,
-                    ability.InitialUseDelay
+                    ability.initialUseDelay
                     );
                 cf.StartCoroutine(FollowUpPackage.PlayFollowUp(cf.Controls.animController.Play));
                 break;

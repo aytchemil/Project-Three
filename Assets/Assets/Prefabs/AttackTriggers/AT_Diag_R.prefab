@@ -32,7 +32,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.021417765, y: -0.004496254, z: -0.2054034, w: 0.97843266}
   m_LocalPosition: {x: 4.57, y: 3.08, z: 2.34}
-  m_LocalScale: {x: 2.0061278, y: 14.946859, z: 2.5215795}
+  m_LocalScale: {x: 2.7091732, y: 19.27846, z: 2.9994187}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -123,14 +123,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e2a276e788c10a9439e0ce61531412bf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  combatFunctionality: {fileID: 0}
-  usingTrigger: 0
-  hitAttack: 0
-  missedAttack: 0
-  countered: 0
+  cf: {fileID: 0}
+  initialUseDelayOver: 0
+  isLocal: 0
+  parentTrigger: {fileID: 0}
   attackColisionWith:
     serializedVersion: 2
-    m_Bits: 768
+    m_Bits: 8448
   col: {fileID: 0}
   animator: {fileID: 0}
 --- !u!54 &69104736768070694

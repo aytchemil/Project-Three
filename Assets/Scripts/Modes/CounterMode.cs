@@ -80,7 +80,7 @@ public class CounterMode : MonoBehaviour, ICombatMode
                 //StartCoroutine(AnimateFollowUpAbilities(ability, trigger, cf.Controls.Mode("Counter"), cf.Controls.animController));
 
                 //Trigger
-                trigger.Use(ability.InitialUseDelay[0]);
+                trigger.Use(ability.initialUseDelay[0]);
 
                 //Additional Functionality 
                 StandingRiposte(ability);

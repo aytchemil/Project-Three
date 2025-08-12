@@ -12,6 +12,11 @@ public class AttackingAI : MonoBehaviour
 
     string[] lookDirs = { "right", "left", "up", "down" };
 
+    public bool blockUp;
+    public bool blockDown;
+    public bool blockLeft;
+    public bool blockRight;
+
     public bool thinking;
 
     [System.Serializable]
@@ -207,8 +212,24 @@ public class AttackingAI : MonoBehaviour
         int randIndx = UnityEngine.Random.Range(0, AbilitySet.MAX_ABILITIES);
         AbilityBlock block = RandomBlock(randIndx);
 
-        AIInputs.input_changeLookDir(Controls, SetupAIlookDir(randIndx));
-        print("new look dir is " + Controls.lookDir);
+        if (!blockDown && !blockLeft && !blockRight && !blockUp)
+        {
+            AIInputs.input_changeLookDir(Controls, SetupAIlookDir(randIndx));
+            print("new look dir is " + Controls.lookDir);
+        }
+        else
+        {
+            if(blockDown)
+                AIInputs.input_changeLookDir(Controls, "down");
+            if (blockLeft)
+                AIInputs.input_changeLookDir(Controls, "left");
+            if (blockUp)
+                AIInputs.input_changeLookDir(Controls, "up");
+            if (blockRight)
+                AIInputs.input_changeLookDir(Controls, "right");
+
+        }
+
 
         yield return new WaitForSeconds(stats.thinkDelay);
 

@@ -36,6 +36,11 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
         //print("[TRIGGER] [MLTI-ATK] Used");
         base.Use(delay);
 
+        WaitExtension.Wait(this, delay, StartFollowupUse);
+    }
+
+    void StartFollowupUse()
+    {
         StartCoroutine(FollowUpUse());
     }
 
@@ -68,12 +73,12 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
     /// <param name="i"></param>
     void UseChildTrigger(int i)
     {
-        print($"[TRIGGER] [MAT] Prog: {i} Initial Delay: {ability.InitialUseDelay[i]} ");
+        print($"[TRIGGER] [MAT] Prog: {i} Initial Delay: {ability.initialUseDelay[i]} ");
         chosenChildTrigger = triggers[i];
         chosenChildTrigger.gameObject.SetActive(true);
 
 
-        chosenChildTrigger.Use(ability.InitialUseDelay[i]);
+        chosenChildTrigger.Use(ability.initialUseDelay[i]);
     }
 
     /// <summary>

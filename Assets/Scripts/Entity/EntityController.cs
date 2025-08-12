@@ -357,7 +357,8 @@ public class EntityController : MonoBehaviour
     public void SetAllModesNotUsing()
     {
         foreach (RuntimeModeData m in modes)
-            m.isUsing = false;
+            if(m.data.mode != ModeData.Modes.Block)
+                m.isUsing = false;
     }
 
     public AbilitySet AbilitySet(string modeName)
@@ -412,6 +413,9 @@ public class EntityController : MonoBehaviour
         reattackChecking = false;
         dashing = false;
         Mode("Attack").isUsing = false;
+        Mode("Combo").isUsing = false;
+        Mode("Block").isUsing = true;
+        
     }
 
 }

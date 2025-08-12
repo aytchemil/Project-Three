@@ -14,8 +14,7 @@ public class Bootstrapper : MonoBehaviour
     [SerializeField] int enemyCount;
     [SerializeField] Transform playerSpawnLoc;
     [SerializeField] GameObject playerPrefab;
-    [SerializeField] GameObject enemyPrefab;
-    [SerializeField] Transform enemySpawnLoc;
+    [SerializeField] EnemyData[] enemies;
     [SerializeField] List<ModeData> modes = new List<ModeData>();
     [SerializeReference] Type[] AnimTypes;
     public Weapon wpn;
@@ -25,6 +24,15 @@ public class Bootstrapper : MonoBehaviour
     [SerializeField] Button StartGameButton;
     public ModeManager mm;
     public GameManager gm;
+
+    [Serializable]
+    public class EnemyData
+    {
+        public GameObject prefab;
+        public Transform spawnLoc;
+    }
+
+
 
     public void StartGame()
     {
@@ -65,8 +73,19 @@ public class Bootstrapper : MonoBehaviour
     {
         Debug.Log("Spawning Enemies");
 
-        GameObject newPlayer = EntityControllerFactory.SpawnEntityPremade(enemyPrefab, modes, AnimTypes, wpn, abilitySets, playerSpawnLoc.position, Quaternion.identity);
-        print($"Successfully Created New Enemy {newPlayer.name}");
+        var sp0 = enemies[0].spawnLoc;
+        var sp1 = enemies[1].spawnLoc;
+
+        GameObject newEnemyB = EntityControllerFactory.SpawnEntityPremade(
+            enemies[0].prefab, modes, AnimTypes, wpn, abilitySets, sp0.position, sp0.rotation);
+        print($"Successfully Created New Enemy {newEnemyB.name}");
+
+        GameObject newEnemyA = EntityControllerFactory.SpawnEntityPremade(
+            enemies[1].prefab, modes, AnimTypes, wpn, abilitySets, sp1.position, sp1.rotation);
+        print($"Successfully Created New Enemy {newEnemyA.name}");
+
+        Debug.Log($"Spawn0 {sp0.name} world={sp0.position} local={sp0.localPosition}");
+        Debug.Log($"Spawn1 {sp1.name} world={sp1.position} local={sp1.localPosition}");
     }
 
     void StartTheGame()

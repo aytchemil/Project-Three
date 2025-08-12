@@ -69,8 +69,8 @@ public class CharacterAnimationController : AnimatorSystem
 
     public void Flinch(float time)
     {
-        //print($"[AnimatorController] [{EC.gameObject.name}] FlinchAnim");
-        animator.Play("Idle");
+        print($"[AnimatorController] [{EC.gameObject.name}] FlinchAnim");
+        //animator.Play("Idle");
         //Fix
     }
 
@@ -106,6 +106,8 @@ public class CharacterAnimationController : AnimatorSystem
 
     void MoveAnimationsInvoker(int layer, Vector2 moveInput)
     {
+        if (layer == 0 && EC.isLockedOn) return;
+
         if (moveInput.y >= 1)
             Play(typeof(MoveAnims), (int)MoveAnims.Anims.FORWARD, layer, false, false);
         else if (moveInput.y <= -1)

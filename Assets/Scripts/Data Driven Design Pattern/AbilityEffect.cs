@@ -1,3 +1,4 @@
+using log4net.Util;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,9 +26,17 @@ public interface IAEffectOnHit
 
 public interface IAEffectRuntime<T>
 {
-    public T data { get; set; }
+    public T Data { get; set; }
 
     public abstract void Execute(GameObject attacker, T type);
+}
+
+public interface IAEffectCreateVFX
+{
+    public GameObject PrefabVFX { get; set; }
+    public float Duration { get; set; }
+    public virtual void Execute(GameObject attacker, Vector3 position) { }
+
 }
 
 
@@ -109,11 +118,11 @@ class RuntimeMoveAttackerEffect : AbilityEffect, IAEffectRuntime<string>
 
     public float amount;
 
-    public string data { get => direction; set => direction = value; }
+    public string Data { get => direction; set => direction = value; }
 
     public void Execute(GameObject attacker, string direction)
     {
-        data = direction;
+        Data = direction;
 
         attacker.GetComponent<Movement>().Lunge(direction, amount);
         attacker.GetComponent<Movement>().DisableMovement();
@@ -164,23 +173,41 @@ class FlinchEffect : IAEffectDirectional, IAEffectOnHit
 }
 
 [Serializable]
-class HitVFX : IAEffectDirectional, IAEffectOnHit
+class HitVFX : IAEffectDirectional, IAEffectOnHit, IAEffectCreateVFX
 {
-    public GameObject hitVFXPrefab;
-    public float duration;
+    [field:SerializeField] public GameObject PrefabVFX { get; set; }
+    [field: SerializeField] public float Duration { get; set; }
+
     public void OnHit(GameObject attacker, GameObject target)
     {
-        if (hitVFXPrefab == null) return;
+        if (PrefabVFX == null) return;
         AttackHit(attacker, target);
 
-        Debug.Log($"{attacker.name} created Hit Effect {hitVFXPrefab} on {target.name} for {duration} seconds");
+        Debug.Log($"{attacker.name} created Hit Effect {PrefabVFX} on {target.name} for {Duration} seconds");
     }
 
     void AttackHit(GameObject attacker, GameObject target)
     {
         Vector3 spawnPos = target.transform.position;
-        GameObject newHitVFX = GameObject.Instantiate(hitVFXPrefab, spawnPos, Quaternion.identity);
+        GameObject newHitVFX = GameObject.Instantiate(PrefabVFX, spawnPos, Quaternion.identity);
         newHitVFX.GetComponent<ParticleSystem>().Play();
-        WaitExtension.Wait(attacker.GetComponent<EntityController>(), duration, () => GameObject.Destroy(newHitVFX));
+        WaitExtension.Wait(attacker.GetComponent<EntityController>(), Duration, () => GameObject.Destroy(newHitVFX));
     }
+}
+
+[Serializable]
+class CreateVFX : AbilityEffect, IAEffectCreateVFX
+{
+    [field: SerializeField] public GameObject PrefabVFX { get; set; }
+    [field: SerializeField] public float Duration { get; set; }
+
+    public void Execute(GameObject attacker, Vector3 position)
+    {
+        Debug.Log("BlockSys: Block effect being created");
+        // --- spawn block effect ---
+        GameObject fx = GameObject.Instantiate(PrefabVFX, position, Quaternion.identity);
+        MonoBehaviour.Destroy(fx, Duration);
+        // --------------------------
+    }
+
 }

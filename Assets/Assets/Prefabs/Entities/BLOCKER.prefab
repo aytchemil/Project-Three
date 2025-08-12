@@ -7135,7 +7135,7 @@ GameObject:
   - component: {fileID: 396550144979644484}
   - component: {fileID: 3787632432284510447}
   m_Layer: 8
-  m_Name: DUMMY
+  m_Name: BLOCKER
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7149,7 +7149,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7186683645502453023}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.997109, z: -0, w: 0.07598468}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 29.7, y: 7.5, z: 17.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -7158,7 +7158,7 @@ Transform:
   - {fileID: 1850965139820664231}
   - {fileID: 2417054795979588693}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 171.284, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!54 &5103964215289092385
 Rigidbody:
   m_ObjectHideFlags: 0

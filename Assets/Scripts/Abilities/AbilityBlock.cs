@@ -23,8 +23,6 @@ public class AbilityBlock : Ability, IAbilityAnims, IAbilityDirectional
 
 
     public GameObject blockTriggerCollider;
-    public GameObject blockEffectPrefab;
-    public float blockEffectLifetime = 2f;
 
     public override GameObject ColliderPrefab
     {

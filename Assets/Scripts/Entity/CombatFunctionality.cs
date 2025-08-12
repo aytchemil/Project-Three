@@ -454,7 +454,8 @@ public class CombatFunctionality : MonoBehaviour
     {
         if (debug) print("Disabling all attack triggers");
         foreach (RuntimeModeData mode in Controls.modes)
-            DisableTriggers(false, Controls.Mode(mode.name));
+            if(mode.data.mode != ModeData.Modes.Block)
+                DisableTriggers(false, Controls.Mode(mode.name));
 
     }
 
@@ -465,7 +466,7 @@ public class CombatFunctionality : MonoBehaviour
 
     public void Flinch(float flinchTime)
     {
-        //print(this.gameObject.name + " has flinched");
+        print($"FLINCH : " + this.gameObject.name + " has flinched");
         DisableAllAttackTriggers();
     }
 

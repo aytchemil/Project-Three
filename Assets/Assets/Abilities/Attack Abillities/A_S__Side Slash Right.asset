@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilityName: Right Side Slash
   icon: {fileID: 21300000, guid: 33d5822ea28647e47b40890ae6c7971a, type: 3}
-  hasAdditionalFunctionality: 0
+  hasAdditionalFunctionality: 1
   effects:
   - rid: 3359079900535325053
   initialUseDelay:
@@ -48,9 +48,9 @@ MonoBehaviour:
     - rid: 3359079900535325081
       type: {class: FlinchEffect, ns: , asm: Three}
       data:
-        duration: 1
+        duration: 0.4
     - rid: 3359079900535325090
       type: {class: HitVFX, ns: , asm: Three}
       data:
-        hitVFXPrefab: {fileID: 1758473627833946668, guid: 9b21333b068a5084ba09535839bee3c8, type: 3}
-        duration: 1
+        <PrefabVFX>k__BackingField: {fileID: 1758473627833946668, guid: 9b21333b068a5084ba09535839bee3c8, type: 3}
+        <Duration>k__BackingField: 1

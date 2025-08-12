@@ -10,9 +10,18 @@ using UnityEngine;
 public static class AbilityExecutor
 {
     public static void ExecuteAbility(Ability ability, GameObject attacker)
-    {
+    { 
+        Debug.Log($"Ability: {ability.name} Executing Ability");
         foreach (var effect in ability.effects)
             effect.Execute(attacker);
+    }
+
+    public static void ExecuteAbility(Ability ability, GameObject attacker, Vector3 pos)
+    {
+        Debug.Log($"Ability: {ability.name} Executing Ability VFX");
+        foreach (var effect in ability.effects)
+            if(effect is IAEffectCreateVFX vfxEffect)
+                vfxEffect.Execute(attacker, pos);
     }
 
     public static void ExecuteRuntimeAbility<T>(
@@ -31,14 +40,6 @@ public static class AbilityExecutor
                     Debug.Log("Invoking Execute On Runtime Ability");
                 }
     }
-
-    public static void OnHit(Ability ability, GameObject attacker, GameObject target)
-    {
-        foreach (var effect in ability.effects) 
-            if(effect is IAEffectOnHit hitEffect)
-                hitEffect.OnHit(attacker, target);
-    }
-
     public static void OnHit(Ability ability, string attackDirection, GameObject attacker, GameObject target)
     {
         foreach (var effect in ability.effects)

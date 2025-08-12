@@ -122,7 +122,7 @@ public class AnimatorSystem : MonoBehaviour
         if (animEnum.ToString() == layers[layer].currAnimation?.ToString()) { return; }
         if (layers[layer].locked && !bypassLock) { Debug.Log("[AS] Layer Locked, unable to bypass"); return; }
 
-        //print("[AS] Attempting Crossfade");
+        print($"[AS] Attempting Crossfade on Animation [{animEnum.ToString()}]");
 
         // Functionality
         int targetHash = set._anims[enumIndx];

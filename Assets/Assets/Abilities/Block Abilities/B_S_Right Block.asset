@@ -14,8 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   abilityName: Right Block
   icon: {fileID: 21300000, guid: e01eb23e4cf473248808ee651e4c7710, type: 3}
-  hasAdditionalFunctionality: 0
-  effects: []
+  hasAdditionalFunctionality: 1
+  effects:
+  - rid: 7033777363957580069
   initialUseDelay:
   - 0
   successDelay:
@@ -28,8 +29,6 @@ MonoBehaviour:
   Block: 3
   collision: 0
   blockTriggerCollider: {fileID: 5678498679238792639, guid: 833abaa7fc3b68740a1f050b96067633, type: 3}
-  blockEffectPrefab: {fileID: 5238538877814813142, guid: 47096eff328e11a418ace7db2d72aa97, type: 3}
-  blockEffectLifetime: 2
   hasBlockUpTime: 0
   blockUpTime: 1
   damagePercentageBlocked: 100
@@ -38,4 +37,9 @@ MonoBehaviour:
   defaultBlockTimeToBlocking: 0.5
   references:
     version: 2
-    RefIds: []
+    RefIds:
+    - rid: 7033777363957580069
+      type: {class: CreateVFX, ns: , asm: Three}
+      data:
+        <PrefabVFX>k__BackingField: {fileID: 5238538877814813142, guid: 47096eff328e11a418ace7db2d72aa97, type: 3}
+        <Duration>k__BackingField: 1

@@ -57,7 +57,7 @@ public static class EntityControllerFactory
 
         Debug.Log("Spawning Entity...");
 
-        GameObject newEntity = new EntityControllerBuilder(entityPrefab)
+        GameObject newEntity = new EntityControllerBuilder(entityPrefab, pos, rot, parent)
             .WithCombatFunctionality()
             .WithDIAbilitySets(abilitySets)
             .WithDIModes(modes)
@@ -79,15 +79,15 @@ public static class EntityControllerFactory
         Weapon wpn;
         int animLayerCount;
 
-        public EntityControllerBuilder(GameObject entityPrefab)
+        public EntityControllerBuilder(GameObject entityPrefab, Vector3 worldPos, Quaternion worldRot, Transform parent = null)
         {
-            newEntity = GameObject.Instantiate(entityPrefab);
-            entity = newEntity.GetComponent<EntityController>();
+            Quaternion finalRot = worldRot * Quaternion.Euler(0f, 180f, 0f);
+            newEntity = GameObject.Instantiate(entityPrefab, worldPos, finalRot, parent); entity = newEntity.GetComponent<EntityController>();
             entity.mode = "Attack";
-            Debug.Log($"Instantiated New Entity");
-
+            Debug.Log("Instantiated New Entity");
             DebugStepMarker(1);
         }
+
 
         public EntityControllerBuilder WithCombatFunctionality()
         {

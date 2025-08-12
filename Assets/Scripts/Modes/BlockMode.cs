@@ -66,7 +66,7 @@ public class BlockMode : MonoBehaviour, ICombatMode
         readyToUnblock = true;
     }
 
-    void ChangeBlock(string dir)
+    public void ChangeBlock(string dir)
     {
         //print($"[{gameObject.name}] BLOCK Direction Changing to {dir}");
         ChangeBlockAbility(dir);

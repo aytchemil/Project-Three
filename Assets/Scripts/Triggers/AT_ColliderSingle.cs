@@ -82,14 +82,21 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
     /// <param name="other"></param>
     public virtual void OnTriggerEnter(Collider other)
     {
-        if (other.GetComponent<ModeTriggerGroup>()) return;
         if (other.GetComponent<EntityController>() == cf.Controls) return;
+        if (other.GetComponent<BlockTriggerCollider>() && other.GetComponent<BlockTriggerCollider>().cf == cf) return;
 
         if (attacking && initialUseDelayOver)
         {
             print($"AT [{ability.name}] hit {other.gameObject.name}");
+
+            GameObject target = other.gameObject;
+
+            if (other.GetComponent<BlockTriggerCollider>() && other.GetComponent<BlockTriggerCollider>().cf != cf)
+                target = other.GetComponent<BlockTriggerCollider>().cf.gameObject;
+
+
             HitAttack();
-            AbilityExecutor.OnHit(ability, myAttackAbility.Dir.ToString(), cf.gameObject, other.gameObject);
+            AbilityExecutor.OnHit(ability, myAttackAbility.Dir.ToString(), cf.gameObject, target); 
         }
     }
 

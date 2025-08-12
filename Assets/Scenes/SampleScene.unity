@@ -1982,11 +1982,14 @@ MonoBehaviour:
   spawnPlayers: 1
   spawnEnemies: 1
   playerCount: 1
-  enemyCount: 1
+  enemyCount: 2
   playerSpawnLoc: {fileID: 2086292260}
   playerPrefab: {fileID: 6121598940007079717, guid: 715c4074133bd6b47981782ca4c28d90, type: 3}
-  enemyPrefab: {fileID: 7186683645502453023, guid: adb175802ff83a24ebb65c6941c7d9e1, type: 3}
-  enemySpawnLoc: {fileID: 1774646836}
+  enemies:
+  - prefab: {fileID: 7186683645502453023, guid: adb175802ff83a24ebb65c6941c7d9e1, type: 3}
+    spawnLoc: {fileID: 1774646836}
+  - prefab: {fileID: 7186683645502453023, guid: 78ed0d6f49188514bb0ab52ce8f0d89a, type: 3}
+    spawnLoc: {fileID: 1474126081}
   modes:
   - {fileID: 11400000, guid: 3574b41ce69da0344994dc19f7f7ec87, type: 2}
   - {fileID: 11400000, guid: fca314c1d6becf843b3e2fede4266485, type: 2}
@@ -9497,6 +9500,37 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1756576170395005799, guid: 85a85c32aa4484a49988d87f6768d769, type: 3}
   m_PrefabInstance: {fileID: 1670733784}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1474126080
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1474126081}
+  m_Layer: 0
+  m_Name: Enemy Spawn (1)
+  m_TagString: Untagged
+  m_Icon: {fileID: 2488908585195742037, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1474126081
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1474126080}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 163.4, y: -23.2, z: 118}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1632120337}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1489782563
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -10252,6 +10286,7 @@ Transform:
   m_Children:
   - {fileID: 2086292260}
   - {fileID: 1774646836}
+  - {fileID: 1474126081}
   m_Father: {fileID: 651906400}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1670733784
@@ -10822,7 +10857,7 @@ Transform:
   m_GameObject: {fileID: 1774646835}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 71, y: -30.6, z: 118}
+  m_LocalPosition: {x: 71, y: -23.2, z: 118}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -13046,7 +13081,7 @@ Transform:
   m_GameObject: {fileID: 2086292259}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 71, y: -30.6, z: 61.4}
+  m_LocalPosition: {x: 71, y: -23.2, z: 61.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -124,24 +124,14 @@ public class BlockTriggerCollider : ModeTriggerGroup
         if (DidAttackGetBlocked(myBlocksDirection, opponentAbilityDir))
         {
             AT.AttackTriggerBlocked(myBlocksDirection, effectpos);
+            AbilityExecutor.ExecuteAbility(myBlockAbility, cf.gameObject, effectpos);
 
-            // --- spawn block effect ---
-            if (myBlockAbility.blockEffectPrefab != null)
-            {
-                // face the effect toward the attacker (nice for sparks/shields)
-                Vector3 dir = (transform.position - AT.transform.position).normalized;
-                Quaternion rot = dir.sqrMagnitude > 0.0001f ? Quaternion.LookRotation(dir) : Quaternion.identity;
-
-                GameObject fx = Instantiate(myBlockAbility.blockEffectPrefab, effectpos, rot /*, optional parent: transform */);
-                if (myBlockAbility.blockEffectLifetime > 0f) Destroy(fx, myBlockAbility.blockEffectLifetime);
-            }
-            // --------------------------
-
-            Debug.Log($"BlockSys: BLOCKED : (blocker: {myBlocksDirection}) and ( opp {opponentAbilityDir})");
+            Debug.Log($"BlockSys: BLOCKED [blocker {cf.gameObject.name}: {myBlocksDirection}] and [ opp {AT.cf.gameObject.name}: {opponentAbilityDir})");
         }
         else
         {
-            Debug.Log($"BlockSys: NO MATCH -> HIT : (blocker: {myBlocksDirection}) and ( opp {opponentAbilityDir})");
+            Debug.Log($"BlockSys: HIT (NO BLOCK) [blocker {cf.gameObject.name}: {myBlocksDirection}] and [ opp {AT.cf.gameObject.name}: {opponentAbilityDir})");
+
         }
 
         //Debug.Log("BlockSys: end");

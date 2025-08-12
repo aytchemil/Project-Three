@@ -69,8 +69,9 @@ public class CharacterAnimationController : AnimatorSystem
 
     public void Flinch(float time)
     {
-        print($"[AnimatorController] [{EC.gameObject.name}] FlinchAnim");
-        //animator.Play("Idle");
+        //print($"[AnimatorController] [{EC.gameObject.name}] FlinchAnim");
+        //Play(typeof(AtkAnims), (int)AtkAnims.Anims.FLINCH, UPPERBODY, false, true);
+        
         //Fix
     }
 
@@ -106,7 +107,7 @@ public class CharacterAnimationController : AnimatorSystem
 
     void MoveAnimationsInvoker(int layer, Vector2 moveInput)
     {
-        if (layer == 0 && EC.isLockedOn) return;
+        if (layer == 0 && EC.isLockedOn) return; //Uperbody
 
         if (moveInput.y >= 1)
             Play(typeof(MoveAnims), (int)MoveAnims.Anims.FORWARD, layer, false, false);

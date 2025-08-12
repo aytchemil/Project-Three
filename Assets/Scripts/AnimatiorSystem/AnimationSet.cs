@@ -203,6 +203,7 @@ public static class AM
             Atk_Flat_R,
             Atk_Diag_L,
             Atk_Diag_R,
+            FLINCH,
             NONE
         }
     }

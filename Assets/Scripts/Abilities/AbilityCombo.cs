@@ -38,27 +38,9 @@ public class AbilityCombo : AbilityMulti
                 //Actuall Attack
                 UseCurrentCombo().Use(ability.initialUseDelay[0]);
 
-                //Animation
-                AM.FollowUpPackage FollowUpPackage = new AM.FollowUpPackage(
-                    trigger,
-                    Mode,
-                    cf.GetAnimEnums(ability),
-                    typeof(AM.AtkAnims),
-                    typeof(AM.AtkAnims.Anims),
-                    CharacterAnimationController.UPPERBODY,
-                    false,
-                    false,
-                    0.2f,
-                    ability.initialUseDelay
-                    );
-                cf.StartCoroutine(FollowUpPackage.PlayFollowUp(cf.Controls.animController.Play));
                 break;
 
         }
-
-
-
-
 
         /// <summary>
         /// +Sets all trigers to false

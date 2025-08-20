@@ -17,8 +17,8 @@ MonoBehaviour:
   hasAdditionalFunctionality: 0
   effects: []
   initialUseDelay:
-  - 0.25
-  - 0.25
+  - 0
+  - 0
   successDelay:
   - 0
   - 0

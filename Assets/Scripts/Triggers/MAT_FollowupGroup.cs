@@ -25,6 +25,7 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
     {
         base.Reset();
         DisableAllChildTriggers();
+        ResetTriggerProg();
     }
 
     #endregion
@@ -87,27 +88,33 @@ public class MAT_FollowupGroup : MultiAttackTriggerGroup
     /// <param name="i"></param>
     public virtual void CheckForTriggerUpdates_ReturnDelay(int i)
     {
+        print($"[TRIGGER] Checking for Trigger Updates of USED and UNUSED: [{chosenChildTrigger.used}] [{chosenChildTrigger.unused}]");
+
         if (chosenChildTrigger.used || chosenChildTrigger.unused)
             UpdateTriggerProgress(i);
     }
 
     #region Methods
-    //Methods
-    //=================================================================================================================================================
+        //Methods
+        //=================================================================================================================================================
 
     public virtual IEnumerator FollowUpUse()
     {
-        ResetTriggerProg();
+        print($"[TRIGGER] FollowUpUse() ");
+
+        Reset();
 
         for (int i = 0; i < triggerProgress.Length; i++)
         {
             SetAllTriggersToFalse();
             UseChildTrigger(i);
+            print($"[TRIGGER] Using Child Trigger {i}");
 
 
             while (triggerProgress[i] == false)
             {
-                if (!gameObject.activeSelf) {  print("This trigger has been disabled, breaking out of loop");   yield break;  }
+                print($"[TRIGGER] Waiting for Trigger Progress");
+                if (!gameObject.activeSelf) {  print("[TRIGGER] This trigger has been disabled, breaking out of loop");   yield break;  }
 
                 CheckForTriggerUpdates_ReturnDelay(i);
 

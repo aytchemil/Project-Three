@@ -84,8 +84,6 @@ public class BlockTriggerCollider : ModeTriggerGroup
 
     private void OnTriggerEnter(Collider other)
     {
-        //Debug.Log("BlockSys");
-
         // Find the attack trigger component on this collider, its parent, or children
         var AT = other.GetComponent<AT_ColliderSingle>();
 
@@ -103,8 +101,16 @@ public class BlockTriggerCollider : ModeTriggerGroup
             return;
         }
 
-        //Debug.Log("BlockSys: Potential Block Detected");
-       // Debug.Log($"BlockSys : New AT Is {AT.name}");
+        Debug.Log("BlockSys: Potential Block Detected");
+        Debug.Log($"BlockSys : New AT Is {AT.name}");
+        Debug.Log($"BlockSys : Checking If its a followup, if it is, Basic Block Does nothing");
+        if(AT.isLocal)
+            if(AT.parentTrigger is MAT_FollowupGroup followup)
+            {
+                Debug.Log($"BlockSys: HIT (NO BLOCK) Followup Attack Detected on block, Intentionally Do nothing");
+                return;
+            }
+
 
         // Closest contact point from the incoming trigger to me
         Vector3 effectpos = other.ClosestPoint(transform.position);
@@ -119,7 +125,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
         string myBlocksDirection = cf.Controls.lookDir;
         string opponentAbilityDir = attack.Dir.ToString();
 
-        //Debug.Log($"BlockSys: CHECKING ({myBlocksDirection}) and ({opponentAbilityDir})");
+        Debug.Log($"BlockSys: CHECKING ({myBlocksDirection}) and ({opponentAbilityDir})");
 
         if (DidAttackGetBlocked(myBlocksDirection, opponentAbilityDir))
         {

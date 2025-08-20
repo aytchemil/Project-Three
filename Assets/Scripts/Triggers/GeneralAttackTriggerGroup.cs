@@ -30,7 +30,6 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
     }
 
 
-
     #region  Template Pattern Overrides
     //Template Pattern Overrides
 
@@ -177,7 +176,7 @@ public class GeneralAttackTriggerGroup : ModeTriggerGroup
 
     public virtual void AttackTriggerBlocked(string myLookdir, Vector3 effectPos)
     {
-        print(gameObject.name + " I am getting Blocked");
+        print($"BlockSys: {gameObject.name}'s ATTACK was blocked");
 
         Ability ability = null;
 

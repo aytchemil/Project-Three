@@ -77,19 +77,14 @@ public class AttackMode : MonoBehaviour, ICombatMode
     /// <param name="ability"></param>
     public void AttackBlocked(string myLookdir, Ability ability)
     {
-        print("didreattack: on ModeAttackFunc, checking if the ability used is an attack ability");
+        print("BlockSys: AttackBlocked?");
         if (ability.modeBase != Ability.Mode.AttackBased) return;
-        print($"+YES:[{gameObject.name}] didreattack : Attack was blocked");
+        print($"BlockSys: +YES:[{gameObject.name}]");
 
         if (ability.archetype == Ability.Archetype.Multi_Followup)
         {
-            print("+didreattack: AbilityMulti blocked");
-            MAT_FollowupGroup trigger = Mode.trigger.GetComponent<MAT_FollowupGroup>();
-            if(trigger.IncrementTriggerProgress() == true)
-            {
-                print("didreattack: final trigger prog");
-                trigger.DisableThisTrigger();
-            }
+            print("+BlockSys: AbilityMulti blocked");
+            //Nothing Will Happen
         }
 
         if (ability.archetype == Ability.Archetype.Multi_Choice)
@@ -99,6 +94,8 @@ public class AttackMode : MonoBehaviour, ICombatMode
 
             trigger.DisableThisTrigger();
         }
+
+        Mode.isUsing = false;
     }
 
 }

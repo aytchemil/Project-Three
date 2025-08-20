@@ -51,7 +51,7 @@ public class AttackbleEntity : MonoBehaviour
 
             animator.SetBool("Die", true);
             controls.isAlive = false;
-            Invoke(nameof(Die), deathTime);
+            this.Wait(deathTime, () => Die());
         }
 
         void Die()

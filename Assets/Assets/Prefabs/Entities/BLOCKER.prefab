@@ -7344,8 +7344,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   controls: {fileID: 0}
-  _health: 88888
-  maxHealth: 88888
+  _health: 20
+  maxHealth: 20
   animator: {fileID: 4086029440076312279}
   invincibility: 0
   invincibiliyTime: 0.25

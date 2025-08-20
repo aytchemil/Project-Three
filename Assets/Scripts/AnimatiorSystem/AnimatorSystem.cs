@@ -88,7 +88,7 @@ public class AnimatorSystem : MonoBehaviour
         //Setup 2
         // + Get the anim enum from the set's type
         // + Gets the Enum value (ex. NONE, FORWARD, etc) from animEnums & the index
-        Type EnumType = set.EnumsType ?? throw new ArgumentNullException($"[AS] No Anims enum found for set {setType.Name}");
+        Type EnumType = set.EnumsType ?? throw new ArgumentNullException($"[AS] [{gameObject.name}] No Anims enum found for set {setType.Name}");
         Enum animEnum = (Enum)Enum.ToObject(EnumType, enumIndx);
 
         //Checks
@@ -100,12 +100,12 @@ public class AnimatorSystem : MonoBehaviour
 
         if (layer < 0 || layer >= layers.Length)
         {
-            Debug.LogError($"Layer Out of Bounds, on Index: {layer}, layers.length = {layers.Length}");
+            Debug.LogError($"[AS] [{gameObject.name}] Layer Out of Bounds, on Index: {layer}, layers.length = {layers.Length}");
             return;
         }
         if (layers[layer] == null)
         {
-            Debug.LogError($"Layer index: {layer} is null : layers[layer]");
+            Debug.LogError($"[AS] [{gameObject.name}]Layer index: {layer} is null : layers[layer]");
             return;
         }
         if (enumIndx < 0 || enumIndx >= set._anims.Length)
@@ -120,10 +120,11 @@ public class AnimatorSystem : MonoBehaviour
         }
         //print("[AS] p");
         if (animEnum.ToString() == layers[layer].currAnimation?.ToString()) { return; }
-        if (layers[layer].locked && !bypassLock) { Debug.Log("[AS] Layer Locked, unable to bypass"); return; }
+        if (layers[layer].locked && !bypassLock) { Debug.Log($"[AS] [{gameObject.name}] Layer Locked, unable to bypass"); return; }
 
-        print($"[AS] Attempting Crossfade on Animation [{animEnum.ToString()}]");
+        print($"[AS] [{gameObject.name}] Animating: [{animEnum.ToString()}]");
 
+        animator.speed = 1;
         // Functionality
         int targetHash = set._anims[enumIndx];
         animator.CrossFade(targetHash, crossfade, layer);

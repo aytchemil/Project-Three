@@ -787,31 +787,27 @@ MonoBehaviour:
 
     ==========
 
+    ESC - Menu Screen
+
     F - Lock On
 
-    SHIFT - Sprint
+    SHIFT
+    - Sprint
 
 
-    WHILE
-    LOCKED
+    WHILE LOCKED
 
     -----------------------
 
-    1-4 Change Combo Chain
-
-    TAB - Switch
-    Ability Modes (Attack and Counter)
+    KEYS 1,2,3,4  -
+    USEABILITY
 
     MOUSE1 - Combo Attack
 
-    MOUSE2 - Use
-    Ability (Attack or Counter)
+    Mouse Movement - Change Combo/Block
+    Direction
 
-
-    Mouse Movement - Change Ability
-
-    SPACE
-    - Dash'
+    SPACE - Dash'
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1239,7 +1235,8 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'PRE-ALPHA 0.17
+  m_text: 'PRE-ALPHA 0.19
+
 
 
 '
@@ -5093,7 +5090,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5575310285746000814
 RectTransform:
   m_ObjectHideFlags: 0

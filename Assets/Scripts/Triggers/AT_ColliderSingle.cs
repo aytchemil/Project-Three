@@ -1,5 +1,7 @@
+using System;
 using System.Collections;
 using UnityEngine;
+using static AM;
 
 [RequireComponent(typeof(Collider))]
 public class AT_ColliderSingle : GeneralAttackTriggerGroup
@@ -19,6 +21,7 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
     public LayerMask attackColisionWith;
     public Collider col;
     public Animator animator;
+
 
     #region  Template Pattern Overrides
     //Template Pattern Overrides
@@ -75,6 +78,18 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
 
     #endregion
 
+
+    public override void Use(float delay)
+    {
+        base.Use(delay);
+
+        print($"[AS] [{cf.gameObject.name}] AT Animating");
+
+        System.Enum type = myAttackAbility.Attack;
+        int enumIndex = Convert.ToInt32(type);
+        cf.Controls.animController.Play(typeof(AtkAnims), enumIndex, CharacterAnimationController.UPPERBODY, false, false, 0.2f, delay);
+
+    }
 
     /// <summary>
     /// Where the actual attack takes place
@@ -158,16 +173,15 @@ public class AT_ColliderSingle : GeneralAttackTriggerGroup
     {
         col.enabled = false;
 
-        //print(effectPos + " " + myLookDir);
+        print($"BlockSys: AT Blocked, DIR: {myLookDir}");
 
-        //print("AT Collider being frozen");
         StartCoroutine(FreezeAttack(0.15f, myLookDir, effectPos));
     }
     
 
     IEnumerator FreezeAttack(float time, string l, Vector3 effectpos)
     {
-        //print("Freezing attack");
+        print($"BlockSys: [AS] AT Collider Frozen");
         float prevSpeed = animator.speed;
         float prevanimContSpeed = cf.Controls.animController.animator.speed;
 

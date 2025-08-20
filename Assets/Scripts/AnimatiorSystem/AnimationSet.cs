@@ -146,11 +146,10 @@ public static class AM
         {
             for (int i = 0; i < triggerProg.Length; i++)
             {
-                //Debug.Log($"[AS] Followup {i}");
                 int EnumsIndx = (int)Enum.ToObject(EnumType, Enums[i]);
 
                 Play?.Invoke(type, (int)AM.GetEnums(EnumType).GetValue(EnumsIndx), layer, locklayer, bypassLock, crossfade, initialUseDelays[i]);
-                //Debug.Log($"[AS] [FOLLOWUP] [PACKG] PLAYING {AM.GetEnums(EnumType).GetValue(EnumsIndx)}");
+                Debug.Log($"[AS] [Followup] [{i}] PLAYING {AM.GetEnums(EnumType).GetValue(EnumsIndx)}");
 
                 if (!mode.isUsing)
                 {

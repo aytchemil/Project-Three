@@ -2,6 +2,8 @@ using System.Collections;
 using UnityEngine;
 using System;
 using Sirenix.OdinInspector;
+using static AM;
+using static EntityController;
 
 /// <summary>
 /// Template Method Pattern
@@ -123,6 +125,7 @@ public abstract class ModeTriggerGroup : MonoBehaviour
 
         trigger = false;
         unused = false;
+        initialUseDelayOver = false;
 
         gameObject.SetActive(false);
     }

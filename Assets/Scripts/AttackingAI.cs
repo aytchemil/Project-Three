@@ -100,7 +100,7 @@ public class AttackingAI : MonoBehaviour
         {
             while (Controls.isAlive)
             {
-                print($"[{gameObject.name}] [AttackingAI] Checking for lockon...");
+                //print($"[{gameObject.name}] [AttackingAI] Checking for lockon...");
                 yield return new WaitForSeconds(1f);
                 if (!Controls.isLockedOn && !combatLock.myColliderDetector.targetDescisionMade)
                     AttemptLockOn();
@@ -155,7 +155,7 @@ public class AttackingAI : MonoBehaviour
 
     void AttemptLockOn()
     {
-        print(gameObject.name + " attempting to lock on");
+        //print(gameObject.name + " attempting to lock on");
         Controls.lockOn?.Invoke();
     }
 
@@ -187,6 +187,8 @@ public class AttackingAI : MonoBehaviour
 
         AIInputs.input_changeLookDir(Controls, SetupAIlookDir(randIndx));
         //print($"[{gameObject.name}] LookDir is ({Controls.lookDir})");
+
+        yield return new WaitForSeconds(stats.thinkDelay /2);
 
         AIInputs.input_UseCombo(Controls);
 

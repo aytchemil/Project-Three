@@ -32,8 +32,8 @@ MonoBehaviour:
   archetype: 0
   MultiAbilityGroupingPrefab: {fileID: 1766159213802189594, guid: c3a13b68d2130dc408722a0ba5a0094d, type: 3}
   abilities:
-  - {fileID: 11400000, guid: cc188b88764ff3c478da26feea8ec6bc, type: 2}
   - {fileID: 11400000, guid: 90d73c4cb12b02a40bfbffb1eea894b8, type: 2}
+  - {fileID: 11400000, guid: cc188b88764ff3c478da26feea8ec6bc, type: 2}
   - {fileID: 11400000, guid: f70474e9dbc7cb74e9e11772d7ab18fc, type: 2}
   reattackTimeUntilReset: 0.7
   comboType: 0

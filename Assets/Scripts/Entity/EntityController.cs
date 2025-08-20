@@ -1,10 +1,8 @@
-using UnityEngine;
-using System;
-using System.Collections.Generic;
-using System.Collections;
-using System.Linq;
 using Sirenix.OdinInspector;
-using UnityEngine.Scripting.APIUpdating;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 
 /// <summary>
 /// Centralized Controller and controls for every combat entity.

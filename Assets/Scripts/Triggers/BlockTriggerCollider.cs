@@ -104,8 +104,8 @@ public class BlockTriggerCollider : ModeTriggerGroup
         Debug.Log("BlockSys: Potential Block Detected");
         Debug.Log($"BlockSys : New AT Is {AT.name}");
         Debug.Log($"BlockSys : Checking If its a followup, if it is, Basic Block Does nothing");
-        if(AT.isLocal)
-            if(AT.parentTrigger is MAT_FollowupGroup followup)
+        if (AT.isLocal)
+            if (AT.parentTrigger is MAT_FollowupGroup followup)
             {
                 Debug.Log($"BlockSys: HIT (NO BLOCK) Followup Attack Detected on block, Intentionally Do nothing");
                 return;
@@ -206,7 +206,7 @@ public class BlockTriggerCollider : ModeTriggerGroup
     }
     IEnumerator WaitForBlockToStop()
     {
-        while(cf.Controls.Mode("Block").isUsing)
+        while (cf.Controls.Mode("Block").isUsing)
         {
             gameObject.transform.localPosition = Vector3.zero;
             gameObject.transform.localEulerAngles = Vector3.zero;
